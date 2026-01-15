@@ -1,0 +1,166 @@
+# Codebase Structure
+
+**Analysis Date:** 2026-01-15
+
+## Directory Layout
+
+```
+gemhog/
+├── apps/                    # Deployable applications
+│   ├── server/             # Hono backend API server
+│   │   ├── src/
+│   │   │   └── index.ts    # Server entry point
+│   │   ├── tsdown.config.ts
+│   │   ├── .env            # Server environment
+│   │   └── package.json
+│   └── web/                # Next.js frontend application
+│       ├── src/
+│       │   ├── app/        # Next.js App Router pages
+│       │   ├── components/ # React components
+│       │   ├── lib/        # Utility functions
+│       │   └── utils/      # Helper utilities
+│       ├── next.config.ts
+│       └── package.json
+├── packages/               # Shared internal libraries
+│   ├── api/               # tRPC router definitions
+│   ├── auth/              # Authentication configuration
+│   ├── db/                # Database schema & ORM
+│   ├── env/               # Environment validation
+│   └── config/            # Shared TypeScript config
+├── .planning/             # Planning documents (GSD)
+├── pnpm-workspace.yaml    # Workspace configuration
+├── biome.json            # Linting & formatting
+├── tsconfig.json         # Root TypeScript config
+└── package.json          # Root workspace package
+```
+
+## Directory Purposes
+
+**apps/server/**
+- Purpose: Backend API server
+- Contains: Hono routes, tRPC handlers, AI endpoint
+- Key files: `src/index.ts` (entry point)
+- Subdirectories: `src/` only
+
+**apps/web/**
+- Purpose: Next.js frontend application
+- Contains: React pages, components, utilities
+- Key files: `src/app/layout.tsx` (root layout)
+- Subdirectories:
+  - `src/app/` - Next.js App Router pages
+  - `src/components/` - React components
+  - `src/components/ui/` - shadcn/ui primitives
+  - `src/lib/` - Utility functions
+  - `src/utils/` - Helper utilities
+
+**packages/api/**
+- Purpose: tRPC API layer
+- Contains: Router definitions, procedures, context
+- Key files: `src/index.ts` (tRPC init), `src/routers/index.ts` (appRouter)
+- Subdirectories: `src/routers/`
+
+**packages/auth/**
+- Purpose: Authentication configuration
+- Contains: Better-Auth setup, Polar integration
+- Key files: `src/index.ts` (auth config), `src/lib/payments.ts` (Polar client)
+- Subdirectories: `src/lib/`
+
+**packages/db/**
+- Purpose: Database layer
+- Contains: Drizzle schema, ORM instance
+- Key files: `src/index.ts` (db instance), `src/schema/auth.ts` (auth tables)
+- Subdirectories: `src/schema/`
+
+**packages/env/**
+- Purpose: Environment configuration
+- Contains: Zod-validated env schemas for different targets
+- Key files: `src/server.ts`, `src/web.ts`, `src/native.ts`
+- Subdirectories: None
+
+## Key File Locations
+
+**Entry Points:**
+- `apps/server/src/index.ts` - Backend server entry
+- `apps/web/src/app/layout.tsx` - Frontend root layout
+
+**Configuration:**
+- `tsconfig.json` - Root TypeScript config
+- `biome.json` - Linting and formatting
+- `pnpm-workspace.yaml` - Workspace and catalog
+- `packages/db/drizzle.config.ts` - Database migrations
+- `apps/web/next.config.ts` - Next.js config
+
+**Core Logic:**
+- `packages/api/src/routers/index.ts` - tRPC routes
+- `packages/auth/src/index.ts` - Auth configuration
+- `packages/db/src/schema/auth.ts` - Database schema
+- `packages/env/src/server.ts` - Server env validation
+
+**Testing:**
+- Not configured (no test directories)
+
+**Documentation:**
+- `README.md` - Project overview and setup
+
+## Naming Conventions
+
+**Files:**
+- `kebab-case.tsx` - React components (`user-menu.tsx`, `sign-in-form.tsx`)
+- `kebab-case.ts` - TypeScript modules (`auth-client.ts`)
+- `index.ts` - Barrel exports for packages
+
+**Directories:**
+- `kebab-case` - All directories (lowercase with hyphens)
+- `ui/` - UI primitives directory
+
+**Special Patterns:**
+- `page.tsx` - Next.js page component
+- `layout.tsx` - Next.js layout component
+- `*.config.ts` - Configuration files
+
+## Where to Add New Code
+
+**New Feature:**
+- Primary code: `apps/web/src/app/[feature]/` (pages)
+- Components: `apps/web/src/components/`
+- API routes: `packages/api/src/routers/`
+- Config if needed: `packages/env/src/`
+
+**New Component:**
+- Implementation: `apps/web/src/components/[name].tsx`
+- UI primitives: `apps/web/src/components/ui/`
+- Types: Inline or `packages/api/src/`
+
+**New API Procedure:**
+- Definition: `packages/api/src/routers/index.ts`
+- Or new router file: `packages/api/src/routers/[name].ts`
+
+**New Database Table:**
+- Schema: `packages/db/src/schema/[name].ts`
+- Export from: `packages/db/src/schema/index.ts`
+
+**Utilities:**
+- Shared helpers: `apps/web/src/lib/`
+- Type definitions: Package-local or `packages/api/`
+
+## Special Directories
+
+**.planning/**
+- Purpose: GSD planning documents
+- Source: Created by planning workflows
+- Committed: Yes
+
+**packages/config/**
+- Purpose: Shared TypeScript configuration
+- Contains: `tsconfig.base.json`
+- Committed: Yes
+
+**node_modules/**
+- Purpose: Installed dependencies (per-workspace)
+- Source: Auto-generated by pnpm
+- Committed: No (gitignored)
+
+---
+
+*Structure analysis: 2026-01-15*
+*Update when directory structure changes*
