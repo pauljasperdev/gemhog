@@ -18,12 +18,8 @@ export default defineConfig({
     // Timeouts for Docker startup and DB operations
     hookTimeout: 60000, // 60s for Docker startup
     testTimeout: 10000, // 10s per test (DB operations can be slow)
-    // Run integration tests sequentially to avoid DB conflicts
-    pool: "forks",
-    poolOptions: {
-      forks: {
-        singleFork: true, // Single process for DB consistency
-      },
-    },
+    // Run integration tests sequentially to avoid DB conflicts (Vitest 4 format)
+    isolate: false, // Single process for DB consistency
+    fileParallelism: false, // Run test files sequentially
   },
 });
