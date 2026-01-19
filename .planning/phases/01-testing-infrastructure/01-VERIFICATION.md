@@ -1,16 +1,49 @@
 ---
 phase: 01-testing-infrastructure
-verified: 2026-01-19T16:15:00Z
-status: passed
-score: 5/5 must-haves verified
+verified: 2026-01-19T19:15:00Z
+status: gaps_found
+score: 3/5 must-haves verified
+re_verification:
+  previous_status: passed
+  previous_score: 5/5
+  gaps_closed: []
+  gaps_remaining:
+    - "Pre-existing lint issues cause pnpm check to fail"
+    - "Pre-existing type errors cause pnpm check-types to fail"
+  regressions: []
+gaps:
+  - truth: "Developer can run static analysis (Biome + TSC) via single command"
+    status: failed
+    reason: "Pre-existing lint warnings and type errors cause non-zero exit codes"
+    artifacts:
+      - path: "apps/web/src/app/ai/page.tsx"
+        issue: "Biome lint warning: useExhaustiveDependencies"
+      - path: "apps/web/src/app/dashboard/dashboard.tsx"
+        issue: "Biome lint warnings: noNonNullAssertion, noUnusedFunctionParameters"
+      - path: "apps/server"
+        issue: "TypeScript error: Cannot find module 'hono'"
+    missing:
+      - "Fix lint warnings in apps/web"
+      - "Fix type errors in apps/server"
+  - truth: "Developer can run integration tests against local Postgres Docker"
+    status: partial
+    reason: "Infrastructure works but Docker socket permission denied in this environment"
+    artifacts:
+      - path: "vitest.integration.config.ts"
+        issue: "Config correct but Docker not accessible"
+      - path: "test/integration-setup.ts"
+        issue: "Setup logic correct but requires Docker group membership"
+    missing:
+      - "Add user to docker group or use rootless Docker"
+      - "This is environment setup, not code issue"
 ---
 
 # Phase 1: Testing Infrastructure Verification Report
 
 **Phase Goal:** Establish all testing layers with single-command execution
-**Verified:** 2026-01-19T16:15:00Z
-**Status:** passed
-**Re-verification:** No - initial verification
+**Verified:** 2026-01-19T19:15:00Z
+**Status:** gaps_found
+**Re-verification:** Yes - after gap closure plans 01-04 and 01-06
 
 ## Goal Achievement
 
@@ -18,32 +51,28 @@ score: 5/5 must-haves verified
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Developer can run static analysis (Biome + TSC) via single command | VERIFIED | `pnpm check` script with `--error-on-warnings` flag; `pnpm check-types` for TSC |
-| 2 | Developer can run unit tests (Vitest) with mocked externals via single command | VERIFIED | `pnpm test:unit` runs `vitest run` across all project configs |
-| 3 | Developer can run integration tests against local Postgres Docker | VERIFIED | `pnpm test:integration` runs db package; globalSetup auto-starts Docker |
-| 4 | Developer can run integration tests against Test-stage AWS via env vars | VERIFIED | globalSetup skips Docker when `DATABASE_URL` points to non-localhost |
-| 5 | Developer can run E2E tests via Playwright against localhost dev server | VERIFIED | `pnpm test:e2e` with webServer auto-start for both apps |
+| 1 | Developer can run static analysis (Biome + TSC) via single command | FAILED | `pnpm check` exits with lint warnings; `pnpm check-types` exits with type errors |
+| 2 | Developer can run unit tests (Vitest) with mocked externals via single command | VERIFIED | `pnpm test:unit` passes (1 test in @gemhog/api) |
+| 3 | Developer can run integration tests against local Postgres Docker | PARTIAL | Infrastructure correct but Docker permission denied in this environment |
+| 4 | Developer can run integration tests against Test-stage AWS via env vars | VERIFIED | External DATABASE_URL detection works, shows "[integration] Using external database, skipping Docker setup" |
+| 5 | Developer can run E2E tests via Playwright against localhost dev server | PARTIAL | webServer env vars configured correctly, but Playwright browser dependencies missing |
 
-**Score:** 5/5 truths verified
+**Score:** 3/5 truths verified (2 partial due to environment, not code)
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `vitest.config.ts` | Root Vitest config with projects | VERIFIED | 24 lines, has `projects: ["apps/*", "packages/*"]`, excludes db package |
-| `apps/server/vitest.config.ts` | Server unit test config | VERIFIED | 9 lines, uses `defineProject`, node environment |
-| `apps/web/vitest.config.ts` | Web unit test config | VERIFIED | 9 lines, uses `defineProject`, happy-dom environment |
-| `packages/api/vitest.config.ts` | API package config | VERIFIED | 9 lines, uses `defineProject`, node environment |
-| `packages/auth/vitest.config.ts` | Auth package config | VERIFIED | 9 lines, uses `defineProject`, node environment |
-| `packages/env/vitest.config.ts` | Env package config | VERIFIED | 9 lines, uses `defineProject`, node environment |
-| `packages/db/vitest.config.ts` | DB package with globalSetup | VERIFIED | 13 lines, has `globalSetup: ['./test/global-setup.ts']` |
-| `packages/db/test/global-setup.ts` | Docker auto-start logic | VERIFIED | 59 lines, has `docker compose up -d`, `pg_isready` health check |
-| `packages/api/src/example.test.ts` | Example unit test | VERIFIED | 7 lines, uses vitest `describe/it/expect` |
-| `packages/db/src/connection.test.ts` | Example integration test | VERIFIED | 32 lines, connects to DB via drizzle-orm |
-| `playwright.config.ts` | E2E config with webServer | VERIFIED | 42 lines, has `webServer` array with both apps |
-| `apps/web/tests/e2e/home.spec.ts` | Example E2E test | VERIFIED | 15 lines, uses `@playwright/test` |
-| `lefthook.yml` | Pre-commit hooks | VERIFIED | 19 lines, has `pre-commit` with biome and typecheck |
-| `scripts/verify.sh` | Orchestration script | VERIFIED | 30 lines, has `set -e` for fail-fast, executable (0775) |
+| `vitest.config.ts` | Root Vitest config with projects | VERIFIED | 29 lines, excludes `**/*.integration.test.ts` |
+| `vitest.integration.config.ts` | Integration test config | VERIFIED | 25 lines, discovers `*.integration.test.ts` |
+| `test/integration-setup.ts` | Docker auto-start logic | VERIFIED | 65 lines, external DB detection, Docker compose |
+| `packages/db/vitest.config.ts` | DB package config | VERIFIED | 12 lines, excludes `**/*.integration.test.ts` |
+| `packages/api/src/example.test.ts` | Example unit test | VERIFIED | 7 lines, vitest describe/it/expect |
+| `packages/db/src/connection.integration.test.ts` | Integration test | VERIFIED | 34 lines, drizzle-orm connection test |
+| `playwright.config.ts` | E2E config with webServer | VERIFIED | 56 lines, webServer array with env vars |
+| `apps/web/tests/e2e/home.spec.ts` | Example E2E test | VERIFIED | 15 lines, @playwright/test |
+| `lefthook.yml` | Pre-commit hooks | VERIFIED | 19 lines, biome and typecheck hooks |
+| `scripts/verify.sh` | Orchestration script | VERIFIED | 30 lines, executable (0775), fail-fast with `set -e` |
 
 ### Key Link Verification
 
@@ -52,10 +81,10 @@ score: 5/5 must-haves verified
 | `vitest.config.ts` | `apps/*/vitest.config.ts` | projects array | WIRED | `"apps/*"` glob in projects |
 | `vitest.config.ts` | `packages/*/vitest.config.ts` | projects array | WIRED | `"packages/*"` glob in projects |
 | `package.json` | vitest | `test:unit` script | WIRED | `"test:unit": "vitest run"` |
-| `package.json` | vitest | `test:integration` script | WIRED | `"test:integration": "vitest run --project @gemhog/db"` |
-| `packages/db/vitest.config.ts` | `test/global-setup.ts` | globalSetup option | WIRED | `globalSetup: ['./test/global-setup.ts']` |
-| `packages/db/test/global-setup.ts` | docker-compose.yml | execSync | WIRED | `docker compose up -d` command |
-| `playwright.config.ts` | `apps/server` | webServer command | WIRED | `command: "pnpm dev:server"` |
+| `package.json` | vitest.integration.config.ts | `test:integration` script | WIRED | `"test:integration": "vitest run --config vitest.integration.config.ts"` |
+| `vitest.integration.config.ts` | `test/integration-setup.ts` | globalSetup | WIRED | `globalSetup: ["./test/integration-setup.ts"]` |
+| `test/integration-setup.ts` | docker-compose | execSync | WIRED | `docker compose up -d` command |
+| `playwright.config.ts` | `apps/server` | webServer command | WIRED | `command: "pnpm dev:server"` with env vars |
 | `playwright.config.ts` | `apps/web` | webServer command | WIRED | `command: "pnpm dev:web"` |
 | `package.json` | `scripts/verify.sh` | verify script | WIRED | `"verify": "./scripts/verify.sh"` |
 | `lefthook.yml` | biome | pre-commit hook | WIRED | `run: npx biome check ...` |
@@ -63,71 +92,69 @@ score: 5/5 must-haves verified
 
 ### Requirements Coverage
 
-Based on ROADMAP.md requirements mapping:
-- **TEST-01 through TEST-06**: All testing requirements for Phase 1 are satisfied
-
-| Requirement | Status | Supporting Truth |
-|-------------|--------|------------------|
-| TEST-01: Static analysis | SATISFIED | Truth 1 |
-| TEST-02: Unit tests | SATISFIED | Truth 2 |
-| TEST-03: Integration (Docker) | SATISFIED | Truth 3 |
-| TEST-04: Integration (AWS) | SATISFIED | Truth 4 |
-| TEST-05: E2E tests | SATISFIED | Truth 5 |
+| Requirement | Status | Blocking Issue |
+|-------------|--------|----------------|
+| TEST-01: Static analysis single command | BLOCKED | Pre-existing lint/type errors |
+| TEST-02: Unit tests with mocked externals | SATISFIED | `pnpm test:unit` passes |
+| TEST-03: Integration with local Docker | BLOCKED | Docker permission (environment) |
+| TEST-04: Integration with AWS env vars | SATISFIED | External DB detection works |
+| TEST-05: E2E via Playwright | BLOCKED | Missing Playwright browser deps (environment) |
 | TEST-06: CI-safe exit codes | SATISFIED | All scripts return proper exit codes |
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| - | - | No anti-patterns found | - | - |
-
-All created files are substantive with no TODO/FIXME comments, no placeholder content, and no empty implementations.
+| `apps/web/src/app/ai/page.tsx` | 23 | useExhaustiveDependencies | Warning | Lint fails |
+| `apps/web/src/app/dashboard/dashboard.tsx` | 17 | noNonNullAssertion | Warning | Lint fails |
+| `apps/web/src/app/dashboard/dashboard.tsx` | 10 | noUnusedFunctionParameters | Warning | Lint fails |
+| `packages/api/src/context.ts` | 2 | Missing 'hono' module | Blocker | Type check fails |
 
 ### Human Verification Required
 
-The following items need human testing to fully confirm:
+### 1. Docker Integration Test Execution
+**Test:** With Docker running and user in docker group, run `pnpm test:integration`
+**Expected:** PostgreSQL container auto-starts, connection.integration.test.ts passes
+**Why human:** Requires Docker socket access not available in verification environment
 
-### 1. Static Analysis Exit Codes
-**Test:** Run `pnpm check` on code with lint issues
-**Expected:** Non-zero exit code
-**Why human:** Exit code behavior depends on actual code state
+### 2. E2E Test Execution
+**Test:** With Playwright browser deps installed, run `pnpm test:e2e`
+**Expected:** Dev servers start, homepage tests pass
+**Why human:** Requires browser dependencies not available in verification environment
 
-### 2. Docker Auto-Start
-**Test:** Stop Docker container, run `pnpm test:integration`
-**Expected:** Container auto-starts and tests pass
-**Why human:** Requires Docker daemon access
+### 3. Full Pipeline
+**Test:** After fixing lint/type errors, run `pnpm verify`
+**Expected:** All 4 stages pass (static, unit, integration, E2E)
+**Why human:** Depends on fixing pre-existing issues and environment setup
 
-### 3. E2E Server Auto-Start
-**Test:** With no servers running, run `pnpm test:e2e`
-**Expected:** Both dev servers start automatically
-**Why human:** Requires running dev servers and browser
+## Gaps Summary
 
-### 4. Pre-Commit Hook Behavior
-**Test:** Stage a file with lint issues, attempt commit
-**Expected:** Commit blocked with lint errors
-**Why human:** Requires git hook execution
+**Two categories of gaps exist:**
 
-### 5. External Database Bypass
-**Test:** Set `DATABASE_URL=postgresql://user@remote:5432/db`, run `pnpm test:integration`
-**Expected:** "Using external database, skipping Docker setup" message
-**Why human:** Requires setting env var and observing output
+### Code Issues (Must Fix)
+1. **Pre-existing lint warnings** in `apps/web/src/app/ai/page.tsx` and `apps/web/src/app/dashboard/dashboard.tsx` cause `pnpm check` to exit non-zero
+2. **Pre-existing type errors** in `apps/server` (missing 'hono' module) cause `pnpm check-types` to exit non-zero
 
-## Summary
+These are tracked in CONCERNS.md and were supposed to be fixed in 01-05-PLAN.md (which appears unexecuted).
 
-All 5 phase success criteria are verified at the code level:
+### Environment Issues (Setup Required)
+1. **Docker permission** - User not in docker group, cannot access Docker socket
+2. **Playwright browser deps** - Missing system libraries for Chromium
 
-1. **Static analysis via single command** - `pnpm check` (Biome + --error-on-warnings) and `pnpm check-types` (TSC) exist and are wired correctly
-2. **Unit tests via single command** - `pnpm test:unit` runs Vitest across all configured projects
-3. **Integration tests with Docker** - `pnpm test:integration` triggers globalSetup that auto-starts Docker
-4. **Integration tests with AWS env vars** - globalSetup detects non-localhost DATABASE_URL and skips Docker
-5. **E2E tests via Playwright** - `pnpm test:e2e` with webServer config auto-starts both dev servers
+These are environment setup issues, not code bugs. The test infrastructure itself is correctly implemented:
+- `vitest.integration.config.ts` correctly discovers `*.integration.test.ts` files
+- `test/integration-setup.ts` correctly detects external DATABASE_URL and skips Docker
+- `playwright.config.ts` correctly provides test env vars to webServer
 
-Additional infrastructure verified:
-- Pre-commit hooks via Lefthook (`prepare` script auto-installs)
-- Full verification pipeline via `pnpm verify` (fail-fast with `set -e`)
-- Manual pre-commit equivalent via `pnpm verify:commit`
+**Verification command results:**
+- `pnpm check` - FAILS (lint warnings)
+- `pnpm check-types` - FAILS (type errors)
+- `pnpm test:unit` - PASSES (1 test)
+- `pnpm test:integration` - Infrastructure works, Docker permission denied
+- `pnpm test:e2e` - webServer env vars work, browser deps missing
 
 ---
 
-*Verified: 2026-01-19T16:15:00Z*
+*Verified: 2026-01-19T19:15:00Z*
 *Verifier: Claude (gsd-verifier)*
+*Commands actually executed to verify*
