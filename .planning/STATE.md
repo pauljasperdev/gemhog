@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 1 gap closure complete - scripts fixed, pre-existing issues remain
+**Current focus:** Phase 1 complete - integration test convention established
 
 ## Current Position
 
 Phase: 1 of 5 (Testing Infrastructure)
-Plan: 4 of 4 plans complete (gap closure done)
-Status: Scripts working, pre-existing lint/type issues block full verification
-Last activity: 2026-01-19 - Completed 01-04 gap closure plan
+Plan: 5 of 5 plans complete (including integration test convention)
+Status: Testing infrastructure complete, pre-existing lint/type issues remain
+Last activity: 2026-01-19 - Completed 01-06 integration test convention plan
 
-Progress: ███░░░░░░░ ~20% (infrastructure fixed, codebase cleanup needed)
+Progress: ███░░░░░░░ ~20% (infrastructure complete, codebase cleanup needed)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 3.5 min
-- Total execution time: 14 min
+- Total plans completed: 5
+- Average duration: 3.6 min
+- Total execution time: 18 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Testing Infrastructure | 4/4 | 14 min | 3.5 min |
+| 1. Testing Infrastructure | 5/5 | 18 min | 3.6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4 min), 01-02 (2 min), 01-03 (3 min), 01-04 (5 min)
+- Last 5 plans: 01-02 (2 min), 01-03 (3 min), 01-04 (5 min), 01-06 (4 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 | defineConfig over defineProject for standalone | Standalone configs need full config object | 01-04 |
 | Explicit root path in Vitest config | Paths resolve from monorepo root otherwise | 01-04 |
 | Spread process.env first in webServer env | Real env vars override test defaults | 01-04 |
+| Use *.integration.test.ts suffix convention | Clear separation from unit tests, glob-discoverable | 01-06 |
+| Single test/integration-setup.ts for all packages | Consistent Docker handling, avoids duplication | 01-06 |
+| Use isolate: false, fileParallelism: false | Vitest 4 removed poolOptions, these are equivalents | 01-06 |
 
 ### Pending Todos
 
@@ -77,11 +80,17 @@ Testing infrastructure complete - scripts work, pre-existing issues remain:
 | 01-02 | Docker auto-start for integration tests | 2 min | Complete |
 | 01-03 | Playwright E2E + Lefthook hooks + verify.sh | 3 min | Complete |
 | 01-04 | Fix test bugs from UAT | 5 min | Complete |
+| 01-06 | Integration test convention (*.integration.test.ts) | 4 min | Complete |
 
 **Script Status (all working):**
-- `pnpm test:integration` - Uses --config flag, finds packages/db tests
+- `pnpm test:unit` - Passes, excludes *.integration.test.ts
+- `pnpm test:integration` - Uses vitest.integration.config.ts, discovers all packages
 - `pnpm test:e2e` - webServer starts with test env vars
-- `pnpm test:unit` - Passes
+
+**Test File Convention:**
+- `*.test.ts` - Unit tests (mocked, fast)
+- `*.integration.test.ts` - Integration tests (real DB, Docker)
+- `*.spec.ts` - E2E tests (Playwright)
 
 **Remaining Issues (pre-existing, not test infrastructure):**
 1. Lint issues in apps/web and packages/db (Biome finds 6 errors)
@@ -98,8 +107,8 @@ Testing infrastructure complete - scripts work, pre-existing issues remain:
 
 ## Session Continuity
 
-Last session: 2026-01-19T19:05:00Z
-Stopped at: Completed 01-04-PLAN.md (gap closure)
+Last session: 2026-01-19T18:06:00Z
+Stopped at: Completed 01-06-PLAN.md (integration test convention)
 Resume file: None
 
 Next: Clean up pre-existing lint/type issues OR proceed to Phase 2
