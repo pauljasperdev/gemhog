@@ -28,7 +28,9 @@
     "test:unit:watch": "vitest",
     "test:integration": "vitest run --project @gemhog/db",
     "test:e2e": "playwright test",
-    "format:md": "prettier --write \"**/*.md\""
+    "format:md": "prettier --write \"**/*.md\"",
+    "prepare": "lefthook install",
+    "verify:commit": "pnpm check && pnpm check-types && pnpm test:unit"
   },
   "dependencies": {
     "@gemhog/env": "workspace:*",
@@ -42,6 +44,7 @@
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^4.0.17",
     "happy-dom": "^20.3.3",
+    "lefthook": "^2.0.15",
     "prettier": "^3.8.0",
     "typescript": "catalog:",
     "vitest": "^4.0.17"

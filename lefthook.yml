@@ -1,0 +1,19 @@
+# lefthook.yml
+# Pre-commit hook runs fast checks only
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
+      run: npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    typecheck:
+      run: pnpm check-types
+
+# Post-checkout hook for dependency updates (optional quality of life)
+post-checkout:
+  commands:
+    install:
+      run: pnpm install --frozen-lockfile
+      skip:
+        - rebase
+        - merge
