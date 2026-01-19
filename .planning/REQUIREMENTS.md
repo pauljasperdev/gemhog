@@ -9,12 +9,12 @@ Requirements for V0 foundation release. Each maps to roadmap phases.
 
 ### Testing Infrastructure
 
-- [ ] **TEST-01**: Static analysis (Biome + TSC) can be run via single command
-- [ ] **TEST-02**: Unit tests (Vitest) can be run via single command with mocked externals
-- [ ] **TEST-03**: Integration tests can run against local Postgres Docker container
-- [ ] **TEST-04**: Integration tests can run against Test-stage AWS resources via env vars
-- [ ] **TEST-05**: E2E tests can run via Playwright MCP against localhost dev server
-- [ ] **TEST-06**: All test commands have clear pass/fail exit codes for automation
+- [x] **TEST-01**: Static analysis (Biome + TSC) can be run via single command
+- [x] **TEST-02**: Unit tests (Vitest) can be run via single command with mocked externals
+- [x] **TEST-03**: Integration tests can run against local Postgres Docker container
+- [x] **TEST-04**: Integration tests can run against Test-stage AWS resources via env vars
+- [x] **TEST-05**: E2E tests can run via Playwright MCP against localhost dev server
+- [x] **TEST-06**: All test commands have clear pass/fail exit codes for automation
 
 ### Agent Verification Workflow
 
@@ -100,12 +100,12 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TEST-01 | Phase 1 | Pending |
-| TEST-02 | Phase 1 | Pending |
-| TEST-03 | Phase 1 | Pending |
-| TEST-04 | Phase 1 | Pending |
-| TEST-05 | Phase 1 | Pending |
-| TEST-06 | Phase 1 | Pending |
+| TEST-01 | Phase 1 | Complete |
+| TEST-02 | Phase 1 | Complete |
+| TEST-03 | Phase 1 | Complete |
+| TEST-04 | Phase 1 | Complete |
+| TEST-05 | Phase 1 | Complete |
+| TEST-06 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | SEC-03 | Phase 2 | Pending |
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 — Roadmap created, all requirements mapped to phases*
+*Last updated: 2026-01-19 — Phase 1 complete, TEST-01 through TEST-06 verified*
