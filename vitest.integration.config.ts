@@ -6,10 +6,10 @@ export default defineConfig({
   test: {
     name: "integration",
     environment: "node",
-    // Discover all *.integration.test.ts files across monorepo
+    // Discover all *.int.test.ts files across monorepo
     include: [
-      "apps/**/src/**/*.integration.test.ts",
-      "packages/**/src/**/*.integration.test.ts",
+      "apps/**/src/**/*.int.test.ts",
+      "packages/**/src/**/*.int.test.ts",
     ],
     // Exclude node_modules and dist
     exclude: ["**/node_modules/**", "**/dist/**"],
