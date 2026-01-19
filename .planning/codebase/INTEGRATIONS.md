@@ -20,6 +20,29 @@
   - Features: Email sending, bounce/complaint handling
   - Rationale: Infrastructure-as-code via SST, no external service dependency
 
+**Stock Data (V1 — $0 budget, US stocks only):**
+
+- SEC EDGAR - Financial fundamentals
+  - Purpose: 10-K/10-Q filings via XBRL for authoritative financial data
+  - Auth: None required (public API)
+  - Endpoint: `https://data.sec.gov/` (company facts, submissions)
+  - Data: Revenue, earnings, balance sheet items, cash flow
+  - Rationale: Free, authoritative, no redistribution licensing concerns
+  - Note: Requires User-Agent header per SEC guidelines
+
+- Stooq - EOD price history
+  - Purpose: End-of-day price data for charts and basic multiples (P/E, etc.)
+  - Auth: None required
+  - Endpoint: `https://stooq.com/q/d/l/?s={SYMBOL}.US&i=d` (CSV format)
+  - Data: Date, Open, High, Low, Close, Volume
+  - Rationale: Free CSV endpoint, sufficient for context charts
+  - Note: Verify ToS before production; keep swappable via abstraction layer
+
+- **Rejected providers:**
+  - Financial Modeling Prep (FMP): Requires "Data Display and Licensing Agreement" for public redistribution
+  - Alpha Vantage: Free tier too limited for production use
+  - Twelve Data: Fundamentals endpoints too credit-expensive
+
 **Payment Processing:**
 
 - Polar.sh - Subscription billing and checkout
@@ -182,5 +205,5 @@ GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
 
 ---
 
-_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — added AWS SES for
-newsletter_ _Update when adding/removing external services_
+_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — added stock data APIs (SEC
+EDGAR, Stooq)_ _Update when adding/removing external services_
