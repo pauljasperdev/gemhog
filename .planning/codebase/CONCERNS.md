@@ -1,6 +1,16 @@
 # Codebase Concerns
 
 **Analysis Date:** 2026-01-15
+**Updated:** 2026-01-19
+
+## Severity Definitions
+
+| Severity | Meaning | Action |
+|----------|---------|--------|
+| **Critical** | Immediate exploitation risk, data breach possible | Block merge, fix immediately |
+| **High** | Significant risk, likely to cause issues | Block merge, fix before deployment |
+| **Medium** | Should be fixed soon | Track here, fix in next sprint |
+| **Low** | Minor issues, best practices | Document, fix when convenient |
 
 ## Tech Debt
 
@@ -24,23 +34,39 @@
 
 ## Security Considerations
 
-**Missing input validation on AI endpoint:**
+Security findings from reviews. Critical/High must be resolved before merge. See `SECURITY-CHECKLIST.md` for review process.
+
+### High Severity
+
+**[SEC-001] Missing input validation on AI endpoint:**
+- Severity: **High**
 - Risk: Malformed or oversized payloads could cause resource exhaustion
 - File: `apps/server/src/index.ts` (lines 38-51)
-- Current mitigation: None
+- Category: Input Validation
+- Status: Open
 - Recommendations: Add Zod validation for message array, limit message count
 
-**Debug logging exposes data:**
-- Risk: `console.log` of subscription data in production
-- File: `apps/web/src/app/dashboard/dashboard.tsx` (line 18)
-- Current mitigation: None
-- Recommendations: Remove debug logging or guard with environment check
-
-**No rate limiting:**
-- Risk: AI endpoint vulnerable to abuse/DoS
+**[SEC-002] No rate limiting:**
+- Severity: **High**
+- Risk: AI endpoint vulnerable to abuse/DoS, potential cost explosion
 - File: `apps/server/src/index.ts` (AI endpoint)
-- Current mitigation: None
-- Recommendations: Add rate limiting middleware
+- Category: Rate Limiting
+- Status: Open
+- Recommendations: Add rate limiting middleware (e.g., Hono rate-limiter)
+
+### Medium Severity
+
+**[SEC-003] Debug logging exposes data:**
+- Severity: **Medium**
+- Risk: `console.log` of subscription data could expose sensitive info in production logs
+- File: `apps/web/src/app/dashboard/dashboard.tsx` (line 18)
+- Category: Logging
+- Status: Open
+- Recommendations: Remove debug logging or guard with `process.env.NODE_ENV` check
+
+### Low Severity
+
+None currently tracked.
 
 ## Performance Bottlenecks
 
@@ -114,4 +140,6 @@
 ---
 
 *Concerns audit: 2026-01-15*
+*Security severity tracking added: 2026-01-19*
 *Update as issues are fixed or new ones discovered*
+*Security findings should include: ID, severity, risk, file, category, status, recommendations*
