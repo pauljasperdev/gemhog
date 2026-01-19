@@ -118,6 +118,21 @@ investment.
 
 **Data Source:** Podscan.fm API for podcast transcripts
 
+**Stock Data Strategy (V1):**
+
+- **Fundamentals:** SEC EDGAR (XBRL from 10-K/10-Q filings) — free, authoritative,
+  no redistribution concerns
+- **Price Context:** Stooq (EOD CSV endpoints) — free, sufficient for historical
+  charts and basic multiples (P/E, etc.)
+- **What we avoid:** Financial Modeling Prep (FMP) requires "Data Display and
+  Licensing Agreement" for public redistribution; Alpha Vantage free tier too
+  limited; Twelve Data fundamentals too credit-expensive
+- **Architecture:** Provider abstraction layer so we can swap Stooq for another
+  source (or add paid APIs later) without major refactors
+- **Data needs:** EOD close prices + history for charts, fundamentals for derived
+  metrics (P/E, debt ratios, growth rates) presented in hobby-investor-friendly
+  terms
+
 **Existing Codebase:** Better-T-Stack scaffold with auth, db, api, web packages.
 Needs migration to SST v3 and domain-driven refactoring.
 
@@ -141,6 +156,11 @@ Needs migration to SST v3 and domain-driven refactoring.
   schemas), auth checks on protected routes, no secrets in code, dependencies
   audited. Security review required before merge — critical/high findings block
   deployment. See `.planning/codebase/SECURITY-CHECKLIST.md`
+- **$0 stock data APIs**: V1 uses only free-tier data sources. Avoid providers
+  requiring paid redistribution/display licensing for public-facing apps (FMP
+  flagged as risky). Keep architecture swappable for future paid upgrades.
+- **US stocks only**: V1 scope limited to US equities for simpler data sourcing
+  and regulatory clarity
 
 ## Key Decisions
 
@@ -157,7 +177,10 @@ Needs migration to SST v3 and domain-driven refactoring.
 | Newsletter for audience         | Build audience before full product; low-friction entry; informs users when signup ready; AWS SES            | — Pending |
 | Twitter/X for distribution      | Quick reach, free tier available, fits MVP                                                                  | — Pending |
 | Bluesky for distribution        | Free API, growing platform, complements Twitter                                                             | — Pending |
+| SEC EDGAR for fundamentals      | Free, authoritative 10-K/10-Q data via XBRL; no licensing concerns; US stocks only                          | — Pending |
+| Stooq for EOD prices            | Free CSV endpoints for price history; sufficient for context charts; verify ToS; keep swappable             | — Pending |
+| Multi-source stock data         | SEC for fundamentals + Stooq for prices; avoids single-vendor licensing risk; abstraction layer for swaps   | — Pending |
 
 ---
 
-_Last updated: 2026-01-19 added newsletter requirement (AWS SES)_
+_Last updated: 2026-01-19 added stock data strategy (SEC EDGAR + Stooq)_
