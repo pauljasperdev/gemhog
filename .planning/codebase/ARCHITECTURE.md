@@ -95,24 +95,6 @@
 5. Streaming response returned
 6. Streamdown component renders markdown
 
-**Newsletter Subscription Flow:**
-
-1. User visits landing page and enters email
-2. Server validates and stores subscriber
-3. Emails sent via AWS SES
-
-**Stock Data Flow (V1):**
-
-1. Stock page requested for ticker (e.g., `/stock/AAPL`)
-2. Server checks cache for recent data
-3. If stale/missing, fetches in parallel:
-   - SEC EDGAR: Company facts API for fundamentals (XBRL data)
-   - Stooq: CSV endpoint for EOD price history
-4. Data normalized via provider abstraction layer
-5. Derived metrics computed (P/E, debt ratios, growth rates)
-6. Results cached and returned to client
-7. UI renders hobby-investor-friendly metrics and charts
-
 **State Management:**
 
 - Server: Stateless HTTP with session cookies
@@ -238,10 +220,33 @@ middleware)
 - Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
 - Schema aggregation: `drizzle/index.ts` spreads domain schemas
 - Rationale: Avoids cyclic deps between db and domain packages
-- Future domains: `stock/`, `thesis/`, `newsletter/` added as sibling folders
+- Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
+  sibling folders when implementing V1 features
 - Status: Pending refactoring (see STRUCTURE.md for full details)
+
+## Deferred Data Flows (V1)
+
+These flows will be implemented after V0 foundation is complete.
+
+**Newsletter Subscription Flow:**
+
+1. User visits landing page and enters email
+2. Server validates and stores subscriber
+3. Emails sent via AWS SES
+
+**Stock Data Flow:**
+
+1. Stock page requested for ticker (e.g., `/stock/AAPL`)
+2. Server checks cache for recent data
+3. If stale/missing, fetches in parallel:
+   - SEC EDGAR: Company facts API for fundamentals (XBRL data)
+   - EODHD (or alternative): automated-friendly EOD price history
+4. Data normalized via provider abstraction layer
+5. Derived metrics computed (P/E, debt ratios, growth rates)
+6. Results cached and returned to client
+7. UI renders hobby-investor-friendly metrics and charts
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-19 — added stock data flow
-(SEC EDGAR + Stooq)_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-19 — moved stock data flow
+and newsletter flow to Deferred (V1)_ _Update when major patterns change_

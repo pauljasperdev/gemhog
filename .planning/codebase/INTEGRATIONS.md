@@ -4,6 +4,8 @@
 
 ## APIs & External Services
 
+### Active (V0)
+
 **AI/LLM:**
 
 - Google Generative AI (Gemini) - AI chat responses
@@ -11,37 +13,6 @@
   - Model: `gemini-2.5-flash` (`apps/server/src/index.ts`)
   - Auth: API key in `GOOGLE_GENERATIVE_AI_API_KEY` env var
   - Endpoint: `POST /ai` (`apps/server/src/index.ts`)
-
-**Email/Newsletter:**
-
-- AWS SES (Simple Email Service) - Newsletter delivery
-  - Purpose: Send blog-post style stock finding summaries to subscribers
-  - Auth: AWS credentials via SST/IAM
-  - Features: Email sending, bounce/complaint handling
-  - Rationale: Infrastructure-as-code via SST, no external service dependency
-
-**Stock Data (V1 — $0 budget, US stocks only):**
-
-- SEC EDGAR - Financial fundamentals
-  - Purpose: 10-K/10-Q filings via XBRL for authoritative financial data
-  - Auth: None required (public API)
-  - Endpoint: `https://data.sec.gov/` (company facts, submissions)
-  - Data: Revenue, earnings, balance sheet items, cash flow
-  - Rationale: Free, authoritative, no redistribution licensing concerns
-  - Note: Requires User-Agent header per SEC guidelines
-
-- Stooq - EOD price history
-  - Purpose: End-of-day price data for charts and basic multiples (P/E, etc.)
-  - Auth: None required
-  - Endpoint: `https://stooq.com/q/d/l/?s={SYMBOL}.US&i=d` (CSV format)
-  - Data: Date, Open, High, Low, Close, Volume
-  - Rationale: Free CSV endpoint, sufficient for context charts
-  - Note: Verify ToS before production; keep swappable via abstraction layer
-
-- **Rejected providers:**
-  - Financial Modeling Prep (FMP): Requires "Data Display and Licensing Agreement" for public redistribution
-  - Alpha Vantage: Free tier too limited for production use
-  - Twelve Data: Fundamentals endpoints too credit-expensive
 
 **Payment Processing:**
 
@@ -70,6 +41,44 @@
 **Caching:**
 
 - Not detected (no Redis or similar)
+
+### Deferred (V1)
+
+These integrations will be implemented after V0 foundation is complete.
+
+**Email/Newsletter:**
+
+- AWS SES (Simple Email Service) - Newsletter delivery
+  - Purpose: Send blog-post style stock finding summaries to subscribers
+  - Auth: AWS credentials via SST/IAM
+  - Features: Email sending, bounce/complaint handling
+  - Rationale: Infrastructure-as-code via SST, no external service dependency
+
+**Stock Data ($0 budget, US stocks only):**
+
+- SEC EDGAR - Financial fundamentals
+  - Purpose: 10-K/10-Q filings via XBRL for authoritative financial data
+  - Auth: None required (public API)
+  - Endpoint: `https://data.sec.gov/` (company facts, submissions)
+  - Data: Revenue, earnings, balance sheet items, cash flow
+  - Rationale: Free, authoritative, no redistribution licensing concerns
+  - Note: Requires User-Agent header per SEC guidelines
+
+- EODHD (or alternative) - EOD price history
+  - Purpose: End-of-day price data for charts and basic multiples (P/E, etc.)
+  - Auth: API key (provider-specific)
+  - Endpoint: Provider-specific (e.g., EODHD REST endpoints)
+  - Data: Date, Open, High, Low, Close, Volume (and adjusted close when
+    available)
+  - Rationale: Automated-friendly provider; avoid Stooq (CAPTCHA); keep
+    swappable via abstraction layer
+  - Note: Verify ToS before production; keep a fallback provider available
+
+- **Rejected providers:**
+  - Financial Modeling Prep (FMP): Requires "Data Display and Licensing
+    Agreement" for public redistribution
+  - Alpha Vantage: Free tier too limited for production use
+  - Twelve Data: Fundamentals endpoints too credit-expensive
 
 ## Authentication & Identity
 
@@ -198,12 +207,12 @@ NEXT_PUBLIC_SERVER_URL    # Backend API URL
 GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
 ```
 
-**Newsletter (AWS SES):**
+**Newsletter (AWS SES) — Deferred V1:**
 
 - No additional env vars needed — SST injects AWS credentials at deploy time
 - Local dev: Use Test stage SES or mock email sending
 
 ---
 
-_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — added stock data APIs (SEC
-EDGAR, Stooq)_ _Update when adding/removing external services_
+_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — moved stock data APIs and
+newsletter to Deferred (V1)_ _Update when adding/removing external services_

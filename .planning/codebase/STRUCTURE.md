@@ -233,10 +233,10 @@ packages/
         auth.sql.ts      # Tables: user, session, account, verification
         index.ts         # Better-auth config + Polar
         payments.ts      # Polar client
-      # Future domains:
-      newsletter/
-      stock/
-      thesis/
+      # Future domains (Deferred V1):
+      newsletter/        # AWS SES email delivery
+      stock/             # SEC EDGAR + EOD price data provider
+      thesis/            # Podcast thesis extraction
     docker-compose.yml
     drizzle.config.ts    # Schema glob: ./src/*/*.sql.ts
     package.json
@@ -267,5 +267,6 @@ schema tables |
 
 ---
 
-_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — added newsletter to
-future domains_ _Update when directory structure changes_
+_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — marked future domains
+(newsletter, stock, thesis) as Deferred V1_ _Update when directory structure
+changes_
