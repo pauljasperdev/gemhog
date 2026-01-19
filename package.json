@@ -26,7 +26,6 @@
     "check:fix": "biome check --write .",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:integration": "vitest run --project @gemhog/db",
     "format:md": "prettier --write \"**/*.md\""
   },
   "dependencies": {
