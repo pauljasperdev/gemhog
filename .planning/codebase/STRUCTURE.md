@@ -234,12 +234,9 @@ packages/
         index.ts         # Better-auth config + Polar
         payments.ts      # Polar client
       # Future domains:
+      newsletter/
       stock/
-        stock.sql.ts
-        index.ts
       thesis/
-        thesis.sql.ts
-        index.ts
     docker-compose.yml
     drizzle.config.ts    # Schema glob: ./src/*/*.sql.ts
     package.json
@@ -270,5 +267,5 @@ schema tables |
 
 ---
 
-_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — added core package
-consolidation plan_ _Update when directory structure changes_
+_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — added newsletter to
+future domains_ _Update when directory structure changes_

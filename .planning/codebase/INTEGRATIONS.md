@@ -12,6 +12,14 @@
   - Auth: API key in `GOOGLE_GENERATIVE_AI_API_KEY` env var
   - Endpoint: `POST /ai` (`apps/server/src/index.ts`)
 
+**Email/Newsletter:**
+
+- AWS SES (Simple Email Service) - Newsletter delivery
+  - Purpose: Send blog-post style stock finding summaries to subscribers
+  - Auth: AWS credentials via SST/IAM
+  - Features: Email sending, bounce/complaint handling
+  - Rationale: Infrastructure-as-code via SST, no external service dependency
+
 **Payment Processing:**
 
 - Polar.sh - Subscription billing and checkout
@@ -167,6 +175,12 @@ NEXT_PUBLIC_SERVER_URL    # Backend API URL
 GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
 ```
 
+**Newsletter (AWS SES):**
+
+- No additional env vars needed — SST injects AWS credentials at deploy time
+- Local dev: Use Test stage SES or mock email sending
+
 ---
 
-_Integration audit: 2026-01-15_ _Update when adding/removing external services_
+_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — added AWS SES for
+newsletter_ _Update when adding/removing external services_
