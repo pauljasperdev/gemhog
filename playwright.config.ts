@@ -31,7 +31,8 @@ export default defineConfig({
           process.env.BETTER_AUTH_SECRET ||
           "test-secret-key-for-e2e-minimum-32-chars",
         BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-        POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN || "test-polar-token",
+        POLAR_ACCESS_TOKEN:
+          process.env.POLAR_ACCESS_TOKEN || "test-polar-token",
         POLAR_SUCCESS_URL:
           process.env.POLAR_SUCCESS_URL || "http://localhost:3001/success",
         CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3001",
