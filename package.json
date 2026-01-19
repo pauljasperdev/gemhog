@@ -26,7 +26,7 @@
     "check:fix": "biome check --write .",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:integration": "vitest run --project @gemhog/db",
+    "test:integration": "vitest run --config packages/db/vitest.config.ts",
     "test:e2e": "playwright test",
     "format:md": "prettier --write \"**/*.md\"",
     "prepare": "lefthook install",
