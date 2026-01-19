@@ -27,6 +27,7 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:integration": "vitest run --project @gemhog/db",
+    "test:e2e": "playwright test",
     "format:md": "prettier --write \"**/*.md\""
   },
   "dependencies": {
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
     "@gemhog/config": "workspace:*",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^4.0.17",
     "happy-dom": "^20.3.3",
