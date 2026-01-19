@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 1 complete, ready for Phase 1.1 (Test File Convention Migration)
+**Current focus:** Phase 1.1 complete, ready for Phase 2
 
 ## Current Position
 
-Phase: 1 COMPLETE, ready for Phase 1.1
-Plan: 7/7 plans complete
-Status: Phase 1 verified and approved
-Last activity: 2026-01-19 - Phase 1 complete, human verification approved
+Phase: 1.1 COMPLETE (Test File Convention Migration)
+Plan: 1/1 plans complete
+Status: Phase 1.1 complete
+Last activity: 2026-01-19 - Completed 01.1-01-PLAN.md (test file convention migration)
 
-Progress: ████░░░░░░ ~25% (Phase 1 complete, 5 phases remain)
+Progress: ████░░░░░░ ~27% (Phase 1 + 1.1 complete, 5 phases remain)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 3.0 min
-- Total execution time: 21 min
+- Total plans completed: 8
+- Average duration: 2.9 min
+- Total execution time: 23 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Testing Infrastructure | 7/8 | 21 min | 3.0 min |
+| 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
+| 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-04 (5 min), 01-06 (4 min), 01-07 (2 min), 01-08 (<1 min)
+- Last 5 plans: 01-06 (4 min), 01-07 (2 min), 01-08 (<1 min), 01.1-01 (2 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -60,6 +61,8 @@ Recent decisions affecting current work:
 | Explicit root path in Vitest config | Paths resolve from monorepo root otherwise | 01-04 |
 | Spread process.env first in webServer env | Real env vars override test defaults | 01-04 |
 | Use *.int.test.ts suffix convention | Shorter, clear separation from unit tests, glob-discoverable | 01.1-01 |
+| Use *.e2e.test.ts for E2E tests | Consistent with other test suffixes, explicit test type | 01.1-01 |
+| Use git mv for test file renames | Preserves git history | 01.1-01 |
 | Single test/integration-setup.ts for all packages | Consistent Docker handling, avoids duplication | 01-06 |
 | Use isolate: false, fileParallelism: false | Vitest 4 removed poolOptions, these are equivalents | 01-06 |
 | Use biome-ignore for intentional effect triggers | Scroll-on-message-count is intentional, not a bug | 01-07 |
@@ -117,10 +120,23 @@ Testing infrastructure complete - type check passes, targeted lint fixed:
 - `pnpm verify:commit` - Pre-commit check (fails: pre-existing lint issues)
 - `pnpm verify` - Full verification pipeline (fails: pre-existing lint issues)
 
+## Phase 1.1 Summary
+
+Test file convention migration complete:
+
+| Plan | Summary | Duration | Status |
+|------|---------|----------|--------|
+| 01.1-01 | Rename files and update configs | 2 min | Complete |
+
+**Convention Standardized:**
+- `*.test.ts` - Unit tests (unchanged)
+- `*.int.test.ts` - Integration tests (was *.integration.test.ts)
+- `*.e2e.test.ts` - E2E tests (was *.spec.ts)
+
 ## Session Continuity
 
-Last session: 2026-01-19T18:40:56Z
-Stopped at: Completed 01-07-PLAN.md (fix apps/web lint warnings)
+Last session: 2026-01-19T19:56:56Z
+Stopped at: Completed 01.1-01-PLAN.md (test file convention migration)
 Resume file: None
 
-Next: Execute Phase 1.1 (Test File Convention Migration)
+Next: Execute Phase 2
