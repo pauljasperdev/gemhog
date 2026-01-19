@@ -1,15 +1,15 @@
 // apps/web/tests/e2e/home.spec.ts
-import { test, expect } from '@playwright/test'
+import { expect, test } from "@playwright/test";
 
-test('homepage loads', async ({ page }) => {
-  await page.goto('/')
+test("homepage loads", async ({ page }) => {
+  await page.goto("/");
   // Verify the page loads without error
-  await expect(page).toHaveURL('/')
-})
+  await expect(page).toHaveURL("/");
+});
 
-test('page has content', async ({ page }) => {
-  await page.goto('/')
+test("page has content", async ({ page }) => {
+  await page.goto("/");
   // Basic check that something renders
-  const body = page.locator('body')
-  await expect(body).toBeVisible()
-})
+  const body = page.locator("body");
+  await expect(body).toBeVisible();
+});
