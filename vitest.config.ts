@@ -2,10 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: [
-      "apps/*",
-      "packages/*",
-    ],
+    projects: ["apps/*", "packages/*"],
     // Exclude integration tests from unit test runs
     exclude: [
       "**/node_modules/**",
