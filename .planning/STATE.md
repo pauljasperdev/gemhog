@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 1 of 5 (Testing Infrastructure)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-19 — Project initialized
+Plan: 2 of 3 complete
+Status: In progress
+Last activity: 2026-01-19 — Completed 01-02-PLAN.md
 
-Progress: ░░░░░░░░░░ 0%
+Progress: ██░░░░░░░░ ~7% (1/~15 total plans estimated)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 2 min
+- Total execution time: 2 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| — | — | — | — |
+| 1. Testing Infrastructure | 1/3 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: —
-- Trend: —
+- Last 5 plans: 01-02 (2 min)
+- Trend: First plan
 
 ## Accumulated Context
 
@@ -40,18 +40,22 @@ Progress: ░░░░░░░░░░ 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-(None yet)
+| Decision | Rationale | Plan |
+|----------|-----------|------|
+| Don't auto-stop Docker containers in teardown | Developers may want them running for db:studio | 01-02 |
+| Use pg_isready for PostgreSQL health check | More reliable than container start status | 01-02 |
+| Detect external DB via DATABASE_URL hostname | Enables Test-stage AWS without code changes | 01-02 |
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-01-19
-Stopped at: Project initialization complete
+Last session: 2026-01-19T15:01:24Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
