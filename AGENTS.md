@@ -57,6 +57,61 @@ methodology for AI-assisted development. All project context lives in the
 - **Effect TS for backend**: Required for testability and dependency injection
   (pending implementation).
 
+## Verification Requirements (MANDATORY)
+
+**Tests must pass before work is considered complete.** This is non-negotiable.
+
+### Before Every Commit
+
+Lefthook auto-runs on commit (or run `pnpm verify:commit` manually):
+- Static analysis (lint + format)
+- Type checking
+- Unit tests
+- Integration tests (requires Docker)
+
+### Before Completing a Feature/Phase
+
+Run full verification including integration and E2E:
+```bash
+pnpm verify          # Full pipeline: lint → types → unit → integration → e2e
+```
+
+### When to Run What
+
+| When | Command | What runs |
+|------|---------|-----------|
+| Every commit | `pnpm verify:commit` | Lint + types + unit tests |
+| Database changes | `pnpm test:integration` | Integration tests (requires `pnpm db:start` first) |
+| Feature/phase complete | `pnpm verify` | All tests including E2E |
+
+### Database Setup for Integration Tests
+
+**Before running integration tests**, start the database:
+
+```bash
+pnpm db:start          # Start PostgreSQL container
+pnpm test:integration  # Run integration tests
+```
+
+The database container stays running for subsequent test runs. Stop it with `pnpm db:stop`.
+
+### Rules for Agents
+
+1. **Run tests BEFORE declaring work complete** — not after
+2. **Tests must pass** — "runs but fails" is NOT acceptable
+3. **Fix failures before committing** — don't commit broken code
+4. **Infrastructure changes require working tests** — if you add test tooling,
+   verify it actually works end-to-end
+5. **Pre-existing failures are blockers** — document in CONCERNS.md but don't
+   ignore them
+
+### What "Complete" Means
+
+Work is complete when:
+- [ ] `pnpm verify:commit` passes (lint + types + unit)
+- [ ] `pnpm verify` passes for phase completion (includes integration + E2E)
+- [ ] No new errors introduced
+
 ## For Claude Code / Cursor / Other AI Tools
 
 This file serves as the entry point. The detailed context lives in `.planning/`.

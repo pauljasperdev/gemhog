@@ -13,10 +13,8 @@ export default defineConfig({
     ],
     // Exclude node_modules and dist
     exclude: ["**/node_modules/**", "**/dist/**"],
-    // Shared globalSetup handles Docker for all integration tests
-    globalSetup: ["./test/integration-setup.ts"],
-    // Timeouts for Docker startup and DB operations
-    hookTimeout: 60000, // 60s for Docker startup
+    // Timeouts for DB operations
+    hookTimeout: 30000, // 30s for setup hooks
     testTimeout: 10000, // 10s per test (DB operations can be slow)
     // Run integration tests sequentially to avoid DB conflicts (Vitest 4 format)
     isolate: false, // Single process for DB consistency

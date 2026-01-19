@@ -13,6 +13,38 @@
 
 ## Tech Debt
 
+**Pre-existing lint failures (BLOCKER):**
+
+- Issue: Multiple Biome lint warnings cause `pnpm check` to exit non-zero
+- Files: `apps/web/src/app/ai/page.tsx` (useExhaustiveDependencies), `packages/db/test/global-setup.ts` (useNodejsImportProtocol), and others
+- Impact: CI/pre-commit blocks all commits until fixed
+- Fix approach: Run `pnpm check --write` to auto-fix, or manually address each warning
+- Status: **Must fix for Phase 1 completion**
+
+**Pre-existing type errors (BLOCKER):**
+
+- Issue: TypeScript errors in apps/server cause `pnpm check-types` to exit non-zero
+- Files: `apps/server/` package
+- Impact: CI/pre-commit blocks all commits until fixed
+- Fix approach: Fix type errors in apps/server
+- Status: **Must fix for Phase 1 completion**
+
+**Integration test script bug (BLOCKER):**
+
+- Issue: `test:integration` uses `--project @gemhog/db` but db is excluded from root vitest.config.ts
+- File: `package.json` line 29
+- Impact: `pnpm test:integration` always fails with "No projects matched the filter"
+- Fix approach: Change to `--config packages/db/vitest.config.ts`
+- Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
+
+**E2E test missing env vars (BLOCKER):**
+
+- Issue: Playwright webServer fails to start - requires BETTER_AUTH_SECRET (min 32 chars)
+- File: `playwright.config.ts`
+- Impact: `pnpm test:e2e` always fails with "Invalid environment variables"
+- Fix approach: Add test env vars to webServer config or create .env.test
+- Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
+
 **Hardcoded Polar product ID:**
 
 - Issue: Placeholder `"your-product-id"` in Polar checkout integration
