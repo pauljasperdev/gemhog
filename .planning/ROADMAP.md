@@ -28,10 +28,12 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
   3. Developer can run integration tests against local Postgres Docker
   4. Developer can run integration tests against Test-stage AWS via env vars
   5. Developer can run E2E tests via Playwright MCP against localhost dev server
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Static analysis + Vitest unit test framework
+- [ ] 01-02-PLAN.md — Integration tests with Docker auto-start
+- [ ] 01-03-PLAN.md — E2E tests, pre-commit hooks, orchestration script
 
 ### Phase 2: Security Workflow
 **Goal**: Security verification as a blocking workflow gate
@@ -79,7 +81,7 @@ Plans:
 **Depends on**: Phase 4 (all testing and infrastructure must be ready)
 **Requirements**: AGENT-01, AGENT-02, AGENT-03, AGENT-04, AGENT-05, AGENT-06, AGENT-07
 **Success Criteria** (what must be TRUE):
-  1. Agent runs verification in order: static → unit → integration → security → E2E
+  1. Agent runs verification in order: static -> unit -> integration -> security -> E2E
   2. Agent knows when to run which test type based on change type
   3. Agent verification workflow is documented in `.planning/codebase/TESTING.md`
 **Plans**: TBD
@@ -90,11 +92,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Testing Infrastructure | 0/? | Not started | - |
+| 1. Testing Infrastructure | 0/3 | Planned | - |
 | 2. Security Workflow | 0/? | Not started | - |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
