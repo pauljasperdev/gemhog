@@ -20,6 +20,18 @@ pnpm test:integration
 echo "OK integration"
 echo ""
 
+echo "=== Dependency Security ==="
+pnpm audit --audit-level moderate || {
+  echo "FAIL: Dependency vulnerabilities found (moderate or higher)"
+  echo "Run 'pnpm audit' for details"
+  exit 1
+}
+echo "OK dependencies"
+echo ""
+echo "NOTE: Agent must also complete full security review"
+echo "      See .planning/codebase/SECURITY-REVIEW.md"
+echo ""
+
 echo "=== E2E Tests ==="
 pnpm test:e2e
 echo "OK e2e"

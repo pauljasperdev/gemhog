@@ -29,6 +29,7 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
     "format:md": "prettier --write \"**/*.md\"",
+    "security:audit": "pnpm audit --audit-level low",
     "prepare": "lefthook install",
     "verify:commit": "pnpm check && pnpm check-types && pnpm test:unit",
     "verify": "./scripts/verify.sh"
