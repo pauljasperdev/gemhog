@@ -5,7 +5,7 @@ import { appRouter } from "@gemhog/api/routers/index";
 import { auth } from "@gemhog/auth";
 import { env } from "@gemhog/env/server";
 import { trpcServer } from "@hono/trpc-server";
-import { streamText, convertToModelMessages, wrapLanguageModel } from "ai";
+import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";

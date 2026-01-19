@@ -1,7 +1,7 @@
 import { db } from "@gemhog/db";
 import * as schema from "@gemhog/db/schema/auth";
 import { env } from "@gemhog/env/server";
-import { polar, checkout, portal } from "@polar-sh/better-auth";
+import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 

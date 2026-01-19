@@ -1,0 +1,11 @@
+node_modules
+dist
+.next
+.nuxt
+.expo
+.turbo
+.wrangler
+.alchemy
+.svelte-kit
+.source
+pnpm-lock.yaml

@@ -26,7 +26,9 @@ export default function Dashboard({
           Manage Subscription
         </Button>
       ) : (
-        <Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
+        <Button
+          onClick={async () => await authClient.checkout({ slug: "pro" })}
+        >
           Upgrade to Pro
         </Button>
       )}
