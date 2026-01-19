@@ -2,7 +2,12 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    projects: ["apps/*", "packages/*"],
+    projects: [
+      "apps/*",
+      "packages/*",
+      // Exclude db package - it has globalSetup for Docker and is configured separately
+      "!packages/db",
+    ],
     reporters: ["default"],
     coverage: {
       provider: "v8",
