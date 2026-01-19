@@ -65,13 +65,19 @@
 
 ## CI/CD & Deployment
 
-**Hosting:**
-- Not explicitly configured
-- Next.js (Vercel compatible)
-- Hono server (Node.js compatible)
+**Hosting (Planned):**
+- SST v3 on AWS - TypeScript-native infrastructure-as-code
+- SST-agnostic application code (apps read env vars only, no SST SDK imports)
+- Enables local development with `pnpm dev` without SST context
+
+**Deployment Stages:**
+- Local: Apps run with `.env` files, no SST dependency
+- Test: Deployed AWS resources (S3, etc.) for integration testing via env vars
+- Production: Full SST v3 deployment on AWS
 
 **CI Pipeline:**
-- Not detected (no GitHub Actions or similar)
+- Not yet configured
+- Planned verification order: static → unit → integration → Playwright MCP
 
 ## Environment Configuration
 

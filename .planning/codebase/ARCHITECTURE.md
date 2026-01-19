@@ -160,7 +160,27 @@
 - protectedProcedure middleware checks session (`packages/api/src/index.ts`)
 - HTTP-only secure cookies for session storage
 
+## Planned Architectural Changes
+
+**Effect TS Integration (Backend):**
+- Purpose: Testability, dependency injection, composable error handling
+- Scope: Backend services in `apps/server/` and `packages/api/`
+- Benefits: Easy mocking for unit tests, structured error handling
+- Status: Pending implementation
+
+**SST-Agnostic Architecture:**
+- Principle: Application code reads env vars only, no SST SDK imports
+- Rationale: Enables local development with `pnpm dev` without SST context
+- Pattern: SST injects env vars at deploy time; `.env` files for local/test
+- Benefit: Agents can verify code without SST multiplexer running
+
+**Domain-Driven Package Structure:**
+- Pattern: Schemas live with their domain (e.g., `user.ts` + `user.sql.ts`)
+- Rationale: Colocation reduces cognitive load, improves discoverability
+- Status: Pending refactoring from current structure
+
 ---
 
 *Architecture analysis: 2026-01-15*
+*Updated: 2026-01-19*
 *Update when major patterns change*

@@ -1,22 +1,39 @@
 # Testing Patterns
 
 **Analysis Date:** 2026-01-15
+**Updated:** 2026-01-19
+
+## Planned Testing Infrastructure
+
+**Verification Order (Fail Fast, Expensive Last):**
+1. **Static Analysis** - Biome lint + TypeScript strict type checking
+2. **Unit Tests** - Vitest for pure logic, mocked externals
+3. **Integration Tests** - Local Postgres Docker + Test stage AWS resources
+4. **E2E Verification** - Playwright MCP against localhost dev server
+
+**Rationale:** Cheap, fast tests run first to catch issues early. Expensive E2E tests run last as final verification gate.
 
 ## Test Framework
 
 **Runner:**
-- Not configured (no test framework installed)
+- Not yet configured
+- Planned: Vitest for unit/integration tests
 
 **Assertion Library:**
-- Not configured
+- Not yet configured
+- Planned: Vitest built-in assertions
+
+**E2E Framework:**
+- Not yet configured
+- Planned: Playwright MCP for browser-based verification
 
 **Run Commands:**
 ```bash
-# No test commands configured
-# Recommended setup if adding tests:
-# pnpm test                    # Run all tests
-# pnpm test -- --watch         # Watch mode
-# pnpm test -- path/to/file    # Single file
+# Planned commands (not yet configured):
+# pnpm check                   # Static analysis (Biome + TypeScript)
+# pnpm test                    # Run unit tests
+# pnpm test:integration        # Run integration tests
+# pnpm test:e2e                # Run Playwright MCP tests
 ```
 
 ## Test File Organization
@@ -112,15 +129,21 @@ describe('ModuleName', () => {
 
 **Unit Tests:**
 - Not implemented
-- Recommended for: API procedures, utility functions
+- Planned for: Pure logic, API procedures, utility functions
+- Framework: Vitest with mocked externals
+- Backend testability: Effect TS enables dependency injection for easy mocking
 
 **Integration Tests:**
 - Not implemented
-- Recommended for: Auth flows, database operations
+- Planned for: Auth flows, database operations, external service integration
+- Infrastructure: Local Postgres Docker for database tests
+- AWS resources: Test stage deployed resources via env vars (S3, etc.)
 
 **E2E Tests:**
 - Not implemented
-- Recommended for: Full user flows (sign-up, checkout)
+- Planned for: Full user flows (sign-up, checkout, core features)
+- Framework: Playwright MCP against localhost dev server
+- Runs last in verification pipeline (most expensive)
 
 ## Common Patterns
 
