@@ -63,10 +63,10 @@ Plans:
   1. Security review produces `SECURITY-REVIEW.md` with findings
   2. Critical/high findings are clearly marked as merge-blockers
   3. Ongoing concerns are tracked in `.planning/codebase/CONCERNS.md`
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Agent-driven security workflow documentation and pnpm audit integration
 
 ### Phase 3: Core Consolidation
 **Goal**: Merge db + auth packages into domain-driven core with Effect TS
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 7/7 | ✓ Complete | 2026-01-19 |
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
-| 2. Security Workflow | 0/? | Not started | - |
+| 2. Security Workflow | 0/1 | Planned | - |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
