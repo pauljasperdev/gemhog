@@ -55,6 +55,7 @@ the consultant.
 - [ ] Thesis extraction from podcast transcripts (via podscan.fm API)
 - [ ] Thesis analysis against financial data (reports, metrics)
 - [ ] Cron job for transcript analysis pipeline
+- [ ] Landing page with newsletter signup (AWS SES for email delivery)
 - [ ] Twitter/X automation for new analysis posts (free tier)
 - [ ] Bluesky automation for new analysis posts (free API)
 - [ ] Discovery feed of stock picks by category/strategy
@@ -111,7 +112,8 @@ investment.
 
 - Manually pick "gems" from podcast transcripts
 - Minimal analysis structure (thesis + evaluation)
-- Auto-post to Twitter to drive traffic
+- Auto-post to Twitter/Bluesky to drive traffic
+- Landing page with newsletter to build audience (blog-post style summaries)
 - Free discovery, paid detailed analysis comes later
 
 **Data Source:** Podscan.fm API for podcast transcripts
@@ -144,17 +146,18 @@ Needs migration to SST v3 and domain-driven refactoring.
 
 | Decision                        | Rationale                                                                                                   | Outcome   |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------- |
-| Security verification gate      | Financial app handling user data/payments; blocking review ensures no critical vulns ship                   | — Pending |
-| SST v3 for deployment           | TypeScript-native IaC, good DX, AWS flexibility                                                             | — Pending |
-| Effect TS for backend           | Testability, DI, composable error handling                                                                  | — Pending |
-| Core package consolidation      | Merge db+auth into packages/core; domains as folders (auth/, stock/); \*.sql.ts schemas; avoids cyclic deps | — Pending |
 | Testing infrastructure early    | Fail-fast with cheap tests (static, unit, integration), Playwright MCP as final verification gate           | — Pending |
+| Security verification gate      | Financial app handling user data/payments; blocking review ensures no critical vulns ship                   | — Pending |
+| Core package consolidation      | Merge db+auth into packages/core; domains as folders (auth/, stock/); \*.sql.ts schemas; avoids cyclic deps | — Pending |
+| SST v3 for deployment           | TypeScript-native IaC, good DX, AWS flexibility                                                             | — Pending |
 | SST-agnostic app code           | App reads env vars only; SST injects at deploy, `.env` files for local/test; agents verify without SST      | — Pending |
+| Effect TS for backend           | Testability, DI, composable error handling                                                                  | — Pending |
 | Page per stock (not per thesis) | Multiple theses aggregate on same stock over time                                                           | — Pending |
 | Podscan.fm for transcripts      | Existing API, reasonable coverage                                                                           | — Pending |
+| Newsletter for audience         | Build audience before full product; low-friction entry; informs users when signup ready; AWS SES            | — Pending |
 | Twitter/X for distribution      | Quick reach, free tier available, fits MVP                                                                  | — Pending |
 | Bluesky for distribution        | Free API, growing platform, complements Twitter                                                             | — Pending |
 
 ---
 
-_Last updated: 2026-01-19 refined core package consolidation decision_
+_Last updated: 2026-01-19 added newsletter requirement (AWS SES)_

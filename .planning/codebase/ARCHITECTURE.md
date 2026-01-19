@@ -95,6 +95,12 @@
 5. Streaming response returned
 6. Streamdown component renders markdown
 
+**Newsletter Subscription Flow:**
+
+1. User visits landing page and enters email
+2. Server validates and stores subscriber
+3. Emails sent via AWS SES
+
 **State Management:**
 
 - Server: Stateless HTTP with session cookies
@@ -220,10 +226,10 @@ middleware)
 - Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
 - Schema aggregation: `drizzle/index.ts` spreads domain schemas
 - Rationale: Avoids cyclic deps between db and domain packages
-- Future domains: `stock/`, `thesis/` added as sibling folders
+- Future domains: `stock/`, `thesis/`, `newsletter/` added as sibling folders
 - Status: Pending refactoring (see STRUCTURE.md for full details)
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-19 — added core package
-consolidation plan_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-19 — added newsletter
+subscription flow and newsletter domain_ _Update when major patterns change_
