@@ -1,603 +1,559 @@
-# Stack Research
+# Stack Research: Effect TS + Hono + tRPC Integration
 
-**Project:** Gemhog
+**Domain:** Financial research platform / Podcast insight extraction
 **Researched:** 2026-01-19
-**Overall Confidence:** HIGH
+**Confidence:** HIGH (verified via official documentation and current package versions)
+
+---
 
 ## Executive Summary
 
-The financial research app with AI-powered content extraction benefits from a
-mature 2025/2026 ecosystem. The recommended additions leverage the **Vercel AI
-SDK 6** for LLM integration (provider-agnostic, TypeScript-first, structured
-outputs), **Financial Modeling Prep** for stock data (best price/feature ratio,
-comprehensive fundamentals), **Podscan.fm** (already decided), **SST v3 Cron**
-for job scheduling (native to existing infra), and **twitter-api-v2** +
-**@atproto/api** for social automation. The already-decided stack is solid and
-requires no changes.
+The 2026 TypeScript stack for Effect TS + Hono + tRPC integration in a monorepo with
+SST v3 deployment requires careful consideration of integration boundaries. The key
+finding: **tRPC and Effect schemas have a fundamental type inference incompatibility**
+that affects transformations. The recommended approach is a **pragmatic coexistence
+strategy** that uses Effect TS for backend business logic while keeping tRPC for
+API contracts, with Effect Schema used internally but Zod at tRPC boundaries.
 
 ---
 
-## Already Decided (Validated)
+## Recommended Stack
 
-These technologies are confirmed appropriate for the use case.
+### Core Technologies
 
-| Technology       | Purpose                 | Validation Notes                                     |
-| ---------------- | ----------------------- | ---------------------------------------------------- |
-| Next.js          | Frontend framework      | Industry standard for React apps, SSR/SSG support    |
-| shadcn/ui        | UI components           | Accessible, customizable, pairs well with Tailwind   |
-| Hono             | Backend server          | Lightweight, fast, good TypeScript support           |
-| tRPC             | Type-safe API           | Excellent DX, pairs well with Zod schemas            |
-| PostgreSQL       | Database                | Reliable, feature-rich, good for financial data      |
-| Drizzle ORM      | Database toolkit        | Type-safe, lightweight, good migrations              |
-| Better-Auth      | Authentication          | Modern, self-hosted auth solution                    |
-| Polar            | Payments                | Developer-friendly, subscription support             |
-| SST v3           | AWS deployment          | TypeScript IaC, Pulumi-based, serverless-native      |
-| Effect TS        | Backend patterns        | Testability, DI, composable error handling (pending) |
-| pnpm workspaces  | Monorepo management     | Fast, efficient, mature                              |
-| Podscan.fm       | Podcast transcripts     | Already decided, comprehensive transcript API        |
-| Biome            | Linting/formatting      | Fast, unified tooling                                |
-| Vitest           | Testing                 | Fast, Vite-native, good TypeScript support           |
-| Playwright       | E2E testing             | Reliable, cross-browser                              |
+| Technology           | Version   | Purpose                    | Why Recommended                                                                                           |
+| -------------------- | --------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Effect TS            | ^3.19.14  | Backend DI, error handling | API stable since 3.0, superior testability via Layers, type-safe dependency injection, composable errors |
+| Hono                 | ^4.11.4   | HTTP framework             | Lightweight, Web Standards, excellent TypeScript support, works with Lambda and containers                |
+| tRPC                 | ^11.8.1   | Type-safe API layer        | End-to-end type safety with frontend, mature ecosystem, React Query integration                           |
+| SST v3               | latest    | AWS deployment             | TypeScript IaC, Pulumi-based, native Hono support, function URLs                                          |
+| TypeScript           | ^5.9.3    | Language                   | tRPC v11 requires >=5.7.2, Effect requires >=5.4 with strict mode                                         |
+| Zod                  | ^4.3.5    | tRPC validation            | tRPC's native validator, use at API boundaries                                                            |
+| @effect/schema       | ^0.77.x   | Effect-side validation     | Use internally in Effect services, bidirectional transformations                                          |
+| @hono/effect-validator | ^1.2.0  | Hono middleware            | Effect Schema validation in Hono routes (optional, for non-tRPC routes)                                   |
+
+### Supporting Libraries
+
+| Library                | Version  | Purpose                    | When to Use                                    |
+| ---------------------- | -------- | -------------------------- | ---------------------------------------------- |
+| @effect/platform       | ^0.77.x  | HTTP client, file system   | Internal HTTP calls, platform abstractions     |
+| @effect/platform-node  | ^0.73.x  | Node.js runtime            | Lambda/Node.js execution environment           |
+| vitest                 | ^3.1.x   | Unit/integration testing   | All tests, works well with Effect Layers       |
+| msw                    | ^2.8.x   | HTTP mocking               | Integration tests, mock external APIs          |
+| @playwright/test       | ^1.52.x  | E2E testing                | Browser automation, Playwright MCP compatible  |
+| @trpc/client           | ^11.8.1  | Frontend tRPC client       | React Query integration, type-safe calls       |
+| @tanstack/react-query  | ^5.90.x  | Data fetching              | tRPC integration, caching, optimistic updates  |
+
+### Development Tools
+
+| Tool              | Purpose                    | Notes                                               |
+| ----------------- | -------------------------- | --------------------------------------------------- |
+| tsx               | TypeScript execution       | Fast dev server, hot reload                         |
+| tsdown            | TypeScript build           | Fast builds, ESM output                             |
+| Biome             | Lint + format              | Fast, unified tooling, already configured           |
+| Playwright MCP    | AI-assisted E2E            | Model Context Protocol for intelligent test gen     |
 
 ---
 
-## Recommended Additions
+## Effect TS + Hono + tRPC Integration
 
-### LLM/AI Integration
+### The Integration Challenge
 
-#### Provider: Claude API (Anthropic) - PRIMARY
+**Critical finding:** tRPC and Effect Schema have a fundamental type inference
+incompatibility. tRPC determines input types from validator function return values,
+but Effect Schema's `decodeUnknownSync` can transform data differently than expected.
 
-**Recommendation:** Use Claude Sonnet 4.5 as primary model for thesis extraction.
-
-| Attribute         | Value                                                         |
-| ----------------- | ------------------------------------------------------------- |
-| Model             | claude-sonnet-4.5 (claude-sonnet-4-5-20250514)                |
-| Pricing           | $3/MTok input, $15/MTok output                                |
-| Structured Output | Yes (beta) - json_schema + strict tool use                    |
-| Batch API         | 50% discount for async processing                             |
-
-**Why Claude over GPT-4o:**
-
-1. **Better at long-form analysis** - Podcast transcripts are lengthy; Claude
-   handles context well
-2. **Structured outputs available** - Released Nov 2025, guarantees JSON schema
-   conformance
-3. **Competitive pricing** - $3/MTok input vs GPT-4o's $2.50/MTok, but better at
-   nuanced extraction
-4. **Prompt caching** - 90% discount on cached tokens for repeated schema
-   patterns
-
-**Fallback:** GPT-4o-mini ($0.15/MTok input) for cost-sensitive operations or
-high-volume initial filtering.
-
-#### Framework: Vercel AI SDK 6
-
-**Recommendation:** Use `ai` package version ^6.0.0 for all LLM interactions.
-
-```bash
-pnpm add ai @ai-sdk/anthropic zod
+Example problem:
+```typescript
+// Effect Schema can decode string "2024-01-01" -> Date object
+// tRPC would then expect Date on client, but client sends string
+// This breaks the type contract
 ```
 
-**Why Vercel AI SDK:**
+### Recommended Architecture: Pragmatic Coexistence
 
-1. **Provider-agnostic** - Switch between Claude, GPT-4o, local models without
-   code changes
-2. **Structured outputs built-in** - `Output.object()` with Zod schema
-   validation
-3. **TypeScript-first** - Full type safety end-to-end
-4. **Streaming support** - `streamText` for real-time UI updates
-5. **20M+ monthly downloads** - Battle-tested, active development
-6. **Next.js integration** - Seamless with existing stack
+The solution is **layered integration** where each technology handles what it does best:
 
-**Key Features for Gemhog:**
+```
++------------------+
+|  Next.js Client  |  <-- Uses tRPC client with Zod schemas
++--------+---------+
+         |
+         | tRPC (Zod schemas at boundary)
+         v
++------------------+
+|   Hono Router    |  <-- Routes tRPC + other endpoints
+|   + tRPC Adapter |
++--------+---------+
+         |
+         | Internal calls (Effect programs)
+         v
++------------------+
+|  Effect Services |  <-- Business logic, DI via Layers
+|  (Effect Schema  |  <-- Internal validation with Effect Schema
+|   internally)    |
++--------+---------+
+         |
+         v
++------------------+
+| Effect Layers    |  <-- Testable dependencies (DB, APIs, etc.)
+| (Live/Test)      |
++------------------+
+```
+
+### Integration Pattern: tRPC Procedures Wrapping Effect
 
 ```typescript
-import { generateText, Output } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+// packages/api/src/trpc.ts
+import { initTRPC, TRPCError } from "@trpc/server";
+import { Effect, Exit } from "effect";
 import { z } from "zod";
 
-const ThesisSchema = z.object({
-  ticker: z.string().describe("Stock ticker symbol"),
-  thesis: z.string().describe("Investment thesis narrative"),
-  assumptions: z.array(z.string()).describe("Key assumptions"),
-  timeHorizon: z.enum(["short", "medium", "long"]),
-  confidence: z.number().min(0).max(1),
+const t = initTRPC.context<Context>().create();
+
+// Helper to run Effect programs in tRPC procedures
+export const runEffect = <A, E>(
+  effect: Effect.Effect<A, E, AppContext>
+): Promise<A> =>
+  effect.pipe(
+    Effect.provide(AppContextLive), // Provide production layers
+    Effect.runPromise
+  ).catch((error) => {
+    // Map Effect errors to tRPC errors
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: error.message,
+    });
+  });
+
+// Usage in procedure
+export const thesisRouter = t.router({
+  extract: t.procedure
+    .input(z.object({ transcriptId: z.string() })) // Zod at boundary
+    .mutation(async ({ input, ctx }) => {
+      return runEffect(
+        ThesisService.extract(input.transcriptId) // Effect program
+      );
+    }),
 });
-
-const result = await generateText({
-  model: anthropic("claude-sonnet-4-5-20250514"),
-  prompt: transcriptContent,
-  output: Output.object({ schema: ThesisSchema }),
-});
 ```
 
-**Note:** `generateObject` and `streamObject` are deprecated in SDK 6. Use
-`generateText`/`streamText` with `output` property instead.
-
-| Package           | Version | Purpose                  |
-| ----------------- | ------- | ------------------------ |
-| ai                | ^6.0.0  | Core AI SDK              |
-| @ai-sdk/anthropic | ^1.0.0  | Claude provider          |
-| @ai-sdk/openai    | ^1.0.0  | OpenAI provider (backup) |
-
-**Confidence:** HIGH (verified via
-[AI SDK docs](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data))
-
----
-
-### Financial Data APIs
-
-#### Primary: Financial Modeling Prep (FMP)
-
-**Recommendation:** Use FMP Starter plan ($99/year or $19/month unlimited).
-
-```bash
-# No SDK needed - use fetch with typed responses
-```
-
-| Attribute        | Value                                             |
-| ---------------- | ------------------------------------------------- |
-| Free Tier        | 250 requests/day, 500MB/30-day bandwidth          |
-| Starter Plan     | $19/month unlimited, 20GB bandwidth               |
-| Coverage         | 70,000+ stocks globally, 30+ years history        |
-| Endpoints        | 150+ (quotes, financials, ratios, metrics)        |
-| Authentication   | API key as query parameter                        |
-
-**Why FMP over alternatives:**
-
-| Provider       | Free Tier      | Paid Starting | Fundamentals | Notes                      |
-| -------------- | -------------- | ------------- | ------------ | -------------------------- |
-| **FMP**        | 250 req/day    | $19/mo        | Excellent    | Best value, comprehensive  |
-| Alpha Vantage  | 25 req/day     | $49/mo        | Good         | Limited free tier          |
-| Polygon.io     | 5 req/min      | $199/mo       | Limited      | Better for real-time       |
-| Finnhub        | 60 req/min     | $50/mo        | Good         | Best free tier             |
-
-**Key FMP Endpoints for Gemhog:**
-
-```
-GET /stable/profile?symbol=AAPL          # Company overview
-GET /stable/quote?symbol=AAPL            # Current price
-GET /stable/income-statement?symbol=AAPL # Income statements
-GET /stable/balance-sheet?symbol=AAPL    # Balance sheet
-GET /stable/key-metrics?symbol=AAPL      # P/E, P/B, etc.
-GET /stable/ratios?symbol=AAPL           # Financial ratios
-```
-
-**Implementation Pattern:**
+### Integration Pattern: Effect Services
 
 ```typescript
-// packages/core/src/services/financial-data.ts
-const FMP_BASE = "https://financialmodelingprep.com/stable";
+// packages/core/src/services/thesis.ts
+import { Effect, Layer, Context } from "effect";
+import * as S from "@effect/schema/Schema";
 
-export const getStockProfile = async (symbol: string) => {
-  const res = await fetch(
-    `${FMP_BASE}/profile?symbol=${symbol}&apikey=${process.env.FMP_API_KEY}`
-  );
-  return res.json();
-};
+// Define service interface
+export class ThesisService extends Context.Tag("ThesisService")<
+  ThesisService,
+  {
+    extract: (transcriptId: string) => Effect.Effect<Thesis, ThesisError>;
+    analyze: (thesis: Thesis) => Effect.Effect<Analysis, AnalysisError>;
+  }
+>() {}
+
+// Internal schema (Effect Schema for transforms)
+const ThesisSchema = S.Struct({
+  id: S.String,
+  ticker: S.String,
+  narrative: S.String,
+  assumptions: S.Array(S.String),
+  extractedAt: S.Date, // Transforms work internally
+});
+
+// Live implementation
+export const ThesisServiceLive = Layer.succeed(
+  ThesisService,
+  ThesisService.of({
+    extract: (transcriptId) =>
+      Effect.gen(function* () {
+        const transcript = yield* TranscriptRepo.get(transcriptId);
+        const result = yield* AIService.extractThesis(transcript);
+        return yield* S.decodeUnknown(ThesisSchema)(result);
+      }),
+    analyze: (thesis) =>
+      Effect.gen(function* () {
+        const data = yield* FinancialDataService.get(thesis.ticker);
+        return yield* AIService.analyze(thesis, data);
+      }),
+  })
+);
 ```
 
-**Confidence:** HIGH (verified via
-[FMP docs](https://site.financialmodelingprep.com/developer/docs))
-
----
-
-### Social Media Automation
-
-#### Twitter/X: twitter-api-v2
-
-**Recommendation:** Use `twitter-api-v2` package with Free tier initially.
-
-```bash
-pnpm add twitter-api-v2
-```
-
-| Attribute     | Value                                        |
-| ------------- | -------------------------------------------- |
-| Package       | twitter-api-v2                               |
-| Version       | ^1.29.0                                      |
-| Free Tier     | 1,500 tweets/month (post only)               |
-| Basic Tier    | $200/month (if more needed)                  |
-| Auth          | OAuth 1.0a for server-side posting           |
-
-**Why this package:**
-
-1. **Strongly typed** - Full TypeScript support
-2. **Full API coverage** - v1.1 and v2 endpoints
-3. **227 dependents** - Well-maintained, active
-4. **Handles rate limits** - Built-in retry logic
-
-**Implementation Pattern:**
+### Integration Pattern: Testing with Layers
 
 ```typescript
-import { TwitterApi } from "twitter-api-v2";
+// packages/core/src/services/thesis.test.ts
+import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
+import { Effect, Layer } from "effect";
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
 
-const client = new TwitterApi({
-  appKey: process.env.TWITTER_API_KEY!,
-  appSecret: process.env.TWITTER_API_SECRET!,
-  accessToken: process.env.TWITTER_ACCESS_TOKEN!,
-  accessSecret: process.env.TWITTER_ACCESS_SECRET!,
-});
+// Mock layers for testing
+const ThesisServiceTest = Layer.succeed(
+  ThesisService,
+  ThesisService.of({
+    extract: (transcriptId) =>
+      Effect.succeed({
+        id: "test-id",
+        ticker: "AAPL",
+        narrative: "Test thesis",
+        assumptions: ["assumption 1"],
+        extractedAt: new Date(),
+      }),
+    analyze: (thesis) =>
+      Effect.succeed({
+        pros: ["pro 1"],
+        cons: ["con 1"],
+        unknowns: ["unknown 1"],
+      }),
+  })
+);
 
-await client.v2.tweet({
-  text: `New thesis discovered: ${thesis.ticker}\n\n${thesis.summary}\n\nRead more: ${url}`,
+// MSW for external HTTP mocking
+const server = setupServer(
+  http.get("https://api.external.com/*", () => {
+    return HttpResponse.json({ data: "mocked" });
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe("ThesisService", () => {
+  it("extracts thesis from transcript", async () => {
+    const result = await Effect.runPromise(
+      ThesisService.pipe(
+        Effect.flatMap((service) => service.extract("transcript-123")),
+        Effect.provide(ThesisServiceTest) // Provide test layer
+      )
+    );
+
+    expect(result.ticker).toBe("AAPL");
+  });
 });
 ```
 
-**Free Tier Limitations:**
+### When to Use Each Validation Library
 
-- Post only (no reading tweets)
-- 1,500 tweets/month cap
-- No engagement automation (likes, follows)
-- Sufficient for MVP auto-posting use case
-
-**Confidence:** HIGH (verified via
-[npm](https://www.npmjs.com/package/twitter-api-v2))
+| Context                  | Use         | Rationale                                        |
+| ------------------------ | ----------- | ------------------------------------------------ |
+| tRPC input/output        | Zod         | Native tRPC support, no type inference issues    |
+| Effect service internals | Effect Schema | Bidirectional transforms, Effect ecosystem       |
+| Hono non-tRPC routes     | Effect Schema | Via @hono/effect-validator, consistent with services |
+| Environment validation   | Zod         | @t3-oss/env compatibility, simpler for env vars  |
+| Database schemas         | Drizzle     | Drizzle's own schema system, infers types        |
 
 ---
 
-#### Bluesky: @atproto/api
+## SST v3 Deployment Patterns
 
-**Recommendation:** Use official `@atproto/api` package.
+### SST-Agnostic Application Code (Critical Constraint)
 
-```bash
-pnpm add @atproto/api
-```
+The project constraint requires app code to read env vars only, no SST SDK imports.
+This enables local development and agent verification without SST context.
 
-| Attribute     | Value                               |
-| ------------- | ----------------------------------- |
-| Package       | @atproto/api                        |
-| Version       | ^0.18.0                             |
-| Pricing       | Free (no rate limits for posting)   |
-| Auth          | App password (not OAuth yet)        |
-| Node Version  | Requires Node.js 18+                |
-
-**Why Bluesky:**
-
-1. **Free API** - No cost for posting
-2. **Growing platform** - Good reach for tech/finance audience
-3. **Official SDK** - Maintained by Bluesky team
-4. **Complements Twitter** - Diversifies distribution
-
-**Implementation Pattern:**
+**Pattern: Environment Variables Bridge**
 
 ```typescript
-import Atproto from "@atproto/api";
-const { BskyAgent } = Atproto;
+// sst.config.ts - SST configuration injects env vars
+export default $config({
+  app(input) {
+    return { name: "gemhog", home: "aws" };
+  },
+  async run() {
+    const database = new sst.aws.Postgres("Database");
+    const anthropicKey = new sst.Secret("AnthropicApiKey");
 
-const agent = new BskyAgent({ service: "https://bsky.social" });
-
-await agent.login({
-  identifier: process.env.BLUESKY_HANDLE!,
-  password: process.env.BLUESKY_APP_PASSWORD!,
-});
-
-await agent.post({
-  text: `New thesis discovered: ${thesis.ticker}\n\n${thesis.summary}`,
-  createdAt: new Date().toISOString(),
+    new sst.aws.Function("Api", {
+      handler: "apps/server/src/index.handler",
+      url: true,
+      link: [database, anthropicKey],
+      environment: {
+        // Bridge: SST resources -> env vars
+        DATABASE_URL: $interpolate`postgres://${database.username}:${database.password}@${database.host}:${database.port}/${database.database}`,
+        ANTHROPIC_API_KEY: anthropicKey.value,
+      },
+    });
+  },
 });
 ```
 
-**Important Notes:**
+```typescript
+// packages/env/src/server.ts - App reads env vars only (SST-agnostic)
+import { createEnv } from "@t3-oss/env-core";
+import { z } from "zod";
 
-- Use app password, not main account password
-- CommonJS import fix: `import Atproto from '@atproto/api'; const { BskyAgent } = Atproto;`
-- Rich text with links/mentions requires `RichText` helper for utf8 handling
-- OAuth with granular permissions coming in 2025
+export const env = createEnv({
+  server: {
+    DATABASE_URL: z.string().url(),
+    ANTHROPIC_API_KEY: z.string().min(1),
+    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  },
+  runtimeEnv: process.env,
+});
+```
 
-**Confidence:** HIGH (verified via
-[Bluesky docs](https://docs.bsky.app/docs/get-started))
+```typescript
+// apps/server/src/index.ts - Uses env vars, no SST imports
+import { Hono } from "hono";
+import { handle } from "hono/aws-lambda";
+import { env } from "@gemhog/env/server";
 
----
+const app = new Hono();
 
-### Job Scheduling
+app.get("/health", (c) => c.json({ status: "ok" }));
 
-#### SST v3 Cron Component
+// Works locally with .env, works on Lambda with SST-injected env vars
+export const handler = handle(app);
+export default app;
+```
 
-**Recommendation:** Use SST v3's built-in `sst.aws.Cron` component.
+### Local Development (.env files)
+
+```bash
+# .env.local (git-ignored, for local development)
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/gemhog
+ANTHROPIC_API_KEY=sk-ant-...
+PODSCAN_API_KEY=...
+```
+
+```bash
+# Development: uses .env.local
+pnpm dev
+
+# Deployment: SST injects env vars
+npx sst deploy --stage production
+```
+
+### Cron Jobs Pattern
 
 ```typescript
 // sst.config.ts
 new sst.aws.Cron("TranscriptPipeline", {
-  job: "packages/functions/src/pipelines/transcript.handler",
+  job: {
+    handler: "packages/functions/src/cron/transcript.handler",
+    environment: {
+      DATABASE_URL: databaseUrl,
+      PODSCAN_API_KEY: podscanKey.value,
+    },
+  },
   schedule: "rate(1 hour)",
-});
-
-new sst.aws.Cron("SocialPoster", {
-  job: "packages/functions/src/pipelines/social.handler",
-  schedule: "cron(0 9,17 * * ? *)", // 9 AM and 5 PM UTC
 });
 ```
 
-**Why SST Cron:**
+```typescript
+// packages/functions/src/cron/transcript.ts - SST-agnostic
+import { Effect } from "effect";
+import { env } from "@gemhog/env/server";
+import { TranscriptPipeline } from "@gemhog/core/pipelines";
 
-1. **Already using SST v3** - No additional dependencies
-2. **Serverless** - Pay only when functions run
-3. **EventBridge-backed** - Reliable, managed by AWS
-4. **TypeScript config** - Type-safe schedule definitions
-
-**Schedule Syntax Options:**
-
-| Pattern                      | Description                |
-| ---------------------------- | -------------------------- |
-| `rate(1 minute)`             | Every minute               |
-| `rate(1 hour)`               | Every hour                 |
-| `rate(1 day)`                | Daily                      |
-| `cron(0 9 * * ? *)`          | 9 AM UTC daily             |
-| `cron(0 */4 * * ? *)`        | Every 4 hours              |
-| `cron(0 9,17 * * ? *)`       | 9 AM and 5 PM UTC          |
-
-**Recommended Pipeline Schedule:**
-
-| Job                | Schedule          | Rationale                        |
-| ------------------ | ----------------- | -------------------------------- |
-| Transcript fetch   | `rate(1 hour)`    | Check for new episodes hourly    |
-| Thesis extraction  | `rate(2 hours)`   | Process pending transcripts      |
-| Social posting     | `rate(4 hours)`   | Spread posts throughout day      |
-| Data refresh       | `rate(1 day)`     | Update stock metrics daily       |
-
-**Confidence:** HIGH (verified via
-[SST docs](https://sst.dev/docs/component/aws/cron))
+export const handler = async () => {
+  await Effect.runPromise(
+    TranscriptPipeline.run.pipe(
+      Effect.provide(PipelineLayerLive)
+    )
+  );
+};
+```
 
 ---
 
-### Caching and Performance
+## Testing Stack
 
-#### Upstash Redis
-
-**Recommendation:** Use Upstash for serverless Redis caching.
-
-```bash
-pnpm add @upstash/redis
-```
-
-| Attribute    | Value                                      |
-| ------------ | ------------------------------------------ |
-| Package      | @upstash/redis                             |
-| Pricing      | $0.20 per 100k requests + $0.25/GB storage |
-| Free Tier    | 10k requests/day                           |
-| Access       | HTTP/REST (works in serverless/edge)       |
-
-**Why Upstash over ElastiCache:**
-
-1. **Serverless-native** - No VPC configuration needed
-2. **Pay-per-request** - Cost-effective for variable traffic
-3. **REST API** - Works in Lambda, edge functions, anywhere
-4. **Global replication** - Low latency worldwide
-5. **SST integration** - First-class support
-
-**When to use caching:**
-
-| Data Type           | TTL          | Rationale                        |
-| ------------------- | ------------ | -------------------------------- |
-| Stock quotes        | 15 minutes   | Balance freshness vs API calls   |
-| Company profiles    | 24 hours     | Rarely changes                   |
-| Financial metrics   | 1 hour       | Updated intraday                 |
-| Extracted theses    | Indefinite   | Computed once, stored in DB      |
-| API rate limit      | 1 minute     | Track request counts             |
-
-**Implementation Pattern:**
+### Vitest Configuration for Effect TS
 
 ```typescript
-import { Redis } from "@upstash/redis";
+// vitest.config.ts
+import { defineConfig } from "vitest/config";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: "node",
+    include: ["**/*.test.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts"],
+      exclude: ["**/*.test.ts", "**/index.ts"],
+    },
+    setupFiles: ["./test/setup.ts"],
+  },
+});
+```
+
+```typescript
+// test/setup.ts
+import { vi } from "vitest";
+
+// Reset all mocks between tests
+beforeEach(() => {
+  vi.clearAllMocks();
 });
 
-// Cache stock quote
-const cacheKey = `stock:${symbol}:quote`;
-let quote = await redis.get(cacheKey);
-if (!quote) {
-  quote = await fetchFromFMP(symbol);
-  await redis.set(cacheKey, quote, { ex: 900 }); // 15 min TTL
+// Global test config mock
+vi.mock("@gemhog/env/server", () => ({
+  env: {
+    DATABASE_URL: "postgres://test:test@localhost:5432/test",
+    ANTHROPIC_API_KEY: "test-key",
+    NODE_ENV: "test",
+  },
+}));
+```
+
+### MSW Setup for Integration Tests
+
+```typescript
+// test/handlers.ts
+import { http, HttpResponse } from "msw";
+
+export const handlers = [
+  // Mock Podscan API
+  http.get("https://api.podscan.fm/episodes/*", () => {
+    return HttpResponse.json({
+      id: "episode-123",
+      transcript: "This is a mock transcript...",
+    });
+  }),
+
+  // Mock Anthropic API
+  http.post("https://api.anthropic.com/v1/messages", () => {
+    return HttpResponse.json({
+      content: [{ type: "text", text: '{"ticker":"AAPL","thesis":"..."}' }],
+    });
+  }),
+];
+```
+
+### Playwright MCP for E2E
+
+Playwright MCP (Model Context Protocol) enables AI-powered test automation. The
+server provides browser automation capabilities through structured accessibility
+snapshots, enabling AI agents to interact with web pages.
+
+```json
+// mcp.json (Claude Code / Cursor / VS Code Copilot)
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
 }
 ```
 
-**Alternative: AWS ElastiCache Serverless**
-
-If you need VPC-only access and higher throughput, ElastiCache Serverless is an
-option. However, it requires VPC configuration and is better suited for
-high-volume, consistent traffic patterns.
-
-**Confidence:** HIGH (verified via
-[Upstash docs](https://upstash.com/docs/redis/overall/compare))
+Usage pattern: AI agents can generate, run, debug, and refine Playwright tests
+through natural language interaction with the MCP server.
 
 ---
 
-### Other Recommendations
+## Alternatives Considered
 
-#### Podscan.fm API (Already Decided)
+### Effect RPC Instead of tRPC
 
-**Recommendation:** Essential plan minimum for production.
+**Considered:** Replacing tRPC entirely with Effect RPC (@effect/rpc).
 
-| Plan      | Requests/Day | Requests/Min | Price    |
-| --------- | ------------ | ------------ | -------- |
-| Trial     | 100          | 10           | Free     |
-| Essential | 1,000        | 60           | ~$50/mo  |
-| Premium   | 2,000        | 120          | ~$100/mo |
-| Advanced  | 5,000        | 120          | ~$200/mo |
+**Why not chosen:**
+- tRPC ecosystem is more mature (React Query integration, devtools)
+- Team already familiar with tRPC patterns
+- Effect RPC requires more buy-in to Effect ecosystem
+- Migration cost outweighs benefits for existing codebase
 
-**Key Endpoints:**
+**When to reconsider:**
+- If building a new greenfield project fully committed to Effect
+- If tRPC type inference issues become blocking
 
-```
-GET /episodes/search?query=investing   # Search transcripts
-GET /episodes/recent                   # Latest transcribed
-GET /teams/{team}/alerts/mentions      # Keyword alerts
-```
+### @effect/platform HttpApi Instead of Hono
 
-**Confidence:** HIGH (verified via [Podscan docs](https://podscan.fm/docs/api))
+**Considered:** Using Effect's built-in HTTP API framework instead of Hono.
 
----
+**Why not chosen:**
+- Hono has broader ecosystem support
+- Better documentation and community resources
+- More familiar patterns for team
+- SST has native Hono examples
 
-#### Zod (Schema Validation)
+**When to reconsider:**
+- If needing deep Effect integration for HTTP layer
+- If @effect/platform HttpApi matures further
 
-**Already implicit in stack** - Required for tRPC and AI SDK structured outputs.
+### ts-rest Instead of tRPC
 
-```bash
-pnpm add zod
-```
+**Considered:** Using ts-rest for RESTful type-safe APIs.
 
-Zod schemas serve triple duty:
-
-1. **tRPC input validation**
-2. **AI SDK structured output schemas**
-3. **Database type inference with Drizzle**
+**Why not chosen:**
+- tRPC's DX is superior for internal APIs
+- React Query integration is seamless
+- No need for REST semantics in this project
 
 ---
 
 ## What NOT to Use
 
-### LangChain
-
-**Do not use LangChain** for this project.
+### Do NOT Import SST SDK in Application Code
 
 **Why:**
+- Breaks local development workflow
+- Prevents agent verification without SST context
+- Creates tight coupling to deployment platform
 
-1. **Overkill** - Gemhog needs simple extraction, not complex agent chains
-2. **More boilerplate** - Vercel AI SDK is simpler for structured outputs
-3. **Abstraction overhead** - Direct provider APIs + AI SDK are cleaner
-4. **Dependency bloat** - Large package with many transitive dependencies
+**Instead:** Read environment variables that SST injects at deploy time.
 
-**Use Vercel AI SDK instead.**
-
----
-
-### LlamaIndex
-
-**Do not use LlamaIndex** for this project.
+### Do NOT Use Effect Schema at tRPC Boundaries
 
 **Why:**
+- Type inference incompatibility with tRPC
+- Bidirectional transforms break client/server type contract
+- Debugging type errors is extremely difficult
 
-1. **RAG-focused** - Gemhog doesn't need vector search/retrieval
-2. **Wrong paradigm** - We're extracting from known transcripts, not searching
-3. **Python-first** - TypeScript support is secondary
+**Instead:** Use Zod for tRPC input/output, Effect Schema internally.
 
-**Use direct transcript processing with AI SDK instead.**
-
----
-
-### node-cron or agenda.js
-
-**Do not use in-process schedulers.**
+### Do NOT Use node-cron or agenda.js
 
 **Why:**
+- Lambda functions don't persist
+- SST provides native Cron component
+- EventBridge is more reliable than in-process timers
 
-1. **Serverless architecture** - Lambda functions don't persist
-2. **SST provides Cron** - Native solution already available
-3. **Reliability** - EventBridge is more reliable than in-process timers
+**Instead:** Use SST v3 Cron component with EventBridge.
 
-**Use SST v3 Cron component instead.**
-
----
-
-### Alpha Vantage
-
-**Do not use as primary financial data source.**
+### Do NOT Use Jest
 
 **Why:**
+- Vitest is faster with native ESM support
+- Better TypeScript support out of the box
+- Jest-compatible API makes migration easy
 
-1. **Severely limited free tier** - 25 requests/day vs FMP's 250
-2. **Higher paid pricing** - $49/mo vs FMP's $19/mo
-3. **Less comprehensive** - Fewer endpoints, less historical data
+**Instead:** Use Vitest for all testing.
 
-**Use Financial Modeling Prep instead.**
-
----
-
-### Self-hosted Redis (ElastiCache node-based)
-
-**Do not use traditional ElastiCache** unless traffic is consistently high.
+### Do NOT Mix Effect Layers Between Test and Production
 
 **Why:**
+- Leads to subtle bugs where test behavior differs from production
+- Makes tests less reliable as indicators of real behavior
 
-1. **Always-on cost** - Pay even when idle
-2. **VPC complexity** - Requires networking configuration
-3. **Overkill for MVP** - Upstash scales from $0
-
-**Use Upstash for serverless Redis instead.**
-
----
-
-## Confidence Assessment
-
-| Category             | Confidence | Reasoning                                        |
-| -------------------- | ---------- | ------------------------------------------------ |
-| LLM Integration      | HIGH       | AI SDK 6 docs verified, Claude pricing confirmed |
-| Financial Data APIs  | HIGH       | FMP docs verified, pricing confirmed             |
-| Twitter Automation   | HIGH       | npm package verified, free tier limits confirmed |
-| Bluesky Automation   | HIGH       | Official docs verified, SDK active               |
-| Job Scheduling       | HIGH       | SST v3 docs verified, native to stack            |
-| Caching              | HIGH       | Upstash docs verified, serverless fit confirmed  |
-| Anti-recommendations | HIGH       | Based on architecture fit analysis               |
-
----
-
-## Integration Summary
-
-```
-                    +------------------+
-                    |   Next.js Web    |
-                    |   (shadcn/ui)    |
-                    +--------+---------+
-                             |
-                             | tRPC
-                             v
-                    +------------------+
-                    |   Hono Backend   |
-                    |   (Effect TS)    |
-                    +--------+---------+
-                             |
-         +-------------------+-------------------+
-         |                   |                   |
-         v                   v                   v
-+----------------+  +----------------+  +----------------+
-|  AI SDK 6 +    |  |   Upstash      |  |  PostgreSQL    |
-|  Claude API    |  |   Redis        |  |  (Drizzle)     |
-+----------------+  +----------------+  +----------------+
-         |
-         v
-+----------------+
-| Podscan.fm API |
-+----------------+
-
-+------------------+     +------------------+
-| SST v3 Cron      |---->| Lambda Functions |
-| (EventBridge)    |     | - Transcript     |
-+------------------+     | - Social Post    |
-                         +------------------+
-                                  |
-                    +-------------+-------------+
-                    |                           |
-                    v                           v
-           +----------------+         +----------------+
-           | Twitter API    |         | Bluesky API    |
-           | (twitter-api-v2)|        | (@atproto/api) |
-           +----------------+         +----------------+
-
-           +----------------+
-           | FMP API        |
-           | (Stock Data)   |
-           +----------------+
-```
+**Instead:** Clear separation: `*Live` layers for production, `*Test` layers for testing.
 
 ---
 
 ## Installation Commands
 
 ```bash
-# LLM Integration
-pnpm add ai @ai-sdk/anthropic @ai-sdk/openai
+# Core Effect ecosystem
+pnpm add effect @effect/schema @effect/platform @effect/platform-node
 
-# Social Media
-pnpm add twitter-api-v2 @atproto/api
+# Hono + Effect integration
+pnpm add @hono/effect-validator
 
-# Caching
-pnpm add @upstash/redis
+# Testing
+pnpm add -D vitest msw @playwright/test
 
-# Already included (validation)
-pnpm add zod
+# Already in stack (verify versions)
+pnpm add hono @trpc/server @trpc/client zod
 ```
 
 ---
@@ -605,15 +561,18 @@ pnpm add zod
 ## Environment Variables Required
 
 ```bash
-# LLM
+# Core application
+DATABASE_URL=postgres://...
+BETTER_AUTH_SECRET=...
+CORS_ORIGIN=https://gemhog.com
+
+# AI/LLM
 ANTHROPIC_API_KEY=sk-ant-...
 OPENAI_API_KEY=sk-...  # backup
 
-# Financial Data
-FMP_API_KEY=...
-
-# Podcast Transcripts
+# External APIs
 PODSCAN_API_KEY=...
+FMP_API_KEY=...  # Financial Modeling Prep (if used)
 
 # Social Media
 TWITTER_API_KEY=...
@@ -623,48 +582,60 @@ TWITTER_ACCESS_SECRET=...
 BLUESKY_HANDLE=...
 BLUESKY_APP_PASSWORD=...
 
-# Caching
+# Caching (optional)
 UPSTASH_REDIS_REST_URL=...
 UPSTASH_REDIS_REST_TOKEN=...
 ```
 
 ---
 
+## Confidence Assessment
+
+| Area                          | Confidence | Reasoning                                                       |
+| ----------------------------- | ---------- | --------------------------------------------------------------- |
+| Effect TS version/stability   | HIGH       | Verified via npm (3.19.14), official docs confirm API stability |
+| tRPC v11 requirements         | HIGH       | Official migration docs verify TypeScript >=5.7.2 requirement   |
+| Effect + tRPC incompatibility | HIGH       | Documented by developers, verified via community reports        |
+| Hono + Effect integration     | HIGH       | Official @hono/effect-validator package exists                  |
+| SST v3 Hono deployment        | HIGH       | Official SST documentation with examples                        |
+| Testing patterns              | HIGH       | Vitest + MSW patterns verified via Effect community guides      |
+| Playwright MCP                | MEDIUM     | Recent technology (March 2025), official Microsoft support      |
+
+---
+
 ## Sources
 
-### LLM/AI Integration
+### Effect TS
+- [Effect 3.0 Release](https://effect.website/blog/releases/effect/30/)
+- [Effect npm package](https://www.npmjs.com/package/effect)
+- [Effect Documentation](https://effect.website/docs/getting-started/introduction)
+- [Effect 3.19 Release](https://effect.website/blog/releases/effect/319/)
+- [Effect Patterns GitHub](https://github.com/PaulJPhilp/EffectPatterns)
 
-- [AI SDK Structured Data](https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data)
-- [AI SDK 6 Announcement](https://vercel.com/blog/ai-sdk-6)
-- [Claude Structured Outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)
-- [Anthropic Pricing](https://platform.claude.com/docs/en/about-claude/pricing)
+### tRPC
+- [tRPC v11 Announcement](https://trpc.io/blog/announcing-trpc-v11)
+- [tRPC v10 to v11 Migration](https://trpc.io/docs/migrate-from-v10-to-v11)
+- [tRPC Middleware](https://trpc.io/docs/server/middlewares)
 
-### Financial Data
+### Effect + tRPC Integration
+- [Replacing tRPC with Effect RPC](https://dev.to/titouancreach/how-i-replaced-trpc-with-effect-rpc-in-a-nextjs-app-router-application-4j8p)
+- [Effect Backend Implementation](https://www.typeonce.dev/article/how-to-implement-a-backend-with-effect)
 
-- [FMP API Documentation](https://site.financialmodelingprep.com/developer/docs)
-- [FMP Pricing](https://site.financialmodelingprep.com/pricing-plans)
-- [Financial APIs Comparison](https://medium.com/coinmonks/the-7-best-financial-apis-for-investors-and-developers-in-2025-in-depth-analysis-and-comparison-adbc22024f68)
+### Hono
+- [Hono Best Practices](https://hono.dev/docs/guides/best-practices)
+- [@hono/effect-validator npm](https://www.npmjs.com/package/@hono/effect-validator)
+- [@hono/effect-validator GitHub](https://github.com/honojs/middleware/tree/main/packages/effect-validator)
 
-### Social Media
+### SST v3
+- [SST Environment Variables](https://sst.dev/docs/environment-variables/)
+- [SST Hono on AWS](https://sst.dev/docs/start/aws/hono/)
+- [SST v3 Blog](https://sst.dev/blog/sst-v3/)
 
-- [twitter-api-v2 npm](https://www.npmjs.com/package/twitter-api-v2)
-- [X API Pricing](https://twitterapi.io/blog/twitter-api-pricing-2025)
-- [@atproto/api npm](https://www.npmjs.com/package/@atproto/api)
-- [Bluesky API Docs](https://docs.bsky.app/docs/get-started)
-
-### Job Scheduling
-
-- [SST v3 Cron](https://sst.dev/docs/component/aws/cron)
-- [SST v3 Announcement](https://sst.dev/blog/sst-v3/)
-
-### Caching
-
-- [Upstash vs ElastiCache](https://upstash.com/docs/redis/overall/compare)
-- [Upstash Redis Docs](https://upstash.com/docs/redis/overall/getstarted)
-
-### Podcast Data
-
-- [Podscan API Docs](https://podscan.fm/docs/api)
+### Testing
+- [Vitest and MSW with Effect](https://www.typeonce.dev/course/effect-beginners-complete-getting-started/testing-with-services/vitest-and-msw-testing-setup)
+- [Vitest Mocking Guide](https://vitest.dev/guide/mocking)
+- [Playwright MCP GitHub](https://github.com/microsoft/playwright-mcp)
+- [Playwright MCP Guide 2026](https://www.testleaf.com/blog/playwright-mcp-ai-test-automation-2026/)
 
 ---
 
