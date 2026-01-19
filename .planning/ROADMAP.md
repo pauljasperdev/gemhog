@@ -11,6 +11,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [ ] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing (gap closure: lint + type fixes)
+- [ ] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED)
 - [ ] **Phase 2: Security Workflow** - Security review process as a blocking gate
 - [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
@@ -38,6 +39,21 @@ Plans:
 - [x] 01-06-PLAN.md — Scalable integration test discovery with file suffix convention
 - [ ] 01-07-PLAN.md — Fix Biome lint warnings in apps/web (gap closure)
 - [ ] 01-08-PLAN.md — Fix TypeScript error - add hono to packages/api (gap closure)
+
+### Phase 1.1: Test File Convention Migration (INSERTED)
+**Goal**: Standardize test file naming: unit (*.test.ts), integration (*.int.test.ts), E2E (*.e2e.test.ts)
+**Depends on**: Phase 1 (testing infrastructure must be in place)
+**Requirements**: Derived from Phase 1 execution
+**Success Criteria** (what must be TRUE):
+  1. All unit tests use `*.test.ts` suffix
+  2. All integration tests use `*.int.test.ts` suffix
+  3. All E2E tests use `*.e2e.test.ts` suffix
+  4. Scripts (vitest configs, verify.sh) updated to match new conventions
+  5. Documentation (TESTING.md, STATE.md) reflects new convention
+**Plans**: 1 plan
+
+Plans:
+- [ ] 01.1-01-PLAN.md — Rename test files, update configs and documentation
 
 ### Phase 2: Security Workflow
 **Goal**: Security verification as a blocking workflow gate
@@ -96,11 +112,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 5/8 | In Progress (gap closure) | - |
+| 1.1 Test File Convention Migration | 0/1 | Not started (INSERTED) | - |
 | 2. Security Workflow | 0/? | Not started | - |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
