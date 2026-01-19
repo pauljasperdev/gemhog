@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 1.1 complete, ready for Phase 2
+**Current focus:** Phase 2 complete, security workflow established
 
 ## Current Position
 
-Phase: 1.1 COMPLETE (Test File Convention Migration)
+Phase: 2 of 6 (Security Workflow)
 Plan: 1/1 plans complete
-Status: Phase 1.1 complete
-Last activity: 2026-01-19 - Completed 01.1-01-PLAN.md (test file convention migration)
+Status: Phase 2 complete
+Last activity: 2026-01-19 - Completed 02-01-PLAN.md (security workflow)
 
-Progress: ████░░░░░░ ~27% (Phase 1 + 1.1 complete, 5 phases remain)
+Progress: █████░░░░░ ~36% (Phase 1 + 1.1 + 2 complete, 4 phases remain)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 2.9 min
-- Total execution time: 23 min
+- Total execution time: 26 min
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: ████░░░░░░ ~27% (Phase 1 + 1.1 complete, 5 phases 
 |-------|-------|-------|----------|
 | 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
+| 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-06 (4 min), 01-07 (2 min), 01-08 (<1 min), 01.1-01 (2 min)
+- Last 5 plans: 01-07 (2 min), 01-08 (<1 min), 01.1-01 (2 min), 02-01 (3 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -69,6 +70,11 @@ Recent decisions affecting current work:
 | Composite keys for nested map iterations | ${message.id}-${index} avoids noArrayIndexKey warning | 01-07 |
 | Underscore prefix for unused props | session: _session indicates intentionally unused | 01-07 |
 | Add hono as regular dependency in packages/api | Consistency with apps/server, even for type-only imports | 01-08 |
+| Security review runs on every commit | Security issues hide in unexpected places | 02-01 |
+| Medium severity blocks completion | Prevents accumulation of Medium issues | 02-01 |
+| SECURITY-REVIEW.md is append-only log | Maintains full audit trail | 02-01 |
+| CONCERNS.md references SECURITY-REVIEW.md | Single source of truth, no duplication | 02-01 |
+| pnpm audit --audit-level moderate in verify.sh | Matches workflow severity (moderate = blocks) | 02-01 |
 
 ### Pending Todos
 
@@ -79,6 +85,8 @@ None.
 - Pre-existing lint issues remain in mode-toggle.tsx, label.tsx, .agent/prd.json (not in scope of 01-07)
 - Docker socket access needed for integration tests (environment-specific)
 - Playwright browser dependencies needed for E2E tests (environment-specific)
+- Security findings SEC-001, SEC-002, SEC-003 (High/Medium) documented in SECURITY-REVIEW.md - blocking for completion
+- pnpm audit shows moderate vulnerability in esbuild (drizzle-kit dev dependency)
 
 ## Phase 1 Summary
 
@@ -133,10 +141,28 @@ Test file convention migration complete:
 - `*.int.test.ts` - Integration tests (was *.integration.test.ts)
 - `*.e2e.test.ts` - E2E tests (was *.spec.ts)
 
+## Phase 2 Summary
+
+Security workflow complete:
+
+| Plan | Summary | Duration | Status |
+|------|---------|----------|--------|
+| 02-01 | Security verification workflow + pnpm audit | 3 min | Complete |
+
+**Security Workflow Established:**
+- CLAUDE.md: Security Verification (MANDATORY) section with 7-step workflow
+- SECURITY-REVIEW.md: Cumulative findings log (append-only)
+- CONCERNS.md: References SECURITY-REVIEW.md (no duplication)
+- verify.sh: Dependency Security step with pnpm audit
+- Severity blocking: Critical/High/Medium block, Low does not
+
+**New Commands:**
+- `pnpm security:audit` - Run dependency audit standalone
+
 ## Session Continuity
 
-Last session: 2026-01-19T19:56:56Z
-Stopped at: Completed 01.1-01-PLAN.md (test file convention migration)
+Last session: 2026-01-19T20:13:00Z
+Stopped at: Completed 02-01-PLAN.md (security workflow)
 Resume file: None
 
-Next: Execute Phase 2
+Next: Execute Phase 3
