@@ -1,80 +1,132 @@
-# Testing Patterns
+# Testing Infrastructure
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-19
+**Updated:** 2026-01-19
 
-## Planned Testing Infrastructure
+## Current State
 
-**Verification Order (Fail Fast, Expensive Last):**
+| Test Type | Status | Command | Notes |
+|-----------|--------|---------|-------|
+| Static Analysis | Working | `pnpm check` | Pre-existing lint issues need cleanup |
+| Type Check | Working | `pnpm check-types` | Pre-existing type errors need cleanup |
+| Unit Tests | Working | `pnpm test:unit` | Vitest configured, example test passes |
+| Integration Tests | Working | `pnpm test:integration` | Uses vitest.integration.config.ts |
+| E2E Tests | Working | `pnpm test:e2e` | Uses playwright.config.ts |
+| Pre-commit Hooks | Working | Lefthook | Runs on git commit |
+| Full Pipeline | Partial | `pnpm verify` | Fails at static analysis (pre-existing issues) |
 
-1. **Static Analysis** - Biome lint + TypeScript strict type checking
-2. **Unit Tests** - Vitest for pure logic, mocked externals
-3. **Integration Tests** - Local Postgres Docker + Test stage AWS resources
-4. **Security Verification** - Checklist-based review producing
-   SECURITY-REVIEW.md (see below)
-5. **E2E Verification** - Playwright MCP against localhost dev server
+## Verification Requirements
 
-**Rationale:** Cheap, fast tests run first to catch issues early. Security
-review catches vulnerabilities before expensive E2E. E2E tests run last as final
-verification gate.
+**Tests must pass before work is complete. "Runs but fails" is NOT acceptable.**
+
+### When to Run What
+
+| Change Type | Required Commands |
+|-------------|-------------------|
+| Any code change | `pnpm verify:commit` (static + types + unit) |
+| Database/schema changes | `pnpm test:integration` |
+| UI/user flow changes | `pnpm test:e2e` |
+| Before merge/release | `pnpm verify` (full pipeline) |
+
+### Verification Order (Fail Fast, Expensive Last)
+
+```
+1. Static Analysis (pnpm check)      - Biome lint, ~1s
+2. Type Check (pnpm check-types)     - TypeScript strict, ~3s
+3. Unit Tests (pnpm test:unit)       - Vitest, mocked externals, ~1s
+4. Integration Tests                  - Docker + Postgres required
+5. E2E Tests                         - Full app startup, Playwright
+```
+
+Run cheap/fast tests first. Stop on first failure.
+
+## Test Commands
+
+```bash
+# Static analysis (Biome lint + format check)
+pnpm check
+
+# Type checking
+pnpm check-types
+
+# Unit tests (Vitest, all packages except db)
+pnpm test:unit
+
+# Integration tests (requires Docker)
+pnpm test:integration
+
+# E2E tests (requires env vars, starts dev servers)
+pnpm test:e2e
+
+# Pre-commit equivalent (manual)
+pnpm verify:commit
+
+# Full verification pipeline
+pnpm verify
+```
 
 ## Test Framework
 
-**Runner:**
+**Unit Tests:** Vitest 4.x
+- Config: `vitest.config.ts` (root) + per-package configs
+- Projects: apps/server, apps/web, packages/api, packages/auth, packages/db, packages/env
+- Pattern: `*.test.ts` files
 
-- Not yet configured
-- Planned: Vitest for unit/integration tests
+**Integration Tests:** Vitest 4.x
+- Config: `vitest.integration.config.ts` (root)
+- Setup: `test/integration-setup.ts` (Docker auto-start)
+- Pattern: `*.integration.test.ts` files
+- Discovered via glob across all packages
 
-**Assertion Library:**
+**E2E:** Playwright
+- Config: `playwright.config.ts`
+- Tests: `apps/web/tests/e2e/*.spec.ts`
+- Auto-starts dev servers via webServer config
 
-- Not yet configured
-- Planned: Vitest built-in assertions
+**Pre-commit:** Lefthook
+- Config: `lefthook.yml`
+- Runs: biome (staged files) + typecheck
 
-**E2E Framework:**
+## Test File Naming Convention
 
-- Not yet configured
-- Planned: Playwright MCP for browser-based verification
+Tests are co-located with implementation using clear suffixes:
 
-**Run Commands:**
+| Suffix | Type | Command | Description |
+|--------|------|---------|-------------|
+| `*.test.ts` | Unit | `pnpm test:unit` | Fast, mocked externals |
+| `*.integration.test.ts` | Integration | `pnpm test:integration` | Real DB, Docker required |
+| `*.spec.ts` | E2E | `pnpm test:e2e` | Playwright, full app |
 
-```bash
-# Planned commands (not yet configured):
-# pnpm check                   # Static analysis (Biome + TypeScript)
-# pnpm test                    # Run unit tests
-# pnpm test:integration        # Run integration tests
-# pnpm test:e2e                # Run Playwright MCP tests
-```
-
-## Test File Organization
-
-**Location:**
-
-- No test files found in codebase
-- Recommended: Co-locate tests (`*.test.ts` alongside source)
-
-**Naming:**
-
-- No convention established
-- Recommended: `*.test.ts` or `*.spec.ts`
-
-**Structure:**
+**Example structure:**
 
 ```
-# Recommended structure:
 src/
-  lib/
-    utils.ts
-    utils.test.ts
-  services/
-    auth-service.ts
-    auth-service.test.ts
+  users.ts
+  users.test.ts              # Unit test (mocked DB)
+  users.integration.test.ts  # Integration test (real DB)
+  auth/
+    login.ts
+    login.test.ts            # Unit test
 ```
 
-## Test Structure
+## Adding Integration Tests
 
-**Suite Organization:**
+Any package can have integration tests. Simply:
+
+1. Create `src/something.integration.test.ts` (co-located with implementation)
+2. Run `pnpm test:integration` - automatically discovered and run
+3. Docker is auto-started if not running
+
+The `vitest.integration.config.ts` discovers all `*.integration.test.ts` files across:
+- `apps/**/src/**/*.integration.test.ts`
+- `packages/**/src/**/*.integration.test.ts`
+
+The shared `test/integration-setup.ts` handles Docker startup for all packages.
+
+## Test Patterns
+
+### Unit Test Structure
 
 ```typescript
-// Recommended pattern (if tests are added):
 import { describe, it, expect, beforeEach } from "vitest";
 
 describe("ModuleName", () => {
@@ -85,169 +137,95 @@ describe("ModuleName", () => {
 
     it("should handle valid input", () => {
       // arrange
+      const input = "test";
+
       // act
+      const result = functionName(input);
+
       // assert
+      expect(result).toBe("expected");
     });
   });
 });
 ```
 
-**Patterns:**
-
-- Not established (no tests exist)
-- Recommended: beforeEach for per-test setup
-- Recommended: arrange/act/assert structure
-
-## Mocking
-
-**Framework:**
-
-- Not configured
-
-**Patterns:**
-
-- Not established
-
-**What to Mock (Recommended):**
-
-- External API calls (Google AI, Polar)
-- Database operations
-- Environment variables
-
-**What NOT to Mock:**
-
-- Internal pure functions
-- Simple utilities
-
-## Fixtures and Factories
-
-**Test Data:**
-
-- Not established
-
-**Location:**
-
-- Recommended: `tests/fixtures/` for shared fixtures
-- Recommended: Factory functions in test files
-
-## Coverage
-
-**Requirements:**
-
-- Not configured
-
-**Configuration:**
-
-- No coverage tools installed
-
-**View Coverage:**
-
-```bash
-# No coverage configured
-# Recommended: pnpm run test:coverage
-```
-
-## Test Types
-
-**Unit Tests:**
-
-- Not implemented
-- Planned for: Pure logic, API procedures, utility functions
-- Framework: Vitest with mocked externals
-- Backend testability: Effect TS enables dependency injection for easy mocking
-
-**Integration Tests:**
-
-- Not implemented
-- Planned for: Auth flows, database operations, external service integration
-- Infrastructure: Local Postgres Docker for database tests
-- AWS resources: Test stage deployed resources via env vars (S3, etc.)
-
-**E2E Tests:**
-
-- Not implemented
-- Planned for: Full user flows (sign-up, checkout, core features)
-- Framework: Playwright MCP against localhost dev server
-- Runs last in verification pipeline (most expensive)
-
-**Security Verification:**
-
-- Checklist-based review using `.planning/codebase/SECURITY-CHECKLIST.md`
-- Produces `SECURITY-REVIEW.md` per feature/phase
-- Runs after integration tests, before E2E
-- Critical/High findings block merge
-- Medium findings tracked in `CONCERNS.md`
-- Includes: input validation, auth/authz, secrets, XSS, CSRF, rate limiting,
-  dependencies
-- Also runs `pnpm audit` for dependency vulnerabilities
-
-## Common Patterns
-
-**Async Testing:**
+### Integration Test (Database)
 
 ```typescript
-// Recommended pattern:
-it("should handle async operation", async () => {
-  const result = await asyncFunction();
-  expect(result).toBe("expected");
+import { describe, it, expect } from "vitest";
+import { db } from "../client";
+
+describe("Database Connection", () => {
+  it("should connect and query", async () => {
+    const result = await db.execute("SELECT 1 as value");
+    expect(result.rows[0].value).toBe(1);
+  });
 });
 ```
 
-**Error Testing:**
+### E2E Test (Playwright)
 
 ```typescript
-// Recommended pattern:
-it("should throw on invalid input", () => {
-  expect(() => functionCall()).toThrow("error message");
+import { test, expect } from "@playwright/test";
+
+test.describe("Homepage", () => {
+  test("should load and display title", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveTitle(/Gemhog/);
+  });
 });
 ```
 
-**tRPC Testing (Recommended):**
+### tRPC Procedure Test
 
 ```typescript
-// Test procedure with mock context
+import { describe, it, expect } from "vitest";
 import { appRouter } from "@gemhog/api/routers";
 
-const caller = appRouter.createCaller({
-  session: null, // or mock session
-});
+describe("Health Check", () => {
+  it("should return OK", async () => {
+    const caller = appRouter.createCaller({
+      session: null,
+    });
 
-it("should return OK", async () => {
-  const result = await caller.healthCheck();
-  expect(result).toBe("OK");
+    const result = await caller.healthCheck();
+    expect(result).toBe("OK");
+  });
 });
 ```
 
-**Snapshot Testing:**
+## What to Mock
 
-- Not used
+**DO mock:**
+- External API calls (Google AI, Polar)
+- Time/dates for deterministic tests
+- Environment variables
 
-## Recommendations
+**DON'T mock:**
+- Internal pure functions
+- Database in integration tests (use real Docker DB)
+- HTTP in E2E tests (use real servers)
 
-Since no testing infrastructure exists, consider:
+## Known Issues
 
-1. **Add Vitest** for fast TypeScript testing
+**Pre-existing failures that need cleanup:**
 
-   ```bash
-   pnpm add -D vitest @vitest/coverage-v8
-   ```
+1. **Lint issues** - Multiple files have Biome warnings (useExhaustiveDependencies, etc.)
+2. **Type errors** - apps/server has TypeScript errors
 
-2. **Add test scripts** to root `package.json`:
+These are documented in `.planning/codebase/CONCERNS.md`.
 
-   ```json
-   {
-     "scripts": {
-       "test": "vitest",
-       "test:coverage": "vitest --coverage"
-     }
-   }
-   ```
+## Requirements for "Testing Complete"
 
-3. **Priority test areas:**
-   - Authentication flows (`packages/auth/`)
-   - API procedures (`packages/api/`)
-   - Critical UI components (forms)
+Testing infrastructure is only complete when:
+
+- [ ] `pnpm check` passes (no lint errors)
+- [ ] `pnpm check-types` passes (no type errors)
+- [ ] `pnpm test:unit` passes (all unit tests green)
+- [ ] `pnpm test:integration` passes (with Docker running)
+- [ ] `pnpm test:e2e` passes (with env vars configured)
+- [ ] `pnpm verify` passes (full pipeline green)
 
 ---
 
-_Testing analysis: 2026-01-15_ _Update when test patterns change_
+_Updated: 2026-01-19_
