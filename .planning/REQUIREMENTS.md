@@ -28,9 +28,9 @@ Requirements for V0 foundation release. Each maps to roadmap phases.
 
 ### Security
 
-- [ ] **SEC-01**: Security checklist review produces `SECURITY-REVIEW.md`
-- [ ] **SEC-02**: Critical or high security findings block merge/deployment
-- [ ] **SEC-03**: Ongoing security concerns are tracked in `.planning/codebase/CONCERNS.md`
+- [x] **SEC-01**: Security checklist review produces `SECURITY-REVIEW.md`
+- [x] **SEC-02**: Critical or high security findings block merge/deployment
+- [x] **SEC-03**: Ongoing security concerns are tracked in `.planning/codebase/CONCERNS.md`
 
 ### Infrastructure
 
@@ -106,9 +106,9 @@ Which phases cover which requirements. Updated by create-roadmap.
 | TEST-04 | Phase 1 | Complete |
 | TEST-05 | Phase 1 | Complete |
 | TEST-06 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Pending |
-| SEC-02 | Phase 2 | Pending |
-| SEC-03 | Phase 2 | Pending |
+| SEC-01 | Phase 2 | Complete |
+| SEC-02 | Phase 2 | Complete |
+| SEC-03 | Phase 2 | Complete |
 | INFRA-03 | Phase 3 | Pending |
 | INFRA-04 | Phase 3 | Pending |
 | INFRA-01 | Phase 4 | Pending |
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 — Phase 1 complete, TEST-01 through TEST-06 verified*
+*Last updated: 2026-01-19 — Phase 2 complete, SEC-01 through SEC-03 verified*
