@@ -29,6 +29,8 @@ describe("database connection", () => {
 
   it("should return current timestamp", async () => {
     const result = await db.execute(sql`SELECT NOW() as now`);
-    expect(result.rows[0].now).toBeInstanceOf(Date);
+    const now = result.rows[0].now;
+    // Raw SQL returns timestamp as string, verify it's a valid parseable date
+    expect(new Date(now as string).getTime()).not.toBeNaN();
   });
 });
