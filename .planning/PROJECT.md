@@ -27,10 +27,15 @@ Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip th
 
 ### Active
 
+- [ ] Testing infrastructure for agent verification workflow:
+  - Static analysis: Biome lint + TypeScript strict type checking
+  - Unit tests: Vitest for pure logic, mocked externals
+  - Integration tests: Local Postgres Docker + Test stage AWS resources
+  - E2E verification: Playwright MCP against localhost dev server
+  - Verification order: static → unit → integration → Playwright MCP (fail fast, expensive last)
 - [ ] SST v3 migration for AWS deployment
 - [ ] Local development without SST SDK dependency (use deployed stage resources via env vars)
 - [ ] Domain-driven package structure (schemas live with their domain, e.g., user.ts + user.sql.ts)
-- [ ] Testing infrastructure (unit, integration, E2E) for agent workflow validation
 - [ ] Effect TS integration for backend (testability, DI)
 - [ ] Stock pages with dynamic routes based on available data
 - [ ] Thesis extraction from podcast transcripts (via podscan.fm API)
@@ -89,6 +94,8 @@ Theses are NOT financial targets or price predictions. They are market perspecti
 - **Backend Architecture**: Effect TS — required for testability and dependency injection without infrastructure hassle
 - **Data Source**: Podscan.fm API — podcast transcript provider
 - **Regulatory**: No investment advice — research summaries only, user makes own decisions
+- **SST-agnostic application code**: App reads env vars only, no SST SDK imports — enables local dev with `pnpm dev` and agent verification without SST multiplexer
+- **Test stage for external resources**: AWS resources that can't run locally (S3, etc.) use deployed Test stage via env vars in `.env` files
 
 ## Key Decisions
 
@@ -97,11 +104,12 @@ Theses are NOT financial targets or price predictions. They are market perspecti
 | SST v3 for deployment | TypeScript-native IaC, good DX, AWS flexibility | — Pending |
 | Effect TS for backend | Testability, DI, composable error handling | — Pending |
 | Domain-driven packages | Colocation of schema + logic reduces cognitive load | — Pending |
-| Testing infrastructure early | Enables agent workflows to validate work, catches regressions | — Pending |
+| Testing infrastructure early | Fail-fast with cheap tests (static, unit, integration), Playwright MCP as final verification gate | — Pending |
+| SST-agnostic app code | App reads env vars only; SST injects at deploy, `.env` files for local/test; agents verify without SST | — Pending |
 | Page per stock (not per thesis) | Multiple theses aggregate on same stock over time | — Pending |
 | Podscan.fm for transcripts | Existing API, reasonable coverage | — Pending |
 | Twitter/X for distribution | Quick reach, free tier available, fits MVP | — Pending |
 | Bluesky for distribution | Free API, growing platform, complements Twitter | — Pending |
 
 ---
-*Last updated: 2026-01-19 refined scope — two-sided value: expert insight extraction + financial data accessibility*
+*Last updated: 2026-01-19 added testing infrastructure and SST-agnostic architecture details*

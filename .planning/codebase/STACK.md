@@ -28,8 +28,9 @@
 - Hono 4.11.4 - Backend HTTP framework (`apps/server/package.json`)
 - React 19.2.3 - UI library (`apps/web/package.json`)
 
-**Testing:**
-- Not configured (no test framework installed)
+**Testing (Planned):**
+- Vitest - Unit testing (not yet configured)
+- Playwright MCP - E2E verification (not yet configured)
 
 **Build/Dev:**
 - tsdown 0.16.5 - TypeScript build tool (`apps/server/package.json`)
@@ -82,9 +83,10 @@
 - pnpm for package management
 
 **Production:**
-- Node.js server for Hono backend
-- Next.js hosting (Vercel compatible)
+- SST v3 on AWS - Infrastructure-as-code deployment
+- SST-agnostic app code (reads env vars only, no SST SDK imports)
 - PostgreSQL database
+- Test stage for external AWS resources (S3, etc.) during development
 
 ---
 
