@@ -35,6 +35,10 @@ Progress: ███░░░░░░░ ~20% (infrastructure complete, minor cl
 
 ## Accumulated Context
 
+### Roadmap Evolution
+
+- Phase 1.1 inserted after Phase 1: Test file convention migration (URGENT) - standardize to *.test.ts, *.int.test.ts, *.e2e.test.ts
+
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.

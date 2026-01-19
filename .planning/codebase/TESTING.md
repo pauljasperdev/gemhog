@@ -23,9 +23,9 @@
 | Change Type | Required Commands |
 |-------------|-------------------|
 | Any code change | `pnpm verify:commit` (static + types + unit) |
-| Database/schema changes | `pnpm test:integration` |
+| Database/schema changes | `pnpm db:start && pnpm test:integration` |
 | UI/user flow changes | `pnpm test:e2e` |
-| Before merge/release | `pnpm verify` (full pipeline) |
+| Before merge/release | `pnpm db:start && pnpm verify` (full pipeline) |
 
 ### Verification Order (Fail Fast, Expensive Last)
 
@@ -51,7 +51,8 @@ pnpm check-types
 # Unit tests (Vitest, all packages except db)
 pnpm test:unit
 
-# Integration tests (requires Docker)
+# Integration tests (start database first)
+pnpm db:start
 pnpm test:integration
 
 # E2E tests (requires env vars, starts dev servers)
@@ -73,7 +74,7 @@ pnpm verify
 
 **Integration Tests:** Vitest 4.x
 - Config: `vitest.integration.config.ts` (root)
-- Setup: `test/integration-setup.ts` (Docker auto-start)
+- Prerequisite: `pnpm db:start` (must start database manually before running)
 - Pattern: `*.integration.test.ts` files
 - Discovered via glob across all packages
 
@@ -113,14 +114,12 @@ src/
 Any package can have integration tests. Simply:
 
 1. Create `src/something.integration.test.ts` (co-located with implementation)
-2. Run `pnpm test:integration` - automatically discovered and run
-3. Docker is auto-started if not running
+2. Run `pnpm db:start` to start the PostgreSQL container
+3. Run `pnpm test:integration` - tests are automatically discovered and run
 
 The `vitest.integration.config.ts` discovers all `*.integration.test.ts` files across:
 - `apps/**/src/**/*.integration.test.ts`
 - `packages/**/src/**/*.integration.test.ts`
-
-The shared `test/integration-setup.ts` handles Docker startup for all packages.
 
 ## Test Patterns
 
