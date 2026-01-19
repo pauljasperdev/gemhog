@@ -20,9 +20,10 @@ export default function AIPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional scroll on message count change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages.length]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,7 +57,7 @@ export default function AIPage() {
                 if (part.type === "text") {
                   return (
                     <Streamdown
-                      key={index}
+                      key={`${message.id}-${index}`}
                       isAnimating={
                         status === "streaming" && message.role === "assistant"
                       }
