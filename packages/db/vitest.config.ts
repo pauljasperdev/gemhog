@@ -6,7 +6,7 @@ export default defineProject({
     name: "@gemhog/db",
     environment: "node",
     include: ["src/**/*.test.ts"],
-    exclude: ["**/*.integration.test.ts"],
+    exclude: ["**/*.int.test.ts"],
     // No globalSetup needed - integration tests use vitest.integration.config.ts
   },
 });

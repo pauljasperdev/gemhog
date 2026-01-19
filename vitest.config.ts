@@ -7,7 +7,7 @@ export default defineConfig({
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
-      "**/*.integration.test.ts", // Integration tests have their own config
+      "**/*.int.test.ts", // Integration tests have their own config
     ],
     reporters: ["default"],
     coverage: {
@@ -19,7 +19,7 @@ export default defineConfig({
         "**/dist/**",
         "**/*.test.ts",
         "**/*.spec.ts",
-        "**/*.integration.test.ts",
+        "**/*.int.test.ts",
       ],
     },
   },
