@@ -12,7 +12,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 
 - [x] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing ✓
 - [x] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED) ✓
-- [ ] **Phase 2: Security Workflow** - Security review process as a blocking gate
+- [x] **Phase 2: Security Workflow** - Security review process as a blocking gate ✓
 - [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent verification workflow
@@ -66,7 +66,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 02-01-PLAN.md — Agent-driven security workflow documentation and pnpm audit integration
+- [x] 02-01-PLAN.md — Agent-driven security workflow documentation and pnpm audit integration
 
 ### Phase 3: Core Consolidation
 **Goal**: Merge db + auth packages into domain-driven core with Effect TS
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 7/7 | ✓ Complete | 2026-01-19 |
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
-| 2. Security Workflow | 0/1 | Planned | - |
+| 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
