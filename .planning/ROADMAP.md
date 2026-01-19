@@ -10,7 +10,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing (gap closure: lint + type fixes)
+- [x] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing ✓
 - [ ] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED)
 - [ ] **Phase 2: Security Workflow** - Security review process as a blocking gate
 - [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
@@ -116,7 +116,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Testing Infrastructure | 5/8 | In Progress (gap closure) | - |
+| 1. Testing Infrastructure | 7/7 | ✓ Complete | 2026-01-19 |
 | 1.1 Test File Convention Migration | 0/1 | Not started (INSERTED) | - |
 | 2. Security Workflow | 0/? | Not started | - |
 | 3. Core Consolidation | 0/? | Not started | - |
