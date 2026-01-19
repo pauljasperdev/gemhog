@@ -68,45 +68,29 @@ bugs.
 
 ## Security Considerations
 
-Security findings from reviews. Critical/High must be resolved before merge. See
-`SECURITY-CHECKLIST.md` for review process.
+Security findings from reviews. See `.planning/codebase/SECURITY-REVIEW.md` for
+full audit trail and details. Critical/High/Medium must be resolved before
+declaring work complete.
 
-### High Severity
+### Current Open Findings
 
-**[SEC-001] Missing input validation on AI endpoint:**
+**Summary (as of 2026-01-19):**
 
-- Severity: **High**
-- Risk: Malformed or oversized payloads could cause resource exhaustion
-- File: `apps/server/src/index.ts` (lines 38-51)
-- Category: Input Validation
-- Status: Open
-- Recommendations: Add Zod validation for message array, limit message count
+| Severity | Open | Fixed |
+|----------|------|-------|
+| Critical | 0 | 0 |
+| High | 2 | 0 |
+| Medium | 1 | 0 |
+| Low | 0 | 0 |
 
-**[SEC-002] No rate limiting:**
+**Blocking findings exist:** YES (2 High, 1 Medium)
 
-- Severity: **High**
-- Risk: AI endpoint vulnerable to abuse/DoS, potential cost explosion
-- File: `apps/server/src/index.ts` (AI endpoint)
-- Category: Rate Limiting
-- Status: Open
-- Recommendations: Add rate limiting middleware (e.g., Hono rate-limiter)
+**Open findings (details in SECURITY-REVIEW.md):**
+- [SEC-001] High - Missing input validation on AI endpoint
+- [SEC-002] High - No rate limiting
+- [SEC-003] Medium - Debug logging exposes data
 
-### Medium Severity
-
-**[SEC-003] Debug logging exposes data:**
-
-- Severity: **Medium**
-- Risk: `console.log` of subscription data could expose sensitive info in
-  production logs
-- File: `apps/web/src/app/dashboard/dashboard.tsx` (line 18)
-- Category: Logging
-- Status: Open
-- Recommendations: Remove debug logging or guard with `process.env.NODE_ENV`
-  check
-
-### Low Severity
-
-None currently tracked.
+_Last synced from SECURITY-REVIEW.md: 2026-01-19_
 
 ## Performance Bottlenecks
 
