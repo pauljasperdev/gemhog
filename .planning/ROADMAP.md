@@ -10,7 +10,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [x] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing
+- [ ] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing (gap closure: lint + type fixes)
 - [ ] **Phase 2: Security Workflow** - Security review process as a blocking gate
 - [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
@@ -28,12 +28,16 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
   3. Developer can run integration tests against local Postgres Docker
   4. Developer can run integration tests against Test-stage AWS via env vars
   5. Developer can run E2E tests via Playwright MCP against localhost dev server
-**Plans**: 3 plans in 2 waves
+**Plans**: 8 plans
 
 Plans:
 - [x] 01-01-PLAN.md — Static analysis + Vitest unit test framework
 - [x] 01-02-PLAN.md — Integration tests with Docker auto-start
 - [x] 01-03-PLAN.md — E2E tests, pre-commit hooks, orchestration script
+- [x] 01-04-PLAN.md — Fix UAT issues (integration script bug, E2E env vars)
+- [x] 01-06-PLAN.md — Scalable integration test discovery with file suffix convention
+- [ ] 01-07-PLAN.md — Fix Biome lint warnings in apps/web (gap closure)
+- [ ] 01-08-PLAN.md — Fix TypeScript error - add hono to packages/api (gap closure)
 
 ### Phase 2: Security Workflow
 **Goal**: Security verification as a blocking workflow gate
@@ -96,7 +100,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Testing Infrastructure | 3/3 | ✓ Complete | 2026-01-19 |
+| 1. Testing Infrastructure | 5/8 | In Progress (gap closure) | - |
 | 2. Security Workflow | 0/? | Not started | - |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
