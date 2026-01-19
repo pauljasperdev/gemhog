@@ -7,14 +7,15 @@ import { trpc } from "@/utils/trpc";
 
 export default function Dashboard({
   customerState,
-  session,
+  session: _session,
 }: {
   customerState: ReturnType<typeof authClient.customer.state>;
   session: typeof authClient.$Infer.Session;
 }) {
   const privateData = useQuery(trpc.privateData.queryOptions());
 
-  const hasProSubscription = customerState?.activeSubscriptions?.length! > 0;
+  const hasProSubscription =
+    (customerState?.activeSubscriptions?.length ?? 0) > 0;
   console.log("Active subscriptions:", customerState?.activeSubscriptions);
 
   return (

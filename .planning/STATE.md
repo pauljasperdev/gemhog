@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 1 complete - integration test convention established
+**Current focus:** Phase 1 gap closure - type errors fixed, lint issues remain
 
 ## Current Position
 
 Phase: 1 of 5 (Testing Infrastructure)
-Plan: 5 of 5 plans complete (including integration test convention)
-Status: Testing infrastructure complete, pre-existing lint/type issues remain
-Last activity: 2026-01-19 - Completed 01-06 integration test convention plan
+Plan: 6 of 8 plans complete (01-08 gap closure done)
+Status: Type checking passes, lint issues remain for 01-07
+Last activity: 2026-01-19 - Completed 01-08 (add missing hono dependency)
 
-Progress: ███░░░░░░░ ~20% (infrastructure complete, codebase cleanup needed)
+Progress: ███░░░░░░░ ~20% (infrastructure complete, lint cleanup needed)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 3.6 min
-- Total execution time: 18 min
+- Total plans completed: 6
+- Average duration: 3.2 min
+- Total execution time: 19 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Testing Infrastructure | 5/5 | 18 min | 3.6 min |
+| 1. Testing Infrastructure | 6/8 | 19 min | 3.2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (2 min), 01-03 (3 min), 01-04 (5 min), 01-06 (4 min)
+- Last 5 plans: 01-03 (3 min), 01-04 (5 min), 01-06 (4 min), 01-08 (<1 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -58,6 +58,7 @@ Recent decisions affecting current work:
 | Use *.integration.test.ts suffix convention | Clear separation from unit tests, glob-discoverable | 01-06 |
 | Single test/integration-setup.ts for all packages | Consistent Docker handling, avoids duplication | 01-06 |
 | Use isolate: false, fileParallelism: false | Vitest 4 removed poolOptions, these are equivalents | 01-06 |
+| Add hono as regular dependency in packages/api | Consistency with apps/server, even for type-only imports | 01-08 |
 
 ### Pending Todos
 
@@ -65,14 +66,13 @@ None.
 
 ### Blockers/Concerns
 
-- Pre-existing lint issues in codebase cause `pnpm check` to exit non-zero (expected CI behavior, cleanup needed)
-- Pre-existing type errors cause `pnpm check-types` to exit non-zero
+- Pre-existing lint issues in codebase cause `pnpm check` to exit non-zero (expected CI behavior, cleanup needed in 01-07)
 - Docker socket access needed for integration tests (environment-specific)
 - Playwright browser dependencies needed for E2E tests (environment-specific)
 
 ## Phase 1 Summary
 
-Testing infrastructure complete - scripts work, pre-existing issues remain:
+Testing infrastructure complete - type check passes, lint cleanup pending:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
@@ -81,11 +81,14 @@ Testing infrastructure complete - scripts work, pre-existing issues remain:
 | 01-03 | Playwright E2E + Lefthook hooks + verify.sh | 3 min | Complete |
 | 01-04 | Fix test bugs from UAT | 5 min | Complete |
 | 01-06 | Integration test convention (*.integration.test.ts) | 4 min | Complete |
+| 01-07 | Fix pre-existing lint issues | - | Pending |
+| 01-08 | Add missing hono dependency | <1 min | Complete |
 
 **Script Status (all working):**
 - `pnpm test:unit` - Passes, excludes *.integration.test.ts
 - `pnpm test:integration` - Uses vitest.integration.config.ts, discovers all packages
 - `pnpm test:e2e` - webServer starts with test env vars
+- `pnpm check-types` - PASSES (fixed in 01-08)
 
 **Test File Convention:**
 - `*.test.ts` - Unit tests (mocked, fast)
@@ -93,22 +96,22 @@ Testing infrastructure complete - scripts work, pre-existing issues remain:
 - `*.spec.ts` - E2E tests (Playwright)
 
 **Remaining Issues (pre-existing, not test infrastructure):**
-1. Lint issues in apps/web and packages/db (Biome finds 6 errors)
-2. Type errors in apps/server
-3. Empty .agent/prd.json file
+1. Lint issues in apps/web (Biome finds errors) - to fix in 01-07
+2. Empty .agent/prd.json file - to fix in 01-07
 
 **Key Commands:**
 - `pnpm check` - Static analysis with Biome (fails: pre-existing lint issues)
+- `pnpm check-types` - Type checking (PASSES)
 - `pnpm test:unit` - Unit tests (PASSES)
 - `pnpm test:integration` - Integration tests (works, needs Docker)
 - `pnpm test:e2e` - E2E tests (works, needs Playwright deps)
-- `pnpm verify:commit` - Pre-commit check (fails: pre-existing issues)
-- `pnpm verify` - Full verification pipeline (fails: pre-existing issues)
+- `pnpm verify:commit` - Pre-commit check (fails: pre-existing lint issues)
+- `pnpm verify` - Full verification pipeline (fails: pre-existing lint issues)
 
 ## Session Continuity
 
-Last session: 2026-01-19T18:06:00Z
-Stopped at: Completed 01-06-PLAN.md (integration test convention)
+Last session: 2026-01-19T18:39:36Z
+Stopped at: Completed 01-08-PLAN.md (add missing hono dependency)
 Resume file: None
 
-Next: Clean up pre-existing lint/type issues OR proceed to Phase 2
+Next: Execute 01-07-PLAN.md to fix pre-existing lint issues
