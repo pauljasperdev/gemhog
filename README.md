@@ -1,6 +1,8 @@
 # gemhog
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Hono, TRPC, and more.
+This project was created with
+[Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a
+modern TypeScript stack that combines Next.js, Hono, TRPC, and more.
 
 ## Features
 
@@ -43,8 +45,9 @@ Then, run the development server:
 pnpm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3001](http://localhost:3001) in your browser to see the
+web application. The API is running at
+[http://localhost:3000](http://localhost:3000).
 
 ## Git Hooks and Formatting
 

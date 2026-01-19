@@ -109,7 +109,8 @@ gemhog/
 
 - Not yet configured
 - Planned: Co-located tests (`*.test.ts` alongside source)
-- Planned: Integration tests using Local Postgres Docker + Test stage AWS resources
+- Planned: Integration tests using Local Postgres Docker + Test stage AWS
+  resources
 
 **Documentation:**
 
@@ -200,7 +201,9 @@ gemhog/
 
 **Consolidate into packages/core (Domain-Driven):**
 
-Merge `packages/db` and `packages/auth` into a single `packages/core` package with domain-driven structure. This avoids cyclic dependencies (db needs schemas, domains need db connection) by colocating everything in one package.
+Merge `packages/db` and `packages/auth` into a single `packages/core` package
+with domain-driven structure. This avoids cyclic dependencies (db needs schemas,
+domains need db connection) by colocating everything in one package.
 
 **Current Structure:**
 
@@ -249,13 +252,10 @@ packages/
 - `drizzle/index.ts` aggregates schemas: `{ ...authSchema, ...stockSchema }`
 - No cyclic deps: auth imports from sibling `../drizzle`, not external package
 
-**Export Paths:**
-| Import | Purpose |
-|--------|---------|
-| `@gemhog/core` | DB instance (main export) |
-| `@gemhog/core/drizzle` | DB instance (explicit) |
-| `@gemhog/core/auth` | Auth instance |
-| `@gemhog/core/auth/auth.sql` | Raw schema tables |
+**Export Paths:** | Import | Purpose | |--------|---------| | `@gemhog/core` |
+DB instance (main export) | | `@gemhog/core/drizzle` | DB instance (explicit) |
+| `@gemhog/core/auth` | Auth instance | | `@gemhog/core/auth/auth.sql` | Raw
+schema tables |
 
 **Consumer Updates Required:**
 
@@ -264,10 +264,11 @@ packages/
 - `apps/web`: `@gemhog/auth` → `@gemhog/core`
 - Root `package.json`: db:\* scripts filter `@gemhog/core`
 
-**Reference:** Pattern based on [terminal.shop](https://github.com/terminaldotshop/terminal) and [immo](https://github.com/pauljasperdev/immo) repos.
+**Reference:** Pattern based on
+[terminal.shop](https://github.com/terminaldotshop/terminal) and
+[immo](https://github.com/pauljasperdev/immo) repos.
 
 ---
 
-_Structure analysis: 2026-01-15_
-_Updated: 2026-01-19 — added core package consolidation plan_
-_Update when directory structure changes_
+_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — added core package
+consolidation plan_ _Update when directory structure changes_

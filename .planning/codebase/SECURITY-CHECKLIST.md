@@ -1,8 +1,10 @@
 # Security Verification Checklist
 
-**Purpose:** Systematic security review for agent workflows. Run after implementation, before E2E tests. Critical/high findings block merge.
+**Purpose:** Systematic security review for agent workflows. Run after
+implementation, before E2E tests. Critical/high findings block merge.
 
-**Output:** Each review produces a `SECURITY-REVIEW.md` in the feature/phase directory with findings and sign-off.
+**Output:** Each review produces a `SECURITY-REVIEW.md` in the feature/phase
+directory with findings and sign-off.
 
 ---
 
@@ -16,8 +18,11 @@
 6. Low findings documented but don't block
 
 **Severity Levels:**
-- **Critical**: Immediate exploitation risk (auth bypass, SQL injection, secrets exposed)
-- **High**: Significant risk requiring fix before merge (missing validation, broken auth checks)
+
+- **Critical**: Immediate exploitation risk (auth bypass, SQL injection, secrets
+  exposed)
+- **High**: Significant risk requiring fix before merge (missing validation,
+  broken auth checks)
 - **Medium**: Should be fixed soon, tracked in CONCERNS.md
 - **Low**: Minor issues, best practice improvements
 
@@ -38,6 +43,7 @@ All user input must be validated at system boundaries.
 - [ ] No raw user input used in shell commands
 
 **Common Failures:**
+
 - Missing `.parse()` or `.safeParse()` on user input
 - Overly permissive schemas (e.g., `z.string()` without `.max()`)
 - Trusting client-side validation alone
@@ -58,6 +64,7 @@ Verify auth is correctly implemented and enforced.
 - [ ] Auth state not stored in localStorage (use HTTP-only cookies)
 
 **Common Failures:**
+
 - Using `publicProcedure` for routes that need auth
 - Checking auth only on frontend, not backend
 - Session tokens in localStorage vulnerable to XSS
@@ -76,7 +83,9 @@ Verify users can only access their own resources.
 - [ ] API keys/tokens scoped appropriately
 
 **Common Failures:**
-- Fetching resource by ID without checking ownership: `db.select().where(eq(id, userId))` missing the userId check
+
+- Fetching resource by ID without checking ownership:
+  `db.select().where(eq(id, userId))` missing the userId check
 - Trusting user-provided IDs without verification
 
 ---
@@ -94,6 +103,7 @@ No secrets should be exposed in code or logs.
 - [ ] Source maps disabled in production (if applicable)
 
 **Common Failures:**
+
 - Hardcoded test credentials left in code
 - `console.log(user)` exposing session tokens
 - Stack traces sent to client in production
@@ -104,14 +114,17 @@ No secrets should be exposed in code or logs.
 
 Prevent injection and data leakage.
 
-- [ ] Using Drizzle ORM parameterized queries (no raw SQL with string concatenation)
+- [ ] Using Drizzle ORM parameterized queries (no raw SQL with string
+      concatenation)
 - [ ] No `sql.raw()` with user input
 - [ ] Database errors don't expose schema details to users
 - [ ] Sensitive columns excluded from default selects (passwords, tokens)
 - [ ] Database connection uses SSL in production
 
 **Common Failures:**
-- `sql.raw(\`SELECT * FROM users WHERE id = ${userId}\`)` — use parameterized queries
+
+- `sql.raw(\`SELECT \* FROM users WHERE id = ${userId}\`)` — use parameterized
+  queries
 - Returning full user object including password hash
 
 ---
@@ -120,13 +133,15 @@ Prevent injection and data leakage.
 
 Prevent cross-site scripting attacks.
 
-- [ ] React's default escaping used (no `dangerouslySetInnerHTML` with user content)
+- [ ] React's default escaping used (no `dangerouslySetInnerHTML` with user
+      content)
 - [ ] User-generated content sanitized before rendering
 - [ ] URLs validated before use in `href` or `src` attributes
 - [ ] Content-Security-Policy headers configured
 - [ ] No inline scripts with user data
 
 **Common Failures:**
+
 - `dangerouslySetInnerHTML={{ __html: userContent }}`
 - `href={userProvidedUrl}` without validation (javascript: URLs)
 
@@ -142,6 +157,7 @@ Prevent cross-site request forgery.
 - [ ] Origin/Referer headers validated for sensitive operations
 
 **Common Failures:**
+
 - DELETE operation via GET request
 - Missing SameSite attribute on session cookies
 
@@ -158,6 +174,7 @@ Prevent abuse and DoS.
 - [ ] Rate limit headers returned to clients
 
 **Common Failures:**
+
 - No rate limiting on AI endpoint allowing cost abuse
 - No rate limiting on signup allowing spam accounts
 
@@ -174,6 +191,7 @@ Third-party code is a common attack vector.
 - [ ] Dependabot or similar configured for updates
 
 **Common Failures:**
+
 - Ignoring `pnpm audit` warnings
 - Using abandoned packages with known vulnerabilities
 
@@ -190,6 +208,7 @@ Secure logging for debugging without exposure.
 - [ ] Logs don't expose internal file paths or stack traces to users
 
 **Common Failures:**
+
 - `console.log('User logged in:', user)` including session token
 - Debug logging left enabled in production
 
@@ -207,6 +226,7 @@ Secure API design and implementation.
 - [ ] Timeouts configured for external API calls
 
 **Common Failures:**
+
 - `cors({ origin: '*' })` in production
 - Returning 500 errors with stack traces
 
@@ -224,6 +244,7 @@ Secure file upload and storage.
 - [ ] Virus scanning for user uploads (if applicable)
 
 **Common Failures:**
+
 - Trusting `file.mimetype` from client
 - Storing uploads in `public/` directory
 
@@ -234,39 +255,42 @@ Secure file upload and storage.
 ```markdown
 # Security Review: [Feature/Phase Name]
 
-**Date:** YYYY-MM-DD
-**Reviewer:** [Agent/Human]
-**Scope:** [Files/components reviewed]
+**Date:** YYYY-MM-DD **Reviewer:** [Agent/Human] **Scope:** [Files/components
+reviewed]
 
 ## Summary
 
-| Category | Status | Notes |
-|----------|--------|-------|
-| Input Validation | PASS/FAIL/N/A | |
-| Authentication | PASS/FAIL/N/A | |
-| Authorization | PASS/FAIL/N/A | |
-| Secrets Management | PASS/FAIL/N/A | |
-| SQL/Database | PASS/FAIL/N/A | |
-| XSS Prevention | PASS/FAIL/N/A | |
-| CSRF Protection | PASS/FAIL/N/A | |
-| Rate Limiting | PASS/FAIL/N/A | |
-| Dependencies | PASS/FAIL/N/A | |
-| Logging | PASS/FAIL/N/A | |
-| API Security | PASS/FAIL/N/A | |
-| File Handling | PASS/FAIL/N/A | |
+| Category           | Status        | Notes |
+| ------------------ | ------------- | ----- |
+| Input Validation   | PASS/FAIL/N/A |       |
+| Authentication     | PASS/FAIL/N/A |       |
+| Authorization      | PASS/FAIL/N/A |       |
+| Secrets Management | PASS/FAIL/N/A |       |
+| SQL/Database       | PASS/FAIL/N/A |       |
+| XSS Prevention     | PASS/FAIL/N/A |       |
+| CSRF Protection    | PASS/FAIL/N/A |       |
+| Rate Limiting      | PASS/FAIL/N/A |       |
+| Dependencies       | PASS/FAIL/N/A |       |
+| Logging            | PASS/FAIL/N/A |       |
+| API Security       | PASS/FAIL/N/A |       |
+| File Handling      | PASS/FAIL/N/A |       |
 
 ## Findings
 
 ### Critical
+
 - None / [Description, file:line, remediation]
 
 ### High
+
 - None / [Description, file:line, remediation]
 
 ### Medium
+
 - None / [Description, file:line, remediation]
 
 ### Low
+
 - None / [Description, file:line, remediation]
 
 ## Sign-off
@@ -279,6 +303,5 @@ Secure file upload and storage.
 
 ---
 
-*Checklist version: 1.0*
-*Last updated: 2026-01-19*
-*Based on OWASP Top 10 and project-specific requirements*
+_Checklist version: 1.0_ _Last updated: 2026-01-19_ _Based on OWASP Top 10 and
+project-specific requirements_

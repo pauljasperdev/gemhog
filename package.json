@@ -22,7 +22,8 @@
     "db:watch": "pnpm --filter @gemhog/db db:watch",
     "db:stop": "pnpm --filter @gemhog/db db:stop",
     "db:down": "pnpm --filter @gemhog/db db:down",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "format:md": "prettier --write \"**/*.md\""
   },
   "dependencies": {
     "@gemhog/env": "workspace:*",
@@ -33,6 +34,7 @@
     "@biomejs/biome": "^2.2.0",
     "@gemhog/config": "workspace:*",
     "@types/node": "^22.13.14",
+    "prettier": "^3.8.0",
     "typescript": "catalog:"
   },
   "packageManager": "pnpm@10.15.1"
