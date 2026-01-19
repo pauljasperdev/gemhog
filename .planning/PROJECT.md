@@ -31,11 +31,17 @@ Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip th
   - Static analysis: Biome lint + TypeScript strict type checking
   - Unit tests: Vitest for pure logic, mocked externals
   - Integration tests: Local Postgres Docker + Test stage AWS resources
+  - Security verification: Checklist-based review producing SECURITY-REVIEW.md
   - E2E verification: Playwright MCP against localhost dev server
-  - Verification order: static → unit → integration → Playwright MCP (fail fast, expensive last)
+  - Verification order: static → unit → integration → security → Playwright MCP (fail fast, expensive last)
+- [ ] Security verification as blocking workflow gate:
+  - Security assessment required after implementation, before E2E
+  - Critical/high severity findings block merge
+  - Produces SECURITY-REVIEW.md per feature/phase with findings and sign-off
+  - Updates CONCERNS.md with any new security findings
 - [ ] SST v3 migration for AWS deployment
 - [ ] Local development without SST SDK dependency (use deployed stage resources via env vars)
-- [ ] Domain-driven package structure (schemas live with their domain, e.g., user.ts + user.sql.ts)
+- [ ] Core package consolidation (merge db + auth into packages/core with domain-driven structure)
 - [ ] Effect TS integration for backend (testability, DI)
 - [ ] Stock pages with dynamic routes based on available data
 - [ ] Thesis extraction from podcast transcripts (via podscan.fm API)
@@ -96,14 +102,16 @@ Theses are NOT financial targets or price predictions. They are market perspecti
 - **Regulatory**: No investment advice — research summaries only, user makes own decisions
 - **SST-agnostic application code**: App reads env vars only, no SST SDK imports — enables local dev with `pnpm dev` and agent verification without SST multiplexer
 - **Test stage for external resources**: AWS resources that can't run locally (S3, etc.) use deployed Test stage via env vars in `.env` files
+- **Security-first development**: All user input validated at boundaries (Zod schemas), auth checks on protected routes, no secrets in code, dependencies audited. Security review required before merge — critical/high findings block deployment. See `.planning/codebase/SECURITY-CHECKLIST.md`
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
+| Security verification gate | Financial app handling user data/payments; blocking review ensures no critical vulns ship | — Pending |
 | SST v3 for deployment | TypeScript-native IaC, good DX, AWS flexibility | — Pending |
 | Effect TS for backend | Testability, DI, composable error handling | — Pending |
-| Domain-driven packages | Colocation of schema + logic reduces cognitive load | — Pending |
+| Core package consolidation | Merge db+auth into packages/core; domains as folders (auth/, stock/); *.sql.ts schemas; avoids cyclic deps | — Pending |
 | Testing infrastructure early | Fail-fast with cheap tests (static, unit, integration), Playwright MCP as final verification gate | — Pending |
 | SST-agnostic app code | App reads env vars only; SST injects at deploy, `.env` files for local/test; agents verify without SST | — Pending |
 | Page per stock (not per thesis) | Multiple theses aggregate on same stock over time | — Pending |
@@ -112,4 +120,4 @@ Theses are NOT financial targets or price predictions. They are market perspecti
 | Bluesky for distribution | Free API, growing platform, complements Twitter | — Pending |
 
 ---
-*Last updated: 2026-01-19 added testing infrastructure and SST-agnostic architecture details*
+*Last updated: 2026-01-19 refined core package consolidation decision*

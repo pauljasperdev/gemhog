@@ -9,9 +9,10 @@
 1. **Static Analysis** - Biome lint + TypeScript strict type checking
 2. **Unit Tests** - Vitest for pure logic, mocked externals
 3. **Integration Tests** - Local Postgres Docker + Test stage AWS resources
-4. **E2E Verification** - Playwright MCP against localhost dev server
+4. **Security Verification** - Checklist-based review producing SECURITY-REVIEW.md (see below)
+5. **E2E Verification** - Playwright MCP against localhost dev server
 
-**Rationale:** Cheap, fast tests run first to catch issues early. Expensive E2E tests run last as final verification gate.
+**Rationale:** Cheap, fast tests run first to catch issues early. Security review catches vulnerabilities before expensive E2E. E2E tests run last as final verification gate.
 
 ## Test Framework
 
@@ -144,6 +145,15 @@ describe('ModuleName', () => {
 - Planned for: Full user flows (sign-up, checkout, core features)
 - Framework: Playwright MCP against localhost dev server
 - Runs last in verification pipeline (most expensive)
+
+**Security Verification:**
+- Checklist-based review using `.planning/codebase/SECURITY-CHECKLIST.md`
+- Produces `SECURITY-REVIEW.md` per feature/phase
+- Runs after integration tests, before E2E
+- Critical/High findings block merge
+- Medium findings tracked in `CONCERNS.md`
+- Includes: input validation, auth/authz, secrets, XSS, CSRF, rate limiting, dependencies
+- Also runs `pnpm audit` for dependency vulnerabilities
 
 ## Common Patterns
 

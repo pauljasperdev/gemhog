@@ -164,25 +164,72 @@ gemhog/
 
 ## Planned Structural Changes
 
-**Domain-Driven Package Structure:**
-- Current: Schemas separated in `packages/db/src/schema/`
-- Planned: Schemas colocated with domain logic (e.g., `user.ts` + `user.sql.ts`)
-- Rationale: Reduces cognitive load, improves discoverability
-- Example future structure:
-  ```
-  packages/
-    user/
-      user.ts           # Domain logic
-      user.sql.ts       # Database schema
-      user.test.ts      # Tests
-    thesis/
-      thesis.ts
-      thesis.sql.ts
-      thesis.test.ts
-  ```
+**Consolidate into packages/core (Domain-Driven):**
+
+Merge `packages/db` and `packages/auth` into a single `packages/core` package with domain-driven structure. This avoids cyclic dependencies (db needs schemas, domains need db connection) by colocating everything in one package.
+
+**Current Structure:**
+```
+packages/
+  db/                    # Database connection + schemas
+    src/
+      index.ts           # Drizzle connection
+      schema/
+        auth.ts          # Auth tables
+        index.ts         # Barrel export
+  auth/                  # Better-auth config
+    src/
+      index.ts           # Auth config (imports from @gemhog/db)
+      lib/payments.ts    # Polar client
+```
+
+**Target Structure:**
+```
+packages/
+  core/
+    src/
+      drizzle/
+        index.ts         # DB connection, aggregates schemas via spread
+      auth/
+        auth.sql.ts      # Tables: user, session, account, verification
+        index.ts         # Better-auth config + Polar
+        payments.ts      # Polar client
+      # Future domains:
+      stock/
+        stock.sql.ts
+        index.ts
+      thesis/
+        thesis.sql.ts
+        index.ts
+    docker-compose.yml
+    drizzle.config.ts    # Schema glob: ./src/*/*.sql.ts
+    package.json
+```
+
+**Key Patterns:**
+- `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
+- Domain folders directly under `src/` (auth/, stock/, thesis/)
+- `drizzle/index.ts` aggregates schemas: `{ ...authSchema, ...stockSchema }`
+- No cyclic deps: auth imports from sibling `../drizzle`, not external package
+
+**Export Paths:**
+| Import | Purpose |
+|--------|---------|
+| `@gemhog/core` | DB instance (main export) |
+| `@gemhog/core/drizzle` | DB instance (explicit) |
+| `@gemhog/core/auth` | Auth instance |
+| `@gemhog/core/auth/auth.sql` | Raw schema tables |
+
+**Consumer Updates Required:**
+- `packages/api`: `@gemhog/auth` → `@gemhog/core/auth`
+- `apps/server`: `@gemhog/auth` → `@gemhog/core/auth`
+- `apps/web`: `@gemhog/auth` → `@gemhog/core`
+- Root `package.json`: db:* scripts filter `@gemhog/core`
+
+**Reference:** Pattern based on [terminal.shop](https://github.com/terminaldotshop/terminal) and [immo](https://github.com/pauljasperdev/immo) repos.
 
 ---
 
 *Structure analysis: 2026-01-15*
-*Updated: 2026-01-19*
+*Updated: 2026-01-19 — added core package consolidation plan*
 *Update when directory structure changes*

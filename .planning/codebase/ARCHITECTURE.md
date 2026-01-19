@@ -147,13 +147,24 @@
 
 ## Cross-Cutting Concerns
 
+**Security:**
+- Input validation at all boundaries (Zod schemas on API endpoints)
+- Authentication via Better-Auth with HTTP-only secure cookies
+- Authorization checks via `protectedProcedure` middleware
+- No secrets in code (env vars only, validated at startup)
+- Security review required before merge (see `SECURITY-CHECKLIST.md`)
+- Critical/High findings block deployment
+- Findings tracked in `CONCERNS.md` with severity levels
+
 **Logging:**
 - Console.log for server startup (`apps/server/src/index.ts`)
 - Hono logger middleware for requests
+- No sensitive data in logs (passwords, tokens, PII)
 
 **Validation:**
 - Zod schemas for environment variables (`packages/env/src/`)
 - tRPC input validation via Zod (when defined)
+- All user input validated server-side
 
 **Authentication:**
 - Better-Auth middleware handles `/api/auth/*` routes
@@ -174,13 +185,17 @@
 - Pattern: SST injects env vars at deploy time; `.env` files for local/test
 - Benefit: Agents can verify code without SST multiplexer running
 
-**Domain-Driven Package Structure:**
-- Pattern: Schemas live with their domain (e.g., `user.ts` + `user.sql.ts`)
-- Rationale: Colocation reduces cognitive load, improves discoverability
-- Status: Pending refactoring from current structure
+**Core Package Consolidation (Domain-Driven):**
+- Pattern: Merge `packages/db` + `packages/auth` → `packages/core`
+- Structure: `core/src/drizzle/` for DB, `core/src/auth/` for auth domain
+- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
+- Schema aggregation: `drizzle/index.ts` spreads domain schemas
+- Rationale: Avoids cyclic deps between db and domain packages
+- Future domains: `stock/`, `thesis/` added as sibling folders
+- Status: Pending refactoring (see STRUCTURE.md for full details)
 
 ---
 
 *Architecture analysis: 2026-01-15*
-*Updated: 2026-01-19*
+*Updated: 2026-01-19 — added core package consolidation plan*
 *Update when major patterns change*
