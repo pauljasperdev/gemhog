@@ -110,7 +110,73 @@ The database container stays running for subsequent test runs. Stop it with `pnp
 Work is complete when:
 - [ ] `pnpm verify:commit` passes (lint + types + unit)
 - [ ] `pnpm verify` passes for phase completion (includes integration + E2E)
+- [ ] Security review completed (see below)
 - [ ] No new errors introduced
+
+## Security Verification (MANDATORY)
+
+**Run security review BEFORE declaring work complete.** Non-negotiable.
+
+### Trigger
+
+Security review runs on EVERY commit, not just "sensitive" changes.
+Security issues hide in unexpected places - infrastructure, config, dependencies.
+
+### Workflow
+
+1. **Check for blocking findings:**
+   - Read `.planning/codebase/SECURITY-REVIEW.md`
+   - If any Open Critical/High/Medium findings exist, STOP
+   - Either fix them first or escalate to project owner
+
+2. **Determine scope:**
+   - Run `git diff --name-only HEAD~1` (or vs main branch)
+   - For each changed file: identify what it imports
+   - For each changed file: identify what imports it (callers)
+   - Scope = changed files + their imports + their callers
+
+3. **Run dependency audit:**
+   ```bash
+   pnpm audit --audit-level low
+   ```
+   - Moderate or higher: blocking, must fix or document justification
+   - Document results in SECURITY-REVIEW.md
+
+4. **Review code against checklist:**
+   - Read `.planning/codebase/SECURITY-CHECKLIST.md`
+   - Apply relevant categories to scoped files
+   - Use judgment - checklist is guide, not exhaustive
+
+5. **Record findings:**
+   - Append new session to `.planning/codebase/SECURITY-REVIEW.md`
+   - Include: date, scope, dependency audit result, findings, sign-off
+   - Use format from existing sessions
+
+6. **Resolve blocking findings:**
+   - Fix any Critical/High/Medium issues found
+   - Re-run affected checks
+   - Update finding status to "Fixed"
+
+7. **Update CONCERNS.md:**
+   - Update summary counts if findings changed
+   - Do NOT duplicate findings, just reference SECURITY-REVIEW.md
+
+### Severity and Blocking
+
+| Severity | Blocks Completion | Action |
+|----------|-------------------|--------|
+| Critical | YES | Fix immediately, no exceptions |
+| High | YES | Fix immediately, no exceptions |
+| Medium | YES | Fix before declaring complete |
+| Low | NO | Document, fix when convenient |
+
+**Only Low severity findings are non-blocking.**
+
+### Pre-existing Findings
+
+If SECURITY-REVIEW.md contains any unresolved Critical/High/Medium findings:
+- Work CANNOT be declared complete
+- Either fix the findings or escalate to project owner
 
 ## For Claude Code / Cursor / Other AI Tools
 
