@@ -75,12 +75,12 @@ pnpm verify
 **Integration Tests:** Vitest 4.x
 - Config: `vitest.integration.config.ts` (root)
 - Prerequisite: `pnpm db:start` (must start database manually before running)
-- Pattern: `*.integration.test.ts` files
+- Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
 
 **E2E:** Playwright
 - Config: `playwright.config.ts`
-- Tests: `apps/web/tests/e2e/*.spec.ts`
+- Tests: `apps/web/tests/e2e/*.e2e.test.ts`
 - Auto-starts dev servers via webServer config
 
 **Pre-commit:** Lefthook
@@ -94,32 +94,32 @@ Tests are co-located with implementation using clear suffixes:
 | Suffix | Type | Command | Description |
 |--------|------|---------|-------------|
 | `*.test.ts` | Unit | `pnpm test:unit` | Fast, mocked externals |
-| `*.integration.test.ts` | Integration | `pnpm test:integration` | Real DB, Docker required |
-| `*.spec.ts` | E2E | `pnpm test:e2e` | Playwright, full app |
+| `*.int.test.ts` | Integration | `pnpm test:integration` | Real DB, Docker required |
+| `*.e2e.test.ts` | E2E | `pnpm test:e2e` | Playwright, full app |
 
 **Example structure:**
 
 ```
 src/
   users.ts
-  users.test.ts              # Unit test (mocked DB)
-  users.integration.test.ts  # Integration test (real DB)
+  users.test.ts       # Unit test (mocked DB)
+  users.int.test.ts   # Integration test (real DB)
   auth/
     login.ts
-    login.test.ts            # Unit test
+    login.test.ts     # Unit test
 ```
 
 ## Adding Integration Tests
 
 Any package can have integration tests. Simply:
 
-1. Create `src/something.integration.test.ts` (co-located with implementation)
+1. Create `src/something.int.test.ts` (co-located with implementation)
 2. Run `pnpm db:start` to start the PostgreSQL container
 3. Run `pnpm test:integration` - tests are automatically discovered and run
 
-The `vitest.integration.config.ts` discovers all `*.integration.test.ts` files across:
-- `apps/**/src/**/*.integration.test.ts`
-- `packages/**/src/**/*.integration.test.ts`
+The `vitest.integration.config.ts` discovers all `*.int.test.ts` files across:
+- `apps/**/src/**/*.int.test.ts`
+- `packages/**/src/**/*.int.test.ts`
 
 ## Test Patterns
 

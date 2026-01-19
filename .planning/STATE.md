@@ -59,7 +59,7 @@ Recent decisions affecting current work:
 | defineConfig over defineProject for standalone | Standalone configs need full config object | 01-04 |
 | Explicit root path in Vitest config | Paths resolve from monorepo root otherwise | 01-04 |
 | Spread process.env first in webServer env | Real env vars override test defaults | 01-04 |
-| Use *.integration.test.ts suffix convention | Clear separation from unit tests, glob-discoverable | 01-06 |
+| Use *.int.test.ts suffix convention | Shorter, clear separation from unit tests, glob-discoverable | 01.1-01 |
 | Single test/integration-setup.ts for all packages | Consistent Docker handling, avoids duplication | 01-06 |
 | Use isolate: false, fileParallelism: false | Vitest 4 removed poolOptions, these are equivalents | 01-06 |
 | Use biome-ignore for intentional effect triggers | Scroll-on-message-count is intentional, not a bug | 01-07 |
@@ -92,15 +92,15 @@ Testing infrastructure complete - type check passes, targeted lint fixed:
 | 01-08 | Add missing hono dependency | <1 min | Complete |
 
 **Script Status (all working):**
-- `pnpm test:unit` - Passes, excludes *.integration.test.ts
+- `pnpm test:unit` - Passes, excludes *.int.test.ts
 - `pnpm test:integration` - Uses vitest.integration.config.ts, discovers all packages
 - `pnpm test:e2e` - webServer starts with test env vars
 - `pnpm check-types` - PASSES (fixed in 01-08)
 
 **Test File Convention:**
 - `*.test.ts` - Unit tests (mocked, fast)
-- `*.integration.test.ts` - Integration tests (real DB, Docker)
-- `*.spec.ts` - E2E tests (Playwright)
+- `*.int.test.ts` - Integration tests (real DB, Docker)
+- `*.e2e.test.ts` - E2E tests (Playwright)
 
 **Remaining Issues (pre-existing, outside gap closure scope):**
 1. Lint issues in mode-toggle.tsx (unused import)
