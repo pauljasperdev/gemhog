@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 1 gap closure - type errors fixed, lint issues remain
+**Current focus:** Phase 1 gap closure - ai/page.tsx and dashboard.tsx lint fixed
 
 ## Current Position
 
 Phase: 1 of 5 (Testing Infrastructure)
-Plan: 6 of 8 plans complete (01-08 gap closure done)
-Status: Type checking passes, lint issues remain for 01-07
-Last activity: 2026-01-19 - Completed 01-08 (add missing hono dependency)
+Plan: 7 of 8 plans complete (01-07 lint fixes done)
+Status: Type checking passes, targeted lint issues fixed, other pre-existing issues remain
+Last activity: 2026-01-19 - Completed 01-07 (fix apps/web lint warnings)
 
-Progress: ███░░░░░░░ ~20% (infrastructure complete, lint cleanup needed)
+Progress: ███░░░░░░░ ~20% (infrastructure complete, minor cleanup remains)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 3.2 min
-- Total execution time: 19 min
+- Total plans completed: 7
+- Average duration: 3.0 min
+- Total execution time: 21 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Testing Infrastructure | 6/8 | 19 min | 3.2 min |
+| 1. Testing Infrastructure | 7/8 | 21 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (3 min), 01-04 (5 min), 01-06 (4 min), 01-08 (<1 min)
+- Last 5 plans: 01-04 (5 min), 01-06 (4 min), 01-07 (2 min), 01-08 (<1 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 | Use *.integration.test.ts suffix convention | Clear separation from unit tests, glob-discoverable | 01-06 |
 | Single test/integration-setup.ts for all packages | Consistent Docker handling, avoids duplication | 01-06 |
 | Use isolate: false, fileParallelism: false | Vitest 4 removed poolOptions, these are equivalents | 01-06 |
+| Use biome-ignore for intentional effect triggers | Scroll-on-message-count is intentional, not a bug | 01-07 |
+| Composite keys for nested map iterations | ${message.id}-${index} avoids noArrayIndexKey warning | 01-07 |
+| Underscore prefix for unused props | session: _session indicates intentionally unused | 01-07 |
 | Add hono as regular dependency in packages/api | Consistency with apps/server, even for type-only imports | 01-08 |
 
 ### Pending Todos
@@ -66,13 +69,13 @@ None.
 
 ### Blockers/Concerns
 
-- Pre-existing lint issues in codebase cause `pnpm check` to exit non-zero (expected CI behavior, cleanup needed in 01-07)
+- Pre-existing lint issues remain in mode-toggle.tsx, label.tsx, .agent/prd.json (not in scope of 01-07)
 - Docker socket access needed for integration tests (environment-specific)
 - Playwright browser dependencies needed for E2E tests (environment-specific)
 
 ## Phase 1 Summary
 
-Testing infrastructure complete - type check passes, lint cleanup pending:
+Testing infrastructure complete - type check passes, targeted lint fixed:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
@@ -81,7 +84,7 @@ Testing infrastructure complete - type check passes, lint cleanup pending:
 | 01-03 | Playwright E2E + Lefthook hooks + verify.sh | 3 min | Complete |
 | 01-04 | Fix test bugs from UAT | 5 min | Complete |
 | 01-06 | Integration test convention (*.integration.test.ts) | 4 min | Complete |
-| 01-07 | Fix pre-existing lint issues | - | Pending |
+| 01-07 | Fix pre-existing lint issues (ai/page, dashboard) | 2 min | Complete |
 | 01-08 | Add missing hono dependency | <1 min | Complete |
 
 **Script Status (all working):**
@@ -95,12 +98,14 @@ Testing infrastructure complete - type check passes, lint cleanup pending:
 - `*.integration.test.ts` - Integration tests (real DB, Docker)
 - `*.spec.ts` - E2E tests (Playwright)
 
-**Remaining Issues (pre-existing, not test infrastructure):**
-1. Lint issues in apps/web (Biome finds errors) - to fix in 01-07
-2. Empty .agent/prd.json file - to fix in 01-07
+**Remaining Issues (pre-existing, outside gap closure scope):**
+1. Lint issues in mode-toggle.tsx (unused import)
+2. Lint issues in label.tsx (a11y warning)
+3. Empty .agent/prd.json file (parse error)
+4. Formatting issues in playwright.config.ts, vitest.config.ts
 
 **Key Commands:**
-- `pnpm check` - Static analysis with Biome (fails: pre-existing lint issues)
+- `pnpm check` - Static analysis with Biome (fails: pre-existing lint issues outside plan scope)
 - `pnpm check-types` - Type checking (PASSES)
 - `pnpm test:unit` - Unit tests (PASSES)
 - `pnpm test:integration` - Integration tests (works, needs Docker)
@@ -110,8 +115,8 @@ Testing infrastructure complete - type check passes, lint cleanup pending:
 
 ## Session Continuity
 
-Last session: 2026-01-19T18:39:36Z
-Stopped at: Completed 01-08-PLAN.md (add missing hono dependency)
+Last session: 2026-01-19T18:40:56Z
+Stopped at: Completed 01-07-PLAN.md (fix apps/web lint warnings)
 Resume file: None
 
-Next: Execute 01-07-PLAN.md to fix pre-existing lint issues
+Next: Clean up remaining pre-existing lint/format issues OR proceed to Phase 2
