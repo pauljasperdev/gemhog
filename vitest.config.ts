@@ -5,8 +5,12 @@ export default defineConfig({
     projects: [
       "apps/*",
       "packages/*",
-      // Exclude db package - it has globalSetup for Docker and is configured separately
-      "!packages/db",
+    ],
+    // Exclude integration tests from unit test runs
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/*.integration.test.ts", // Integration tests have their own config
     ],
     reporters: ["default"],
     coverage: {
@@ -18,6 +22,7 @@ export default defineConfig({
         "**/dist/**",
         "**/*.test.ts",
         "**/*.spec.ts",
+        "**/*.integration.test.ts",
       ],
     },
   },
