@@ -11,7 +11,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing ✓
-- [ ] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED)
+- [x] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED) ✓
 - [ ] **Phase 2: Security Workflow** - Security review process as a blocking gate
 - [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
@@ -53,7 +53,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01.1-01-PLAN.md — Rename test files, update configs and documentation
+- [x] 01.1-01-PLAN.md — Rename test files, update configs and documentation
 
 ### Phase 2: Security Workflow
 **Goal**: Security verification as a blocking workflow gate
@@ -117,7 +117,7 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Testing Infrastructure | 7/7 | ✓ Complete | 2026-01-19 |
-| 1.1 Test File Convention Migration | 0/1 | Not started (INSERTED) | - |
+| 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
 | 2. Security Workflow | 0/? | Not started | - |
 | 3. Core Consolidation | 0/? | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
