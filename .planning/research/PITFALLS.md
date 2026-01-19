@@ -1,23 +1,24 @@
 # Pitfalls Research: Gemhog Financial Research App
 
-**Domain:** Financial research platform with free data APIs (SEC EDGAR + Stooq)
-**Researched:** 2026-01-19
-**Overall Confidence:** MEDIUM-HIGH
+**Domain:** Financial research platform with free data APIs (SEC EDGAR + EOD
+price provider) **Researched:** 2026-01-19 **Overall Confidence:** MEDIUM-HIGH
 
 ---
 
 ## Executive Summary
 
-Gemhog faces pitfalls across eight critical domains: regulatory compliance, free API
-data sourcing, data quality/parsing, AI/LLM accuracy, content aggregation, security,
-social media automation, and UX. The **highest-risk areas** unique to this project are:
+Gemhog faces pitfalls across eight critical domains: regulatory compliance, free
+API data sourcing, data quality/parsing, AI/LLM accuracy, content aggregation,
+security, social media automation, and UX. The **highest-risk areas** unique to
+this project are:
 
-1. **SEC EDGAR XBRL parsing complexity** — Data inconsistencies, duplicate amounts,
-   custom taxonomies require significant engineering effort
-2. **Stooq rate limiting without official API** — IP-based blocking, no formal API,
-   requires careful request pacing
-3. **Free API redistribution licensing** — Even "free" APIs often prohibit public
-   redistribution; SEC EDGAR is safe, but Stooq ToS is unclear
+1. **SEC EDGAR XBRL parsing complexity** — Data inconsistencies, duplicate
+   amounts, custom taxonomies require significant engineering effort
+2. **Stooq rate limiting without official API** — IP-based blocking, no formal
+   API, requires careful request pacing
+3. **Free API redistribution licensing** — Even "free" APIs often prohibit
+   public redistribution; SEC EDGAR is safe, but EOD price provider ToS can be
+   unclear
 4. **Regulatory classification** — Accidentally becoming an "investment adviser"
    triggers SEC registration requirements
 5. **AI hallucination in financial contexts** — Up to 41% hallucination rate in
@@ -25,7 +26,8 @@ social media automation, and UX. The **highest-risk areas** unique to this proje
 6. **Better-Auth CVE-2025-61928** — Critical account takeover vulnerability in
    versions prior to 1.3.26
 
-Each pitfall includes detection signals, prevention strategies, and phase mapping.
+Each pitfall includes detection signals, prevention strategies, and phase
+mapping.
 
 ---
 
@@ -33,23 +35,24 @@ Each pitfall includes detection signals, prevention strategies, and phase mappin
 
 ### C1: Inadvertent Investment Adviser Classification
 
-**What goes wrong:** The app crosses the line from "financial information tool" to
-"investment adviser" under SEC rules, triggering registration requirements, fiduciary
-duties, and enforcement risk.
+**What goes wrong:** The app crosses the line from "financial information tool"
+to "investment adviser" under SEC rules, triggering registration requirements,
+fiduciary duties, and enforcement risk.
 
 **Why it happens:**
 
 - Personalized recommendations based on user data
 - Language suggesting users "should" buy/sell specific securities
 - Algorithm-driven suggestions that constitute "advice"
-- SEC scrutinizes substance over disclaimers (hedge clause enforcement in January 2025)
+- SEC scrutinizes substance over disclaimers (hedge clause enforcement in
+  January 2025)
 - SEC's 2025 guidelines mandate specific disclaimers for AI-generated investment
   insights
 
 **Consequences:**
 
-- SEC enforcement action and fines (86% of non-compliant fintechs pay fines exceeding
-  $50K)
+- SEC enforcement action and fines (86% of non-compliant fintechs pay fines
+  exceeding $50K)
 - Required RIA registration ($10K-$50K+ annually plus ongoing compliance)
 - Potential shutdown or forced pivot
 
@@ -62,17 +65,18 @@ duties, and enforcement risk.
 
 **Prevention:**
 
-1. **Firm editorial model:** Present theses as discovered content, not recommendations
-2. **No user-specific filtering:** Same content visible to all users (no "stocks for
-   you")
+1. **Firm editorial model:** Present theses as discovered content, not
+   recommendations
+2. **No user-specific filtering:** Same content visible to all users (no "stocks
+   for you")
 3. **Prominent disclaimers:** But understand disclaimers alone do NOT protect if
    substance is advisory
 4. **Legal review of all copy:** Marketing, UI text, social posts reviewed for
    advisory language
-5. **Specific disclaimer language:** Include "Past performance is not indicative of
-   future results" and "For informational purposes only"
-6. **Documentation:** Keep records showing editorial (not advisory) nature of content
-   selection
+5. **Specific disclaimer language:** Include "Past performance is not indicative
+   of future results" and "For informational purposes only"
+6. **Documentation:** Keep records showing editorial (not advisory) nature of
+   content selection
 
 **Phase to address:** Phase 1 (Foundation) - Establish disclaimer framework and
 editorial policy before any content goes live.
@@ -89,14 +93,15 @@ editorial policy before any content goes live.
 
 ### C2: AI Hallucination in Financial Data Extraction
 
-**What goes wrong:** LLM extracts incorrect investment theses, fabricates financial
-figures, or misattributes statements to podcast guests.
+**What goes wrong:** LLM extracts incorrect investment theses, fabricates
+financial figures, or misattributes statements to podcast guests.
 
 **Why it happens:**
 
 - LLMs hallucinate in up to 41% of finance-related queries (2024 study)
 - Financial language is domain-specific with jargon that confuses general models
-- Numerical data (stock prices, percentages, dates) particularly prone to fabrication
+- Numerical data (stock prices, percentages, dates) particularly prone to
+  fabrication
 - "Confident incorrectness" - model states false information authoritatively
 
 **Consequences:**
@@ -115,23 +120,24 @@ figures, or misattributes statements to podcast guests.
 
 **Prevention:**
 
-1. **Human-in-the-loop validation:** All extracted theses require human review before
-   publication
+1. **Human-in-the-loop validation:** All extracted theses require human review
+   before publication
 2. **RAG with verified sources:** Ground extractions in transcript text, require
    citations
-3. **Confidence thresholds:** Reject extractions below confidence threshold, flag for
-   manual review
+3. **Confidence thresholds:** Reject extractions below confidence threshold,
+   flag for manual review
 4. **Structured extraction:** Use Zod schema-constrained outputs for financial
    entities
 5. **Multi-model consensus:** Compare results from multiple prompts to reduce
    hallucination risk
-6. **Spot-check pipeline:** Randomly sample 10% of extractions for accuracy audit
-7. **No financial figures from LLM:** Pull prices, metrics from verified data APIs
-   only (SEC EDGAR, Stooq)
+6. **Spot-check pipeline:** Randomly sample 10% of extractions for accuracy
+   audit
+7. **No financial figures from LLM:** Pull prices, metrics from verified data
+   APIs only (SEC EDGAR + price data provider)
 8. **Attribution verification:** Cross-check speaker identification against
    transcript metadata
-9. **Deterministic validation:** Pair LLM outputs with numeric validation checks for
-   any financial figures
+9. **Deterministic validation:** Pair LLM outputs with numeric validation checks
+   for any financial figures
 
 **Phase to address:** Phase 3 (Thesis Extraction) - Build validation pipeline
 alongside extraction, not as afterthought.
@@ -149,15 +155,15 @@ trust-destroying
 
 ### C3: Copyright Infringement via Podcast Summarization
 
-**What goes wrong:** AI-generated summaries of podcast content constitute copyright
-infringement, triggering DMCA takedowns or lawsuits.
+**What goes wrong:** AI-generated summaries of podcast content constitute
+copyright infringement, triggering DMCA takedowns or lawsuits.
 
 **Why it happens:**
 
-- 2025 rulings establish "substitutive summaries" can infringe even without verbatim
-  copying
-- Summaries that mirror "expressive structure and journalistic storytelling choices"
-  are problematic
+- 2025 rulings establish "substitutive summaries" can infringe even without
+  verbatim copying
+- Summaries that mirror "expressive structure and journalistic storytelling
+  choices" are problematic
 - No safe harbor for "transformative" AI summarization has been established
 - Podcast content is scripted/fixed (copyrightable), not improvised
 
@@ -177,18 +183,19 @@ infringement, triggering DMCA takedowns or lawsuits.
 
 **Prevention:**
 
-1. **Extraction, not summarization:** Extract discrete claims/theses, not narrative
-   summaries
-2. **Factual focus:** Extract factual assertions (which are not copyrightable) rather
-   than expressive content
-3. **Attribution with links:** Always link to original podcast, drive traffic back
+1. **Extraction, not summarization:** Extract discrete claims/theses, not
+   narrative summaries
+2. **Factual focus:** Extract factual assertions (which are not copyrightable)
+   rather than expressive content
+3. **Attribution with links:** Always link to original podcast, drive traffic
+   back
 4. **Limit scope:** Brief thesis statements, not comprehensive episode summaries
 5. **Partnership outreach:** Contact major podcast networks about acceptable use
 6. **Podscan.fm ToS review:** Check ToS for derivative work restrictions
 7. **Legal counsel:** Get IP attorney opinion on extraction methodology
 
-**Phase to address:** Phase 3 (Thesis Extraction) - Establish extraction methodology
-with legal review before building pipeline.
+**Phase to address:** Phase 3 (Thesis Extraction) - Establish extraction
+methodology with legal review before building pipeline.
 
 **Severity:** CRITICAL - Could require complete product pivot
 
@@ -211,8 +218,8 @@ displayed to users.
 - XBRL encodes hierarchical, multi-dimensional data with custom taxonomies and
   context references
 - Many companies use "quick & dirty tagging" as an afterthought
-- 15,000+ predefined concepts in US-GAAP taxonomy; wrong concept selection degrades
-  quality
+- 15,000+ predefined concepts in US-GAAP taxonomy; wrong concept selection
+  degrades quality
 - Duplicate amounts appear because filings contain period comparisons and tables
   reusing prior period data
 - HTML and XBRL versions of same filing may be out of sync
@@ -237,19 +244,20 @@ displayed to users.
 
 1. **Use Financial Statement Data Sets API:** SEC's pre-processed data reduces
    parsing burden (data.sec.gov)
-2. **Handle duplicates explicitly:** Build deduplication logic expecting duplicate
-   amounts in XBRL
-3. **CIK padding:** Pad CIK numbers to 10 characters with leading zeros for API URLs
-4. **Fiscal calendar awareness:** Be mindful of different reporting start/end dates
-   for facts
-5. **Custom taxonomy detection:** Identify when companies use custom vs. standard
-   taxonomies
-6. **Inline XBRL preference:** When available, prefer iXBRL which keeps HTML and XBRL
-   in sync
-7. **Validation against known sources:** Spot-check extracted metrics against Yahoo
-   Finance, Bloomberg
-8. **Consider third-party services:** sec-api.io provides pre-parsed JSON if parsing
-   burden too high
+2. **Handle duplicates explicitly:** Build deduplication logic expecting
+   duplicate amounts in XBRL
+3. **CIK padding:** Pad CIK numbers to 10 characters with leading zeros for API
+   URLs
+4. **Fiscal calendar awareness:** Be mindful of different reporting start/end
+   dates for facts
+5. **Custom taxonomy detection:** Identify when companies use custom vs.
+   standard taxonomies
+6. **Inline XBRL preference:** When available, prefer iXBRL which keeps HTML and
+   XBRL in sync
+7. **Validation against known sources:** Spot-check extracted metrics against
+   Yahoo Finance, Bloomberg
+8. **Consider third-party services:** sec-api.io provides pre-parsed JSON if
+   parsing burden too high
 9. **Frame data alignment:** Use SEC's frame data which aligns facts to calendar
    quarters/years
 
@@ -269,13 +277,13 @@ parsing with validation.
 
 ### C5: Better-Auth Critical Security Vulnerability (CVE-2025-61928)
 
-**What goes wrong:** Account takeover via unauthenticated API key creation allows
-attackers to gain unauthorized access to any user's account.
+**What goes wrong:** Account takeover via unauthenticated API key creation
+allows attackers to gain unauthorized access to any user's account.
 
 **Why it happens:**
 
-- Better-Auth versions prior to 1.3.26 incorrectly handle cases where session doesn't
-  exist but userId is provided
+- Better-Auth versions prior to 1.3.26 incorrectly handle cases where session
+  doesn't exist but userId is provided
 - Attackers can craft requests with chosen userId to create/modify API keys for
   arbitrary users
 - CVSS v4.0 score: 9.3 (Critical)
@@ -299,11 +307,13 @@ attackers to gain unauthorized access to any user's account.
 1. **Immediate upgrade:** Ensure Better-Auth >= 1.3.26
 2. **Audit existing API keys:** Review all API keys created via the plugin
 3. **Rotate compromised keys:** Invalidate any keys created before patch
-4. **Log monitoring:** Watch for unauthenticated requests to create/update endpoints
+4. **Log monitoring:** Watch for unauthenticated requests to create/update
+   endpoints
 5. **Don't disable CSRF:** Never disable CSRF checks (another common mistake)
 6. **Don't disable origin checks:** Keeps redirects secure
 
-**Phase to address:** Phase 1 (Foundation) - Verify Better-Auth version immediately.
+**Phase to address:** Phase 1 (Foundation) - Verify Better-Auth version
+immediately.
 
 **Severity:** CRITICAL - Direct account compromise possible
 
@@ -319,13 +329,14 @@ attackers to gain unauthorized access to any user's account.
 
 ### H1: SEC EDGAR Rate Limiting and IP Blocking
 
-**What goes wrong:** Automated requests exceed SEC's rate limits, resulting in IP
-blocks that prevent data fetching.
+**What goes wrong:** Automated requests exceed SEC's rate limits, resulting in
+IP blocks that prevent data fetching.
 
 **Why it happens:**
 
 - SEC limits requests to 10 per second across all machines from same IP
-- Exceeding threshold triggers 403 response with "Request Rate Threshold Exceeded"
+- Exceeding threshold triggers 403 response with "Request Rate Threshold
+  Exceeded"
 - IP blocked for 10 minutes after exceeding limit
 - SEC reserves right to block IPs permanently for excessive requests
 - Unclassified bots/automated tools explicitly prohibited
@@ -349,10 +360,11 @@ blocks that prevent data fetching.
 2. **User-Agent header:** Required format: "CompanyName AdminContact@domain.com"
 3. **Exponential backoff:** On any error, back off before retry
 4. **Request queuing:** Serialize requests to enforce rate limit
-5. **Caching layer:** Cache responses to reduce repeated requests (Upstash Redis)
+5. **Caching layer:** Cache responses to reduce repeated requests (Upstash
+   Redis)
 6. **Monitor response codes:** Alert on any 403 responses
-7. **Consider EDGAR Next APIs:** New 2025 APIs may have better rate handling with
-   authentication
+7. **Consider EDGAR Next APIs:** New 2025 APIs may have better rate handling
+   with authentication
 
 **Phase to address:** Phase 4 (Financial Data Integration)
 
@@ -484,11 +496,12 @@ service, resulting in API access revocation or legal action.
 - API access warnings
 - Competitors flagging violations
 
-**Prevention (Why SEC EDGAR + Stooq is safer):**
+**Prevention:**
 
-1. **SEC EDGAR:** Government data, no redistribution restrictions, explicitly public
-2. **Stooq ToS review:** Document ToS limitations (currently unclear — flag for legal
-   review)
+1. **SEC EDGAR:** Government data, no redistribution restrictions, explicitly
+   public
+2. **Price provider ToS review:** Document ToS limitations for the chosen EOD
+   provider (flag for legal review)
 3. **No real-time data:** Avoid intraday data which requires exchange licenses
 4. **Attribution compliance:** Display any required attributions prominently
 5. **Provider abstraction layer:** Easy swap if source becomes unavailable
@@ -534,14 +547,16 @@ Podscan.fm, Better-Auth) exposing user data.
 
 **Prevention:**
 
-1. **Vendor security assessment:** Review security practices of Polar, Podscan.fm
+1. **Vendor security assessment:** Review security practices of Polar,
+   Podscan.fm
 2. **Minimize data sharing:** Only send vendors what they absolutely need
 3. **Contract requirements:** Incident notification clauses, security standards
 4. **Monitor vendor announcements:** Subscribe to security bulletins
 5. **Segmentation:** Isolate vendor integrations, limit blast radius
 6. **Incident response plan:** Know what to do if vendor breached
 
-**Phase to address:** Phase 1 (Foundation) - Vendor assessment before integration.
+**Phase to address:** Phase 1 (Foundation) - Vendor assessment before
+integration.
 
 **Severity:** HIGH - Data breach is existential for fintech
 
@@ -598,8 +613,8 @@ anti-automation detection, or account suspension.
 
 ### H7: AWS SES Deliverability and Account Suspension
 
-**What goes wrong:** Newsletter emails land in spam, or AWS suspends SES account due
-to high bounce/complaint rates.
+**What goes wrong:** Newsletter emails land in spam, or AWS suspends SES account
+due to high bounce/complaint rates.
 
 **Why it happens:**
 
@@ -655,8 +670,8 @@ mishandled webhook events.
 
 - Subscription renewal uses `order.created` event (not intuitive
   `subscription.renewed`)
-- Webhook secret requires base64 encoding (SDK handles, but manual implementation
-  may miss)
+- Webhook secret requires base64 encoding (SDK handles, but manual
+  implementation may miss)
 - IP allowlist changes (October 2025 update)
 - Platform is relatively new, still evolving
 
@@ -682,8 +697,8 @@ mishandled webhook events.
 
 ### M2: Podscan.fm Entity Recognition Errors
 
-**What goes wrong:** Stock symbols or company names are incorrectly identified in
-podcast transcripts.
+**What goes wrong:** Stock symbols or company names are incorrectly identified
+in podcast transcripts.
 
 **Why it happens:**
 
@@ -694,7 +709,8 @@ podcast transcripts.
 
 **Prevention:**
 
-1. **Verification layer:** Cross-check extracted symbols against known stock list
+1. **Verification layer:** Cross-check extracted symbols against known stock
+   list
 2. **Context scoring:** Require financial context around entity mentions
 3. **Human review:** Flag uncertain entity matches for manual verification
 4. **Disambiguation rules:** Require additional context for common-word tickers
@@ -711,8 +727,8 @@ podcast transcripts.
 
 ### M3: Bluesky API Rate Limits
 
-**What goes wrong:** Automation exceeds Bluesky's rate limits, disrupting posting or
-getting flagged as spam.
+**What goes wrong:** Automation exceeds Bluesky's rate limits, disrupting
+posting or getting flagged as spam.
 
 **Why it happens:**
 
@@ -739,8 +755,8 @@ getting flagged as spam.
 
 ### M4: UX Feature Overload
 
-**What goes wrong:** Adding too many features creates cognitive overload, hurting
-retention.
+**What goes wrong:** Adding too many features creates cognitive overload,
+hurting retention.
 
 **Why it happens:**
 
@@ -768,89 +784,91 @@ retention.
 
 ## Technical Debt Patterns
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Skip XBRL parser testing | Faster initial build | Data errors in production | Never - financial data must be verified |
-| Hardcoded rate limits | Quick implementation | Failures when limits change | MVP only, with alerts |
-| No split adjustment | Simpler price storage | Wrong historical metrics | Only if displaying raw prices with disclaimer |
-| Single data source | Less code | Service outage = full outage | MVP, but abstract interface |
-| Skip double opt-in | Faster signup | SES suspension risk | Never for newsletter |
-| Cache indefinitely | Fewer API calls | Stale data displayed | Only for truly static data |
-| Skip human review | Faster thesis publishing | Hallucinated content published | Never |
+| Shortcut                 | Immediate Benefit        | Long-term Cost                 | When Acceptable                               |
+| ------------------------ | ------------------------ | ------------------------------ | --------------------------------------------- |
+| Skip XBRL parser testing | Faster initial build     | Data errors in production      | Never - financial data must be verified       |
+| Hardcoded rate limits    | Quick implementation     | Failures when limits change    | MVP only, with alerts                         |
+| No split adjustment      | Simpler price storage    | Wrong historical metrics       | Only if displaying raw prices with disclaimer |
+| Single data source       | Less code                | Service outage = full outage   | MVP, but abstract interface                   |
+| Skip double opt-in       | Faster signup            | SES suspension risk            | Never for newsletter                          |
+| Cache indefinitely       | Fewer API calls          | Stale data displayed           | Only for truly static data                    |
+| Skip human review        | Faster thesis publishing | Hallucinated content published | Never                                         |
 
 ---
 
 ## Integration Gotchas
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| **SEC EDGAR** | Not padding CIK to 10 chars | `cik.padStart(10, '0')` |
-| **SEC EDGAR** | Ignoring duplicate amounts | Deduplicate by fact context |
-| **SEC EDGAR** | Assuming standard taxonomy | Check for custom extensions |
-| **SEC EDGAR** | Exceeding 10 req/sec | Rate limit with queue, cache aggressively |
-| **Stooq** | Bulk requests without delay | Add pause between requests |
-| **Stooq** | Assuming adjusted prices | Track and apply split adjustments |
-| **Stooq** | No fallback source | Have Alpha Vantage or yfinance ready |
-| **Podscan.fm** | Trusting entity recognition | Verify extracted symbols against stock list |
-| **AWS SES** | Skipping sandbox exit | Request production access early |
-| **AWS SES** | Single opt-in | Always use double opt-in |
-| **AWS SES** | No DKIM/SPF | Configure full email authentication |
-| **Polar** | Missing webhook events | Handle all subscription lifecycle events |
-| **Polar** | Old IP allowlist | Check Polar changelog for IP updates |
-| **Better-Auth** | Version < 1.3.26 | Upgrade immediately (CVE-2025-61928) |
-| **Better-Auth** | Disabling CSRF | Never disable CSRF protection |
-| **Twitter/X** | Posting at fixed intervals | Randomize posting times |
-| **Bluesky** | Using main password | Always use app password |
+| Integration     | Common Mistake              | Correct Approach                            |
+| --------------- | --------------------------- | ------------------------------------------- |
+| **SEC EDGAR**   | Not padding CIK to 10 chars | `cik.padStart(10, '0')`                     |
+| **SEC EDGAR**   | Ignoring duplicate amounts  | Deduplicate by fact context                 |
+| **SEC EDGAR**   | Assuming standard taxonomy  | Check for custom extensions                 |
+| **SEC EDGAR**   | Exceeding 10 req/sec        | Rate limit with queue, cache aggressively   |
+| **Stooq**       | Bulk requests without delay | Add pause between requests                  |
+| **Stooq**       | Assuming adjusted prices    | Track and apply split adjustments           |
+| **Stooq**       | No fallback source          | Have Alpha Vantage or yfinance ready        |
+| **Podscan.fm**  | Trusting entity recognition | Verify extracted symbols against stock list |
+| **AWS SES**     | Skipping sandbox exit       | Request production access early             |
+| **AWS SES**     | Single opt-in               | Always use double opt-in                    |
+| **AWS SES**     | No DKIM/SPF                 | Configure full email authentication         |
+| **Polar**       | Missing webhook events      | Handle all subscription lifecycle events    |
+| **Polar**       | Old IP allowlist            | Check Polar changelog for IP updates        |
+| **Better-Auth** | Version < 1.3.26            | Upgrade immediately (CVE-2025-61928)        |
+| **Better-Auth** | Disabling CSRF              | Never disable CSRF protection               |
+| **Twitter/X**   | Posting at fixed intervals  | Randomize posting times                     |
+| **Bluesky**     | Using main password         | Always use app password                     |
 
 ---
 
 ## Performance Traps
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| XBRL parsing on request | Slow stock page loads | Pre-process and cache | >100 users |
-| No Redis caching | API rate limits hit | Cache with Upstash | >50 requests/day |
-| Full filing fetch | Memory exhaustion | Stream/paginate large files | Any 10-K filing |
-| Sync LLM extraction | Request timeouts | Background jobs with SST Cron | >10 transcripts |
-| No image optimization | Slow page loads | Next.js Image component | Any traffic |
-| Client-side data fetch | Waterfall requests | Server components + prefetch | Mobile users |
+| Trap                    | Symptoms              | Prevention                    | When It Breaks   |
+| ----------------------- | --------------------- | ----------------------------- | ---------------- |
+| XBRL parsing on request | Slow stock page loads | Pre-process and cache         | >100 users       |
+| No Redis caching        | API rate limits hit   | Cache with Upstash            | >50 requests/day |
+| Full filing fetch       | Memory exhaustion     | Stream/paginate large files   | Any 10-K filing  |
+| Sync LLM extraction     | Request timeouts      | Background jobs with SST Cron | >10 transcripts  |
+| No image optimization   | Slow page loads       | Next.js Image component       | Any traffic      |
+| Client-side data fetch  | Waterfall requests    | Server components + prefetch  | Mobile users     |
 
 ---
 
 ## Security Mistakes
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Better-Auth < 1.3.26 | Account takeover | Upgrade to 1.3.26+ immediately |
-| Disabling CSRF in Better-Auth | Cross-site request forgery | Never disable CSRF |
-| Storing API keys in code | Credential exposure | Use env vars, validate at startup |
-| Logging user data | Data leakage | Sanitize logs, no PII |
-| Missing input validation | Injection attacks | Zod schemas on all inputs |
-| CORS `*` in production | Cross-origin attacks | Restrict to specific origins |
-| No rate limiting on auth | Brute force | Better-Auth has built-in, verify enabled |
-| Trusting client-side auth | Auth bypass | Always validate server-side |
+| Mistake                       | Risk                       | Prevention                               |
+| ----------------------------- | -------------------------- | ---------------------------------------- |
+| Better-Auth < 1.3.26          | Account takeover           | Upgrade to 1.3.26+ immediately           |
+| Disabling CSRF in Better-Auth | Cross-site request forgery | Never disable CSRF                       |
+| Storing API keys in code      | Credential exposure        | Use env vars, validate at startup        |
+| Logging user data             | Data leakage               | Sanitize logs, no PII                    |
+| Missing input validation      | Injection attacks          | Zod schemas on all inputs                |
+| CORS `*` in production        | Cross-origin attacks       | Restrict to specific origins             |
+| No rate limiting on auth      | Brute force                | Better-Auth has built-in, verify enabled |
+| Trusting client-side auth     | Auth bypass                | Always validate server-side              |
 
 ---
 
 ## UX Pitfalls
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Financial jargon everywhere | Confusion, abandonment | Plain language with tooltips for terms |
-| No loading states | Perceived broken app | Skeleton loaders for data fetches |
-| Error messages expose internals | Security risk, confusion | User-friendly error messages |
-| Thesis without context | Can't evaluate validity | Show source quote, timestamp, speaker |
-| Charts without split adjustment | Misleading visuals | Display adjusted prices or warn |
-| No disclaimer visibility | Regulatory risk | Prominent, not just footer |
+| Pitfall                         | User Impact              | Better Approach                        |
+| ------------------------------- | ------------------------ | -------------------------------------- |
+| Financial jargon everywhere     | Confusion, abandonment   | Plain language with tooltips for terms |
+| No loading states               | Perceived broken app     | Skeleton loaders for data fetches      |
+| Error messages expose internals | Security risk, confusion | User-friendly error messages           |
+| Thesis without context          | Can't evaluate validity  | Show source quote, timestamp, speaker  |
+| Charts without split adjustment | Misleading visuals       | Display adjusted prices or warn        |
+| No disclaimer visibility        | Regulatory risk          | Prominent, not just footer             |
 
 ---
 
 ## "Looks Done But Isn't" Checklist
 
-- [ ] **SEC EDGAR integration**: Often missing duplicate deduplication — verify unique
-  facts
-- [ ] **Stooq integration**: Often missing split adjustment — verify historical prices
-- [ ] **Thesis extraction**: Often missing validation — verify human review workflow
+- [ ] **SEC EDGAR integration**: Often missing duplicate deduplication — verify
+      unique facts
+- [ ] **Price provider integration**: Often missing split/dividend adjustment —
+      verify historical prices (or warn/label as unadjusted)
+- [ ] **Thesis extraction**: Often missing validation — verify human review
+      workflow
 - [ ] **Rate limiting**: Often missing monitoring — verify alerts exist
 - [ ] **SES setup**: Often missing authentication — verify DKIM/SPF/DMARC
 - [ ] **Better-Auth version**: Often outdated — verify >= 1.3.26
@@ -863,24 +881,24 @@ retention.
 
 ## Pitfall-to-Phase Mapping
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| C1: Investment Adviser | Phase 1 (Foundation) | Legal review of disclaimer framework |
-| C2: AI Hallucination | Phase 3 (Thesis Extraction) | Human review workflow exists |
-| C3: Copyright | Phase 3 (Thesis Extraction) | Legal review of extraction methodology |
-| C4: XBRL Data Quality | Phase 4 (Financial Data) | Validation against external source |
-| C5: Better-Auth CVE | Phase 1 (Foundation) | Version check in CI |
-| H1: SEC Rate Limiting | Phase 4 (Financial Data) | Rate limiter + cache tests |
-| H2: Stooq Rate Limiting | Phase 4 (Financial Data) | Request pacer + fallback configured |
-| H3: Stooq Splits | Phase 4 (Financial Data) | Split adjustment logic + tests |
-| H4: Data Licensing | Phase 2 (Data Ingestion) | Legal ToS review documented |
-| H5: Vendor Security | Phase 1 (Foundation) | Vendor assessment checklist |
-| H6: Twitter Limits | Phase 6 (Social Distribution) | Conservative automation + monitoring |
-| H7: SES Deliverability | Phase 5 (Newsletter) | Authentication + double opt-in |
-| M1: Polar Webhooks | Phase 1 (Foundation) | Full event handler tests |
-| M2: Entity Recognition | Phase 3 (Thesis Extraction) | Symbol verification layer |
-| M3: Bluesky Limits | Phase 6 (Social Distribution) | Rate tracking implementation |
-| M4: UX Overload | All phases | User testing gates |
+| Pitfall                 | Prevention Phase              | Verification                           |
+| ----------------------- | ----------------------------- | -------------------------------------- |
+| C1: Investment Adviser  | Phase 1 (Foundation)          | Legal review of disclaimer framework   |
+| C2: AI Hallucination    | Phase 3 (Thesis Extraction)   | Human review workflow exists           |
+| C3: Copyright           | Phase 3 (Thesis Extraction)   | Legal review of extraction methodology |
+| C4: XBRL Data Quality   | Phase 4 (Financial Data)      | Validation against external source     |
+| C5: Better-Auth CVE     | Phase 1 (Foundation)          | Version check in CI                    |
+| H1: SEC Rate Limiting   | Phase 4 (Financial Data)      | Rate limiter + cache tests             |
+| H2: Stooq Rate Limiting | Phase 4 (Financial Data)      | Request pacer + fallback configured    |
+| H3: Stooq Splits        | Phase 4 (Financial Data)      | Split adjustment logic + tests         |
+| H4: Data Licensing      | Phase 2 (Data Ingestion)      | Legal ToS review documented            |
+| H5: Vendor Security     | Phase 1 (Foundation)          | Vendor assessment checklist            |
+| H6: Twitter Limits      | Phase 6 (Social Distribution) | Conservative automation + monitoring   |
+| H7: SES Deliverability  | Phase 5 (Newsletter)          | Authentication + double opt-in         |
+| M1: Polar Webhooks      | Phase 1 (Foundation)          | Full event handler tests               |
+| M2: Entity Recognition  | Phase 3 (Thesis Extraction)   | Symbol verification layer              |
+| M3: Bluesky Limits      | Phase 6 (Social Distribution) | Rate tracking implementation           |
+| M4: UX Overload         | All phases                    | User testing gates                     |
 
 ---
 
@@ -888,53 +906,57 @@ retention.
 
 ### Financial Data Quality Monitoring
 
-| Signal | Detection Method | Response |
-|--------|------------------|----------|
-| SEC EDGAR 403 responses | Error rate dashboard | Back off, check rate limiter |
-| Stooq empty responses | Data pipeline alerts | Activate fallback source |
-| Metric mismatch vs Yahoo | Weekly validation job | Investigate parsing logic |
-| Split not applied | Price jump detection | Apply adjustment, refresh cache |
+| Signal                   | Detection Method      | Response                        |
+| ------------------------ | --------------------- | ------------------------------- |
+| SEC EDGAR 403 responses  | Error rate dashboard  | Back off, check rate limiter    |
+| Stooq empty responses    | Data pipeline alerts  | Activate fallback source        |
+| Metric mismatch vs Yahoo | Weekly validation job | Investigate parsing logic       |
+| Split not applied        | Price jump detection  | Apply adjustment, refresh cache |
 
 ### API Health Monitoring
 
-| Signal | Detection Method | Response |
-|--------|------------------|----------|
-| Rate limit errors (429) | Error logging | Reduce request frequency |
-| Vendor deprecation notice | Changelog monitoring | Plan migration timeline |
-| Authentication failures | Failed request alerts | Rotate/refresh credentials |
+| Signal                    | Detection Method      | Response                   |
+| ------------------------- | --------------------- | -------------------------- |
+| Rate limit errors (429)   | Error logging         | Reduce request frequency   |
+| Vendor deprecation notice | Changelog monitoring  | Plan migration timeline    |
+| Authentication failures   | Failed request alerts | Rotate/refresh credentials |
 
 ### Security Monitoring
 
-| Signal | Detection Method | Response |
-|--------|------------------|----------|
-| Better-Auth CVE announced | Security advisories | Immediate upgrade |
-| Unusual auth patterns | Access logging | Investigate, possibly rotate tokens |
-| Vendor breach news | News alerts | Assess exposure, notify users if needed |
+| Signal                    | Detection Method    | Response                                |
+| ------------------------- | ------------------- | --------------------------------------- |
+| Better-Auth CVE announced | Security advisories | Immediate upgrade                       |
+| Unusual auth patterns     | Access logging      | Investigate, possibly rotate tokens     |
+| Vendor breach news        | News alerts         | Assess exposure, notify users if needed |
 
 ---
 
 ## Confidence Assessment
 
-| Area | Confidence | Reason |
-|------|------------|--------|
-| Regulatory Pitfalls | HIGH | SEC documentation, legal publications |
-| SEC EDGAR Issues | HIGH | Official SEC docs, developer community reports |
-| Stooq Issues | MEDIUM | No official docs, community reports only |
-| AI/LLM Pitfalls | HIGH | Recent studies with specific statistics |
-| Better-Auth Security | HIGH | CVE database, official security advisories |
-| Social Media Limits | MEDIUM | API docs authoritative, enforcement unpredictable |
-| AWS SES Issues | HIGH | Official AWS documentation |
-| Polar Issues | MEDIUM | Limited community feedback, platform still maturing |
+| Area                 | Confidence | Reason                                              |
+| -------------------- | ---------- | --------------------------------------------------- |
+| Regulatory Pitfalls  | HIGH       | SEC documentation, legal publications               |
+| SEC EDGAR Issues     | HIGH       | Official SEC docs, developer community reports      |
+| Stooq Issues         | MEDIUM     | No official docs, community reports only            |
+| AI/LLM Pitfalls      | HIGH       | Recent studies with specific statistics             |
+| Better-Auth Security | HIGH       | CVE database, official security advisories          |
+| Social Media Limits  | MEDIUM     | API docs authoritative, enforcement unpredictable   |
+| AWS SES Issues       | HIGH       | Official AWS documentation                          |
+| Polar Issues         | MEDIUM     | Limited community feedback, platform still maturing |
 
 ---
 
 ## Open Questions Requiring Phase-Specific Research
 
-1. **Stooq ToS:** What are the actual terms for commercial use? Legal review needed.
-2. **SEC EDGAR Next APIs:** Do new 2025 authenticated APIs have better rate limits?
-3. **Split data source:** Where to get reliable stock split history for adjustment?
+1. **Stooq ToS:** What are the actual terms for commercial use? Legal review
+   needed.
+2. **SEC EDGAR Next APIs:** Do new 2025 authenticated APIs have better rate
+   limits?
+3. **Split data source:** Where to get reliable stock split history for
+   adjustment?
 4. **Podscan.fm ToS:** Does ToS permit derivative works from transcripts?
-5. **Polar production reliability:** Long-term webhook reliability in production?
+5. **Polar production reliability:** Long-term webhook reliability in
+   production?
 
 ---
 
