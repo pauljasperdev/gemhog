@@ -2,11 +2,16 @@
 
 ## What This Is
 
-A podcast-to-research app that helps part-time investors discover stock theses discussed by credible voices on podcasts, then evaluates them with structured, source-backed analysis. Instead of listening to hours of podcasts, users get a discovery feed of picks and a research library with balanced briefings (pros/cons/unknowns) so they can decide for themselves.
+A research app that bridges two gaps for part-time investors:
+
+1. **Expert insight extraction** — Digs through financial podcasts to surface the recommendations and assumptions experts make, so users don't have to listen to hours of content
+2. **Financial data accessibility** — Simplifies access to the relevant financial data users need to form their own data-driven opinions
+
+By combining discovered insights with accessible data, Gemhog reduces the knowledge gap that typically requires expensive financial consulting.
 
 ## Core Value
 
-Turn expert podcast discussions into actionable research summaries — find ideas you would have missed, evaluate them fast.
+Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
 
 ## Requirements
 
@@ -25,12 +30,14 @@ Turn expert podcast discussions into actionable research summaries — find idea
 - [ ] SST v3 migration for AWS deployment
 - [ ] Local development without SST SDK dependency (use deployed stage resources via env vars)
 - [ ] Domain-driven package structure (schemas live with their domain, e.g., user.ts + user.sql.ts)
+- [ ] Testing infrastructure (unit, integration, E2E) for agent workflow validation
 - [ ] Effect TS integration for backend (testability, DI)
 - [ ] Stock pages with dynamic routes based on available data
 - [ ] Thesis extraction from podcast transcripts (via podscan.fm API)
 - [ ] Thesis analysis against financial data (reports, metrics)
 - [ ] Cron job for transcript analysis pipeline
-- [ ] Twitter automation for new analysis posts
+- [ ] Twitter/X automation for new analysis posts (free tier)
+- [ ] Bluesky automation for new analysis posts (free API)
 - [ ] Discovery feed of stock picks by category/strategy
 
 ### Out of Scope
@@ -42,13 +49,28 @@ Turn expert podcast discussions into actionable research summaries — find idea
 
 ## Context
 
-**Target User:** Part-time investors who don't want boring ETFs for their entire portfolio. Looking for curated ideas for the ~10% higher-risk allocation. Want to find ideas they'd miss and evaluate them quickly without hours of podcast listening.
+**Target User:** Part-time investors who don't want boring ETFs for their entire portfolio. Looking for curated ideas for the ~10% higher-risk allocation. They lack two things: (1) time to listen to podcasts where experts share insights, and (2) easy access to the financial data needed to evaluate those insights themselves.
+
+**The Problem We Solve:**
+- Financial podcasts contain valuable expert assumptions and recommendations, but require hours to consume
+- Relevant financial data exists but is scattered, complex, or locked behind expensive terminals
+- Financial consultants bridge this gap, but at a cost most part-time investors can't justify
+- Gemhog democratizes access to both expert insights AND the data to evaluate them
 
 **Content Model:**
 - Page per stock (not per thesis)
 - Multiple theses can exist for one stock
 - Analysis sits alongside theses with pros/cons/unknowns
+- Financial data presented in context of the thesis being evaluated
 - Time horizon considerations (12 months vs 12 years)
+
+**What is a "Thesis":**
+A thesis is an investment narrative — a reasoning chain explaining WHY a stock might perform well based on market dynamics, industry trends, or company-specific factors. Examples:
+- "Global insecurities and semiconductor industry will make silver very desirable"
+- "Growing data center demand benefits companies like Datadog or Snowflake"
+- "Memory companies continue to benefit from sustained demand growth"
+
+Theses are NOT financial targets or price predictions. They are market perspectives that help investors understand the reasoning behind a potential investment.
 
 **MVP Approach:**
 - Manually pick "gems" from podcast transcripts
@@ -75,9 +97,11 @@ Turn expert podcast discussions into actionable research summaries — find idea
 | SST v3 for deployment | TypeScript-native IaC, good DX, AWS flexibility | — Pending |
 | Effect TS for backend | Testability, DI, composable error handling | — Pending |
 | Domain-driven packages | Colocation of schema + logic reduces cognitive load | — Pending |
+| Testing infrastructure early | Enables agent workflows to validate work, catches regressions | — Pending |
 | Page per stock (not per thesis) | Multiple theses aggregate on same stock over time | — Pending |
 | Podscan.fm for transcripts | Existing API, reasonable coverage | — Pending |
-| Twitter for distribution | Quick reach, low effort, fits MVP | — Pending |
+| Twitter/X for distribution | Quick reach, free tier available, fits MVP | — Pending |
+| Bluesky for distribution | Free API, growing platform, complements Twitter | — Pending |
 
 ---
-*Last updated: 2026-01-15 after initialization*
+*Last updated: 2026-01-19 refined scope — two-sided value: expert insight extraction + financial data accessibility*
