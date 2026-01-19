@@ -22,7 +22,11 @@
     "db:watch": "pnpm --filter @gemhog/db db:watch",
     "db:stop": "pnpm --filter @gemhog/db db:stop",
     "db:down": "pnpm --filter @gemhog/db db:down",
-    "check": "biome check --write .",
+    "check": "biome check --error-on-warnings .",
+    "check:fix": "biome check --write .",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:integration": "vitest run --project @gemhog/db",
     "format:md": "prettier --write \"**/*.md\""
   },
   "dependencies": {
