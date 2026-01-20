@@ -2,7 +2,7 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { google } from "@ai-sdk/google";
 import { createContext } from "@gemhog/api/context";
 import { appRouter } from "@gemhog/api/routers/index";
-import { auth } from "@gemhog/auth";
+import { auth } from "@gemhog/core/auth";
 import { env } from "@gemhog/env/server";
 import { trpcServer } from "@hono/trpc-server";
 import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
