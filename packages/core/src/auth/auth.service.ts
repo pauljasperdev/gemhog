@@ -1,4 +1,3 @@
-import { env } from "@gemhog/env/server";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import { betterAuth } from "better-auth";
@@ -26,7 +25,12 @@ export class AuthService extends Context.Tag("@gemhog/core/AuthService")<
 >() {}
 
 // Create better-auth instance (internal)
+// Uses dynamic import to defer env validation until runtime
 const createAuth = () => {
+  // Dynamic require to defer env validation until runtime
+  const { env } =
+    require("@gemhog/env/server") as typeof import("@gemhog/env/server");
+
   const db = drizzle(env.DATABASE_URL, { schema });
   const polarClient = new Polar({
     accessToken: env.POLAR_ACCESS_TOKEN,
@@ -64,18 +68,34 @@ const createAuth = () => {
 
 // Implementation layer
 export const AuthLive = Layer.sync(AuthService, () => {
-  const auth = createAuth();
+  const authInstance = createAuth();
   return {
     getSession: (headers) =>
       Effect.tryPromise({
-        try: () => auth.api.getSession({ headers }),
+        try: () => authInstance.api.getSession({ headers }),
         catch: (error) =>
           new AuthError({ message: "Failed to get session", cause: error }),
       }),
-    handler: (request) => auth.handler(request),
+    handler: (request) => authInstance.handler(request),
   };
 });
 
-// Export the raw auth instance for backward compatibility during migration
-// This will be used by apps/server until full Effect adoption
-export const auth = createAuth();
+// Lazy getter for auth instance - backward compatibility
+// Used by apps/server until full Effect adoption
+// Returns the same auth instance on subsequent calls
+let _authInstance: ReturnType<typeof createAuth> | null = null;
+export const getAuth = () => {
+  if (!_authInstance) {
+    _authInstance = createAuth();
+  }
+  return _authInstance;
+};
+
+// For backward compatibility with existing imports
+// Note: This will trigger env validation when accessed
+type BetterAuthInstance = ReturnType<typeof betterAuth>;
+export const auth = new Proxy({} as BetterAuthInstance, {
+  get(_target, prop) {
+    return (getAuth() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
