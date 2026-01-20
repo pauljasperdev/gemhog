@@ -36,8 +36,8 @@ Requirements for V0 foundation release. Each maps to roadmap phases.
 
 - [ ] **INFRA-01**: Application deploys to AWS via SST v3
 - [ ] **INFRA-02**: Application code is SST-agnostic (reads env vars only, no SST SDK imports)
-- [ ] **INFRA-03**: `packages/db` and `packages/auth` are consolidated into `packages/core` with domain-driven structure
-- [ ] **INFRA-04**: Backend services use Effect TS for dependency injection and testability
+- [x] **INFRA-03**: `packages/db` and `packages/auth` are consolidated into `packages/core` with domain-driven structure
+- [x] **INFRA-04**: Backend services use Effect TS for dependency injection and testability
 
 ## V1 Requirements (Deferred)
 
@@ -109,8 +109,8 @@ Which phases cover which requirements. Updated by create-roadmap.
 | SEC-01 | Phase 2 | Complete |
 | SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
-| INFRA-03 | Phase 3 | Pending |
-| INFRA-04 | Phase 3 | Pending |
+| INFRA-03 | Phase 3 | Complete |
+| INFRA-04 | Phase 3 | Complete |
 | INFRA-01 | Phase 4 | Pending |
 | INFRA-02 | Phase 4 | Pending |
 | AGENT-01 | Phase 5 | Pending |
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated by create-roadmap.
 
 ---
 *Requirements defined: 2026-01-19*
-*Last updated: 2026-01-19 — Phase 2 complete, SEC-01 through SEC-03 verified*
+*Last updated: 2026-01-20 — Phase 3 complete, INFRA-03 and INFRA-04 verified*
