@@ -6,6 +6,6 @@ export default defineProject({
     name: "@gemhog/core",
     environment: "node",
     include: ["src/**/*.test.ts"],
-    exclude: ["**/*.int.test.ts"],
+    // Note: int.test.ts and e2e.test.ts excludes are handled by root config
   },
 });
