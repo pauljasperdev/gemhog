@@ -1,18 +1,29 @@
 # Testing Infrastructure
 
-**Updated:** 2026-01-19
+**Updated:** 2026-01-20
+
+## Quick Reference
+
+**Run full verification:**
+```bash
+pnpm db:start      # Start database (if not running)
+pnpm verify        # Run ALL tests: static → types → unit → integration → security
+```
+
+This is THE command to verify everything works. Use it before declaring work complete.
 
 ## Current State
 
 | Test Type | Status | Command | Notes |
 |-----------|--------|---------|-------|
-| Static Analysis | Working | `pnpm check` | Pre-existing lint issues need cleanup |
-| Type Check | Working | `pnpm check-types` | Pre-existing type errors need cleanup |
-| Unit Tests | Working | `pnpm test:unit` | Vitest configured, example test passes |
-| Integration Tests | Working | `pnpm test:integration` | Uses vitest.integration.config.ts |
-| E2E Tests | Working | `pnpm test:e2e` | Uses playwright.config.ts |
-| Pre-commit Hooks | Working | Lefthook | Runs on git commit |
-| Full Pipeline | Partial | `pnpm verify` | Fails at static analysis (pre-existing issues) |
+| Static Analysis | ✓ Working | `pnpm check` | Biome lint + format |
+| Type Check | ✓ Working | `pnpm check-types` | TypeScript strict |
+| Unit Tests | ✓ Working | `pnpm test:unit` | Vitest, 4 tests |
+| Integration Tests | ✓ Working | `pnpm test:integration` | Requires `pnpm db:start` first |
+| E2E Tests | ✓ Working | `pnpm test:e2e` | Playwright |
+| Pre-commit Hooks | ✓ Working | Lefthook | Runs on git commit |
+| Dependency Security | ⚠ Blocked | `pnpm audit` | esbuild moderate vuln (drizzle-kit dep) |
+| **Full Pipeline** | ⚠ Blocked | `pnpm verify` | Blocked by dependency security |
 
 ## Verification Requirements
 
@@ -69,7 +80,7 @@ pnpm verify
 
 **Unit Tests:** Vitest 4.x
 - Config: `vitest.config.ts` (root) + per-package configs
-- Projects: apps/server, apps/web, packages/api, packages/auth, packages/db, packages/env
+- Projects: apps/server, apps/web, packages/api, packages/core, packages/env
 - Pattern: `*.test.ts` files
 
 **Integration Tests:** Vitest 4.x
@@ -207,10 +218,14 @@ describe("Health Check", () => {
 
 ## Known Issues
 
-**Pre-existing failures that need cleanup:**
+**Current blockers:**
 
-1. **Lint issues** - Multiple files have Biome warnings (useExhaustiveDependencies, etc.)
-2. **Type errors** - apps/server has TypeScript errors
+1. **Dependency vulnerability** - `esbuild` moderate vulnerability via drizzle-kit. Blocks `pnpm verify`. Waiting for drizzle-kit to update dependency.
+
+**Pre-existing issues (not blocking tests):**
+
+1. Pre-existing lint issues in mode-toggle.tsx, label.tsx (outside phase scope)
+2. Empty .agent/prd.json file (parse error)
 
 These are documented in `.planning/codebase/CONCERNS.md`.
 
@@ -218,13 +233,13 @@ These are documented in `.planning/codebase/CONCERNS.md`.
 
 Testing infrastructure is only complete when:
 
-- [ ] `pnpm check` passes (no lint errors)
-- [ ] `pnpm check-types` passes (no type errors)
-- [ ] `pnpm test:unit` passes (all unit tests green)
-- [ ] `pnpm test:integration` passes (with Docker running)
-- [ ] `pnpm test:e2e` passes (with env vars configured)
-- [ ] `pnpm verify` passes (full pipeline green)
+- [x] `pnpm check` passes (no lint errors)
+- [x] `pnpm check-types` passes (no type errors)
+- [x] `pnpm test:unit` passes (all unit tests green)
+- [x] `pnpm test:integration` passes (with Docker running)
+- [ ] `pnpm test:e2e` passes (with env vars configured) — requires Playwright deps
+- [ ] `pnpm verify` passes (full pipeline green) — blocked by esbuild vuln
 
 ---
 
-_Updated: 2026-01-19_
+_Updated: 2026-01-20_
