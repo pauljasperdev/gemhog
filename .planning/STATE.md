@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 2 complete, security workflow established
+**Current focus:** Phase 3 in progress - core package foundation created
 
 ## Current Position
 
-Phase: 2 of 6 (Security Workflow)
-Plan: 1/1 plans complete
-Status: Phase 2 complete
-Last activity: 2026-01-19 - Completed 02-01-PLAN.md (security workflow)
+Phase: 3 of 6 (Core Consolidation)
+Plan: 1/3 plans complete
+Status: In progress
+Last activity: 2026-01-20 - Completed 03-01-PLAN.md (core package foundation)
 
-Progress: █████░░░░░ ~36% (Phase 1 + 1.1 + 2 complete, 4 phases remain)
+Progress: ██████░░░░ ~40% (Phase 1 + 1.1 + 2 + 03-01 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 2.9 min
-- Total execution time: 26 min
+- Total execution time: 29 min
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: █████░░░░░ ~36% (Phase 1 + 1.1 + 2 complete, 4 pha
 | 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
+| 3. Core Consolidation | 1/3 | 3 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-07 (2 min), 01-08 (<1 min), 01.1-01 (2 min), 02-01 (3 min)
+- Last 5 plans: 01-08 (<1 min), 01.1-01 (2 min), 02-01 (3 min), 03-01 (3 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -75,6 +76,9 @@ Recent decisions affecting current work:
 | SECURITY-REVIEW.md is append-only log | Maintains full audit trail | 02-01 |
 | CONCERNS.md references SECURITY-REVIEW.md | Single source of truth, no duplication | 02-01 |
 | pnpm audit --audit-level moderate in verify.sh | Matches workflow severity (moderate = blocks) | 02-01 |
+| Use @effect/sql-pg ^0.50, @effect/sql-drizzle ^0.48 | RESEARCH.md versions outdated; updated to npm latest | 03-01 |
+| Add @effect/sql as explicit dependency | Required for TypeScript type resolution | 03-01 |
+| Remove declaration/composite from tsconfig | Workspace packages use direct TS imports | 03-01 |
 
 ### Pending Todos
 
@@ -159,10 +163,25 @@ Security workflow complete:
 **New Commands:**
 - `pnpm security:audit` - Run dependency audit standalone
 
+## Phase 3 Summary (in progress)
+
+Core consolidation - packages/core with Effect TS:
+
+| Plan | Summary | Duration | Status |
+|------|---------|----------|--------|
+| 03-01 | Core package foundation with Effect layers | 3 min | Complete |
+| 03-02 | Auth domain migration | - | Pending |
+| 03-03 | Payment domain migration | - | Pending |
+
+**packages/core created:**
+- Effect database layers: PgLive, DrizzleLive, DatabaseLive
+- Domain structure: src/drizzle/, src/auth/, src/payment/
+- Subpath exports: ./drizzle, ./auth, ./payment
+
 ## Session Continuity
 
-Last session: 2026-01-19T20:13:00Z
-Stopped at: Completed 02-01-PLAN.md (security workflow)
+Last session: 2026-01-20T08:01:00Z
+Stopped at: Completed 03-01-PLAN.md (core package foundation)
 Resume file: None
 
-Next: Execute Phase 3
+Next: Execute 03-02-PLAN.md (auth domain migration)
