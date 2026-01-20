@@ -11,7 +11,7 @@ dependency-graph:
 
 tech-stack:
   added: []
-  patterns: [file-suffix-convention, glob-based-discovery, shared-globalSetup]
+  patterns: [glob-based-discovery, shared-globalSetup]
 
 key-files:
   created:
@@ -64,9 +64,7 @@ metrics:
    - 60s hookTimeout for Docker startup, 10s testTimeout
 
 3. **Test Naming Convention**
-   - `*.test.ts` - Unit tests (mocked externals, fast)
-   - `*.integration.test.ts` - Integration tests (real DB, Docker required)
-   - `*.spec.ts` - E2E tests (Playwright)
+   - See `.planning/codebase/TESTING.md` for current conventions
 
 ### Changes to Existing Files
 
@@ -81,21 +79,19 @@ metrics:
 ## Commands
 
 ```bash
-# Run unit tests only (excludes *.integration.test.ts)
+# Run unit tests only
 pnpm test:unit
 
-# Run integration tests only (discovers *.integration.test.ts)
+# Run integration tests only
 pnpm test:integration
 
-# Add integration test to any package
-# Just create src/something.integration.test.ts
+# See .planning/codebase/TESTING.md for file naming conventions
 ```
 
 ## Decisions Made
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Test file suffix | `*.integration.test.ts` | Clear separation, glob-discoverable |
 | globalSetup location | `test/integration-setup.ts` at root | Single source of truth for Docker |
 | Sequential execution | isolate: false, fileParallelism: false | Avoid DB conflicts, Vitest 4 format |
 | Exclude in package configs | Add explicit exclude pattern | Root-level exclude doesn't propagate to projects |
