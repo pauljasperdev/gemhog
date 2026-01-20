@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3 complete - core package with Effect layers, auth and payment domains
+**Current focus:** Phase 3 in progress - consumers migrated to @gemhog/core
 
 ## Current Position
 
 Phase: 3 of 6 (Core Consolidation)
-Plan: 3/3 plans complete
-Status: Phase complete
-Last activity: 2026-01-20 - Completed 03-03-PLAN.md (payment domain migration)
+Plan: 4/5 plans complete
+Status: In progress
+Last activity: 2026-01-20 - Completed 03-04-PLAN.md (consumer migration)
 
-Progress: ████████░░ ~50% (Phase 1 + 1.1 + 2 + 3 complete)
+Progress: ████████░░ ~55% (Phase 1 + 1.1 + 2 + 3[4/5] complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 2.9 min
-- Total execution time: 35 min
+- Total plans completed: 13
+- Average duration: 2.8 min
+- Total execution time: 37 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: ████████░░ ~50% (Phase 1 + 1.1 + 2 + 3 complete)
 | 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
-| 3. Core Consolidation | 3/3 | 9 min | 3.0 min |
+| 3. Core Consolidation | 4/5 | 11 min | 2.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01.1-01 (2 min), 02-01 (3 min), 03-01 (3 min), 03-02 (2 min), 03-03 (4 min)
+- Last 5 plans: 02-01 (3 min), 03-01 (3 min), 03-02 (2 min), 03-03 (4 min), 03-04 (2 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -168,19 +168,25 @@ Security workflow complete:
 
 ## Phase 3 Summary
 
-Core consolidation complete - packages/core with Effect TS:
+Core consolidation in progress - packages/core with Effect TS:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
 | 03-01 | Core package foundation with Effect layers | 3 min | Complete |
 | 03-02 | Auth domain migration | 2 min | Complete |
 | 03-03 | Payment domain migration | 4 min | Complete |
+| 03-04 | Consumer migration to @gemhog/core | 2 min | Complete |
 
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
 - Auth domain: AuthService, AuthLive, auth.sql schema
 - Payment domain: PaymentService, PaymentLive, Polar SDK wrapper
 - Subpath exports: ./drizzle, ./auth, ./auth/auth.sql, ./payment
+
+**Consumers migrated:**
+- packages/api: imports from @gemhog/core/auth
+- apps/server: imports from @gemhog/core/auth
+- Old packages (@gemhog/auth, @gemhog/db) ready for removal
 
 **Key Patterns Established:**
 - Effect Context.Tag for service interfaces
@@ -190,8 +196,8 @@ Core consolidation complete - packages/core with Effect TS:
 
 ## Session Continuity
 
-Last session: 2026-01-20T08:07:00Z
-Stopped at: Completed 03-03-PLAN.md (payment domain migration)
+Last session: 2026-01-20T08:11:44Z
+Stopped at: Completed 03-04-PLAN.md (consumer migration)
 Resume file: None
 
-Next: Execute Phase 4 (pending planning)
+Next: Execute 03-05-PLAN.md (old package removal)
