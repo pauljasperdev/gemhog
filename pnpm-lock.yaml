@@ -87,12 +87,9 @@ importers:
       '@gemhog/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@gemhog/auth':
+      '@gemhog/core':
         specifier: workspace:*
-        version: link:../../packages/auth
-      '@gemhog/db':
-        specifier: workspace:*
-        version: link:../../packages/db
+        version: link:../../packages/core
       '@gemhog/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -251,12 +248,9 @@ importers:
 
   packages/api:
     dependencies:
-      '@gemhog/auth':
+      '@gemhog/core':
         specifier: workspace:*
-        version: link:../auth
-      '@gemhog/db':
-        specifier: workspace:*
-        version: link:../db
+        version: link:../core
       '@gemhog/env':
         specifier: workspace:*
         version: link:../env
