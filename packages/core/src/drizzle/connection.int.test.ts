@@ -1,4 +1,4 @@
-// packages/db/src/connection.test.ts
+// packages/core/src/drizzle/connection.int.test.ts
 
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -29,8 +29,8 @@ describe("database connection", () => {
 
   it("should return current timestamp", async () => {
     const result = await db.execute(sql`SELECT NOW() as now`);
-    const now = result.rows[0].now;
+    const row = result.rows[0]!;
     // Raw SQL returns timestamp as string, verify it's a valid parseable date
-    expect(new Date(now as string).getTime()).not.toBeNaN();
+    expect(new Date(row.now as string).getTime()).not.toBeNaN();
   });
 });
