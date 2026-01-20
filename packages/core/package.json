@@ -1,0 +1,51 @@
+{
+  "name": "@gemhog/core",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/drizzle/index.ts"
+    },
+    "./drizzle": {
+      "default": "./src/drizzle/index.ts"
+    },
+    "./auth": {
+      "default": "./src/auth/index.ts"
+    },
+    "./auth/auth.sql": {
+      "default": "./src/auth/auth.sql.ts"
+    },
+    "./payment": {
+      "default": "./src/payment/index.ts"
+    }
+  },
+  "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate",
+    "db:start": "docker compose up -d",
+    "db:watch": "docker compose up",
+    "db:stop": "docker compose stop",
+    "db:down": "docker compose down"
+  },
+  "dependencies": {
+    "@gemhog/env": "workspace:*",
+    "effect": "^3.19",
+    "@effect/sql-pg": "^0.45",
+    "@effect/sql-drizzle": "^0.45",
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.16.3",
+    "better-auth": "catalog:",
+    "@polar-sh/better-auth": "catalog:",
+    "@polar-sh/sdk": "^0.34.16",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@gemhog/config": "workspace:*",
+    "@effect/vitest": "^0.45",
+    "@types/pg": "^8.15.6",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "catalog:"
+  }
+}
