@@ -31,8 +31,9 @@
   "dependencies": {
     "@gemhog/env": "workspace:*",
     "effect": "^3.19",
-    "@effect/sql-pg": "^0.45",
-    "@effect/sql-drizzle": "^0.45",
+    "@effect/sql": "^0.49",
+    "@effect/sql-pg": "^0.50",
+    "@effect/sql-drizzle": "^0.48",
     "drizzle-orm": "^0.45.1",
     "pg": "^8.16.3",
     "better-auth": "catalog:",
@@ -43,7 +44,7 @@
   },
   "devDependencies": {
     "@gemhog/config": "workspace:*",
-    "@effect/vitest": "^0.45",
+    "@effect/vitest": "^0.27",
     "@types/pg": "^8.15.6",
     "drizzle-kit": "^0.31.8",
     "typescript": "catalog:"
