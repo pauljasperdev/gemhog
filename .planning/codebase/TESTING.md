@@ -1,13 +1,21 @@
 # Testing Infrastructure
 
-## MANDATORY: Before Completing Any Plan
+## MANDATORY: Executing Plans
 
 ```bash
 pnpm dev:init && pnpm db:start && pnpm verify
 ```
 
-**This is non-negotiable.** Plans cannot be marked complete until `pnpm verify`
+### Before starting execution of plans
+
+You MUST verify `pnpm verify` has no prior erros.
+
+### Before marking a plan as complete
+
+**This is non-negotiable.** ALL test MUST pass to mark a plan `pnpm verify`
 passes. No exceptions.
+
+Security volnurabilites MUST have been audited and FIXED!
 
 ---
 
@@ -17,6 +25,38 @@ passes. No exceptions.
 | ---------------------------- | ------------------------------ |
 | Every commit                 | `pnpm verify:commit`           |
 | **Before completing a plan** | `pnpm db:start && pnpm verify` |
+
+## Database Migrations
+
+Migrations are managed via Drizzle Kit in `packages/core`.
+
+### Commands
+
+| Command            | Purpose                                       |
+| ------------------ | --------------------------------------------- |
+| `pnpm db:generate` | Generate migrations from schema changes       |
+| `pnpm db:migrate`  | Apply pending migrations                      |
+| `pnpm db:push`     | Push schema directly (dev only, no migration) |
+| `pnpm db:studio`   | Open Drizzle Studio GUI                       |
+
+### Workflow
+
+**After schema changes (packages/core/src/_/_.sql.ts):**
+
+1. Run `pnpm db:generate` to create migration files
+2. Review generated SQL in `packages/core/src/migrations/`
+3. Commit migration files with schema changes
+4. Run `pnpm db:migrate` to apply (or let integration tests do it)
+
+**Integration tests auto-migrate:**
+
+- `test/integration-setup.ts` runs `db:migrate` before tests
+- No manual migration step needed for testing
+
+**Production deployment:**
+
+- Run `pnpm db:migrate` before starting the application
+- Migrations are idempotent (safe to run multiple times)
 
 ## Available Test Commands
 
@@ -43,6 +83,32 @@ passes. No exceptions.
    ignore them
 4. **Infrastructure changes require working tests** — if you add test tooling,
    verify it actually works end-to-end
+
+### FORBIDDEN: Modifying Tests to Pass
+
+**Agents are NEVER allowed to:**
+
+- Modify `verify.sh` or test scripts to skip tests
+- Add conditionals that bypass test execution (e.g., "if Docker not available,
+  skip")
+- Change test configs to exclude failing tests
+- Mark tests as `.skip()` or `.todo()` to avoid failures
+- Silence test output or errors
+- Report "ALL TESTS PASSED" when tests were skipped
+
+**If tests cannot run due to missing infrastructure:**
+
+1. **STOP** — Do not mark the plan as complete
+2. **REPORT** — "Cannot complete verification: [reason]"
+3. **ASK** — "Docker/Playwright not available. How should I proceed?"
+
+The user decides whether to:
+
+- Provide the missing infrastructure
+- Explicitly skip verification for this plan (user's choice, not agent's)
+- Abort the plan
+
+**Skipping tests is a USER decision, never an agent decision.**
 
 ### When to Run What
 
@@ -105,9 +171,11 @@ pnpm verify
 **Integration Tests:** Vitest 4.x
 
 - Config: `vitest.integration.config.ts` (root)
-- Prerequisite: `pnpm db:start` (must start database manually before running)
+- Global setup: `test/integration-setup.ts` (starts DB, waits, applies
+  migrations)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
+- Auto-migration: Schema migrations are applied before tests run
 
 **E2E:** Playwright
 
