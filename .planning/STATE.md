@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3 in progress - core package foundation created
+**Current focus:** Phase 3 complete - core package with Effect layers, auth and payment domains
 
 ## Current Position
 
 Phase: 3 of 6 (Core Consolidation)
-Plan: 1/3 plans complete
-Status: In progress
-Last activity: 2026-01-20 - Completed 03-01-PLAN.md (core package foundation)
+Plan: 3/3 plans complete
+Status: Phase complete
+Last activity: 2026-01-20 - Completed 03-03-PLAN.md (payment domain migration)
 
-Progress: ██████░░░░ ~40% (Phase 1 + 1.1 + 2 + 03-01 complete)
+Progress: ████████░░ ~50% (Phase 1 + 1.1 + 2 + 3 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 12
 - Average duration: 2.9 min
-- Total execution time: 29 min
+- Total execution time: 35 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: ██████░░░░ ~40% (Phase 1 + 1.1 + 2 + 03-01 complet
 | 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
-| 3. Core Consolidation | 1/3 | 3 min | 3.0 min |
+| 3. Core Consolidation | 3/3 | 9 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-08 (<1 min), 01.1-01 (2 min), 02-01 (3 min), 03-01 (3 min)
+- Last 5 plans: 01.1-01 (2 min), 02-01 (3 min), 03-01 (3 min), 03-02 (2 min), 03-03 (4 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -79,6 +79,8 @@ Recent decisions affecting current work:
 | Use @effect/sql-pg ^0.50, @effect/sql-drizzle ^0.48 | RESEARCH.md versions outdated; updated to npm latest | 03-01 |
 | Add @effect/sql as explicit dependency | Required for TypeScript type resolution | 03-01 |
 | Remove declaration/composite from tsconfig | Workspace packages use direct TS imports | 03-01 |
+| Use require() for deferred env validation | Allows unit tests without env vars | 03-03 |
+| Use Proxy for backward-compatible polarClient | Seamless migration for existing code | 03-03 |
 
 ### Pending Todos
 
@@ -163,25 +165,32 @@ Security workflow complete:
 **New Commands:**
 - `pnpm security:audit` - Run dependency audit standalone
 
-## Phase 3 Summary (in progress)
+## Phase 3 Summary
 
-Core consolidation - packages/core with Effect TS:
+Core consolidation complete - packages/core with Effect TS:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
 | 03-01 | Core package foundation with Effect layers | 3 min | Complete |
-| 03-02 | Auth domain migration | - | Pending |
-| 03-03 | Payment domain migration | - | Pending |
+| 03-02 | Auth domain migration | 2 min | Complete |
+| 03-03 | Payment domain migration | 4 min | Complete |
 
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
-- Domain structure: src/drizzle/, src/auth/, src/payment/
-- Subpath exports: ./drizzle, ./auth, ./payment
+- Auth domain: AuthService, AuthLive, auth.sql schema
+- Payment domain: PaymentService, PaymentLive, Polar SDK wrapper
+- Subpath exports: ./drizzle, ./auth, ./auth/auth.sql, ./payment
+
+**Key Patterns Established:**
+- Effect Context.Tag for service interfaces
+- Effect Layer for dependency injection
+- Deferred env validation via require() for testability
+- Mock layers (*ServiceTest) for unit testing
 
 ## Session Continuity
 
-Last session: 2026-01-20T08:01:00Z
-Stopped at: Completed 03-01-PLAN.md (core package foundation)
+Last session: 2026-01-20T08:07:00Z
+Stopped at: Completed 03-03-PLAN.md (payment domain migration)
 Resume file: None
 
-Next: Execute 03-02-PLAN.md (auth domain migration)
+Next: Execute Phase 4 (pending planning)
