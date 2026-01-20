@@ -74,13 +74,17 @@ Plans:
 **Requirements**: INFRA-03, INFRA-04
 **Success Criteria** (what must be TRUE):
   1. `packages/db` and `packages/auth` are merged into `packages/core`
-  2. `packages/core` has domain-driven structure (auth/, stock/, etc.)
+  2. `packages/core` has domain-driven structure (auth/, payment/, drizzle/)
   3. Backend services use Effect TS with Layer for dependency injection
   4. Services are testable via Layer composition
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Create packages/core with Effect database layers
+- [ ] 03-02-PLAN.md — Migrate auth domain with Effect service wrapper
+- [ ] 03-03-PLAN.md — Create payment domain with Effect service wrapper
+- [ ] 03-04-PLAN.md — Update all consumers to import from @gemhog/core
+- [ ] 03-05-PLAN.md — Delete old packages and update root scripts
 
 ### Phase 4: SST Deployment
 **Goal**: Deploy SST-agnostic application to AWS
@@ -119,6 +123,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 | 1. Testing Infrastructure | 7/7 | ✓ Complete | 2026-01-19 |
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
 | 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
-| 3. Core Consolidation | 0/? | Not started | - |
+| 3. Core Consolidation | 0/5 | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
