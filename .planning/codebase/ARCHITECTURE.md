@@ -1,6 +1,7 @@
 # Architecture
 
 **Analysis Date:** 2026-01-15
+**Updated:** 2026-01-20 — Core package consolidation complete (Phase 03)
 
 ## Pattern Overview
 
@@ -12,6 +13,7 @@
 - Type-safe API via tRPC (client-server communication)
 - Shared packages for cross-app code reuse
 - React/Next.js frontend consuming Hono backend
+- Effect TS for backend dependency injection and error handling
 
 ## Layers
 
@@ -28,7 +30,7 @@
 - Purpose: Type-safe RPC endpoints and procedure definitions
 - Contains: tRPC routers, procedures, context
 - Location: `packages/api/src/`
-- Depends on: Auth layer, Database layer
+- Depends on: Core layer (auth)
 - Used by: Web app, Server
 
 **Server Layer:**
@@ -36,24 +38,20 @@
 - Purpose: HTTP routing, middleware, external integrations
 - Contains: Hono server, auth handlers, AI endpoint
 - Location: `apps/server/src/`
-- Depends on: API layer, Auth layer, Env
+- Depends on: API layer, Core layer (auth), Env
 - Used by: Web app (HTTP requests)
 
-**Authentication Layer:**
+**Core Layer:**
 
-- Purpose: User auth, session management, payments
-- Contains: Better-Auth config, Polar integration
-- Location: `packages/auth/src/`
-- Depends on: Database layer, Env
+- Purpose: Domain logic with Effect-based services, database, and schemas
+- Contains: Domain services (Auth, Payment), Drizzle schemas, Effect layers
+- Location: `packages/core/src/`
+- Structure:
+  - `drizzle/` — Database client, connection layer, errors
+  - `auth/` — Authentication domain (service, schema, errors, mocks)
+  - `payment/` — Payment domain (service, errors, mocks)
+- Depends on: Env (DATABASE_URL, POLAR_ACCESS_TOKEN)
 - Used by: Server, API procedures
-
-**Data Layer:**
-
-- Purpose: Database schema and ORM configuration
-- Contains: Drizzle schema, relations, db instance
-- Location: `packages/db/src/`
-- Depends on: Env (DATABASE_URL)
-- Used by: Auth layer, API procedures
 
 **Configuration Layer:**
 
@@ -81,8 +79,8 @@
 1. User submits credentials (`apps/web/src/components/sign-in-form.tsx`)
 2. authClient.signIn() called (`apps/web/src/lib/auth-client.ts`)
 3. HTTP POST to `/api/auth/*` (`apps/server/src/index.ts`)
-4. Better-Auth validates credentials (`packages/auth/src/index.ts`)
-5. Session created in database (`packages/db/src/schema/auth.ts`)
+4. Better-Auth validates credentials via `auth.handler` (`packages/core/src/auth/auth.service.ts`)
+5. Session created in database (`packages/core/src/auth/auth.sql.ts`)
 6. HTTP-only cookie set
 7. Client redirects to dashboard
 
@@ -103,6 +101,24 @@
 
 ## Key Abstractions
 
+**Effect Service:**
+
+- Purpose: Dependency-injected service with testable layers
+- Examples: `AuthService`, `PaymentService` (`packages/core/src/auth/auth.service.ts`)
+- Pattern: Context.Tag + Layer for production, mock Layer for tests
+
+**Effect Layer:**
+
+- Purpose: Composable dependency providers
+- Examples: `AuthLive`, `PaymentLive`, `DatabaseLive` (`packages/core/src/`)
+- Pattern: `Layer.sync()` or `Layer.provide()` for composition
+
+**Tagged Error:**
+
+- Purpose: Structured, typed domain errors
+- Examples: `AuthError`, `SessionNotFoundError` (`packages/core/src/auth/auth.errors.ts`)
+- Pattern: `Data.TaggedError` for pattern matching in Effect
+
 **tRPC Procedure:**
 
 - Purpose: Type-safe API endpoint definition
@@ -119,8 +135,8 @@
 **Drizzle Schema:**
 
 - Purpose: Database table definitions with relations
-- Examples: `user`, `session`, `account` (`packages/db/src/schema/auth.ts`)
-- Pattern: Schema-first ORM with typed relations
+- Examples: `user`, `session`, `account` (`packages/core/src/auth/auth.sql.ts`)
+- Pattern: Schema-first ORM with typed relations, `*.sql.ts` naming convention
 
 **Auth Client:**
 
@@ -150,22 +166,42 @@
 
 **Database:**
 
-- Location: `packages/db/src/index.ts`
+- Location: `packages/core/src/drizzle/index.ts`
 - Triggers: Query execution
-- Responsibilities: Drizzle instance creation
+- Responsibilities: Effect PgClient layer, Drizzle layer composition
+
+**Auth Domain:**
+
+- Location: `packages/core/src/auth/index.ts`
+- Triggers: Session validation, sign-in/sign-out
+- Responsibilities: AuthService layer, Better-Auth configuration
+
+**Payment Domain:**
+
+- Location: `packages/core/src/payment/index.ts`
+- Triggers: Payment operations
+- Responsibilities: PaymentService layer, Polar SDK client
 
 ## Error Handling
 
 **Strategy:** Throw errors, catch at boundaries (route handlers, tRPC
-middleware)
+middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 **Patterns:**
 
+- Effect domains: `Data.TaggedError` with typed payloads
+  (`packages/core/src/*/errors.ts`)
 - tRPC: `TRPCError` with codes (UNAUTHORIZED, etc.)
   (`packages/api/src/index.ts`)
 - Auth: Error callback on auth operations
   (`apps/web/src/components/sign-in-form.tsx`)
 - API: Toast notifications for user feedback (`apps/web/src/utils/trpc.ts`)
+
+**Domain Errors:**
+
+- Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`, `UnauthorizedError`
+- Database: `DatabaseError`, `ConnectionError`
+- Payment: `PaymentError`
 
 ## Cross-Cutting Concerns
 
@@ -197,14 +233,36 @@ middleware)
 - protectedProcedure middleware checks session (`packages/api/src/index.ts`)
 - HTTP-only secure cookies for session storage
 
-## Planned Architectural Changes
+## Completed Architectural Changes
 
-**Effect TS Integration (Backend):**
+**Effect TS Integration (Backend) — Completed Phase 03:**
 
 - Purpose: Testability, dependency injection, composable error handling
-- Scope: Backend services in `apps/server/` and `packages/api/`
-- Benefits: Easy mocking for unit tests, structured error handling
-- Status: Pending implementation
+- Scope: Core package services (`packages/core/`)
+- Implementation:
+  - `AuthService` with `AuthLive` layer (`packages/core/src/auth/auth.service.ts`)
+  - `PaymentService` with `PaymentLive` layer (`packages/core/src/payment/payment.service.ts`)
+  - `DatabaseLive` layer composing PgClient + Drizzle (`packages/core/src/drizzle/index.ts`)
+  - Mock layers for testing (`AuthServiceTest`, `PaymentServiceTest`)
+  - TaggedErrors for structured error handling across domains
+- Backward compatibility: Lazy proxy exports (`auth`, `polarClient`) for gradual migration
+
+**Core Package Consolidation — Completed Phase 03:**
+
+- Pattern: Merged `packages/db` + `packages/auth` → `packages/core`
+- Structure:
+  - `core/src/drizzle/` — Database client, connection, errors
+  - `core/src/auth/` — Auth domain (service, schema, errors, mocks)
+  - `core/src/payment/` — Payment domain (service, errors, mocks)
+- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
+- Exports via `package.json`:
+  - `@gemhog/core` → drizzle
+  - `@gemhog/core/auth` → auth domain
+  - `@gemhog/core/payment` → payment domain
+- Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
+  sibling folders when implementing V1 features
+
+## Active Architecture Principles
 
 **SST-Agnostic Architecture:**
 
@@ -212,17 +270,6 @@ middleware)
 - Rationale: Enables local development with `pnpm dev` without SST context
 - Pattern: SST injects env vars at deploy time; `.env` files for local/test
 - Benefit: Agents can verify code without SST multiplexer running
-
-**Core Package Consolidation (Domain-Driven):**
-
-- Pattern: Merge `packages/db` + `packages/auth` → `packages/core`
-- Structure: `core/src/drizzle/` for DB, `core/src/auth/` for auth domain
-- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
-- Schema aggregation: `drizzle/index.ts` spreads domain schemas
-- Rationale: Avoids cyclic deps between db and domain packages
-- Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
-  sibling folders when implementing V1 features
-- Status: Pending refactoring (see STRUCTURE.md for full details)
 
 ## Deferred Data Flows (V1)
 
@@ -248,5 +295,6 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-19 — moved stock data flow
-and newsletter flow to Deferred (V1)_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_
+_Updated: 2026-01-20 — Phase 03 core consolidation complete, Effect TS implemented_
+_Update when major patterns change_

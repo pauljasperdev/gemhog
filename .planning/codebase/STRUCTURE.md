@@ -1,6 +1,6 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-01-15
+**Updated:** 2026-01-20
 
 ## Directory Layout
 
@@ -19,17 +19,22 @@ gemhog/
 │       │   ├── components/ # React components
 │       │   ├── lib/        # Utility functions
 │       │   └── utils/      # Helper utilities
+│       ├── tests/e2e/      # Playwright E2E tests
 │       ├── next.config.ts
 │       └── package.json
 ├── packages/               # Shared internal libraries
 │   ├── api/               # tRPC router definitions
-│   ├── auth/              # Authentication configuration
-│   ├── db/                # Database schema & ORM
+│   ├── core/              # Domain-driven core (auth, payment, drizzle)
 │   ├── env/               # Environment validation
 │   └── config/            # Shared TypeScript config
 ├── .planning/             # Planning documents (GSD)
+├── scripts/               # Build and verification scripts
+├── vitest.config.ts       # Unit test configuration
+├── vitest.integration.config.ts  # Integration test configuration
+├── playwright.config.ts   # E2E test configuration
 ├── pnpm-workspace.yaml    # Workspace configuration
 ├── biome.json            # Linting & formatting
+├── lefthook.yml          # Pre-commit hooks
 ├── tsconfig.json         # Root TypeScript config
 └── package.json          # Root workspace package
 ```
@@ -54,6 +59,7 @@ gemhog/
   - `src/components/ui/` - shadcn/ui primitives
   - `src/lib/` - Utility functions
   - `src/utils/` - Helper utilities
+  - `tests/e2e/` - Playwright E2E tests
 
 **packages/api/**
 
@@ -62,19 +68,18 @@ gemhog/
 - Key files: `src/index.ts` (tRPC init), `src/routers/index.ts` (appRouter)
 - Subdirectories: `src/routers/`
 
-**packages/auth/**
+**packages/core/**
 
-- Purpose: Authentication configuration
-- Contains: Better-Auth setup, Polar integration
-- Key files: `src/index.ts` (auth config), `src/lib/payments.ts` (Polar client)
-- Subdirectories: `src/lib/`
-
-**packages/db/**
-
-- Purpose: Database layer
-- Contains: Drizzle schema, ORM instance
-- Key files: `src/index.ts` (db instance), `src/schema/auth.ts` (auth tables)
-- Subdirectories: `src/schema/`
+- Purpose: Domain-driven core package (consolidated from db + auth)
+- Contains: Database layer, auth domain, payment domain
+- Key files:
+  - `src/drizzle/index.ts` - Database client and Effect layers
+  - `src/auth/index.ts` - Better-Auth config and AuthService
+  - `src/payment/index.ts` - Polar client and PaymentService
+- Subdirectories:
+  - `src/drizzle/` - Database connection, client, errors
+  - `src/auth/` - Auth domain (service, schema, errors, mocks)
+  - `src/payment/` - Payment domain (service, errors, mocks)
 
 **packages/env/**
 
@@ -95,22 +100,22 @@ gemhog/
 - `tsconfig.json` - Root TypeScript config
 - `biome.json` - Linting and formatting
 - `pnpm-workspace.yaml` - Workspace and catalog
-- `packages/db/drizzle.config.ts` - Database migrations
+- `packages/core/drizzle.config.ts` - Database migrations
 - `apps/web/next.config.ts` - Next.js config
 
 **Core Logic:**
 
 - `packages/api/src/routers/index.ts` - tRPC routes
-- `packages/auth/src/index.ts` - Auth configuration
-- `packages/db/src/schema/auth.ts` - Database schema
+- `packages/core/src/auth/index.ts` - Auth configuration
+- `packages/core/src/auth/auth.sql.ts` - Auth database schema
+- `packages/core/src/drizzle/client.ts` - Database client
 - `packages/env/src/server.ts` - Server env validation
 
 **Testing:**
 
-- Not yet configured
-- Planned: Co-located tests (`*.test.ts` alongside source)
-- Planned: Integration tests using Local Postgres Docker + Test stage AWS
-  resources
+- Co-located tests: `*.test.ts` alongside source files
+- Integration tests: `*.int.test.ts` (requires Docker Postgres)
+- E2E tests: `apps/web/tests/e2e/*.e2e.test.ts`
 
 **Documentation:**
 
@@ -120,13 +125,26 @@ gemhog/
 
 **Root package.json scripts:**
 
-| Script     | Purpose                                                                                                   |
-| ---------- | --------------------------------------------------------------------------------------------------------- |
-| `dev:init` | Re-install dependencies and start database. Use when to fetch correct native binaries and start database. |
-| `dev`      | Run all apps in development mode                                                                          |
-| `db:start` | Start local PostgreSQL via Docker                                                                         |
-| `db:push`  | Push schema changes to database                                                                           |
-| `check`    | Run Biome linting and formatting                                                                          |
+| Script             | Purpose                                               |
+| ------------------ | ----------------------------------------------------- |
+| `dev:init`         | Re-install dependencies and install Playwright deps   |
+| `dev`              | Run all apps in development mode                      |
+| `dev:web`          | Run Next.js frontend only                             |
+| `dev:server`       | Run Hono backend only                                 |
+| `db:start`         | Start local PostgreSQL via Docker                     |
+| `db:stop`          | Stop PostgreSQL container                             |
+| `db:push`          | Push schema changes to database                       |
+| `db:generate`      | Generate Drizzle migrations                           |
+| `db:migrate`       | Run Drizzle migrations                                |
+| `db:studio`        | Open Drizzle Studio                                   |
+| `check`            | Run Biome linting and formatting                      |
+| `check-types`      | Run TypeScript type checking                          |
+| `test:unit`        | Run Vitest unit tests                                 |
+| `test:integration` | Run Vitest integration tests (requires `db:start`)    |
+| `test:e2e`         | Run Playwright E2E tests                              |
+| `verify:commit`    | Pre-commit verification (check + types + unit tests)  |
+| `verify`           | Full verification pipeline                            |
+| `security:audit`   | Run pnpm audit for dependency vulnerabilities         |
 
 ## Naming Conventions
 
@@ -167,10 +185,21 @@ gemhog/
 - Definition: `packages/api/src/routers/index.ts`
 - Or new router file: `packages/api/src/routers/[name].ts`
 
+**New Domain (in packages/core):**
+
+- Create folder: `packages/core/src/[domain]/`
+- Schema file: `packages/core/src/[domain]/[domain].sql.ts`
+- Service file: `packages/core/src/[domain]/[domain].service.ts`
+- Errors file: `packages/core/src/[domain]/[domain].errors.ts`
+- Mock file: `packages/core/src/[domain]/[domain].mock.ts`
+- Index: `packages/core/src/[domain]/index.ts`
+- Export from: `packages/core/package.json` exports field
+
 **New Database Table:**
 
-- Schema: `packages/db/src/schema/[name].ts`
-- Export from: `packages/db/src/schema/index.ts`
+- Schema: `packages/core/src/[domain]/[domain].sql.ts`
+- Follow `*.sql.ts` naming convention for Drizzle schema files
+- Aggregate in: `packages/core/src/drizzle/index.ts`
 
 **Utilities:**
 
@@ -191,75 +220,79 @@ gemhog/
 - Contains: `tsconfig.base.json`
 - Committed: Yes
 
+**scripts/**
+
+- Purpose: Build and verification scripts
+- Contains: `verify.sh` (full verification pipeline)
+- Committed: Yes
+
 **node_modules/**
 
 - Purpose: Installed dependencies (per-workspace)
 - Source: Auto-generated by pnpm
 - Committed: No (gitignored)
 
-## Planned Structural Changes
+## Domain-Driven Structure (packages/core)
 
-**Consolidate into packages/core (Domain-Driven):**
-
-Merge `packages/db` and `packages/auth` into a single `packages/core` package
-with domain-driven structure. This avoids cyclic dependencies (db needs schemas,
-domains need db connection) by colocating everything in one package.
+The `packages/core` package uses a domain-driven structure that consolidates
+database and business logic. This avoids cyclic dependencies by colocating
+schemas with their domain services.
 
 **Current Structure:**
 
 ```
-packages/
-  db/                    # Database connection + schemas
-    src/
-      index.ts           # Drizzle connection
-      schema/
-        auth.ts          # Auth tables
-        index.ts         # Barrel export
-  auth/                  # Better-auth config
-    src/
-      index.ts           # Auth config (imports from @gemhog/db)
-      lib/payments.ts    # Polar client
-```
-
-**Target Structure:**
-
-```
-packages/
-  core/
-    src/
-      drizzle/
-        index.ts         # DB connection, aggregates schemas via spread
-      auth/
-        auth.sql.ts      # Tables: user, session, account, verification
-        index.ts         # Better-auth config + Polar
-        payments.ts      # Polar client
-      # Future domains (Deferred V1):
-      newsletter/        # AWS SES email delivery
-      stock/             # SEC EDGAR + EOD price data provider
-      thesis/            # Podcast thesis extraction
-    docker-compose.yml
-    drizzle.config.ts    # Schema glob: ./src/*/*.sql.ts
-    package.json
+packages/core/
+├── src/
+│   ├── drizzle/           # Database layer
+│   │   ├── client.ts      # Drizzle client instance
+│   │   ├── errors.ts      # Database errors (TaggedError)
+│   │   ├── index.ts       # Effect layers (DatabaseLive)
+│   │   └── connection.int.test.ts
+│   ├── auth/              # Auth domain
+│   │   ├── auth.sql.ts    # Drizzle schema (user, session, account, verification)
+│   │   ├── auth.service.ts  # Effect service (AuthService, AuthLive)
+│   │   ├── auth.errors.ts   # Domain errors (TaggedError)
+│   │   ├── auth.mock.ts     # Mock layer for testing
+│   │   ├── auth.test.ts     # Unit tests
+│   │   └── index.ts         # Exports + Better-Auth config
+│   └── payment/           # Payment domain
+│       ├── payment.service.ts  # Effect service (PaymentService, PaymentLive)
+│       ├── payment.errors.ts   # Domain errors
+│       ├── payment.mock.ts     # Mock layer for testing
+│       ├── payment.test.ts     # Unit tests
+│       └── index.ts            # Exports + Polar client
+├── docker-compose.yml     # Local PostgreSQL
+├── drizzle.config.ts      # Schema glob: ./src/*/*.sql.ts
+└── package.json
 ```
 
 **Key Patterns:**
 
 - `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
-- Domain folders directly under `src/` (auth/, stock/, thesis/)
-- `drizzle/index.ts` aggregates schemas: `{ ...authSchema, ...stockSchema }`
-- No cyclic deps: auth imports from sibling `../drizzle`, not external package
+- Domain folders directly under `src/` (drizzle/, auth/, payment/)
+- Effect TS services with dependency injection via layers
+- Mock layers for testing (`AuthServiceTest`, `PaymentServiceTest`)
+- Co-located tests with `.test.ts` suffix
 
-**Export Paths:** | Import | Purpose | |--------|---------| | `@gemhog/core` |
-DB instance (main export) | | `@gemhog/core/drizzle` | DB instance (explicit) |
-| `@gemhog/core/auth` | Auth instance | | `@gemhog/core/auth/auth.sql` | Raw
-schema tables |
+**Export Paths:**
 
-**Consumer Updates Required:**
+| Import                     | Purpose                              |
+| -------------------------- | ------------------------------------ |
+| `@gemhog/core`             | DB instance (main export)            |
+| `@gemhog/core/drizzle`     | DB instance (explicit)               |
+| `@gemhog/core/auth`        | Auth instance + Better-Auth config   |
+| `@gemhog/core/auth/auth.sql` | Raw schema tables                  |
+| `@gemhog/core/payment`     | Payment service + Polar client       |
 
-- `packages/api`: `@gemhog/auth` → `@gemhog/core/auth`
-- `apps/server`: `@gemhog/auth` → `@gemhog/core/auth`
-- `apps/web`: `@gemhog/auth` → `@gemhog/core`
-- Root `package.json`: db:\* scripts filter `@gemhog/core`
+**Adding a New Domain:**
+
+1. Create folder: `packages/core/src/[domain]/`
+2. Add schema: `[domain].sql.ts` (Drizzle tables)
+3. Add service: `[domain].service.ts` (Effect service + layer)
+4. Add errors: `[domain].errors.ts` (TaggedErrors)
+5. Add mock: `[domain].mock.ts` (test layer)
+6. Add index: `index.ts` (exports)
+7. Register export in `package.json` exports field
 
 **Reference:** Pattern based on
 [terminal.shop](https://github.com/terminaldotshop/terminal) and
@@ -267,6 +300,4 @@ schema tables |
 
 ---
 
-_Structure analysis: 2026-01-15_ _Updated: 2026-01-19 — marked future domains
-(newsletter, stock, thesis) as Deferred V1_ _Update when directory structure
-changes_
+_Updated: 2026-01-20_

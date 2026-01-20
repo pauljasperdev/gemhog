@@ -1,42 +1,58 @@
 # Testing Infrastructure
 
-**Updated:** 2026-01-20
+## MANDATORY: Before Completing Any Plan
+
+```bash
+pnpm dev:init && pnpm db:start && pnpm verify
+```
+
+**This is non-negotiable.** Plans cannot be marked complete until `pnpm verify`
+passes. No exceptions.
+
+---
 
 ## Quick Reference
 
-**Run full verification:**
-```bash
-pnpm db:start      # Start database (if not running)
-pnpm verify        # Run ALL tests: static → types → unit → integration → security
-```
+| When                         | Command                        |
+| ---------------------------- | ------------------------------ |
+| Every commit                 | `pnpm verify:commit`           |
+| **Before completing a plan** | `pnpm db:start && pnpm verify` |
 
-This is THE command to verify everything works. Use it before declaring work complete.
+## Available Test Commands
 
-## Current State
-
-| Test Type | Status | Command | Notes |
-|-----------|--------|---------|-------|
-| Static Analysis | ✓ Working | `pnpm check` | Biome lint + format |
-| Type Check | ✓ Working | `pnpm check-types` | TypeScript strict |
-| Unit Tests | ✓ Working | `pnpm test:unit` | Vitest, 4 tests |
-| Integration Tests | ✓ Working | `pnpm test:integration` | Requires `pnpm db:start` first |
-| E2E Tests | ✓ Working | `pnpm test:e2e` | Playwright |
-| Pre-commit Hooks | ✓ Working | Lefthook | Runs on git commit |
-| Dependency Security | ⚠ Blocked | `pnpm audit` | esbuild moderate vuln (drizzle-kit dep) |
-| **Full Pipeline** | ⚠ Blocked | `pnpm verify` | Blocked by dependency security |
+| Test Type           | Command                 | Notes                               |
+| ------------------- | ----------------------- | ----------------------------------- |
+| Static Analysis     | `pnpm check`            | Biome lint + format                 |
+| Type Check          | `pnpm check-types`      | TypeScript strict                   |
+| Unit Tests          | `pnpm test:unit`        | Vitest                              |
+| Integration Tests   | `pnpm test:integration` | Requires `pnpm db:start` first      |
+| E2E Tests           | `pnpm test:e2e`         | Playwright, auto-starts dev servers |
+| Pre-commit Hooks    | Lefthook                | Runs on git commit                  |
+| Dependency Security | `pnpm security:audit`   | Checks for vulnerable dependencies  |
+| **Full Pipeline**   | `pnpm verify`           | Runs all of the above               |
 
 ## Verification Requirements
 
 **Tests must pass before work is complete. "Runs but fails" is NOT acceptable.**
 
+### Agent Rules
+
+1. **Run tests BEFORE declaring work complete** — not after
+2. **Fix failures before committing** — don't commit broken code
+3. **Pre-existing failures are blockers** — document in CONCERNS.md but don't
+   ignore them
+4. **Infrastructure changes require working tests** — if you add test tooling,
+   verify it actually works end-to-end
+
 ### When to Run What
 
-| Change Type | Required Commands |
-|-------------|-------------------|
-| Any code change | `pnpm verify:commit` (static + types + unit) |
-| Database/schema changes | `pnpm db:start && pnpm test:integration` |
-| UI/user flow changes | `pnpm test:e2e` |
-| Before merge/release | `pnpm db:start && pnpm verify` (full pipeline) |
+| When                         | Command                                        |
+| ---------------------------- | ---------------------------------------------- |
+| Any code change              | `pnpm verify:commit` (static + types + unit)   |
+| Database/schema changes      | `pnpm db:start && pnpm test:integration`       |
+| UI/user flow changes         | `pnpm test:e2e`                                |
+| **Before completing a plan** | `pnpm db:start && pnpm verify` (full pipeline) |
+| Before merge/release         | `pnpm db:start && pnpm verify` (full pipeline) |
 
 ### Verification Order (Fail Fast, Expensive Last)
 
@@ -59,7 +75,7 @@ pnpm check
 # Type checking
 pnpm check-types
 
-# Unit tests (Vitest, all packages except db)
+# Unit tests (Vitest, all packages)
 pnpm test:unit
 
 # Integration tests (start database first)
@@ -79,23 +95,28 @@ pnpm verify
 ## Test Framework
 
 **Unit Tests:** Vitest 4.x
-- Config: `vitest.config.ts` (root) + per-package `vitest.config.ts` using `defineProject`
+
+- Config: `vitest.config.ts` (root) + per-package `vitest.config.ts` using
+  `defineProject`
 - Projects: apps/server, apps/web, packages/api, packages/core, packages/env
 - Pattern: `*.test.ts` files
 - Excludes: `*.int.test.ts`, `*.e2e.test.ts` (handled at root config level)
 
 **Integration Tests:** Vitest 4.x
+
 - Config: `vitest.integration.config.ts` (root)
 - Prerequisite: `pnpm db:start` (must start database manually before running)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
 
 **E2E:** Playwright
+
 - Config: `playwright.config.ts`
 - Tests: `apps/web/tests/e2e/*.e2e.test.ts`
 - Auto-starts dev servers via webServer config
 
 **Pre-commit:** Lefthook
+
 - Config: `lefthook.yml`
 - Runs: biome (staged files) + typecheck
 
@@ -114,11 +135,13 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 ```
 
 **Root config responsibilities:**
+
 - Workspace discovery via `projects: ["apps/*", "packages/*"]`
 - Global excludes: `*.int.test.ts`, `*.e2e.test.ts`, `node_modules`, `dist`
 - Coverage configuration
 
 **Package config responsibilities (using `defineProject`):**
+
 - Package name for test output
 - Environment: `node` (server/api/core/env) or `happy-dom` (web)
 - Include patterns (most use `src/**/*.test.ts`)
@@ -128,11 +151,11 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 Tests are co-located with implementation using clear suffixes:
 
-| Suffix | Type | Command | Description |
-|--------|------|---------|-------------|
-| `*.test.ts` | Unit | `pnpm test:unit` | Fast, mocked externals |
+| Suffix          | Type        | Command                 | Description              |
+| --------------- | ----------- | ----------------------- | ------------------------ |
+| `*.test.ts`     | Unit        | `pnpm test:unit`        | Fast, mocked externals   |
 | `*.int.test.ts` | Integration | `pnpm test:integration` | Real DB, Docker required |
-| `*.e2e.test.ts` | E2E | `pnpm test:e2e` | Playwright, full app |
+| `*.e2e.test.ts` | E2E         | `pnpm test:e2e`         | Playwright, full app     |
 
 **Example structure:**
 
@@ -155,6 +178,7 @@ Any package can have integration tests. Simply:
 3. Run `pnpm test:integration` - tests are automatically discovered and run
 
 The `vitest.integration.config.ts` discovers all `*.int.test.ts` files across:
+
 - `apps/**/src/**/*.int.test.ts`
 - `packages/**/src/**/*.int.test.ts`
 
@@ -233,39 +257,17 @@ describe("Health Check", () => {
 ## What to Mock
 
 **DO mock:**
+
 - External API calls (Google AI, Polar)
 - Time/dates for deterministic tests
 - Environment variables
 
 **DON'T mock:**
+
 - Internal pure functions
 - Database in integration tests (use real Docker DB)
 - HTTP in E2E tests (use real servers)
 
 ## Known Issues
 
-**Current blockers:**
-
-1. **Dependency vulnerability** - `esbuild` moderate vulnerability via drizzle-kit. Blocks `pnpm verify`. Waiting for drizzle-kit to update dependency.
-
-**Pre-existing issues (not blocking tests):**
-
-1. Pre-existing lint issues in mode-toggle.tsx, label.tsx (outside phase scope)
-2. Empty .agent/prd.json file (parse error)
-
-These are documented in `.planning/codebase/CONCERNS.md`.
-
-## Requirements for "Testing Complete"
-
-Testing infrastructure is only complete when:
-
-- [x] `pnpm check` passes (no lint errors)
-- [x] `pnpm check-types` passes (no type errors)
-- [x] `pnpm test:unit` passes (all unit tests green)
-- [x] `pnpm test:integration` passes (with Docker running)
-- [ ] `pnpm test:e2e` passes (with env vars configured) — requires Playwright deps
-- [ ] `pnpm verify` passes (full pipeline green) — blocked by esbuild vuln
-
----
-
-_Updated: 2026-01-20_
+See `.planning/codebase/CONCERNS.md` for current known issues and tech debt.
