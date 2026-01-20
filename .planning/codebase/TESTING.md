@@ -79,9 +79,10 @@ pnpm verify
 ## Test Framework
 
 **Unit Tests:** Vitest 4.x
-- Config: `vitest.config.ts` (root) + per-package configs
+- Config: `vitest.config.ts` (root) + per-package `vitest.config.ts` using `defineProject`
 - Projects: apps/server, apps/web, packages/api, packages/core, packages/env
 - Pattern: `*.test.ts` files
+- Excludes: `*.int.test.ts`, `*.e2e.test.ts` (handled at root config level)
 
 **Integration Tests:** Vitest 4.x
 - Config: `vitest.integration.config.ts` (root)
@@ -97,6 +98,31 @@ pnpm verify
 **Pre-commit:** Lefthook
 - Config: `lefthook.yml`
 - Runs: biome (staged files) + typecheck
+
+## Vitest Configuration Structure
+
+The project uses a monorepo Vitest setup with workspace discovery:
+
+```
+vitest.config.ts              # Root: discovers projects, global excludes
+vitest.integration.config.ts  # Root: integration test config (separate run)
+├── apps/server/vitest.config.ts   # defineProject: name, environment
+├── apps/web/vitest.config.ts      # defineProject: name, environment, paths
+├── packages/api/vitest.config.ts
+├── packages/core/vitest.config.ts
+└── packages/env/vitest.config.ts
+```
+
+**Root config responsibilities:**
+- Workspace discovery via `projects: ["apps/*", "packages/*"]`
+- Global excludes: `*.int.test.ts`, `*.e2e.test.ts`, `node_modules`, `dist`
+- Coverage configuration
+
+**Package config responsibilities (using `defineProject`):**
+- Package name for test output
+- Environment: `node` (server/api/core/env) or `happy-dom` (web)
+- Include patterns (most use `src/**/*.test.ts`)
+- Note: `apps/web` also includes `app/**/*.test.ts` for Next.js App Router
 
 ## Test File Naming Convention
 
