@@ -145,9 +145,6 @@ importers:
       '@gemhog/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@gemhog/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
       '@gemhog/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -277,37 +274,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  packages/auth:
-    dependencies:
-      '@gemhog/db':
-        specifier: workspace:*
-        version: link:../db
-      '@gemhog/env':
-        specifier: workspace:*
-        version: link:../env
-      '@polar-sh/better-auth':
-        specifier: 'catalog:'
-        version: 1.6.4(@polar-sh/sdk@0.34.17)(@stripe/react-stripe-js@4.0.2(@stripe/stripe-js@7.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@stripe/stripe-js@7.9.0)(better-auth@1.4.12(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.9)(pg@8.17.0))(next@16.1.1(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.17.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0)))(react-dom@19.2.3(react@19.2.3))(react-is@19.2.3)(react@19.2.3)(redux@5.0.1)(zod@4.3.5)
-      '@polar-sh/sdk':
-        specifier: ^0.34.16
-        version: 0.34.17
-      better-auth:
-        specifier: 'catalog:'
-        version: 1.4.12(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.9)(pg@8.17.0))(next@16.1.1(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.17.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))
-      dotenv:
-        specifier: 'catalog:'
-        version: 17.2.3
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
-    devDependencies:
-      '@gemhog/config':
-        specifier: workspace:*
-        version: link:../config
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   packages/config: {}
 
   packages/core:
@@ -352,37 +318,6 @@ importers:
       '@effect/vitest':
         specifier: ^0.27
         version: 0.27.0(effect@3.19.14)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))
-      '@gemhog/config':
-        specifier: workspace:*
-        version: link:../config
-      '@types/pg':
-        specifier: ^8.15.6
-        version: 8.16.0
-      drizzle-kit:
-        specifier: ^0.31.8
-        version: 0.31.8
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
-  packages/db:
-    dependencies:
-      '@gemhog/env':
-        specifier: workspace:*
-        version: link:../env
-      dotenv:
-        specifier: 'catalog:'
-        version: 17.2.3
-      drizzle-orm:
-        specifier: ^0.45.1
-        version: 0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.9)(pg@8.17.0)
-      pg:
-        specifier: ^8.16.3
-        version: 8.17.0
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
-    devDependencies:
       '@gemhog/config':
         specifier: workspace:*
         version: link:../config

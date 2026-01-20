@@ -29,6 +29,7 @@ describe("database connection", () => {
 
   it("should return current timestamp", async () => {
     const result = await db.execute(sql`SELECT NOW() as now`);
+    // biome-ignore lint/style/noNonNullAssertion: SELECT NOW() always returns one row
     const row = result.rows[0]!;
     // Raw SQL returns timestamp as string, verify it's a valid parseable date
     expect(new Date(row.now as string).getTime()).not.toBeNaN();
