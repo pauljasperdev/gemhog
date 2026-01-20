@@ -3,8 +3,53 @@
 **Purpose:** Systematic security review for agent workflows. Run after
 implementation, before E2E tests. Critical/high findings block merge.
 
-**Output:** Each review produces a `SECURITY-REVIEW.md` in the feature/phase
-directory with findings and sign-off.
+**Output:** Findings recorded in `.planning/codebase/SECURITY-REVIEW.md`.
+
+---
+
+## Security Review Workflow
+
+**Run security review BEFORE declaring work complete.** This runs on every
+commit, not just "sensitive" changes — security issues hide in unexpected
+places.
+
+### Steps
+
+1. **Check for blocking findings:**
+   - Read `.planning/codebase/SECURITY-REVIEW.md`
+   - If any Open Critical/High/Medium findings exist, STOP
+   - Either fix them first or escalate to project owner
+
+2. **Determine scope:**
+   - Run `git diff --name-only HEAD~1` (or vs main branch)
+   - For each changed file: identify what it imports
+   - For each changed file: identify what imports it (callers)
+   - Scope = changed files + their imports + their callers
+
+3. **Run dependency audit:**
+   ```bash
+   pnpm security:audit
+   ```
+   - Moderate or higher: blocking, must fix or document justification
+   - Document results in SECURITY-REVIEW.md
+
+4. **Review code against checklist:** Apply relevant categories below to scoped
+   files
+
+5. **Record findings:** Append session to `.planning/codebase/SECURITY-REVIEW.md`
+
+6. **Resolve blocking findings:** Fix Critical/High/Medium issues, re-run checks
+
+7. **Update CONCERNS.md:** Update summary counts (don't duplicate findings)
+
+### Severity Blocking
+
+| Severity | Blocks Completion | Action                       |
+| -------- | ----------------- | ---------------------------- |
+| Critical | YES               | Fix immediately, no exceptions |
+| High     | YES               | Fix immediately, no exceptions |
+| Medium   | YES               | Fix before declaring complete |
+| Low      | NO                | Document, fix when convenient |
 
 ---
 

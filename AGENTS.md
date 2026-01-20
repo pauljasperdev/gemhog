@@ -30,9 +30,10 @@ methodology for AI-assisted development. All project context lives in the
 │   ├── CONVENTIONS.md      # Coding patterns and standards
 │   ├── STACK.md            # Technologies and dependencies
 │   ├── INTEGRATIONS.md     # External services and APIs
-│   ├── TESTING.md          # Test strategy and infrastructure
+│   ├── TESTING.md          # Test commands and verification workflow
 │   ├── CONCERNS.md         # Known issues and technical debt
-│   └── SECURITY-CHECKLIST.md # Security review requirements
+│   ├── SECURITY-CHECKLIST.md # Security review checklist
+│   └── SECURITY-REVIEW.md  # Security audit trail
 └── phases/                 # Implementation phases (roadmap)
 ```
 
@@ -42,9 +43,10 @@ methodology for AI-assisted development. All project context lives in the
 | ----------------------- | ------------------------------------ | -------------------------------------- |
 | `PROJECT.md`            | Requirements, constraints, decisions | Always — start here                    |
 | `ARCHITECTURE.md`       | System design, data flows            | Before structural changes              |
-| `SECURITY-CHECKLIST.md` | Security requirements                | Before implementing auth/data handling |
+| `TESTING.md`            | Test commands and verification       | Before running tests or declaring complete |
+| `SECURITY-CHECKLIST.md` | Security review checklist            | Before implementing auth/data handling |
+| `SECURITY-REVIEW.md`    | Security findings and audit trail    | Check for blocking findings before work |
 | `CONCERNS.md`           | Known issues, tech debt              | Before major refactoring               |
-| `TESTING.md`            | Test strategy                        | Before writing tests                   |
 
 ## Important Constraints
 
@@ -57,134 +59,33 @@ methodology for AI-assisted development. All project context lives in the
 - **Effect TS for backend**: Required for testability and dependency injection
   (pending implementation).
 
-## Verification Requirements (MANDATORY)
+## Verification Requirements
 
-**Tests must pass before work is considered complete.** This is non-negotiable.
-
-### Before Every Commit
-
-Lefthook auto-runs on commit (or run `pnpm verify:commit` manually):
-- Static analysis (lint + format)
-- Type checking
-- Unit tests
-- Integration tests (requires Docker)
-
-### Before Completing a Feature/Phase
-
-Run full verification including integration and E2E:
-```bash
-pnpm verify          # Full pipeline: lint → types → unit → integration → e2e
-```
-
-### When to Run What
-
-| When | Command | What runs |
-|------|---------|-----------|
-| Every commit | `pnpm verify:commit` | Lint + types + unit tests |
-| Database changes | `pnpm test:integration` | Integration tests (requires `pnpm db:start` first) |
-| Feature/phase complete | `pnpm verify` | All tests including E2E |
-
-### Database Setup for Integration Tests
-
-**Before running integration tests**, start the database:
+**Before completing any plan, you MUST run:**
 
 ```bash
-pnpm db:start          # Start PostgreSQL container
-pnpm test:integration  # Run integration tests
+pnpm db:start && pnpm verify
 ```
 
-The database container stays running for subsequent test runs. Stop it with `pnpm db:stop`.
+**This is non-negotiable.** See `.planning/codebase/TESTING.md` for full details.
 
-### Rules for Agents
+## Security Requirements
 
-1. **Run tests BEFORE declaring work complete** — not after
-2. **Tests must pass** — "runs but fails" is NOT acceptable
-3. **Fix failures before committing** — don't commit broken code
-4. **Infrastructure changes require working tests** — if you add test tooling,
-   verify it actually works end-to-end
-5. **Pre-existing failures are blockers** — document in CONCERNS.md but don't
-   ignore them
+**Security review required before declaring work complete.** See
+`.planning/codebase/SECURITY-CHECKLIST.md` for the checklist and
+`.planning/codebase/SECURITY-REVIEW.md` for the audit trail.
 
-### What "Complete" Means
+**Severity blocking:**
+- Critical/High/Medium findings block completion
+- Only Low severity is non-blocking
 
-Work is complete when:
-- [ ] `pnpm verify:commit` passes (lint + types + unit)
-- [ ] `pnpm verify` passes for phase completion (includes integration + E2E)
-- [ ] Security review completed (see below)
-- [ ] No new errors introduced
+## For Non-GSD Workflows
 
-## Security Verification (MANDATORY)
+If you're not using GSD commands, follow these verification steps manually:
 
-**Run security review BEFORE declaring work complete.** Non-negotiable.
+1. **Before commits**: Run `pnpm verify:commit`
+2. **Before completing work**: Run `pnpm verify` (full pipeline)
+3. **Security review**: Work through `.planning/codebase/SECURITY-CHECKLIST.md`
+4. **Record findings**: Append to `.planning/codebase/SECURITY-REVIEW.md`
 
-### Trigger
-
-Security review runs on EVERY commit, not just "sensitive" changes.
-Security issues hide in unexpected places - infrastructure, config, dependencies.
-
-### Workflow
-
-1. **Check for blocking findings:**
-   - Read `.planning/codebase/SECURITY-REVIEW.md`
-   - If any Open Critical/High/Medium findings exist, STOP
-   - Either fix them first or escalate to project owner
-
-2. **Determine scope:**
-   - Run `git diff --name-only HEAD~1` (or vs main branch)
-   - For each changed file: identify what it imports
-   - For each changed file: identify what imports it (callers)
-   - Scope = changed files + their imports + their callers
-
-3. **Run dependency audit:**
-   ```bash
-   pnpm audit --audit-level low
-   ```
-   - Moderate or higher: blocking, must fix or document justification
-   - Document results in SECURITY-REVIEW.md
-
-4. **Review code against checklist:**
-   - Read `.planning/codebase/SECURITY-CHECKLIST.md`
-   - Apply relevant categories to scoped files
-   - Use judgment - checklist is guide, not exhaustive
-
-5. **Record findings:**
-   - Append new session to `.planning/codebase/SECURITY-REVIEW.md`
-   - Include: date, scope, dependency audit result, findings, sign-off
-   - Use format from existing sessions
-
-6. **Resolve blocking findings:**
-   - Fix any Critical/High/Medium issues found
-   - Re-run affected checks
-   - Update finding status to "Fixed"
-
-7. **Update CONCERNS.md:**
-   - Update summary counts if findings changed
-   - Do NOT duplicate findings, just reference SECURITY-REVIEW.md
-
-### Severity and Blocking
-
-| Severity | Blocks Completion | Action |
-|----------|-------------------|--------|
-| Critical | YES | Fix immediately, no exceptions |
-| High | YES | Fix immediately, no exceptions |
-| Medium | YES | Fix before declaring complete |
-| Low | NO | Document, fix when convenient |
-
-**Only Low severity findings are non-blocking.**
-
-### Pre-existing Findings
-
-If SECURITY-REVIEW.md contains any unresolved Critical/High/Medium findings:
-- Work CANNOT be declared complete
-- Either fix the findings or escalate to project owner
-
-## For Claude Code / Cursor / Other AI Tools
-
-This file serves as the entry point. The detailed context lives in `.planning/`.
-When working on this codebase:
-
-1. Start with `PROJECT.md` to understand what we're building
-2. Check relevant codebase docs before making changes
-3. Follow patterns in `CONVENTIONS.md`
-4. Verify security requirements in `SECURITY-CHECKLIST.md` for sensitive
-   features
+See the detailed docs in `.planning/codebase/` for complete requirements.
