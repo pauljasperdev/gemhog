@@ -79,8 +79,9 @@ Recent decisions affecting current work:
 | Use @effect/sql-pg ^0.50, @effect/sql-drizzle ^0.48 | RESEARCH.md versions outdated; updated to npm latest | 03-01 |
 | Add @effect/sql as explicit dependency | Required for TypeScript type resolution | 03-01 |
 | Remove declaration/composite from tsconfig | Workspace packages use direct TS imports | 03-01 |
-| Use require() for deferred env validation | Allows unit tests without env vars | 03-03 |
-| Use Proxy for backward-compatible polarClient | Seamless migration for existing code | 03-03 |
+| Use require() for deferred env validation | Allows unit tests without env vars | 03-02, 03-03 |
+| Use Proxy for backward-compatible exports | Seamless migration for existing code | 03-02, 03-03 |
+| Lazy getter pattern for auth/payment instances | Caches instance on first access | 03-02, 03-03 |
 
 ### Pending Todos
 
