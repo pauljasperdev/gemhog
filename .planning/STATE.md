@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3 in progress - consumers migrated to @gemhog/core
+**Current focus:** Phase 3 complete - old packages removed, @gemhog/core is sole source of truth
 
 ## Current Position
 
-Phase: 3 of 6 (Core Consolidation)
-Plan: 4/5 plans complete
-Status: In progress
-Last activity: 2026-01-20 - Completed 03-04-PLAN.md (consumer migration)
+Phase: 3 of 6 (Core Consolidation) - COMPLETE
+Plan: 5/5 plans complete
+Status: Phase complete
+Last activity: 2026-01-20 - Completed 03-05-PLAN.md (old package removal)
 
-Progress: ████████░░ ~55% (Phase 1 + 1.1 + 2 + 3[4/5] complete)
+Progress: █████████░ ~60% (Phase 1 + 1.1 + 2 + 3 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
-- Average duration: 2.8 min
-- Total execution time: 37 min
+- Total plans completed: 14
+- Average duration: 2.9 min
+- Total execution time: 41 min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: ████████░░ ~55% (Phase 1 + 1.1 + 2 + 3[4/5] comple
 | 1. Testing Infrastructure | 7/7 | 21 min | 3.0 min |
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
-| 3. Core Consolidation | 4/5 | 11 min | 2.8 min |
+| 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (3 min), 03-01 (3 min), 03-02 (2 min), 03-03 (4 min), 03-04 (2 min)
+- Last 5 plans: 03-01 (3 min), 03-02 (2 min), 03-03 (4 min), 03-04 (2 min), 03-05 (4 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -82,6 +82,8 @@ Recent decisions affecting current work:
 | Use require() for deferred env validation | Allows unit tests without env vars | 03-02, 03-03 |
 | Use Proxy for backward-compatible exports | Seamless migration for existing code | 03-02, 03-03 |
 | Lazy getter pattern for auth/payment instances | Caches instance on first access | 03-02, 03-03 |
+| Delete old packages completely after migration | All code migrated to @gemhog/core | 03-05 |
+| Remove unused dependencies discovered during verification | @gemhog/auth was in apps/web but unused | 03-05 |
 
 ### Pending Todos
 
@@ -168,7 +170,7 @@ Security workflow complete:
 
 ## Phase 3 Summary
 
-Core consolidation in progress - packages/core with Effect TS:
+Core consolidation complete - packages/core with Effect TS:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
@@ -176,17 +178,20 @@ Core consolidation in progress - packages/core with Effect TS:
 | 03-02 | Auth domain migration | 2 min | Complete |
 | 03-03 | Payment domain migration | 4 min | Complete |
 | 03-04 | Consumer migration to @gemhog/core | 2 min | Complete |
+| 03-05 | Old package removal | 4 min | Complete |
 
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
 - Auth domain: AuthService, AuthLive, auth.sql schema
 - Payment domain: PaymentService, PaymentLive, Polar SDK wrapper
 - Subpath exports: ./drizzle, ./auth, ./auth/auth.sql, ./payment
+- Integration test: connection.int.test.ts
 
-**Consumers migrated:**
-- packages/api: imports from @gemhog/core/auth
-- apps/server: imports from @gemhog/core/auth
-- Old packages (@gemhog/auth, @gemhog/db) ready for removal
+**Old packages removed:**
+- packages/db deleted (16 files)
+- packages/auth deleted (6 files)
+- Root db:* scripts updated to @gemhog/core
+- Unused @gemhog/auth dependency removed from apps/web
 
 **Key Patterns Established:**
 - Effect Context.Tag for service interfaces
@@ -196,8 +201,8 @@ Core consolidation in progress - packages/core with Effect TS:
 
 ## Session Continuity
 
-Last session: 2026-01-20T08:11:44Z
-Stopped at: Completed 03-04-PLAN.md (consumer migration)
+Last session: 2026-01-20T08:16:53Z
+Stopped at: Completed 03-05-PLAN.md (old package removal) - Phase 3 complete
 Resume file: None
 
-Next: Execute 03-05-PLAN.md (old package removal)
+Next: Phase 4 (see ROADMAP.md)
