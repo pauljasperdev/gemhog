@@ -119,6 +119,7 @@ affecting current work:
 | Expanded Comments section with concrete examples              | Actionable guidance better than principles-only                    | 03.2-04                         |
 | Use tsx from local node_modules/.bin for startup tests        | Spawned process needs PATH but tsx isn't globally available        | 03.2-05                         |
 | Temp directory with symlinks for web startup tests            | Next.js auto-reads .env; symlink all except .env to test missing   | 03.2-05                         |
+| DOTENV_CONFIG_PATH=/nonexistent for server startup tests      | Prevent dotenv from auto-loading .env file in spawned process      | 03.2-05                         |
 
 ### Pending Todos
 
