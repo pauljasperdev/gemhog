@@ -10,4 +10,3 @@ export const DatabaseLive = Layer.mergeAll(PgLive, DrizzleLive);
 
 // Re-export client for direct access
 export { PgLive } from "./client";
-export * from "./errors";
