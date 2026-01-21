@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 3.1 of 7 (Code Review Fixes) - Gap closure in progress
-Plan: 7/9 plans complete (03.1-01 through 03.1-06 + 03.1-08)
-Status: Executing gap closure plans (03.1-07, 03.1-09 remaining)
-Last activity: 2026-01-21 - Completed 03.1-06 (drizzle.config.ts env fix)
+Plan: 8/9 plans complete (03.1-01 through 03.1-08)
+Status: Executing gap closure plans (03.1-09 remaining)
+Last activity: 2026-01-21 - Completed 03.1-07 (auth cleanup - static imports, Polar removal)
 
-Progress: ██████████ ~74% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap plans)
+Progress: ███████████ ~77% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
-- Average duration: 4.3 min
-- Total execution time: 91 min
+- Total plans completed: 22
+- Average duration: 4.2 min
+- Total execution time: 93 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ██████████ ~74% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 7/9 | 50 min | 7.1 min |
+| 3.1. Code Review Fixes | 8/9 | 52 min | 6.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 03.1-04 (15 min), 03.1-05 (4 min), 03.1-06 (6 min), 03.1-08 (4 min)
+- Last 5 plans: 03.1-05 (4 min), 03.1-06 (6 min), 03.1-07 (2 min), 03.1-08 (4 min)
 - Note: 03.1-03 and 03.1-04 took longer due to parallel agent coordination
 
 ## Accumulated Context
@@ -102,6 +102,8 @@ Recent decisions affecting current work:
 | UIMessage parts validation schema | AI SDK v6 uses parts array, not simple content string | 03.1-08 |
 | Discriminated union for message parts | TextPartSchema, FilePartSchema, OtherPartSchema with passthrough | 03.1-08 |
 | drizzle.config.ts uses @gemhog/env/server | Centralize env handling, remove dotenv from packages/core | 03.1-06 |
+| Static import for env in auth.service.ts | Module loads validate env at import time, tests mock via vi.mock() | 03.1-07 |
+| vi.mock() pattern for unit test env isolation | Mock env module before importing dependent modules | 03.1-07 |
 
 ### Pending Todos
 
@@ -231,6 +233,7 @@ Code review fixes complete:
 | 03.1-04 | Simplify auth by removing Effect wrapper | 15 min | Complete |
 | 03.1-05 | Audit and remove unused dependencies | 4 min | Complete |
 | 03.1-06 | Fix drizzle.config.ts to use @gemhog/env/server | 6 min | Complete |
+| 03.1-07 | Auth cleanup (static imports, Polar removal) | 2 min | Complete |
 | 03.1-08 | AI endpoint security (validation + rate limiting) | 7 min | Complete |
 
 **Completed:**
@@ -250,11 +253,14 @@ Code review fixes complete:
 - Fixed auth.service.ts to defer env import for testability
 - drizzle.config.ts now uses @gemhog/env/server with Redacted.value()
 - Removed dotenv dependency from packages/core
+- auth.service.ts uses static env import (no more require() hack)
+- All @polar-sh packages removed from codebase
+- Unit tests mock env module via vi.mock() pattern
 
 ## Session Continuity
 
-Last session: 2026-01-21T10:18:03Z
-Stopped at: Completed 03.1-08-PLAN.md (AI endpoint security)
+Last session: 2026-01-21T13:20:55Z
+Stopped at: Completed 03.1-07-PLAN.md (auth cleanup)
 Resume file: None
 
-Next: Continue with remaining gap closure plans (03.1-07, 03.1-09)
+Next: Continue with remaining gap closure plan (03.1-09)
