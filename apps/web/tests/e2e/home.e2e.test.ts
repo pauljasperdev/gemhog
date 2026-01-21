@@ -1,5 +1,5 @@
-// apps/web/tests/e2e/home.spec.ts
-import { expect, test } from "@playwright/test";
+// E2E tests using error-detecting fixture (captures console errors and page exceptions)
+import { expect, test } from "./fixtures";
 
 test("homepage loads", async ({ page }) => {
   await page.goto("/");
