@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3.1 in progress - addressing code review fixes
+**Current focus:** Phase 3.1 complete - all code review fixes addressed
 
 ## Current Position
 
-Phase: 3.1 of 7 (Code Review Fixes) - IN PROGRESS
-Plan: 4/5 plans complete (03.1-01, 03.1-02, 03.1-03, 03.1-04)
-Status: Plan 04 complete, continuing with 05
-Last activity: 2026-01-21 - Completed 03.1-04 (Simplify auth)
+Phase: 3.1 of 7 (Code Review Fixes) - COMPLETE
+Plan: 5/5 plans complete (03.1-01 through 03.1-05)
+Status: Phase 3.1 complete, ready for Phase 4
+Last activity: 2026-01-21 - Completed 03.1-05 (Dependency audit)
 
-Progress: █████████░ ~65% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
+Progress: ██████████ ~70% (Phase 1 + 1.1 + 2 + 3 + 3.1 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
-- Average duration: 3.4 min
-- Total execution time: 77 min
+- Total plans completed: 19
+- Average duration: 3.7 min
+- Total execution time: 81 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: █████████░ ~65% (Phase 1 + 1.1 + 2 + 3 complete, 3
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 4/5 | 36 min | 9.0 min |
+| 3.1. Code Review Fixes | 5/5 | 40 min | 8.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03.1-01 (3 min), 03.1-02 (3 min), 03.1-03 (15 min), 03.1-04 (15 min)
+- Last 5 plans: 03.1-02 (3 min), 03.1-03 (15 min), 03.1-04 (15 min), 03.1-05 (4 min)
 - Note: 03.1-03 and 03.1-04 took longer due to parallel agent coordination
 
 ## Accumulated Context
@@ -95,6 +95,9 @@ Recent decisions affecting current work:
 | dotenv directly in drizzle.config.ts | drizzle-kit only needs DATABASE_URL, not all env vars | 03.1-03 |
 | Remove Effect wrapper from auth | better-auth is self-contained at HTTP boundary | 03.1-04 |
 | Delete auth.mock.ts | Only provided Effect Layer mocks, no longer needed | 03.1-04 |
+| Keep dotenv in packages/core | drizzle.config.ts needs dotenv directly (per 03.1-03 decision) | 03.1-05 |
+| Remove @effect/vitest from packages/core | Unused after auth simplification in 03.1-04 | 03.1-05 |
+| Use knip for dependency audits | Identifies truly unused dependencies vs false positives | 03.1-05 |
 
 ### Pending Todos
 
@@ -193,7 +196,7 @@ Core consolidation complete - packages/core with Effect TS:
 
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
-- Auth domain: simplified (no Effect wrapper after 03.1-03)
+- Auth domain: simplified (no Effect wrapper after 03.1-04)
 - Subpath exports: ./drizzle, ./auth, ./auth/auth.sql
 - Integration test: connection.int.test.ts
 - Note: Payment module removed in 03.1-02 (dead code)
@@ -212,7 +215,7 @@ Core consolidation complete - packages/core with Effect TS:
 
 ## Phase 3.1 Summary
 
-Code review fixes in progress:
+Code review fixes complete:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
@@ -220,6 +223,7 @@ Code review fixes in progress:
 | 03.1-02 | Remove dead payment service code | 3 min | Complete |
 | 03.1-03 | Replace t3-env with Effect Config | 15 min | Complete |
 | 03.1-04 | Simplify auth by removing Effect wrapper | 15 min | Complete |
+| 03.1-05 | Audit and remove unused dependencies | 4 min | Complete |
 
 **Completed:**
 - Generated initial database migrations (user, session, account, verification tables)
@@ -231,11 +235,13 @@ Code review fixes in progress:
 - Simplified auth.service.ts (removed Context.Tag, Layer)
 - Deleted auth.mock.ts (Effect Layer mocks no longer needed)
 - Updated auth exports: getAuth, auth, getSession
+- Removed 9 unused dependencies identified by knip audit
+- Centralized dotenv to packages/env (and packages/core for drizzle.config.ts)
 
 ## Session Continuity
 
-Last session: 2026-01-21T09:26:26Z
-Stopped at: Completed 03.1-04-PLAN.md (Simplify auth)
+Last session: 2026-01-21T09:36:03Z
+Stopped at: Completed 03.1-05-PLAN.md (Dependency audit)
 Resume file: None
 
-Next: Continue Phase 3.1 (03.1-05)
+Next: Continue with Phase 4
