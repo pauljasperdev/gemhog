@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 3.1 of 7 (Code Review Fixes) - IN PROGRESS
-Plan: 1/? plans complete (03.1-02)
-Status: Plan 02 complete, continuing with remaining plans
-Last activity: 2026-01-21 - Completed 03.1-02 (dead payment service removal)
+Plan: 2/5 plans complete (03.1-01, 03.1-02)
+Status: Plans 01 and 02 complete, continuing with remaining plans
+Last activity: 2026-01-21 - Completed 03.1-01 (database migrations)
 
-Progress: █████████░ ~58% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
+Progress: █████████░ ~60% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 2.9 min
-- Total execution time: 44 min
+- Total execution time: 47 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: █████████░ ~58% (Phase 1 + 1.1 + 2 + 3 complete, 3
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 1/? | 3 min | 3.0 min |
+| 3.1. Code Review Fixes | 2/5 | 6 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (2 min), 03-03 (4 min), 03-04 (2 min), 03-05 (4 min), 03.1-02 (3 min)
+- Last 5 plans: 03-03 (4 min), 03-04 (2 min), 03-05 (4 min), 03.1-01 (3 min), 03.1-02 (3 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -88,6 +88,8 @@ Recent decisions affecting current work:
 | Remove unused dependencies discovered during verification | @gemhog/auth was in apps/web but unused | 03-05 |
 | Delete entire payment/ directory | All exports unused, no reason to keep empty module | 03.1-02 |
 | Keep @polar-sh/sdk despite payment deletion | auth.service.ts uses it inline for better-auth plugin | 03.1-02 |
+| Rename drizzle-kit generated migrations | 0000_initial_schema.sql more descriptive than random name | 03.1-01 |
+| Format migration JSON with Biome | Pre-commit hooks require Biome formatting | 03.1-01 |
 
 ### Pending Todos
 
@@ -209,17 +211,20 @@ Code review fixes in progress:
 
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
+| 03.1-01 | Generate database migrations | 3 min | Complete |
 | 03.1-02 | Remove dead payment service code | 3 min | Complete |
 
 **Completed:**
+- Generated initial database migrations (user, session, account, verification tables)
+- Applied migrations to local PostgreSQL, verified with integration tests
 - Deleted packages/core/src/payment/ directory (5 files)
 - Removed ./payment subpath export from package.json
 - Verified no broken imports
 
 ## Session Continuity
 
-Last session: 2026-01-21T09:02:14Z
-Stopped at: Completed 03.1-02-PLAN.md (dead payment service removal)
+Last session: 2026-01-21T09:02:18Z
+Stopped at: Completed 03.1-01-PLAN.md (database migrations)
 Resume file: None
 
-Next: Continue Phase 3.1 (remaining code review fixes)
+Next: Continue Phase 3.1 (03.1-03, 03.1-04, 03.1-05)
