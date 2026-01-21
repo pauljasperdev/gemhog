@@ -108,9 +108,6 @@ importers:
       ai:
         specifier: 'catalog:'
         version: 6.0.34(zod@4.3.5)
-      better-auth:
-        specifier: 'catalog:'
-        version: 1.4.12(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.9)(pg@8.17.0))(next@16.1.1(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.17.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))
       hono:
         specifier: ^4.8.2
         version: 4.11.4
@@ -245,21 +242,12 @@ importers:
       '@gemhog/core':
         specifier: workspace:*
         version: link:../core
-      '@gemhog/env':
-        specifier: workspace:*
-        version: link:../env
-      '@trpc/client':
-        specifier: 'catalog:'
-        version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.8.1(typescript@5.9.3)
       hono:
         specifier: ^4.11.4
         version: 4.11.4
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
     devDependencies:
       '@gemhog/config':
         specifier: workspace:*
@@ -306,9 +294,6 @@ importers:
         specifier: ^8.16.3
         version: 8.17.0
     devDependencies:
-      '@effect/vitest':
-        specifier: ^0.27
-        version: 0.27.0(effect@3.19.14)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))
       '@gemhog/config':
         specifier: workspace:*
         version: link:../config
@@ -695,12 +680,6 @@ packages:
       '@effect/experimental': ^0.58.0
       '@effect/platform': ^0.94.0
       effect: ^3.19.13
-
-  '@effect/vitest@0.27.0':
-    resolution: {integrity: sha512-8bM7n9xlMUYw9GqPIVgXFwFm2jf27m/R7psI64PGpwU5+26iwyxp9eAXEsfT5S6lqztYfpQQ1Ubp5o6HfNYzJQ==}
-    peerDependencies:
-      effect: ^3.19.0
-      vitest: ^3.2.0
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -6072,11 +6051,6 @@ snapshots:
       '@effect/platform': 0.94.1(effect@3.19.14)
       effect: 3.19.14
       uuid: 11.1.0
-
-  '@effect/vitest@0.27.0(effect@3.19.14)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))':
-    dependencies:
-      effect: 3.19.14
-      vitest: 4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0)
 
   '@emnapi/core@1.8.1':
     dependencies:

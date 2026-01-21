@@ -12,11 +12,8 @@
   "scripts": {},
   "dependencies": {
     "@gemhog/core": "workspace:*",
-    "@gemhog/env": "workspace:*",
-    "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
-    "hono": "^4.11.4",
-    "zod": "catalog:"
+    "hono": "^4.11.4"
   },
   "devDependencies": {
     "@gemhog/config": "workspace:*",
