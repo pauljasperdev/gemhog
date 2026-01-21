@@ -98,14 +98,19 @@ Plans:
   4. Auth service has unnecessary Effect wrapper removed
   5. t3-env replaced with Effect Config in `packages/env`
   6. Unused dependencies audited and removed
-**Plans**: 5 plans
+  7. Security findings SEC-001, SEC-002, SEC-003 resolved
+**Plans**: 9 plans
 
 Plans:
-- [ ] 03.1-01-PLAN.md — Generate initial database migrations
-- [ ] 03.1-02-PLAN.md — Remove dead payment service code
-- [ ] 03.1-03-PLAN.md — Replace t3-env with Effect Config
-- [ ] 03.1-04-PLAN.md — Simplify auth service (remove Effect wrapper)
-- [ ] 03.1-05-PLAN.md — Audit and remove unused dependencies
+- [x] 03.1-01-PLAN.md — Generate initial database migrations
+- [x] 03.1-02-PLAN.md — Remove dead payment service code
+- [x] 03.1-03-PLAN.md — Replace t3-env with Effect Config
+- [x] 03.1-04-PLAN.md — Simplify auth service (remove Effect wrapper)
+- [x] 03.1-05-PLAN.md — Audit and remove unused dependencies
+- [ ] 03.1-06-PLAN.md — Fix drizzle.config.ts env import (gap closure)
+- [ ] 03.1-07-PLAN.md — Complete auth cleanup and Polar removal (gap closure)
+- [ ] 03.1-08-PLAN.md — Add AI endpoint validation and rate limiting (gap closure)
+- [ ] 03.1-09-PLAN.md — Security review and verification (gap closure)
 
 ### Phase 4: SST Deployment
 **Goal**: Deploy SST-agnostic application to AWS
@@ -145,6 +150,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 4 -> 5
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
 | 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
 | 3. Core Consolidation | 5/5 | ✓ Complete | 2026-01-20 |
-| 3.1 Code Review Fixes | 0/5 | Not started | - |
+| 3.1 Code Review Fixes | 5/9 | Gap closure in progress | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
