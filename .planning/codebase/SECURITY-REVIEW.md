@@ -14,19 +14,192 @@ this file for summary counts only.
 
 Quick reference for blocking check before any work.
 
-| Severity | Open | Fixed | Total |
-|----------|------|-------|-------|
-| Critical | 0 | 0 | 0 |
-| High | 2 | 0 | 2 |
-| Medium | 1 | 0 | 1 |
-| Low | 0 | 0 | 0 |
+| Severity | Open | Fixed | Closed (N/A) | Total |
+|----------|------|-------|--------------|-------|
+| Critical | 0 | 0 | 0 | 0 |
+| High | 0 | 2 | 0 | 2 |
+| Medium | 0 | 1 | 2 | 3 |
+| Low | 0 | 0 | 1 | 1 |
 
-**Blocking findings exist:** YES (2 High, 1 Medium)
+**Blocking findings exist:** NO
 
-**Open findings:**
-- [SEC-001] High - Missing input validation on AI endpoint
-- [SEC-002] High - No rate limiting
-- [SEC-003] Medium - Debug logging exposes data
+**All findings resolved:**
+- [SEC-001] High - Missing input validation on AI endpoint - FIXED (03.1-08)
+- [SEC-002] High - No rate limiting - FIXED (03.1-08)
+- [SEC-003] Medium - Debug logging exposes data - FIXED (03.1-07)
+- [SEC-004] Medium - Hardcoded placeholder productId - CLOSED (03.1-07, Polar removed)
+- [SEC-005] Low - Polar sandbox mode hardcoded - CLOSED (03.1-07, Polar removed)
+
+---
+
+## Review: 2026-01-21 - Gap Closure (03.1-06 through 03.1-09)
+
+**Reviewer:** Claude (agent)
+**Commit:** Gap closure plans addressing VERIFICATION.md findings
+**Scope:**
+- packages/core/drizzle.config.ts (env import change)
+- packages/core/src/auth/auth.service.ts (static import, Polar removal)
+- packages/env/src/server.ts (POLAR vars removed)
+- apps/web/src/lib/auth-client.ts (Polar removal)
+- apps/web/src/app/dashboard/dashboard.tsx (debug logging removed, Polar removal)
+- apps/server/src/index.ts (validation and rate limiting added)
+
+### Dependency Audit
+
+```
+pnpm security:audit
+No known vulnerabilities found
+```
+
+### Files Reviewed
+
+| File | Categories Checked | Result |
+|------|-------------------|--------|
+| apps/server/src/index.ts | Input Validation, Rate Limiting, API Security | PASS |
+| packages/core/src/auth/auth.service.ts | Auth, Secrets Management | PASS |
+| packages/core/drizzle.config.ts | Secrets Management | PASS |
+| packages/env/src/server.ts | Secrets Management | PASS |
+| apps/web/src/lib/auth-client.ts | Auth | PASS |
+| apps/web/src/app/dashboard/dashboard.tsx | Logging | PASS |
+
+### Findings Resolved
+
+#### [SEC-001] High - Missing input validation on AI endpoint
+- **Status:** FIXED (03.1-08)
+- **Fix:** Added Zod schema validation for message array
+  - UIMessageSchema validates role, parts array structure
+  - Limits: 50 messages max, 100 parts per message, 10KB per text part
+  - Proper error response with validation details
+
+#### [SEC-002] High - No rate limiting
+- **Status:** FIXED (03.1-08)
+- **Fix:** Added in-memory rate limiter
+  - 10 requests per minute per client IP
+  - Uses x-forwarded-for/x-real-ip for client identification
+  - Returns 429 with clear error message when exceeded
+  - Periodic cleanup of expired entries
+
+#### [SEC-003] Medium - Debug logging exposes data
+- **Status:** FIXED (03.1-07)
+- **Fix:** Removed console.log from dashboard.tsx
+  - No more subscription data logged in production
+
+#### [SEC-004] Medium - Hardcoded placeholder productId
+- **Status:** CLOSED (03.1-07)
+- **Reason:** Polar integration removed entirely from codebase
+  - @polar-sh/sdk removed from dependencies
+  - All Polar-related code deleted
+  - Finding no longer applicable
+
+#### [SEC-005] Low - Polar sandbox mode hardcoded
+- **Status:** CLOSED (03.1-07)
+- **Reason:** Polar integration removed entirely from codebase
+  - Finding no longer applicable
+
+### Positive Findings
+
+- **Input validation properly implemented:** Zod schemas with appropriate constraints
+- **Rate limiting in place:** Simple but effective for single-server deployment
+- **Secrets properly redacted:** DATABASE_URL uses Config.redacted() and Redacted.value()
+- **Cookie security:** httpOnly: true, secure: true, sameSite: "none" (intentional for cross-origin API)
+- **CORS configured:** Uses specific origin from env, not "*"
+- **No debug logging:** Dashboard cleaned up
+- **Env validation:** Effect Config validates at import time
+
+### Summary
+
+| Severity | Count | Status |
+|----------|-------|--------|
+| Critical | 0 | - |
+| High | 0 | All fixed |
+| Medium | 0 | All fixed/closed |
+| Low | 0 | All closed |
+
+### Sign-off
+
+- [x] Checked for pre-existing blocking findings (all resolved)
+- [x] Dependency audit passed (no vulnerabilities)
+- [x] All Critical/High/Medium resolved
+- [x] Ready for completion
+
+---
+
+## Review: 2026-01-21 - Phase 3.1 Code Review Fixes
+
+**Reviewer:** Claude (agent)
+**Commit:** Phase 3.1 complete (03.1-01 through 03.1-05)
+**Scope:**
+- packages/env/src/server.ts (secrets handling with Effect Config)
+- packages/env/src/web.ts (web env config)
+- packages/core/src/auth/auth.service.ts (authentication)
+- packages/core/drizzle.config.ts (database config)
+- packages/core/src/payment/* (deleted - dead code removal)
+- apps/server/src/index.ts (caller)
+- packages/api/src/context.ts (caller)
+
+### Dependency Audit
+
+```
+pnpm audit --audit-level low
+No known vulnerabilities found
+```
+
+### Files Reviewed
+
+| File | Categories Checked | Result |
+|------|-------------------|--------|
+| packages/env/src/server.ts | Secrets Management | PASS - Uses Config.redacted() |
+| packages/env/src/web.ts | Secrets Management | PASS |
+| packages/core/src/auth/auth.service.ts | Auth, Secrets, SQL | PARTIAL - 2 findings |
+| packages/core/drizzle.config.ts | Secrets, SQL | PASS - Build-time only |
+| apps/server/src/index.ts | API Security, CORS | PASS |
+| packages/api/src/context.ts | Auth | PASS |
+
+### Findings
+
+#### [SEC-004] Medium - Hardcoded placeholder productId
+
+- **File:** `packages/core/src/auth/auth.service.ts:42`
+- **Category:** Secrets Management / Configuration
+- **Description:** Polar checkout uses hardcoded `productId: "your-product-id"` placeholder
+- **Risk:** Checkout will fail or use wrong product if deployed without changing code
+- **Recommendation:** Move to environment variable `POLAR_PRODUCT_ID`
+- **Status:** Open
+
+#### [SEC-005] Low - Polar sandbox mode hardcoded
+
+- **File:** `packages/core/src/auth/auth.service.ts:21`
+- **Category:** Configuration
+- **Description:** Polar client uses hardcoded `server: "sandbox"`
+- **Risk:** Will use sandbox environment in production unless code is changed
+- **Recommendation:** Make configurable via env var `POLAR_ENVIRONMENT` (sandbox/production)
+- **Status:** Open (Low - non-blocking)
+
+### Positive Findings
+
+- **Secrets properly redacted:** DATABASE_URL, BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN use Config.redacted() and Redacted.value()
+- **Cookie security:** httpOnly: true, secure: true, sameSite: "none" (intentional for cross-origin API)
+- **No secrets in git:** .env files properly gitignored, none tracked
+- **Parameterized queries:** Drizzle ORM used throughout
+- **CORS configured:** Uses specific origin from env, not "*"
+- **Env validation:** Effect Config validates at import time, fails fast
+
+### Summary
+
+| Severity | Count | Status |
+|----------|-------|--------|
+| Critical | 0 | - |
+| High | 0 | - |
+| Medium | 1 | Open (SEC-004) |
+| Low | 1 | Open (SEC-005) |
+
+### Sign-off
+
+- [x] Checked for pre-existing blocking findings (3 exist: SEC-001, SEC-002, SEC-003)
+- [x] Dependency audit passed (no vulnerabilities)
+- [ ] All Critical/High/Medium resolved (SEC-004 new Medium finding)
+- [x] Low findings documented (SEC-005)
+- [ ] Ready for completion (SEC-004 blocks)
 
 ---
 
