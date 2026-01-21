@@ -1,21 +1,21 @@
 # Architecture Research
 
 **Domain:** Financial research platform with content extraction pipeline
-**Researched:** 2026-01-19
-**Confidence:** HIGH (Effect TS patterns), MEDIUM (pipeline architecture), HIGH (financial data integration)
+**Researched:** 2026-01-19 **Confidence:** HIGH (Effect TS patterns), MEDIUM
+(pipeline architecture), HIGH (financial data integration)
 
 ## Executive Summary
 
-Gemhog requires a three-tier architecture: (1) **content ingestion pipeline** for
-extracting theses from podcast transcripts, (2) **financial data integration
+Gemhog requires a three-tier architecture: (1) **content ingestion pipeline**
+for extracting theses from podcast transcripts, (2) **financial data integration
 layer** with provider abstraction for SEC EDGAR and price data sources, and (3)
 **presentation layer** serving stock pages with combined analysis. The
 architecture leverages Effect TS for testable service composition, tRPC for
 type-safe API boundaries, and SST Cron for scheduled pipeline execution.
 
-**Critical Finding:** Stooq now requires CAPTCHA (since December 2020), making it
-unsuitable for automated price fetching. Alternative price data sources (EODHD,
-Alpha Vantage, Marketstack) should be used instead.
+**Critical Finding:** Stooq now requires CAPTCHA (since December 2020), making
+it unsuitable for automated price fetching. Alternative price data sources
+(EODHD, Alpha Vantage, Marketstack) should be used instead.
 
 ---
 
@@ -65,16 +65,16 @@ Alpha Vantage, Marketstack) should be used instead.
 
 ## Component Responsibilities
 
-| Component | Responsibility | Implementation |
-|-----------|---------------|----------------|
-| **Next.js Web** | Stock pages, discovery feed, newsletter signup | `packages/web` |
-| **Hono Server** | HTTP routing, tRPC adapter, auth middleware | `packages/api` |
-| **Effect Service Layer** | Business logic, DI, testability | `packages/core/src/services/` |
-| **Transcript Service** | Fetch transcripts from Podscan.fm | Effect service with HTTP client |
-| **Thesis Service** | Extract theses using LLM, link to tickers | Effect service with AI SDK |
-| **Stock Service** | Aggregate stock data, serve to frontend | Effect service with caching |
-| **Financial Data Layer** | Abstract SEC EDGAR + price sources | Provider pattern in Effect |
-| **Cron Lambdas** | Scheduled pipeline execution | `packages/functions/` |
+| Component                | Responsibility                                 | Implementation                  |
+| ------------------------ | ---------------------------------------------- | ------------------------------- |
+| **Next.js Web**          | Stock pages, discovery feed, newsletter signup | `packages/web`                  |
+| **Hono Server**          | HTTP routing, tRPC adapter, auth middleware    | `packages/api`                  |
+| **Effect Service Layer** | Business logic, DI, testability                | `packages/core/src/services/`   |
+| **Transcript Service**   | Fetch transcripts from Podscan.fm              | Effect service with HTTP client |
+| **Thesis Service**       | Extract theses using LLM, link to tickers      | Effect service with AI SDK      |
+| **Stock Service**        | Aggregate stock data, serve to frontend        | Effect service with caching     |
+| **Financial Data Layer** | Abstract SEC EDGAR + price sources             | Provider pattern in Effect      |
+| **Cron Lambdas**         | Scheduled pipeline execution                   | `packages/functions/`           |
 
 ---
 
@@ -176,8 +176,12 @@ import type { CacheService } from "../../layers/cache.layer";
 export class StockService extends Context.Tag("StockService")<
   StockService,
   {
-    readonly getStock: (ticker: string) => Effect.Effect<Stock, StockNotFoundError>;
-    readonly getStockWithFinancials: (ticker: string) => Effect.Effect<StockWithFinancials, StockError>;
+    readonly getStock: (
+      ticker: string,
+    ) => Effect.Effect<Stock, StockNotFoundError>;
+    readonly getStockWithFinancials: (
+      ticker: string,
+    ) => Effect.Effect<StockWithFinancials, StockError>;
     readonly listStocks: () => Effect.Effect<Stock[]>;
   }
 >() {}
@@ -217,7 +221,7 @@ export const StockServiceLive = Layer.effect(
 
       listStocks: () => repo.findAll(),
     };
-  })
+  }),
 );
 
 // Layer type: Layer<StockService, never, StockRepository | FinancialDataProvider | CacheService>
@@ -240,7 +244,7 @@ import { FinancialDataProviderLive } from "../providers/financial-data/financial
 export const AppLayerLive = Layer.mergeAll(
   ConfigLayerLive,
   DatabaseLayerLive,
-  CacheLayerLive
+  CacheLayerLive,
 ).pipe(
   Layer.provideMerge(StockRepositoryLive),
   Layer.provideMerge(FinancialDataProviderLive),
@@ -251,11 +255,11 @@ export const AppLayerLive = Layer.mergeAll(
 // For testing: swap implementations
 export const AppLayerTest = Layer.mergeAll(
   ConfigLayerTest,
-  DatabaseLayerTest,  // Uses test DB or in-memory
-  CacheLayerTest      // Uses in-memory cache
+  DatabaseLayerTest, // Uses test DB or in-memory
+  CacheLayerTest, // Uses in-memory cache
 ).pipe(
   Layer.provideMerge(StockRepositoryLive),
-  Layer.provideMerge(FinancialDataProviderTest),  // Mock provider
+  Layer.provideMerge(FinancialDataProviderTest), // Mock provider
   Layer.provideMerge(StockServiceLive),
 );
 ```
@@ -280,9 +284,7 @@ export const stockRouter = router({
       });
 
       // Run Effect with provided layer
-      return Effect.runPromise(
-        program.pipe(Effect.provide(AppLayerLive))
-      );
+      return Effect.runPromise(program.pipe(Effect.provide(AppLayerLive)));
     }),
 });
 ```
@@ -341,12 +343,16 @@ export interface HistoricalPrice {
 export class FinancialDataProvider extends Context.Tag("FinancialDataProvider")<
   FinancialDataProvider,
   {
-    readonly getProfile: (ticker: string) => Effect.Effect<CompanyProfile, ProviderError>;
-    readonly getFinancials: (ticker: string) => Effect.Effect<FinancialMetrics[], ProviderError>;
+    readonly getProfile: (
+      ticker: string,
+    ) => Effect.Effect<CompanyProfile, ProviderError>;
+    readonly getFinancials: (
+      ticker: string,
+    ) => Effect.Effect<FinancialMetrics[], ProviderError>;
     readonly getHistoricalPrices: (
       ticker: string,
       from: Date,
-      to: Date
+      to: Date,
     ) => Effect.Effect<HistoricalPrice[], ProviderError>;
   }
 >() {}
@@ -357,7 +363,7 @@ export class ProviderError extends Error {
   constructor(
     readonly provider: string,
     readonly operation: string,
-    readonly cause: unknown
+    readonly cause: unknown,
   ) {
     super(`${provider}.${operation} failed: ${String(cause)}`);
   }
@@ -369,7 +375,10 @@ export class ProviderError extends Error {
 ```typescript
 // packages/core/src/providers/financial-data/sec-edgar.provider.ts
 import { Effect, Layer } from "effect";
-import { FinancialDataProvider, ProviderError } from "./financial-data.provider";
+import {
+  FinancialDataProvider,
+  ProviderError,
+} from "./financial-data.provider";
 import type { ConfigService } from "../../layers/config.layer";
 import type { CacheService } from "../../layers/cache.layer";
 
@@ -419,7 +428,11 @@ export const SecEdgarProviderLive = Layer.effect(
           const cik = mapping[ticker.toUpperCase()]?.cik_str;
           if (!cik) {
             return yield* Effect.fail(
-              new ProviderError("SEC_EDGAR", "getProfile", `Unknown ticker: ${ticker}`)
+              new ProviderError(
+                "SEC_EDGAR",
+                "getProfile",
+                `Unknown ticker: ${ticker}`,
+              ),
             );
           }
 
@@ -450,7 +463,11 @@ export const SecEdgarProviderLive = Layer.effect(
           const cik = mapping[ticker.toUpperCase()]?.cik_str;
           if (!cik) {
             return yield* Effect.fail(
-              new ProviderError("SEC_EDGAR", "getFinancials", `Unknown ticker: ${ticker}`)
+              new ProviderError(
+                "SEC_EDGAR",
+                "getFinancials",
+                `Unknown ticker: ${ticker}`,
+              ),
             );
           }
 
@@ -474,10 +491,14 @@ export const SecEdgarProviderLive = Layer.effect(
       // SEC EDGAR doesn't have price data - delegate to price provider
       getHistoricalPrices: () =>
         Effect.fail(
-          new ProviderError("SEC_EDGAR", "getHistoricalPrices", "Not supported")
+          new ProviderError(
+            "SEC_EDGAR",
+            "getHistoricalPrices",
+            "Not supported",
+          ),
         ),
     };
-  })
+  }),
 );
 ```
 
@@ -499,9 +520,11 @@ export class PriceDataProvider extends Context.Tag("PriceDataProvider")<
     readonly getHistoricalPrices: (
       ticker: string,
       from: Date,
-      to: Date
+      to: Date,
     ) => Effect.Effect<HistoricalPrice[], ProviderError>;
-    readonly getLatestPrice: (ticker: string) => Effect.Effect<number, ProviderError>;
+    readonly getLatestPrice: (
+      ticker: string,
+    ) => Effect.Effect<number, ProviderError>;
   }
 >() {}
 
@@ -533,7 +556,9 @@ export const EodhdProviderLive = Layer.effect(
 
           const response = yield* Effect.tryPromise({
             try: () =>
-              fetch(`${EODHD_BASE}/eod/${ticker}.US?${params}`).then((r) => r.json()),
+              fetch(`${EODHD_BASE}/eod/${ticker}.US?${params}`).then((r) =>
+                r.json(),
+              ),
             catch: (e) => new ProviderError("EODHD", "getHistoricalPrices", e),
           });
 
@@ -564,7 +589,9 @@ export const EodhdProviderLive = Layer.effect(
 
           const response = yield* Effect.tryPromise({
             try: () =>
-              fetch(`${EODHD_BASE}/real-time/${ticker}.US?${params}`).then((r) => r.json()),
+              fetch(`${EODHD_BASE}/real-time/${ticker}.US?${params}`).then(
+                (r) => r.json(),
+              ),
             catch: (e) => new ProviderError("EODHD", "getLatestPrice", e),
           });
 
@@ -573,7 +600,7 @@ export const EodhdProviderLive = Layer.effect(
           return price;
         }),
     };
-  })
+  }),
 );
 ```
 
@@ -622,21 +649,40 @@ const ExtractedThesisSchema = z.object({
   theses: z.array(
     z.object({
       ticker: z.string().describe("Stock ticker symbol (e.g., AAPL)"),
-      thesis: z.string().describe("Investment thesis narrative (2-4 sentences)"),
-      assumptions: z.array(z.string()).describe("Key assumptions underlying the thesis"),
-      catalysts: z.array(z.string()).describe("Potential catalysts that could validate thesis"),
+      thesis: z
+        .string()
+        .describe("Investment thesis narrative (2-4 sentences)"),
+      assumptions: z
+        .array(z.string())
+        .describe("Key assumptions underlying the thesis"),
+      catalysts: z
+        .array(z.string())
+        .describe("Potential catalysts that could validate thesis"),
       risks: z.array(z.string()).describe("Key risks to the thesis"),
-      timeHorizon: z.enum(["short", "medium", "long"]).describe("Investment time horizon"),
-      confidence: z.number().min(0).max(1).describe("Speaker's apparent confidence"),
-      speakerName: z.string().optional().describe("Name of person making the thesis"),
-    })
+      timeHorizon: z
+        .enum(["short", "medium", "long"])
+        .describe("Investment time horizon"),
+      confidence: z
+        .number()
+        .min(0)
+        .max(1)
+        .describe("Speaker's apparent confidence"),
+      speakerName: z
+        .string()
+        .optional()
+        .describe("Name of person making the thesis"),
+    }),
   ),
 });
 
-export class ThesisExtractorService extends Context.Tag("ThesisExtractorService")<
+export class ThesisExtractorService extends Context.Tag(
+  "ThesisExtractorService",
+)<
   ThesisExtractorService,
   {
-    readonly extractFromTranscript: (transcriptId: string) => Effect.Effect<ExtractedThesis[], ExtractionError>;
+    readonly extractFromTranscript: (
+      transcriptId: string,
+    ) => Effect.Effect<ExtractedThesis[], ExtractionError>;
     readonly processNewTranscripts: () => Effect.Effect<ProcessingResult>;
   }
 >() {}
@@ -676,7 +722,9 @@ Transcript:
         Effect.gen(function* () {
           const transcript = yield* transcriptRepo.findById(transcriptId);
           if (!transcript) {
-            return yield* Effect.fail(new ExtractionError("Transcript not found", transcriptId));
+            return yield* Effect.fail(
+              new ExtractionError("Transcript not found", transcriptId),
+            );
           }
 
           // Chunk transcript if too long
@@ -693,7 +741,8 @@ Transcript:
                 });
                 return response.object.theses;
               },
-              catch: (e) => new ExtractionError("LLM extraction failed", transcriptId, e),
+              catch: (e) =>
+                new ExtractionError("LLM extraction failed", transcriptId, e),
             });
 
             allTheses.push(...result);
@@ -713,7 +762,10 @@ Transcript:
           for (const transcript of pending) {
             const result = yield* Effect.either(
               Effect.gen(function* () {
-                const extracted = yield* ThesisExtractorService.extractFromTranscript(transcript.id);
+                const extracted =
+                  yield* ThesisExtractorService.extractFromTranscript(
+                    transcript.id,
+                  );
 
                 for (const thesis of extracted) {
                   yield* stockService.ensureStockExists(thesis.ticker);
@@ -733,7 +785,7 @@ Transcript:
 
                 yield* transcriptRepo.markProcessed(transcript.id);
                 processed++;
-              })
+              }),
             );
 
             if (result._tag === "Left") {
@@ -744,7 +796,7 @@ Transcript:
           return { processed, thesesCreated, errors };
         }),
     };
-  })
+  }),
 );
 ```
 
@@ -918,7 +970,8 @@ Next.js Page
 
 ### Anti-Pattern 1: SST SDK in Application Code
 
-**Problem:** Importing SST SDK directly couples code to deployment infrastructure.
+**Problem:** Importing SST SDK directly couples code to deployment
+infrastructure.
 
 ```typescript
 // BAD - Don't do this
@@ -944,18 +997,19 @@ SST injects env vars at deploy time. Local dev uses `.env` files.
 
 ### Anti-Pattern 2: Scattered Effect.provide Calls
 
-**Problem:** Providing layers at each call site creates inconsistency and testing difficulty.
+**Problem:** Providing layers at each call site creates inconsistency and
+testing difficulty.
 
 ```typescript
 // BAD - Layer provided at every call
 const getStock = (ticker: string) =>
   Effect.runPromise(
-    stockService.getStock(ticker).pipe(Effect.provide(AppLayerLive))
+    stockService.getStock(ticker).pipe(Effect.provide(AppLayerLive)),
   );
 
 const getTheses = (ticker: string) =>
   Effect.runPromise(
-    thesisService.getByTicker(ticker).pipe(Effect.provide(AppLayerLive))
+    thesisService.getByTicker(ticker).pipe(Effect.provide(AppLayerLive)),
   );
 ```
 
@@ -972,22 +1026,27 @@ export const runtime = ManagedRuntime.make(AppLayerLive);
 // Use in routers
 export const stockRouter = router({
   getStock: protectedProcedure.query(({ input }) =>
-    runtime.runPromise(stockService.getStock(input.ticker))
+    runtime.runPromise(stockService.getStock(input.ticker)),
   ),
 });
 ```
 
 ### Anti-Pattern 3: Business Logic in tRPC Routers
 
-**Problem:** Putting business logic in routers makes it untestable and couples to HTTP.
+**Problem:** Putting business logic in routers makes it untestable and couples
+to HTTP.
 
 ```typescript
 // BAD - Logic in router
 export const stockRouter = router({
   getStockWithAnalysis: protectedProcedure.query(async ({ input }) => {
-    const stock = await db.query.stocks.findFirst({ where: eq(ticker, input.ticker) });
+    const stock = await db.query.stocks.findFirst({
+      where: eq(ticker, input.ticker),
+    });
     const financials = await fetch(`https://data.sec.gov/...`);
-    const theses = await db.query.theses.findMany({ where: eq(stockId, stock.id) });
+    const theses = await db.query.theses.findMany({
+      where: eq(stockId, stock.id),
+    });
     // 50 more lines of business logic...
   }),
 });
@@ -999,14 +1058,15 @@ export const stockRouter = router({
 // GOOD - Router is thin, logic in services
 export const stockRouter = router({
   getStockWithAnalysis: protectedProcedure.query(({ input }) =>
-    runtime.runPromise(stockService.getStockWithAnalysis(input.ticker))
+    runtime.runPromise(stockService.getStockWithAnalysis(input.ticker)),
   ),
 });
 ```
 
 ### Anti-Pattern 4: Stooq for Automated Price Fetching
 
-**Problem:** Stooq requires CAPTCHA since December 2020, blocking automated requests.
+**Problem:** Stooq requires CAPTCHA since December 2020, blocking automated
+requests.
 
 **Evidence:** "Note that STOOQ requires CAPTCHA starting Dec 10, 2020 so that
 code that downloads and unpacks the zip files will no longer work"
@@ -1024,24 +1084,24 @@ code that downloads and unpacks the zip files will no longer work"
 
 ### External APIs
 
-| Service | Purpose | Auth | Rate Limits | Notes |
-|---------|---------|------|-------------|-------|
-| **Podscan.fm** | Podcast transcripts | API key | 100/day (trial), 1000/day ($50/mo) | Requires subscription for production |
-| **SEC EDGAR** | Fundamentals (XBRL) | None (User-Agent required) | 10 req/sec | Free, authoritative, no auth |
-| **EODHD** | EOD prices | API key | 20/day (free), unlimited ($19.99/mo) | Recommended over Stooq |
-| **Claude API** | Thesis extraction | API key | Per-token pricing | $3/MTok input, $15/MTok output |
-| **Twitter API** | Social posting | OAuth 1.0a | 1,500 tweets/month (free) | Post-only on free tier |
-| **Bluesky API** | Social posting | App password | No limits | Free, growing platform |
+| Service         | Purpose             | Auth                       | Rate Limits                          | Notes                                |
+| --------------- | ------------------- | -------------------------- | ------------------------------------ | ------------------------------------ |
+| **Podscan.fm**  | Podcast transcripts | API key                    | 100/day (trial), 1000/day ($50/mo)   | Requires subscription for production |
+| **SEC EDGAR**   | Fundamentals (XBRL) | None (User-Agent required) | 10 req/sec                           | Free, authoritative, no auth         |
+| **EODHD**       | EOD prices          | API key                    | 20/day (free), unlimited ($19.99/mo) | Recommended over Stooq               |
+| **Claude API**  | Thesis extraction   | API key                    | Per-token pricing                    | $3/MTok input, $15/MTok output       |
+| **Twitter API** | Social posting      | OAuth 1.0a                 | 1,500 tweets/month (free)            | Post-only on free tier               |
+| **Bluesky API** | Social posting      | App password               | No limits                            | Free, growing platform               |
 
 ### Internal Integration
 
-| From | To | Method | Purpose |
-|------|-----|--------|---------|
-| Web | API | tRPC | Type-safe data fetching |
-| Cron Lambda | Core | Effect services | Pipeline execution |
-| Core services | PostgreSQL | Drizzle ORM | Data persistence |
-| Core services | Upstash | @upstash/redis | Caching |
-| Core providers | External APIs | fetch | Data retrieval |
+| From           | To            | Method          | Purpose                 |
+| -------------- | ------------- | --------------- | ----------------------- |
+| Web            | API           | tRPC            | Type-safe data fetching |
+| Cron Lambda    | Core          | Effect services | Pipeline execution      |
+| Core services  | PostgreSQL    | Drizzle ORM     | Data persistence        |
+| Core services  | Upstash       | @upstash/redis  | Caching                 |
+| Core providers | External APIs | fetch           | Data retrieval          |
 
 ---
 
@@ -1094,13 +1154,13 @@ Based on architectural dependencies, recommended build order:
 
 ## Scalability Considerations
 
-| Concern | At 100 Users | At 10K Users | At 100K Users |
-|---------|--------------|--------------|---------------|
-| **API Response** | Direct DB queries | Add Redis caching | Read replicas |
-| **LLM Processing** | Synchronous | Queue-based | Batch API (50% discount) |
-| **Financial Data** | On-demand fetch | Pre-cache popular stocks | Bulk data + incremental |
-| **Social Posting** | Direct posting | Queue with rate limiting | Multiple accounts |
-| **Database** | Single RDS | RDS with replicas | Horizontal sharding |
+| Concern            | At 100 Users      | At 10K Users             | At 100K Users            |
+| ------------------ | ----------------- | ------------------------ | ------------------------ |
+| **API Response**   | Direct DB queries | Add Redis caching        | Read replicas            |
+| **LLM Processing** | Synchronous       | Queue-based              | Batch API (50% discount) |
+| **Financial Data** | On-demand fetch   | Pre-cache popular stocks | Bulk data + incremental  |
+| **Social Posting** | Direct posting    | Queue with rate limiting | Multiple accounts        |
+| **Database**       | Single RDS        | RDS with replicas        | Horizontal sharding      |
 
 ---
 

@@ -16,14 +16,17 @@
 **Pre-existing lint failures (BLOCKER):**
 
 - Issue: Multiple Biome lint warnings cause `pnpm check` to exit non-zero
-- Files: `apps/web/src/app/ai/page.tsx` (useExhaustiveDependencies), `packages/db/test/global-setup.ts` (useNodejsImportProtocol), and others
+- Files: `apps/web/src/app/ai/page.tsx` (useExhaustiveDependencies),
+  `packages/db/test/global-setup.ts` (useNodejsImportProtocol), and others
 - Impact: CI/pre-commit blocks all commits until fixed
-- Fix approach: Run `pnpm check --write` to auto-fix, or manually address each warning
+- Fix approach: Run `pnpm check --write` to auto-fix, or manually address each
+  warning
 - Status: **Must fix for Phase 1 completion**
 
 **Pre-existing type errors (BLOCKER):**
 
-- Issue: TypeScript errors in apps/server cause `pnpm check-types` to exit non-zero
+- Issue: TypeScript errors in apps/server cause `pnpm check-types` to exit
+  non-zero
 - Files: `apps/server/` package
 - Impact: CI/pre-commit blocks all commits until fixed
 - Fix approach: Fix type errors in apps/server
@@ -31,20 +34,22 @@
 
 **Integration test script bug (BLOCKER):**
 
-- Issue: `test:integration` uses `--project @gemhog/db` but db is excluded from root vitest.config.ts
+- Issue: `test:integration` uses `--project @gemhog/db` but db is excluded from
+  root vitest.config.ts
 - File: `package.json` line 29
-- Impact: `pnpm test:integration` always fails with "No projects matched the filter"
+- Impact: `pnpm test:integration` always fails with "No projects matched the
+  filter"
 - Fix approach: Change to `--config packages/db/vitest.config.ts`
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 
 **E2E test missing env vars (BLOCKER):**
 
-- Issue: Playwright webServer fails to start - requires BETTER_AUTH_SECRET (min 32 chars)
+- Issue: Playwright webServer fails to start - requires BETTER_AUTH_SECRET (min
+  32 chars)
 - File: `playwright.config.ts`
 - Impact: `pnpm test:e2e` always fails with "Invalid environment variables"
 - Fix approach: Add test env vars to webServer config or create .env.test
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
-
 
 ## Known Bugs
 
@@ -62,15 +67,16 @@ declaring work complete.
 **Summary (as of 2026-01-21):**
 
 | Severity | Open | Fixed | Closed (N/A) |
-|----------|------|-------|--------------|
-| Critical | 0 | 0 | 0 |
-| High | 0 | 2 | 0 |
-| Medium | 0 | 1 | 2 |
-| Low | 0 | 0 | 1 |
+| -------- | ---- | ----- | ------------ |
+| Critical | 0    | 0     | 0            |
+| High     | 0    | 2     | 0            |
+| Medium   | 0    | 1     | 2            |
+| Low      | 0    | 0     | 1            |
 
 **Blocking findings exist:** NO
 
 **All findings resolved (details in SECURITY-REVIEW.md):**
+
 - [SEC-001] High - Input validation - FIXED (03.1-08)
 - [SEC-002] High - Rate limiting - FIXED (03.1-08)
 - [SEC-003] Medium - Debug logging - FIXED (03.1-07)

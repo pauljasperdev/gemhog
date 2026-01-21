@@ -1,19 +1,20 @@
 # Stack Research: Effect TS + Hono + tRPC Integration
 
 **Domain:** Financial research platform / Podcast insight extraction
-**Researched:** 2026-01-19
-**Confidence:** HIGH (verified via official documentation and current package versions)
+**Researched:** 2026-01-19 **Confidence:** HIGH (verified via official
+documentation and current package versions)
 
 ---
 
 ## Executive Summary
 
-The 2026 TypeScript stack for Effect TS + Hono + tRPC integration in a monorepo with
-SST v3 deployment requires careful consideration of integration boundaries. The key
-finding: **tRPC and Effect schemas have a fundamental type inference incompatibility**
-that affects transformations. The recommended approach is a **pragmatic coexistence
-strategy** that uses Effect TS for backend business logic while keeping tRPC for
-API contracts, with Effect Schema used internally but Zod at tRPC boundaries.
+The 2026 TypeScript stack for Effect TS + Hono + tRPC integration in a monorepo
+with SST v3 deployment requires careful consideration of integration boundaries.
+The key finding: **tRPC and Effect schemas have a fundamental type inference
+incompatibility** that affects transformations. The recommended approach is a
+**pragmatic coexistence strategy** that uses Effect TS for backend business
+logic while keeping tRPC for API contracts, with Effect Schema used internally
+but Zod at tRPC boundaries.
 
 ---
 
@@ -21,37 +22,37 @@ API contracts, with Effect Schema used internally but Zod at tRPC boundaries.
 
 ### Core Technologies
 
-| Technology           | Version   | Purpose                    | Why Recommended                                                                                           |
-| -------------------- | --------- | -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Effect TS            | ^3.19.14  | Backend DI, error handling | API stable since 3.0, superior testability via Layers, type-safe dependency injection, composable errors |
-| Hono                 | ^4.11.4   | HTTP framework             | Lightweight, Web Standards, excellent TypeScript support, works with Lambda and containers                |
-| tRPC                 | ^11.8.1   | Type-safe API layer        | End-to-end type safety with frontend, mature ecosystem, React Query integration                           |
-| SST v3               | latest    | AWS deployment             | TypeScript IaC, Pulumi-based, native Hono support, function URLs                                          |
-| TypeScript           | ^5.9.3    | Language                   | tRPC v11 requires >=5.7.2, Effect requires >=5.4 with strict mode                                         |
-| Zod                  | ^4.3.5    | tRPC validation            | tRPC's native validator, use at API boundaries                                                            |
-| @effect/schema       | ^0.77.x   | Effect-side validation     | Use internally in Effect services, bidirectional transformations                                          |
-| @hono/effect-validator | ^1.2.0  | Hono middleware            | Effect Schema validation in Hono routes (optional, for non-tRPC routes)                                   |
+| Technology             | Version  | Purpose                    | Why Recommended                                                                                          |
+| ---------------------- | -------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Effect TS              | ^3.19.14 | Backend DI, error handling | API stable since 3.0, superior testability via Layers, type-safe dependency injection, composable errors |
+| Hono                   | ^4.11.4  | HTTP framework             | Lightweight, Web Standards, excellent TypeScript support, works with Lambda and containers               |
+| tRPC                   | ^11.8.1  | Type-safe API layer        | End-to-end type safety with frontend, mature ecosystem, React Query integration                          |
+| SST v3                 | latest   | AWS deployment             | TypeScript IaC, Pulumi-based, native Hono support, function URLs                                         |
+| TypeScript             | ^5.9.3   | Language                   | tRPC v11 requires >=5.7.2, Effect requires >=5.4 with strict mode                                        |
+| Zod                    | ^4.3.5   | tRPC validation            | tRPC's native validator, use at API boundaries                                                           |
+| @effect/schema         | ^0.77.x  | Effect-side validation     | Use internally in Effect services, bidirectional transformations                                         |
+| @hono/effect-validator | ^1.2.0   | Hono middleware            | Effect Schema validation in Hono routes (optional, for non-tRPC routes)                                  |
 
 ### Supporting Libraries
 
-| Library                | Version  | Purpose                    | When to Use                                    |
-| ---------------------- | -------- | -------------------------- | ---------------------------------------------- |
-| @effect/platform       | ^0.77.x  | HTTP client, file system   | Internal HTTP calls, platform abstractions     |
-| @effect/platform-node  | ^0.73.x  | Node.js runtime            | Lambda/Node.js execution environment           |
-| vitest                 | ^3.1.x   | Unit/integration testing   | All tests, works well with Effect Layers       |
-| msw                    | ^2.8.x   | HTTP mocking               | Integration tests, mock external APIs          |
-| @playwright/test       | ^1.52.x  | E2E testing                | Browser automation, Playwright MCP compatible  |
-| @trpc/client           | ^11.8.1  | Frontend tRPC client       | React Query integration, type-safe calls       |
-| @tanstack/react-query  | ^5.90.x  | Data fetching              | tRPC integration, caching, optimistic updates  |
+| Library               | Version | Purpose                  | When to Use                                   |
+| --------------------- | ------- | ------------------------ | --------------------------------------------- |
+| @effect/platform      | ^0.77.x | HTTP client, file system | Internal HTTP calls, platform abstractions    |
+| @effect/platform-node | ^0.73.x | Node.js runtime          | Lambda/Node.js execution environment          |
+| vitest                | ^3.1.x  | Unit/integration testing | All tests, works well with Effect Layers      |
+| msw                   | ^2.8.x  | HTTP mocking             | Integration tests, mock external APIs         |
+| @playwright/test      | ^1.52.x | E2E testing              | Browser automation, Playwright MCP compatible |
+| @trpc/client          | ^11.8.1 | Frontend tRPC client     | React Query integration, type-safe calls      |
+| @tanstack/react-query | ^5.90.x | Data fetching            | tRPC integration, caching, optimistic updates |
 
 ### Development Tools
 
-| Tool              | Purpose                    | Notes                                               |
-| ----------------- | -------------------------- | --------------------------------------------------- |
-| tsx               | TypeScript execution       | Fast dev server, hot reload                         |
-| tsdown            | TypeScript build           | Fast builds, ESM output                             |
-| Biome             | Lint + format              | Fast, unified tooling, already configured           |
-| Playwright MCP    | AI-assisted E2E            | Model Context Protocol for intelligent test gen     |
+| Tool           | Purpose              | Notes                                           |
+| -------------- | -------------------- | ----------------------------------------------- |
+| tsx            | TypeScript execution | Fast dev server, hot reload                     |
+| tsdown         | TypeScript build     | Fast builds, ESM output                         |
+| Biome          | Lint + format        | Fast, unified tooling, already configured       |
+| Playwright MCP | AI-assisted E2E      | Model Context Protocol for intelligent test gen |
 
 ---
 
@@ -60,10 +61,12 @@ API contracts, with Effect Schema used internally but Zod at tRPC boundaries.
 ### The Integration Challenge
 
 **Critical finding:** tRPC and Effect Schema have a fundamental type inference
-incompatibility. tRPC determines input types from validator function return values,
-but Effect Schema's `decodeUnknownSync` can transform data differently than expected.
+incompatibility. tRPC determines input types from validator function return
+values, but Effect Schema's `decodeUnknownSync` can transform data differently
+than expected.
 
 Example problem:
+
 ```typescript
 // Effect Schema can decode string "2024-01-01" -> Date object
 // tRPC would then expect Date on client, but client sends string
@@ -72,7 +75,8 @@ Example problem:
 
 ### Recommended Architecture: Pragmatic Coexistence
 
-The solution is **layered integration** where each technology handles what it does best:
+The solution is **layered integration** where each technology handles what it
+does best:
 
 ```
 +------------------+
@@ -113,18 +117,20 @@ const t = initTRPC.context<Context>().create();
 
 // Helper to run Effect programs in tRPC procedures
 export const runEffect = <A, E>(
-  effect: Effect.Effect<A, E, AppContext>
+  effect: Effect.Effect<A, E, AppContext>,
 ): Promise<A> =>
-  effect.pipe(
-    Effect.provide(AppContextLive), // Provide production layers
-    Effect.runPromise
-  ).catch((error) => {
-    // Map Effect errors to tRPC errors
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: error.message,
+  effect
+    .pipe(
+      Effect.provide(AppContextLive), // Provide production layers
+      Effect.runPromise,
+    )
+    .catch((error) => {
+      // Map Effect errors to tRPC errors
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: error.message,
+      });
     });
-  });
 
 // Usage in procedure
 export const thesisRouter = t.router({
@@ -132,7 +138,7 @@ export const thesisRouter = t.router({
     .input(z.object({ transcriptId: z.string() })) // Zod at boundary
     .mutation(async ({ input, ctx }) => {
       return runEffect(
-        ThesisService.extract(input.transcriptId) // Effect program
+        ThesisService.extract(input.transcriptId), // Effect program
       );
     }),
 });
@@ -178,7 +184,7 @@ export const ThesisServiceLive = Layer.succeed(
         const data = yield* FinancialDataService.get(thesis.ticker);
         return yield* AIService.analyze(thesis, data);
       }),
-  })
+  }),
 );
 ```
 
@@ -209,14 +215,14 @@ const ThesisServiceTest = Layer.succeed(
         cons: ["con 1"],
         unknowns: ["unknown 1"],
       }),
-  })
+  }),
 );
 
 // MSW for external HTTP mocking
 const server = setupServer(
   http.get("https://api.external.com/*", () => {
     return HttpResponse.json({ data: "mocked" });
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
@@ -228,8 +234,8 @@ describe("ThesisService", () => {
     const result = await Effect.runPromise(
       ThesisService.pipe(
         Effect.flatMap((service) => service.extract("transcript-123")),
-        Effect.provide(ThesisServiceTest) // Provide test layer
-      )
+        Effect.provide(ThesisServiceTest), // Provide test layer
+      ),
     );
 
     expect(result.ticker).toBe("AAPL");
@@ -239,13 +245,13 @@ describe("ThesisService", () => {
 
 ### When to Use Each Validation Library
 
-| Context                  | Use         | Rationale                                        |
-| ------------------------ | ----------- | ------------------------------------------------ |
-| tRPC input/output        | Zod         | Native tRPC support, no type inference issues    |
-| Effect service internals | Effect Schema | Bidirectional transforms, Effect ecosystem       |
+| Context                  | Use           | Rationale                                            |
+| ------------------------ | ------------- | ---------------------------------------------------- |
+| tRPC input/output        | Zod           | Native tRPC support, no type inference issues        |
+| Effect service internals | Effect Schema | Bidirectional transforms, Effect ecosystem           |
 | Hono non-tRPC routes     | Effect Schema | Via @hono/effect-validator, consistent with services |
-| Environment validation   | Zod         | @t3-oss/env compatibility, simpler for env vars  |
-| Database schemas         | Drizzle     | Drizzle's own schema system, infers types        |
+| Environment validation   | Zod           | @t3-oss/env compatibility, simpler for env vars      |
+| Database schemas         | Drizzle       | Drizzle's own schema system, infers types            |
 
 ---
 
@@ -253,8 +259,9 @@ describe("ThesisService", () => {
 
 ### SST-Agnostic Application Code (Critical Constraint)
 
-The project constraint requires app code to read env vars only, no SST SDK imports.
-This enables local development and agent verification without SST context.
+The project constraint requires app code to read env vars only, no SST SDK
+imports. This enables local development and agent verification without SST
+context.
 
 **Pattern: Environment Variables Bridge**
 
@@ -291,7 +298,9 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     ANTHROPIC_API_KEY: z.string().min(1),
-    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
   },
   runtimeEnv: process.env,
 });
@@ -353,9 +362,7 @@ import { TranscriptPipeline } from "@gemhog/core/pipelines";
 
 export const handler = async () => {
   await Effect.runPromise(
-    TranscriptPipeline.run.pipe(
-      Effect.provide(PipelineLayerLive)
-    )
+    TranscriptPipeline.run.pipe(Effect.provide(PipelineLayerLive)),
   );
 };
 ```
@@ -458,12 +465,14 @@ through natural language interaction with the MCP server.
 **Considered:** Replacing tRPC entirely with Effect RPC (@effect/rpc).
 
 **Why not chosen:**
+
 - tRPC ecosystem is more mature (React Query integration, devtools)
 - Team already familiar with tRPC patterns
 - Effect RPC requires more buy-in to Effect ecosystem
 - Migration cost outweighs benefits for existing codebase
 
 **When to reconsider:**
+
 - If building a new greenfield project fully committed to Effect
 - If tRPC type inference issues become blocking
 
@@ -472,12 +481,14 @@ through natural language interaction with the MCP server.
 **Considered:** Using Effect's built-in HTTP API framework instead of Hono.
 
 **Why not chosen:**
+
 - Hono has broader ecosystem support
 - Better documentation and community resources
 - More familiar patterns for team
 - SST has native Hono examples
 
 **When to reconsider:**
+
 - If needing deep Effect integration for HTTP layer
 - If @effect/platform HttpApi matures further
 
@@ -486,6 +497,7 @@ through natural language interaction with the MCP server.
 **Considered:** Using ts-rest for RESTful type-safe APIs.
 
 **Why not chosen:**
+
 - tRPC's DX is superior for internal APIs
 - React Query integration is seamless
 - No need for REST semantics in this project
@@ -497,6 +509,7 @@ through natural language interaction with the MCP server.
 ### Do NOT Import SST SDK in Application Code
 
 **Why:**
+
 - Breaks local development workflow
 - Prevents agent verification without SST context
 - Creates tight coupling to deployment platform
@@ -506,6 +519,7 @@ through natural language interaction with the MCP server.
 ### Do NOT Use Effect Schema at tRPC Boundaries
 
 **Why:**
+
 - Type inference incompatibility with tRPC
 - Bidirectional transforms break client/server type contract
 - Debugging type errors is extremely difficult
@@ -515,6 +529,7 @@ through natural language interaction with the MCP server.
 ### Do NOT Use node-cron or agenda.js
 
 **Why:**
+
 - Lambda functions don't persist
 - SST provides native Cron component
 - EventBridge is more reliable than in-process timers
@@ -524,6 +539,7 @@ through natural language interaction with the MCP server.
 ### Do NOT Use Jest
 
 **Why:**
+
 - Vitest is faster with native ESM support
 - Better TypeScript support out of the box
 - Jest-compatible API makes migration easy
@@ -533,10 +549,12 @@ through natural language interaction with the MCP server.
 ### Do NOT Mix Effect Layers Between Test and Production
 
 **Why:**
+
 - Leads to subtle bugs where test behavior differs from production
 - Makes tests less reliable as indicators of real behavior
 
-**Instead:** Clear separation: `*Live` layers for production, `*Test` layers for testing.
+**Instead:** Clear separation: `*Live` layers for production, `*Test` layers for
+testing.
 
 ---
 
@@ -606,6 +624,7 @@ UPSTASH_REDIS_REST_TOKEN=...
 ## Sources
 
 ### Effect TS
+
 - [Effect 3.0 Release](https://effect.website/blog/releases/effect/30/)
 - [Effect npm package](https://www.npmjs.com/package/effect)
 - [Effect Documentation](https://effect.website/docs/getting-started/introduction)
@@ -613,25 +632,30 @@ UPSTASH_REDIS_REST_TOKEN=...
 - [Effect Patterns GitHub](https://github.com/PaulJPhilp/EffectPatterns)
 
 ### tRPC
+
 - [tRPC v11 Announcement](https://trpc.io/blog/announcing-trpc-v11)
 - [tRPC v10 to v11 Migration](https://trpc.io/docs/migrate-from-v10-to-v11)
 - [tRPC Middleware](https://trpc.io/docs/server/middlewares)
 
 ### Effect + tRPC Integration
+
 - [Replacing tRPC with Effect RPC](https://dev.to/titouancreach/how-i-replaced-trpc-with-effect-rpc-in-a-nextjs-app-router-application-4j8p)
 - [Effect Backend Implementation](https://www.typeonce.dev/article/how-to-implement-a-backend-with-effect)
 
 ### Hono
+
 - [Hono Best Practices](https://hono.dev/docs/guides/best-practices)
 - [@hono/effect-validator npm](https://www.npmjs.com/package/@hono/effect-validator)
 - [@hono/effect-validator GitHub](https://github.com/honojs/middleware/tree/main/packages/effect-validator)
 
 ### SST v3
+
 - [SST Environment Variables](https://sst.dev/docs/environment-variables/)
 - [SST Hono on AWS](https://sst.dev/docs/start/aws/hono/)
 - [SST v3 Blog](https://sst.dev/blog/sst-v3/)
 
 ### Testing
+
 - [Vitest and MSW with Effect](https://www.typeonce.dev/course/effect-beginners-complete-getting-started/testing-with-services/vitest-and-msw-testing-setup)
 - [Vitest Mocking Guide](https://vitest.dev/guide/mocking)
 - [Playwright MCP GitHub](https://github.com/microsoft/playwright-mcp)
