@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3.2 inserted - ready for planning
+**Current focus:** Phase 3.2 - Code Quality & TDD Practices
 
 ## Current Position
 
-Phase: 3.1 of 7 (Code Review Fixes) - COMPLETE
-Plan: 9/9 plans complete (03.1-01 through 03.1-09)
-Status: Phase complete, all security findings resolved
-Last activity: 2026-01-21 - Completed 03.1-09 (security review and verification)
+Phase: 3.2 of 7 (Code Quality & TDD Practices) - IN PROGRESS
+Plan: 3/5 plans complete (03.2-01, 03.2-02, 03.2-03)
+Status: Executing wave 1
+Last activity: 2026-01-21 - Completed 03.2-03 (E2E error detection fixture)
 
-Progress: ████████████ ~80% (Phase 1 + 1.1 + 2 + 3 + 3.1 complete)
+Progress: █████████████ ~82% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 partial complete)
 
 ## Performance Metrics
 
@@ -106,6 +106,8 @@ Recent decisions affecting current work:
 | Static import for env in auth.service.ts | Module loads validate env at import time, tests mock via vi.mock() | 03.1-07 |
 | vi.mock() pattern for unit test env isolation | Mock env module before importing dependent modules | 03.1-07 |
 | All security findings resolved | SEC-001/002/003 fixed, SEC-004/005 closed (Polar removed) | 03.1-09 |
+| E2E tests use extended Playwright fixture for error detection | Captures console.error and page exceptions | 03.2-03 |
+| TDD: Tests fail when app has errors - fix app, not test | Tests correctly detected NEXT_PUBLIC_SERVER_URL issue | 03.2-03 |
 
 ### Pending Todos
 
@@ -267,10 +269,27 @@ Code review fixes complete:
 - Security review completed, all 5 findings resolved
 - Full verification pipeline passes (static, unit, integration, e2e, security audit)
 
+## Phase 3.2 Summary (in progress)
+
+Code quality and TDD practices:
+
+| Plan | Summary | Duration | Status |
+|------|---------|----------|--------|
+| 03.2-01 | Remove dead code and archaeological comments | - | Complete |
+| 03.2-02 | Add unit tests for env validation | - | Complete |
+| 03.2-03 | E2E error detection fixture | 3 min | Complete |
+| 03.2-04 | Integration tests for auth | - | Pending |
+| 03.2-05 | TDD guidance in TESTING.md | - | Pending |
+
+**E2E Test Pattern:**
+- All E2E tests import from `./fixtures`, not `@playwright/test`
+- Fixture captures console.error and page exceptions
+- Tests fail when app has runtime errors (TDD behavior)
+
 ## Session Continuity
 
-Last session: 2026-01-21T13:27:30Z
-Stopped at: Completed 03.1-09-PLAN.md (security review and verification)
+Last session: 2026-01-21T19:22:36Z
+Stopped at: Completed 03.2-03-PLAN.md (E2E error detection fixture)
 Resume file: None
 
-Next: Phase 3.2 inserted. Run /gsd:plan-phase 3.2 to break down into plans.
+Next: Continue with 03.2-04 (auth integration tests) or 03.2-05 (TDD guidance).
