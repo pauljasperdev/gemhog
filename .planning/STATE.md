@@ -90,6 +90,7 @@ Recent decisions affecting current work:
 | Keep @polar-sh/sdk despite payment deletion | auth.service.ts uses it inline for better-auth plugin | 03.1-02 |
 | Rename drizzle-kit generated migrations | 0000_initial_schema.sql more descriptive than random name | 03.1-01 |
 | Format migration JSON with Biome | Pre-commit hooks require Biome formatting | 03.1-01 |
+| Add NEXT_PUBLIC_SERVER_URL to E2E web server env | Next.js env validation requires it for E2E tests | 03.1-01 |
 
 ### Pending Todos
 

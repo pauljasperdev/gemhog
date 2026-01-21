@@ -47,6 +47,11 @@ export default defineConfig({
       timeout: 120 * 1000,
       stdout: "ignore",
       stderr: "pipe",
+      env: {
+        ...process.env,
+        NEXT_PUBLIC_SERVER_URL:
+          process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
+      },
     },
   ],
 

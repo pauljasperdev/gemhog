@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1737475200000,
+  "updated": 1768986338455,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -392,42 +392,6 @@
       "imports": ["@effect/sql-drizzle/Pg", "effect", "./client", "./errors"],
       "indexed": 1737475200000
     },
-    "/home/lima/repo/packages/core/src/payment/index.ts": {
-      "exports": [
-        "PaymentServiceTest",
-        "getPolarClient",
-        "PaymentLive",
-        "PaymentService",
-        "polarClient"
-      ],
-      "imports": ["./payment.errors", "./payment.mock", "./payment.service"],
-      "indexed": 1737475200000
-    },
-    "/home/lima/repo/packages/core/src/payment/payment.errors.ts": {
-      "exports": ["PaymentError", "CheckoutError", "SubscriptionError"],
-      "imports": ["effect"],
-      "indexed": 1737475200000
-    },
-    "/home/lima/repo/packages/core/src/payment/payment.mock.ts": {
-      "exports": ["PaymentServiceTest"],
-      "imports": ["effect", "./payment.service"],
-      "indexed": 1737475200000
-    },
-    "/home/lima/repo/packages/core/src/payment/payment.service.ts": {
-      "exports": [
-        "PaymentService",
-        "PaymentLive",
-        "getPolarClient",
-        "polarClient"
-      ],
-      "imports": ["@polar-sh/sdk", "effect"],
-      "indexed": 1737475200000
-    },
-    "/home/lima/repo/packages/core/src/payment/payment.test.ts": {
-      "exports": [],
-      "imports": ["effect", "vitest", "./payment.mock", "./payment.service"],
-      "indexed": 1737475200000
-    },
     "/home/lima/repo/packages/core/vitest.config.ts": {
       "exports": ["default"],
       "imports": ["vitest/config"],
@@ -454,9 +418,9 @@
       "indexed": 1737475200000
     },
     "/home/lima/repo/playwright.config.ts": {
-      "exports": ["default"],
+      "exports": ["default", "defineConfig"],
       "imports": ["@playwright/test"],
-      "indexed": 1737475200000
+      "indexed": 1768986329700
     },
     "/home/lima/repo/vitest.config.ts": {
       "exports": ["default"],
