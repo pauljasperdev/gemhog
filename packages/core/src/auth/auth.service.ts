@@ -1,9 +1,10 @@
+import { env } from "@gemhog/env/server";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Context, Effect, Layer } from "effect";
+import { Context, Effect, Layer, Redacted } from "effect";
 import { AuthError } from "./auth.errors";
 import * as schema from "./auth.sql";
 
@@ -25,15 +26,10 @@ export class AuthService extends Context.Tag("@gemhog/core/AuthService")<
 >() {}
 
 // Create better-auth instance (internal)
-// Uses dynamic import to defer env validation until runtime
 const createAuth = () => {
-  // Dynamic require to defer env validation until runtime
-  const { env } =
-    require("@gemhog/env/server") as typeof import("@gemhog/env/server");
-
-  const db = drizzle(env.DATABASE_URL, { schema });
+  const db = drizzle(Redacted.value(env.DATABASE_URL), { schema });
   const polarClient = new Polar({
-    accessToken: env.POLAR_ACCESS_TOKEN,
+    accessToken: Redacted.value(env.POLAR_ACCESS_TOKEN),
     server: "sandbox",
   });
 

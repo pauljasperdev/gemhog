@@ -1,15 +1,12 @@
-import dotenv from "dotenv";
+import { env } from "@gemhog/env/server";
 import { defineConfig } from "drizzle-kit";
-
-dotenv.config({
-  path: "../../apps/server/.env",
-});
+import { Redacted } from "effect";
 
 export default defineConfig({
   schema: "./src/*/*.sql.ts",
   out: "./src/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "",
+    url: Redacted.value(env.DATABASE_URL),
   },
 });

@@ -1,12 +1,10 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { Config, Effect } from "effect";
 
-export const env = createEnv({
-  client: {
-    NEXT_PUBLIC_SERVER_URL: z.url(),
-  },
-  runtimeEnv: {
-    NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
-  },
-  emptyStringAsUndefined: true,
+const WebConfig = Config.all({
+  NEXT_PUBLIC_SERVER_URL: Config.string("NEXT_PUBLIC_SERVER_URL"),
 });
+
+// Validates at import time
+export const env = Effect.runSync(WebConfig);
+
+export type WebEnv = typeof env;
