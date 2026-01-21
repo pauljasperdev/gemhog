@@ -1,25 +1,13 @@
-import type { ServerEnv } from "@gemhog/env/server";
-import { checkout, polar, portal } from "@polar-sh/better-auth";
-import { Polar } from "@polar-sh/sdk";
+import { env } from "@gemhog/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Redacted } from "effect";
 import * as schema from "./auth.sql";
 
-// Deferred env import - validates when createAuth() is called, not at module load
-// This allows unit tests to import auth module without triggering env validation
-const getEnv = (): ServerEnv =>
-  (require("@gemhog/env/server") as { env: ServerEnv }).env;
-
 // Create better-auth instance
 const createAuth = () => {
-  const env = getEnv();
   const db = drizzle(Redacted.value(env.DATABASE_URL), { schema });
-  const polarClient = new Polar({
-    accessToken: Redacted.value(env.POLAR_ACCESS_TOKEN),
-    server: "sandbox",
-  });
 
   return betterAuth({
     database: drizzleAdapter(db, { provider: "pg", schema }),
@@ -32,21 +20,6 @@ const createAuth = () => {
         httpOnly: true,
       },
     },
-    plugins: [
-      polar({
-        client: polarClient,
-        createCustomerOnSignUp: true,
-        enableCustomerPortal: true,
-        use: [
-          checkout({
-            products: [{ productId: "your-product-id", slug: "pro" }],
-            successUrl: env.POLAR_SUCCESS_URL,
-            authenticatedUsersOnly: true,
-          }),
-          portal(),
-        ],
-      }),
-    ],
   });
 };
 
