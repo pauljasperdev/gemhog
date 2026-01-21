@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3.1 gap closure plans - security fixes
+**Current focus:** Phase 3.1 gap closure plans - env centralization
 
 ## Current Position
 
 Phase: 3.1 of 7 (Code Review Fixes) - Gap closure in progress
-Plan: 6/9 plans complete (03.1-01 through 03.1-05 + 03.1-08)
-Status: Executing gap closure plans (03.1-06 to 03.1-09)
-Last activity: 2026-01-21 - Completed 03.1-08 (AI endpoint security)
+Plan: 7/9 plans complete (03.1-01 through 03.1-06 + 03.1-08)
+Status: Executing gap closure plans (03.1-07, 03.1-09 remaining)
+Last activity: 2026-01-21 - Completed 03.1-06 (drizzle.config.ts env fix)
 
-Progress: ██████████ ~72% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap plans)
+Progress: ██████████ ~74% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: 3.7 min
-- Total execution time: 85 min
+- Total plans completed: 21
+- Average duration: 4.3 min
+- Total execution time: 91 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ██████████ ~72% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 6/9 | 44 min | 7.3 min |
+| 3.1. Code Review Fixes | 7/9 | 50 min | 7.1 min |
 
 **Recent Trend:**
-- Last 5 plans: 03.1-03 (15 min), 03.1-04 (15 min), 03.1-05 (4 min), 03.1-08 (4 min)
+- Last 5 plans: 03.1-04 (15 min), 03.1-05 (4 min), 03.1-06 (6 min), 03.1-08 (4 min)
 - Note: 03.1-03 and 03.1-04 took longer due to parallel agent coordination
 
 ## Accumulated Context
@@ -95,12 +95,13 @@ Recent decisions affecting current work:
 | dotenv directly in drizzle.config.ts | drizzle-kit only needs DATABASE_URL, not all env vars | 03.1-03 |
 | Remove Effect wrapper from auth | better-auth is self-contained at HTTP boundary | 03.1-04 |
 | Delete auth.mock.ts | Only provided Effect Layer mocks, no longer needed | 03.1-04 |
-| Keep dotenv in packages/core | drizzle.config.ts needs dotenv directly (per 03.1-03 decision) | 03.1-05 |
+| Keep dotenv in packages/core | drizzle.config.ts needs dotenv directly (per 03.1-03 decision) | 03.1-05 (superseded by 03.1-06) |
 | Remove @effect/vitest from packages/core | Unused after auth simplification in 03.1-04 | 03.1-05 |
 | Use knip for dependency audits | Identifies truly unused dependencies vs false positives | 03.1-05 |
 | Inline rate limiting for AI endpoint | Simpler than external package for single-server | 03.1-08 |
 | UIMessage parts validation schema | AI SDK v6 uses parts array, not simple content string | 03.1-08 |
 | Discriminated union for message parts | TextPartSchema, FilePartSchema, OtherPartSchema with passthrough | 03.1-08 |
+| drizzle.config.ts uses @gemhog/env/server | Centralize env handling, remove dotenv from packages/core | 03.1-06 |
 
 ### Pending Todos
 
@@ -229,7 +230,8 @@ Code review fixes complete:
 | 03.1-03 | Replace t3-env with Effect Config | 15 min | Complete |
 | 03.1-04 | Simplify auth by removing Effect wrapper | 15 min | Complete |
 | 03.1-05 | Audit and remove unused dependencies | 4 min | Complete |
-| 03.1-08 | AI endpoint security (validation + rate limiting) | 4 min | Complete |
+| 03.1-06 | Fix drizzle.config.ts to use @gemhog/env/server | 6 min | Complete |
+| 03.1-08 | AI endpoint security (validation + rate limiting) | 7 min | Complete |
 
 **Completed:**
 - Generated initial database migrations (user, session, account, verification tables)
@@ -245,11 +247,14 @@ Code review fixes complete:
 - Centralized dotenv to packages/env (and packages/core for drizzle.config.ts)
 - Added Zod validation for AI endpoint (SEC-001)
 - Added rate limiting to AI endpoint (SEC-002)
+- Fixed auth.service.ts to defer env import for testability
+- drizzle.config.ts now uses @gemhog/env/server with Redacted.value()
+- Removed dotenv dependency from packages/core
 
 ## Session Continuity
 
-Last session: 2026-01-21T10:15:09Z
+Last session: 2026-01-21T10:18:03Z
 Stopped at: Completed 03.1-08-PLAN.md (AI endpoint security)
 Resume file: None
 
-Next: Continue with remaining gap closure plans (03.1-06, 03.1-07, 03.1-09)
+Next: Continue with remaining gap closure plans (03.1-07, 03.1-09)
