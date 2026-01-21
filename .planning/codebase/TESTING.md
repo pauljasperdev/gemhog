@@ -1,30 +1,30 @@
 # Testing Infrastructure
 
-## MANDATORY: Executing Plans
-
-```bash
-pnpm dev:init && pnpm db:start && pnpm verify
-```
+## MANDATORY: For executing Plans
 
 ### Before starting execution of plans
 
-You MUST verify `pnpm verify` has no prior erros.
+1. Install deps and start integration test infrastructure
+
+```bash
+pnpm dev:init && pnpm test:integration:up
+```
+
+2. You MUST verify `pnpm verify` has no prior erros. If so fix them!
+
+3. There MUST NOT be any prior security issues. read
+   `.planning/codebase/SECURITY-REVIEW.md`. If so fix them!
 
 ### Before marking a plan as complete
 
 **This is non-negotiable.** ALL test MUST pass to mark a plan `pnpm verify`
-passes. No exceptions.
+passes. No exceptions. Not test skipping.
 
 Security volnurabilites MUST have been audited and FIXED!
 
----
-
-## Quick Reference
-
-| When                         | Command                        |
-| ---------------------------- | ------------------------------ |
-| Every commit                 | `pnpm verify:commit`           |
-| **Before completing a plan** | `pnpm db:start && pnpm verify` |
+Review `.planning/codebase/SECURITY-REVIEW.md` and
+`.planning/codebase/CONCERNS.md` if up to date. Fixed or not relevant issues due
+to changing code base can be removed.
 
 ## Database Migrations
 
@@ -47,11 +47,6 @@ Migrations are managed via Drizzle Kit in `packages/core`.
 2. Review generated SQL in `packages/core/src/migrations/`
 3. Commit migration files with schema changes
 4. Run `pnpm db:migrate` to apply (or let integration tests do it)
-
-**Integration tests auto-migrate:**
-
-- `test/integration-setup.ts` runs `db:migrate` before tests
-- No manual migration step needed for testing
 
 **Production deployment:**
 
@@ -112,13 +107,13 @@ The user decides whether to:
 
 ### When to Run What
 
-| When                         | Command                                        |
-| ---------------------------- | ---------------------------------------------- |
-| Any code change              | `pnpm verify:commit` (static + types + unit)   |
-| Database/schema changes      | `pnpm db:start && pnpm test:integration`       |
-| UI/user flow changes         | `pnpm test:e2e`                                |
-| **Before completing a plan** | `pnpm db:start && pnpm verify` (full pipeline) |
-| Before merge/release         | `pnpm db:start && pnpm verify` (full pipeline) |
+| When                         | Command                                      |
+| ---------------------------- | -------------------------------------------- |
+| Any code change              | `pnpm verify:commit` (static + types + unit) |
+| Database/schema changes      | `pnpm test:integration`                      |
+| UI/user flow changes         | `pnpm test:e2e`                              |
+| **Before completing a plan** | `pnpm verify` (full pipeline)                |
+| Before merge/release         | `pnpm verify` (full pipeline)                |
 
 ### Verification Order (Fail Fast, Expensive Last)
 
@@ -145,7 +140,7 @@ pnpm check-types
 pnpm test:unit
 
 # Integration tests (start database first)
-pnpm db:start
+pnpm test:integration:up
 pnpm test:integration
 
 # E2E tests (requires env vars, starts dev servers)
@@ -171,11 +166,8 @@ pnpm verify
 **Integration Tests:** Vitest 4.x
 
 - Config: `vitest.integration.config.ts` (root)
-- Global setup: `test/integration-setup.ts` (starts DB, waits, applies
-  migrations)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
-- Auto-migration: Schema migrations are applied before tests run
 
 **E2E:** Playwright
 
@@ -242,7 +234,7 @@ src/
 Any package can have integration tests. Simply:
 
 1. Create `src/something.int.test.ts` (co-located with implementation)
-2. Run `pnpm db:start` to start the PostgreSQL container
+2. Run `pnpm db:integraion:up` to start the infra
 3. Run `pnpm test:integration` - tests are automatically discovered and run
 
 The `vitest.integration.config.ts` discovers all `*.int.test.ts` files across:

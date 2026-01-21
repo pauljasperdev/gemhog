@@ -27,6 +27,7 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:integration:up": "pnpm db:start",
     "test:e2e": "playwright test",
     "format:md": "prettier --write \"**/*.md\"",
     "security:audit": "pnpm audit --audit-level low",
