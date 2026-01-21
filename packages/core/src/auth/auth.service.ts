@@ -1,4 +1,4 @@
-import { env } from "@gemhog/env/server";
+import type { ServerEnv } from "@gemhog/env/server";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import { betterAuth } from "better-auth";
@@ -7,6 +7,11 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Context, Effect, Layer, Redacted } from "effect";
 import { AuthError } from "./auth.errors";
 import * as schema from "./auth.sql";
+
+// Deferred env import - validates when createAuth() is called, not at module load
+// This allows unit tests to import AuthService without triggering env validation
+const getEnv = (): ServerEnv =>
+  (require("@gemhog/env/server") as { env: ServerEnv }).env;
 
 // Types
 type Session = Awaited<
@@ -27,6 +32,7 @@ export class AuthService extends Context.Tag("@gemhog/core/AuthService")<
 
 // Create better-auth instance (internal)
 const createAuth = () => {
+  const env = getEnv();
   const db = drizzle(Redacted.value(env.DATABASE_URL), { schema });
   const polarClient = new Polar({
     accessToken: Redacted.value(env.POLAR_ACCESS_TOKEN),
