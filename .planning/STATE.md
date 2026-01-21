@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 3.1 of 7 (Code Review Fixes) - IN PROGRESS
-Plan: 3/5 plans complete (03.1-01, 03.1-02, 03.1-03)
-Status: Plan 03 complete, continuing with remaining plans
-Last activity: 2026-01-21 - Completed 03.1-03 (Effect Config migration)
+Plan: 4/5 plans complete (03.1-01, 03.1-02, 03.1-03, 03.1-04)
+Status: Plan 04 complete, continuing with 05
+Last activity: 2026-01-21 - Completed 03.1-04 (Simplify auth)
 
 Progress: █████████░ ~65% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 3.2 min
-- Total execution time: 62 min
+- Total plans completed: 18
+- Average duration: 3.4 min
+- Total execution time: 77 min
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: █████████░ ~65% (Phase 1 + 1.1 + 2 + 3 complete, 3
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 3/5 | 21 min | 7.0 min |
+| 3.1. Code Review Fixes | 4/5 | 36 min | 9.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-05 (4 min), 03.1-01 (3 min), 03.1-02 (3 min), 03.1-03 (15 min)
-- Note: 03.1-03 took longer due to external tool interference and multiple iterations
+- Last 5 plans: 03.1-01 (3 min), 03.1-02 (3 min), 03.1-03 (15 min), 03.1-04 (15 min)
+- Note: 03.1-03 and 03.1-04 took longer due to parallel agent coordination
 
 ## Accumulated Context
 
@@ -93,7 +93,8 @@ Recent decisions affecting current work:
 | Add NEXT_PUBLIC_SERVER_URL to E2E web server env | Next.js env validation requires it for E2E tests | 03.1-01 |
 | Deferred require() for auth.service.ts | Static env import breaks unit tests without env vars | 03.1-03 |
 | dotenv directly in drizzle.config.ts | drizzle-kit only needs DATABASE_URL, not all env vars | 03.1-03 |
-| Simplified auth (external refactor) | Removed Effect wrapper - better-auth is self-contained | 03.1-03 |
+| Remove Effect wrapper from auth | better-auth is self-contained at HTTP boundary | 03.1-04 |
+| Delete auth.mock.ts | Only provided Effect Layer mocks, no longer needed | 03.1-04 |
 
 ### Pending Todos
 
@@ -218,6 +219,7 @@ Code review fixes in progress:
 | 03.1-01 | Generate database migrations | 3 min | Complete |
 | 03.1-02 | Remove dead payment service code | 3 min | Complete |
 | 03.1-03 | Replace t3-env with Effect Config | 15 min | Complete |
+| 03.1-04 | Simplify auth by removing Effect wrapper | 15 min | Complete |
 
 **Completed:**
 - Generated initial database migrations (user, session, account, verification tables)
@@ -226,12 +228,14 @@ Code review fixes in progress:
 - Removed ./payment subpath export from package.json
 - Replaced t3-env with Effect Config in packages/env
 - Sensitive values use Config.redacted() and Redacted.value()
-- Auth module simplified (external refactor removed Effect wrapper)
+- Simplified auth.service.ts (removed Context.Tag, Layer)
+- Deleted auth.mock.ts (Effect Layer mocks no longer needed)
+- Updated auth exports: getAuth, auth, getSession
 
 ## Session Continuity
 
-Last session: 2026-01-21T09:26:12Z
-Stopped at: Completed 03.1-03-PLAN.md (Effect Config migration)
+Last session: 2026-01-21T09:26:26Z
+Stopped at: Completed 03.1-04-PLAN.md (Simplify auth)
 Resume file: None
 
-Next: Continue Phase 3.1 (03.1-04, 03.1-05)
+Next: Continue Phase 3.1 (03.1-05)
