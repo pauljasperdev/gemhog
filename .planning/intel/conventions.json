@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769001578045,
+  "updated": 1769023505085,
   "naming": {},
   "directories": {
     "components": {
@@ -17,7 +17,7 @@
     },
     "tests": {
       "purpose": "Test files",
-      "files": 1
+      "files": 2
     },
     "api": {
       "purpose": "API endpoints",
@@ -28,6 +28,10 @@
     ".config.ts": {
       "purpose": "Configuration",
       "count": 10
+    },
+    ".test.ts": {
+      "purpose": "Test files",
+      "count": 6
     }
   }
 }
