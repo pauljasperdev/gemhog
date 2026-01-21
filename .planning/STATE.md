@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3 complete - old packages removed, @gemhog/core is sole source of truth
+**Current focus:** Phase 3.1 in progress - addressing code review fixes
 
 ## Current Position
 
-Phase: 3.1 of 7 (Code Review Fixes) - NOT STARTED
-Plan: 0/? plans
-Status: Phase inserted, awaiting planning
-Last activity: 2026-01-21 - Inserted Phase 3.1 for code review fixes
+Phase: 3.1 of 7 (Code Review Fixes) - IN PROGRESS
+Plan: 1/? plans complete (03.1-02)
+Status: Plan 02 complete, continuing with remaining plans
+Last activity: 2026-01-21 - Completed 03.1-02 (dead payment service removal)
 
-Progress: █████████░ ~57% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 inserted)
+Progress: █████████░ ~58% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 2.9 min
-- Total execution time: 41 min
+- Total execution time: 44 min
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: █████████░ ~57% (Phase 1 + 1.1 + 2 + 3 complete, 3
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
+| 3.1. Code Review Fixes | 1/? | 3 min | 3.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (3 min), 03-02 (2 min), 03-03 (4 min), 03-04 (2 min), 03-05 (4 min)
+- Last 5 plans: 03-02 (2 min), 03-03 (4 min), 03-04 (2 min), 03-05 (4 min), 03.1-02 (3 min)
 - Trend: Consistent fast execution
 
 ## Accumulated Context
@@ -85,6 +86,8 @@ Recent decisions affecting current work:
 | Lazy getter pattern for auth/payment instances | Caches instance on first access | 03-02, 03-03 |
 | Delete old packages completely after migration | All code migrated to @gemhog/core | 03-05 |
 | Remove unused dependencies discovered during verification | @gemhog/auth was in apps/web but unused | 03-05 |
+| Delete entire payment/ directory | All exports unused, no reason to keep empty module | 03.1-02 |
+| Keep @polar-sh/sdk despite payment deletion | auth.service.ts uses it inline for better-auth plugin | 03.1-02 |
 
 ### Pending Todos
 
@@ -184,9 +187,9 @@ Core consolidation complete - packages/core with Effect TS:
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
 - Auth domain: AuthService, AuthLive, auth.sql schema
-- Payment domain: PaymentService, PaymentLive, Polar SDK wrapper
-- Subpath exports: ./drizzle, ./auth, ./auth/auth.sql, ./payment
+- Subpath exports: ./drizzle, ./auth, ./auth/auth.sql
 - Integration test: connection.int.test.ts
+- Note: Payment module removed in 03.1-02 (dead code)
 
 **Old packages removed:**
 - packages/db deleted (16 files)
@@ -200,10 +203,23 @@ Core consolidation complete - packages/core with Effect TS:
 - Deferred env validation via require() for testability
 - Mock layers (*ServiceTest) for unit testing
 
+## Phase 3.1 Summary
+
+Code review fixes in progress:
+
+| Plan | Summary | Duration | Status |
+|------|---------|----------|--------|
+| 03.1-02 | Remove dead payment service code | 3 min | Complete |
+
+**Completed:**
+- Deleted packages/core/src/payment/ directory (5 files)
+- Removed ./payment subpath export from package.json
+- Verified no broken imports
+
 ## Session Continuity
 
-Last session: 2026-01-20T08:16:53Z
-Stopped at: Completed 03-05-PLAN.md (old package removal) - Phase 3 complete
+Last session: 2026-01-21T09:02:14Z
+Stopped at: Completed 03.1-02-PLAN.md (dead payment service removal)
 Resume file: None
 
-Next: Phase 4 (see ROADMAP.md)
+Next: Continue Phase 3.1 (remaining code review fixes)
