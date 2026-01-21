@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "updated": 1737475200000,
+  "naming": {
+    "exports": {
+      "dominant": "PascalCase",
+      "count": 116,
+      "percentage": 72
+    }
+  },
+  "directories": {
+    "components": { "purpose": "UI components", "files": 16 },
+    "ui": { "purpose": "UI components", "files": 8 },
+    "lib": { "purpose": "Utility functions", "files": 2 },
+    "utils": { "purpose": "Utility functions", "files": 1 },
+    "app": { "purpose": "Page components", "files": 7 },
+    "routers": { "purpose": "API endpoints", "files": 1 },
+    "auth": { "purpose": "Authentication domain", "files": 6 },
+    "drizzle": { "purpose": "Database layer", "files": 4 },
+    "payment": { "purpose": "Payment domain", "files": 5 },
+    "tests": { "purpose": "Test files", "files": 1 }
+  },
+  "suffixes": {
+    ".config.ts": { "purpose": "Configuration", "count": 10 },
+    ".test.ts": { "purpose": "Test files", "count": 5 },
+    ".int.test.ts": { "purpose": "Integration tests", "count": 1 },
+    ".e2e.test.ts": { "purpose": "E2E tests", "count": 1 },
+    ".errors.ts": { "purpose": "Error definitions", "count": 3 },
+    ".service.ts": { "purpose": "Service layer", "count": 2 },
+    ".mock.ts": { "purpose": "Mock data", "count": 2 },
+    ".sql.ts": { "purpose": "Schema definitions", "count": 1 }
+  }
+}
