@@ -108,20 +108,68 @@
 
 ## Comments
 
-**When to Comment:**
+### When to Comment
 
-- Explain non-obvious business logic
-- Document complex type constraints
-- Avoid obvious comments
+**DO comment:**
 
-**JSDoc/TSDoc:**
+- Non-obvious business logic (explain the WHY)
+- Complex algorithms (explain the approach)
+- Security-critical code (explain the threat model)
+- Workarounds for external bugs (link to issue)
 
-- Not widely used in this codebase
-- Self-documenting code preferred
+**DON'T comment:**
 
-**TODO Comments:**
+- Self-explanatory code
+- What the code does (the code shows that)
+- Historical references (use git history)
 
-- Not detected in current codebase
+### Comment Quality Standards
+
+**Explain WHY, not WHAT:**
+
+```typescript
+// BAD: Restates the code
+// Validate input
+const result = schema.parse(input);
+
+// GOOD: Explains the purpose
+// Prevent injection attacks - user input must match expected schema
+const result = schema.parse(input);
+```
+
+**Avoid archaeological comments:**
+
+Archaeological comments reference historical context rather than explaining
+current purpose. They become stale and confusing.
+
+```typescript
+// BAD: References past tickets/fixes
+// SEC-001 fix
+// Removed in refactor #123
+// TODO: cleanup after v2 migration
+
+// GOOD: Explains current purpose (or remove if self-explanatory)
+// Rate limiting prevents abuse of expensive AI operations
+```
+
+**Link to issues for workarounds:**
+
+```typescript
+// BAD: Unexplained workaround
+// @ts-ignore - doesn't work without this
+
+// GOOD: Links to context
+// Workaround for Next.js hydration bug: https://github.com/vercel/next.js/issues/12345
+// @ts-ignore - server/client mismatch in dev mode only
+```
+
+### JSDoc/TSDoc
+
+Not widely used in this codebase. Self-documenting code with TypeScript types is
+preferred. Use JSDoc only for:
+
+- Public library APIs
+- Complex function signatures that benefit from inline documentation
 
 ## Function Design
 
@@ -200,16 +248,16 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
 ```typescript
 // GOOD: Simple patterns
-Effect.succeed(value)           // For static values
-Effect.void                     // For void operations
-Effect.map(fn)                  // For simple transformations
-Effect.flatMap(fn)              // For sequential operations
-Effect.all({ a, b, c })         // For parallel operations
+Effect.succeed(value); // For static values
+Effect.void; // For void operations
+Effect.map(fn); // For simple transformations
+Effect.flatMap(fn); // For sequential operations
+Effect.all({ a, b, c }); // For parallel operations
 
 // BAD: Over-engineered
 Effect.gen(function* (_) {
-  return value                  // Unnecessary generator for static value
-})
+  return value; // Unnecessary generator for static value
+});
 ```
 
 **When to use Effect.gen:**
@@ -221,23 +269,23 @@ Effect.gen(function* (_) {
 ```typescript
 // GOOD: Complex flow justifies Effect.gen
 Effect.gen(function* (_) {
-  const user = yield* _(getUser())
+  const user = yield* _(getUser());
   if (user.role === "admin") {
-    const permissions = yield* _(getAdminPermissions())
-    return { user, permissions }
+    const permissions = yield* _(getAdminPermissions());
+    return { user, permissions };
   }
-  return { user, permissions: [] }
-})
+  return { user, permissions: [] };
+});
 
 // BAD: Simple chain doesn't need Effect.gen
 Effect.gen(function* (_) {
-  const a = yield* _(effectA)
-  const b = yield* _(effectB(a))
-  return b
-})
+  const a = yield* _(effectA);
+  const b = yield* _(effectB(a));
+  return b;
+});
 
 // GOOD: Use flatMap instead
-effectA.pipe(Effect.flatMap((a) => effectB(a)))
+effectA.pipe(Effect.flatMap((a) => effectB(a)));
 ```
 
 ### Error Handling
@@ -292,18 +340,18 @@ storage.queryRaw(sql).pipe(
 // BAD: Hides dependencies, causes runtime errors
 const ServiceLayer = Layer.effect(
   ServiceTag,
-  Effect.sync(() => implementation) as Effect<Service, never, never>
-)
+  Effect.sync(() => implementation) as Effect<Service, never, never>,
+);
 
 // GOOD: Declares dependencies explicitly
 const ServiceLayer = Layer.effect(
   ServiceTag,
   Effect.gen(function* (_) {
-    const dep1 = yield* _(Dependency1Tag)
-    const dep2 = yield* _(Dependency2Tag)
-    return implementation(dep1, dep2)
-  })
-)
+    const dep1 = yield* _(Dependency1Tag);
+    const dep2 = yield* _(Dependency2Tag);
+    return implementation(dep1, dep2);
+  }),
+);
 ```
 
 **Avoid `as any` in Effect code:**
@@ -317,12 +365,12 @@ const ServiceLayer = Layer.effect(
 const ResponseSchema = Schema.Struct({
   data: Schema.Array(Schema.String),
   meta: Schema.Struct({ count: Schema.Number }),
-})
+});
 
 Effect.tryPromise({
   try: () => fetch("/api").then((r) => r.json()),
   catch: (e) => new FetchError({ cause: e }),
-}).pipe(Effect.flatMap(Schema.decodeUnknown(ResponseSchema)))
+}).pipe(Effect.flatMap(Schema.decodeUnknown(ResponseSchema)));
 ```
 
 ### Test Patterns
@@ -350,12 +398,12 @@ const runTest = <A, E, R>(effect: Effect.Effect<A, E, R>) => ...
 // GOOD: Unused params prefixed with _
 const MockService = {
   fetch: (_url: string, _options: Options) => Effect.succeed(mockData),
-}
+};
 
 // BAD: Triggers noUnusedParameters warning
 const MockService = {
   fetch: (url: string, options: Options) => Effect.succeed(mockData),
-}
+};
 ```
 
 **Direct Effect.runPromise in tests:**
@@ -363,23 +411,23 @@ const MockService = {
 ```typescript
 // GOOD: Direct and explicit
 const result = await Effect.runPromise(
-  myEffect.pipe(Effect.provide(TestLayer))
-)
+  myEffect.pipe(Effect.provide(TestLayer)),
+);
 
 // BAD: Abstracted helper hiding complexity
-const result = await runTest(myEffect)
+const result = await runTest(myEffect);
 ```
 
 ### Anti-Patterns to Avoid
 
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| `Effect.Adaptor` | Circumvents type safety | Direct Effect chains with proper typing |
-| `as Effect<A, E, never>` | Hides dependencies | Declare dependencies in layer signatures |
-| `Effect.gen` for single yield | Over-engineering | Direct pipe or flatMap |
-| `error: unknown` in catchAll | Loses type information | Let TypeScript infer error type |
-| `Effect.promise` + `mapError` | Legacy pattern | Use `Effect.tryPromise` |
-| `runTest` helpers | Type constraint issues | Direct `Effect.runPromise` |
+| Anti-Pattern                  | Problem                 | Solution                                 |
+| ----------------------------- | ----------------------- | ---------------------------------------- |
+| `Effect.Adaptor`              | Circumvents type safety | Direct Effect chains with proper typing  |
+| `as Effect<A, E, never>`      | Hides dependencies      | Declare dependencies in layer signatures |
+| `Effect.gen` for single yield | Over-engineering        | Direct pipe or flatMap                   |
+| `error: unknown` in catchAll  | Loses type information  | Let TypeScript infer error type          |
+| `Effect.promise` + `mapError` | Legacy pattern          | Use `Effect.tryPromise`                  |
+| `runTest` helpers             | Type constraint issues  | Direct `Effect.runPromise`               |
 
 ### Detection Commands
 

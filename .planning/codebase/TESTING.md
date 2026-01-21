@@ -325,7 +325,8 @@ Test-Driven Development follows a strict cycle:
 ### Why "Red First" Matters
 
 - **Proves the test works**: A test that never fails might not test anything
-- **Forces interface design**: Think about how code will be used before implementing
+- **Forces interface design**: Think about how code will be used before
+  implementing
 - **Creates living documentation**: Tests describe expected behavior
 
 ### TDD Workflow Example
