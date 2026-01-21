@@ -39,14 +39,14 @@ methodology for AI-assisted development. All project context lives in the
 
 ## Key Context Files
 
-| File                    | Purpose                              | When to Read                           |
-| ----------------------- | ------------------------------------ | -------------------------------------- |
-| `PROJECT.md`            | Requirements, constraints, decisions | Always — start here                    |
-| `ARCHITECTURE.md`       | System design, data flows            | Before structural changes              |
+| File                    | Purpose                              | When to Read                               |
+| ----------------------- | ------------------------------------ | ------------------------------------------ |
+| `PROJECT.md`            | Requirements, constraints, decisions | Always — start here                        |
+| `ARCHITECTURE.md`       | System design, data flows            | Before structural changes                  |
 | `TESTING.md`            | Test commands and verification       | Before running tests or declaring complete |
-| `SECURITY-CHECKLIST.md` | Security review checklist            | Before implementing auth/data handling |
-| `SECURITY-REVIEW.md`    | Security findings and audit trail    | Check for blocking findings before work |
-| `CONCERNS.md`           | Known issues, tech debt              | Before major refactoring               |
+| `SECURITY-CHECKLIST.md` | Security review checklist            | Before implementing auth/data handling     |
+| `SECURITY-REVIEW.md`    | Security findings and audit trail    | Check for blocking findings before work    |
+| `CONCERNS.md`           | Known issues, tech debt              | Before major refactoring                   |
 
 ## Important Constraints
 
@@ -67,7 +67,8 @@ methodology for AI-assisted development. All project context lives in the
 pnpm db:start && pnpm verify
 ```
 
-**This is non-negotiable.** See `.planning/codebase/TESTING.md` for full details.
+**This is non-negotiable.** See `.planning/codebase/TESTING.md` for full
+details.
 
 ## Security Requirements
 
@@ -76,6 +77,7 @@ pnpm db:start && pnpm verify
 `.planning/codebase/SECURITY-REVIEW.md` for the audit trail.
 
 **Severity blocking:**
+
 - Critical/High/Medium findings block completion
 - Only Low severity is non-blocking
 

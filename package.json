@@ -7,7 +7,8 @@
   ],
   "type": "module",
   "scripts": {
-    "dev:init": "rm -rf node_modules && pnpm install && pnpm exec playwright install-deps",
+    "dev:init": "rm -rf node_modules && pnpm install &&  pnpm playwright:install",
+    "playwright:install": "pnpm exec playwright install-deps && pnpx playwright install",
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
     "check-types": "pnpm -r check-types",
