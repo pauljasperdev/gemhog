@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 3.1 of 7 (Code Review Fixes) - IN PROGRESS
-Plan: 2/5 plans complete (03.1-01, 03.1-02)
-Status: Plans 01 and 02 complete, continuing with remaining plans
-Last activity: 2026-01-21 - Completed 03.1-01 (database migrations)
+Plan: 3/5 plans complete (03.1-01, 03.1-02, 03.1-03)
+Status: Plan 03 complete, continuing with remaining plans
+Last activity: 2026-01-21 - Completed 03.1-03 (Effect Config migration)
 
-Progress: █████████░ ~60% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
+Progress: █████████░ ~65% (Phase 1 + 1.1 + 2 + 3 complete, 3.1 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
-- Average duration: 2.9 min
-- Total execution time: 47 min
+- Total plans completed: 17
+- Average duration: 3.2 min
+- Total execution time: 62 min
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: █████████░ ~60% (Phase 1 + 1.1 + 2 + 3 complete, 3
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 2/5 | 6 min | 3.0 min |
+| 3.1. Code Review Fixes | 3/5 | 21 min | 7.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (4 min), 03-04 (2 min), 03-05 (4 min), 03.1-01 (3 min), 03.1-02 (3 min)
-- Trend: Consistent fast execution
+- Last 5 plans: 03-05 (4 min), 03.1-01 (3 min), 03.1-02 (3 min), 03.1-03 (15 min)
+- Note: 03.1-03 took longer due to external tool interference and multiple iterations
 
 ## Accumulated Context
 
@@ -91,6 +91,9 @@ Recent decisions affecting current work:
 | Rename drizzle-kit generated migrations | 0000_initial_schema.sql more descriptive than random name | 03.1-01 |
 | Format migration JSON with Biome | Pre-commit hooks require Biome formatting | 03.1-01 |
 | Add NEXT_PUBLIC_SERVER_URL to E2E web server env | Next.js env validation requires it for E2E tests | 03.1-01 |
+| Deferred require() for auth.service.ts | Static env import breaks unit tests without env vars | 03.1-03 |
+| dotenv directly in drizzle.config.ts | drizzle-kit only needs DATABASE_URL, not all env vars | 03.1-03 |
+| Simplified auth (external refactor) | Removed Effect wrapper - better-auth is self-contained | 03.1-03 |
 
 ### Pending Todos
 
@@ -189,7 +192,7 @@ Core consolidation complete - packages/core with Effect TS:
 
 **packages/core created:**
 - Effect database layers: PgLive, DrizzleLive, DatabaseLive
-- Auth domain: AuthService, AuthLive, auth.sql schema
+- Auth domain: simplified (no Effect wrapper after 03.1-03)
 - Subpath exports: ./drizzle, ./auth, ./auth/auth.sql
 - Integration test: connection.int.test.ts
 - Note: Payment module removed in 03.1-02 (dead code)
@@ -214,18 +217,21 @@ Code review fixes in progress:
 |------|---------|----------|--------|
 | 03.1-01 | Generate database migrations | 3 min | Complete |
 | 03.1-02 | Remove dead payment service code | 3 min | Complete |
+| 03.1-03 | Replace t3-env with Effect Config | 15 min | Complete |
 
 **Completed:**
 - Generated initial database migrations (user, session, account, verification tables)
 - Applied migrations to local PostgreSQL, verified with integration tests
 - Deleted packages/core/src/payment/ directory (5 files)
 - Removed ./payment subpath export from package.json
-- Verified no broken imports
+- Replaced t3-env with Effect Config in packages/env
+- Sensitive values use Config.redacted() and Redacted.value()
+- Auth module simplified (external refactor removed Effect wrapper)
 
 ## Session Continuity
 
-Last session: 2026-01-21T09:02:18Z
-Stopped at: Completed 03.1-01-PLAN.md (database migrations)
+Last session: 2026-01-21T09:26:12Z
+Stopped at: Completed 03.1-03-PLAN.md (Effect Config migration)
 Resume file: None
 
-Next: Continue Phase 3.1 (03.1-03, 03.1-04, 03.1-05)
+Next: Continue Phase 3.1 (03.1-04, 03.1-05)
