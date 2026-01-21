@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1768986329700,
+  "updated": 1769001578045,
   "naming": {},
   "directories": {
     "components": {
@@ -28,10 +28,6 @@
     ".config.ts": {
       "purpose": "Configuration",
       "count": 10
-    },
-    ".test.ts": {
-      "purpose": "Test files",
-      "count": 5
     }
   }
 }
