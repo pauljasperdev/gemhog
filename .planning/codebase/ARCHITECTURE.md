@@ -1,7 +1,7 @@
 # Architecture
 
-**Analysis Date:** 2026-01-15
-**Updated:** 2026-01-20 — Core package consolidation complete (Phase 03)
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-20 — Core package
+consolidation complete (Phase 03)
 
 ## Pattern Overview
 
@@ -79,7 +79,8 @@
 1. User submits credentials (`apps/web/src/components/sign-in-form.tsx`)
 2. authClient.signIn() called (`apps/web/src/lib/auth-client.ts`)
 3. HTTP POST to `/api/auth/*` (`apps/server/src/index.ts`)
-4. Better-Auth validates credentials via `auth.handler` (`packages/core/src/auth/auth.service.ts`)
+4. Better-Auth validates credentials via `auth.handler`
+   (`packages/core/src/auth/auth.service.ts`)
 5. Session created in database (`packages/core/src/auth/auth.sql.ts`)
 6. HTTP-only cookie set
 7. Client redirects to dashboard
@@ -104,7 +105,8 @@
 **Effect Service:**
 
 - Purpose: Dependency-injected service with testable layers
-- Examples: `AuthService`, `PaymentService` (`packages/core/src/auth/auth.service.ts`)
+- Examples: `AuthService`, `PaymentService`
+  (`packages/core/src/auth/auth.service.ts`)
 - Pattern: Context.Tag + Layer for production, mock Layer for tests
 
 **Effect Layer:**
@@ -116,7 +118,8 @@
 **Tagged Error:**
 
 - Purpose: Structured, typed domain errors
-- Examples: `AuthError`, `SessionNotFoundError` (`packages/core/src/auth/auth.errors.ts`)
+- Examples: `AuthError`, `SessionNotFoundError`
+  (`packages/core/src/auth/auth.errors.ts`)
 - Pattern: `Data.TaggedError` for pattern matching in Effect
 
 **tRPC Procedure:**
@@ -199,7 +202,8 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 **Domain Errors:**
 
-- Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`, `UnauthorizedError`
+- Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`,
+  `UnauthorizedError`
 - Database: `DatabaseError`, `ConnectionError`
 - Payment: `PaymentError`
 
@@ -240,12 +244,16 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Purpose: Testability, dependency injection, composable error handling
 - Scope: Core package services (`packages/core/`)
 - Implementation:
-  - `AuthService` with `AuthLive` layer (`packages/core/src/auth/auth.service.ts`)
-  - `PaymentService` with `PaymentLive` layer (`packages/core/src/payment/payment.service.ts`)
-  - `DatabaseLive` layer composing PgClient + Drizzle (`packages/core/src/drizzle/index.ts`)
+  - `AuthService` with `AuthLive` layer
+    (`packages/core/src/auth/auth.service.ts`)
+  - `PaymentService` with `PaymentLive` layer
+    (`packages/core/src/payment/payment.service.ts`)
+  - `DatabaseLive` layer composing PgClient + Drizzle
+    (`packages/core/src/drizzle/index.ts`)
   - Mock layers for testing (`AuthServiceTest`, `PaymentServiceTest`)
   - TaggedErrors for structured error handling across domains
-- Backward compatibility: Lazy proxy exports (`auth`, `polarClient`) for gradual migration
+- Backward compatibility: Lazy proxy exports (`auth`, `polarClient`) for gradual
+  migration
 
 **Core Package Consolidation — Completed Phase 03:**
 
@@ -295,6 +303,6 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_
-_Updated: 2026-01-20 — Phase 03 core consolidation complete, Effect TS implemented_
-_Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-20 — Phase 03 core
+consolidation complete, Effect TS implemented_ _Update when major patterns
+change_

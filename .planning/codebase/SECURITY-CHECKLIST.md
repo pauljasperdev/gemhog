@@ -27,16 +27,19 @@ places.
    - Scope = changed files + their imports + their callers
 
 3. **Run dependency audit:**
+
    ```bash
    pnpm security:audit
    ```
+
    - Moderate or higher: blocking, must fix or document justification
    - Document results in SECURITY-REVIEW.md
 
 4. **Review code against checklist:** Apply relevant categories below to scoped
    files
 
-5. **Record findings:** Append session to `.planning/codebase/SECURITY-REVIEW.md`
+5. **Record findings:** Append session to
+   `.planning/codebase/SECURITY-REVIEW.md`
 
 6. **Resolve blocking findings:** Fix Critical/High/Medium issues, re-run checks
 
@@ -44,12 +47,12 @@ places.
 
 ### Severity Blocking
 
-| Severity | Blocks Completion | Action                       |
-| -------- | ----------------- | ---------------------------- |
+| Severity | Blocks Completion | Action                         |
+| -------- | ----------------- | ------------------------------ |
 | Critical | YES               | Fix immediately, no exceptions |
 | High     | YES               | Fix immediately, no exceptions |
-| Medium   | YES               | Fix before declaring complete |
-| Low      | NO                | Document, fix when convenient |
+| Medium   | YES               | Fix before declaring complete  |
+| Low      | NO                | Document, fix when convenient  |
 
 ---
 

@@ -1,10 +1,10 @@
 # Security Review Log
 
-Cumulative security findings for the Gemhog project.
-Each review session is appended below, maintaining full audit trail.
+Cumulative security findings for the Gemhog project. Each review session is
+appended below, maintaining full audit trail.
 
-**Purpose:** Single source of truth for security findings. CONCERNS.md references
-this file for summary counts only.
+**Purpose:** Single source of truth for security findings. CONCERNS.md
+references this file for summary counts only.
 
 **Format:** Append new sessions at the top (most recent first).
 
@@ -15,33 +15,36 @@ this file for summary counts only.
 Quick reference for blocking check before any work.
 
 | Severity | Open | Fixed | Closed (N/A) | Total |
-|----------|------|-------|--------------|-------|
-| Critical | 0 | 0 | 0 | 0 |
-| High | 0 | 2 | 0 | 2 |
-| Medium | 0 | 1 | 2 | 3 |
-| Low | 0 | 0 | 1 | 1 |
+| -------- | ---- | ----- | ------------ | ----- |
+| Critical | 0    | 0     | 0            | 0     |
+| High     | 0    | 2     | 0            | 2     |
+| Medium   | 0    | 1     | 2            | 3     |
+| Low      | 0    | 0     | 1            | 1     |
 
 **Blocking findings exist:** NO
 
 **All findings resolved:**
+
 - [SEC-001] High - Missing input validation on AI endpoint - FIXED (03.1-08)
 - [SEC-002] High - No rate limiting - FIXED (03.1-08)
 - [SEC-003] Medium - Debug logging exposes data - FIXED (03.1-07)
-- [SEC-004] Medium - Hardcoded placeholder productId - CLOSED (03.1-07, Polar removed)
+- [SEC-004] Medium - Hardcoded placeholder productId - CLOSED (03.1-07, Polar
+  removed)
 - [SEC-005] Low - Polar sandbox mode hardcoded - CLOSED (03.1-07, Polar removed)
 
 ---
 
 ## Review: 2026-01-21 - Gap Closure (03.1-06 through 03.1-09)
 
-**Reviewer:** Claude (agent)
-**Commit:** Gap closure plans addressing VERIFICATION.md findings
-**Scope:**
+**Reviewer:** Claude (agent) **Commit:** Gap closure plans addressing
+VERIFICATION.md findings **Scope:**
+
 - packages/core/drizzle.config.ts (env import change)
 - packages/core/src/auth/auth.service.ts (static import, Polar removal)
 - packages/env/src/server.ts (POLAR vars removed)
 - apps/web/src/lib/auth-client.ts (Polar removal)
-- apps/web/src/app/dashboard/dashboard.tsx (debug logging removed, Polar removal)
+- apps/web/src/app/dashboard/dashboard.tsx (debug logging removed, Polar
+  removal)
 - apps/server/src/index.ts (validation and rate limiting added)
 
 ### Dependency Audit
@@ -53,18 +56,19 @@ No known vulnerabilities found
 
 ### Files Reviewed
 
-| File | Categories Checked | Result |
-|------|-------------------|--------|
-| apps/server/src/index.ts | Input Validation, Rate Limiting, API Security | PASS |
-| packages/core/src/auth/auth.service.ts | Auth, Secrets Management | PASS |
-| packages/core/drizzle.config.ts | Secrets Management | PASS |
-| packages/env/src/server.ts | Secrets Management | PASS |
-| apps/web/src/lib/auth-client.ts | Auth | PASS |
-| apps/web/src/app/dashboard/dashboard.tsx | Logging | PASS |
+| File                                     | Categories Checked                            | Result |
+| ---------------------------------------- | --------------------------------------------- | ------ |
+| apps/server/src/index.ts                 | Input Validation, Rate Limiting, API Security | PASS   |
+| packages/core/src/auth/auth.service.ts   | Auth, Secrets Management                      | PASS   |
+| packages/core/drizzle.config.ts          | Secrets Management                            | PASS   |
+| packages/env/src/server.ts               | Secrets Management                            | PASS   |
+| apps/web/src/lib/auth-client.ts          | Auth                                          | PASS   |
+| apps/web/src/app/dashboard/dashboard.tsx | Logging                                       | PASS   |
 
 ### Findings Resolved
 
 #### [SEC-001] High - Missing input validation on AI endpoint
+
 - **Status:** FIXED (03.1-08)
 - **Fix:** Added Zod schema validation for message array
   - UIMessageSchema validates role, parts array structure
@@ -72,6 +76,7 @@ No known vulnerabilities found
   - Proper error response with validation details
 
 #### [SEC-002] High - No rate limiting
+
 - **Status:** FIXED (03.1-08)
 - **Fix:** Added in-memory rate limiter
   - 10 requests per minute per client IP
@@ -80,11 +85,13 @@ No known vulnerabilities found
   - Periodic cleanup of expired entries
 
 #### [SEC-003] Medium - Debug logging exposes data
+
 - **Status:** FIXED (03.1-07)
 - **Fix:** Removed console.log from dashboard.tsx
   - No more subscription data logged in production
 
 #### [SEC-004] Medium - Hardcoded placeholder productId
+
 - **Status:** CLOSED (03.1-07)
 - **Reason:** Polar integration removed entirely from codebase
   - @polar-sh/sdk removed from dependencies
@@ -92,28 +99,32 @@ No known vulnerabilities found
   - Finding no longer applicable
 
 #### [SEC-005] Low - Polar sandbox mode hardcoded
+
 - **Status:** CLOSED (03.1-07)
 - **Reason:** Polar integration removed entirely from codebase
   - Finding no longer applicable
 
 ### Positive Findings
 
-- **Input validation properly implemented:** Zod schemas with appropriate constraints
+- **Input validation properly implemented:** Zod schemas with appropriate
+  constraints
 - **Rate limiting in place:** Simple but effective for single-server deployment
-- **Secrets properly redacted:** DATABASE_URL uses Config.redacted() and Redacted.value()
-- **Cookie security:** httpOnly: true, secure: true, sameSite: "none" (intentional for cross-origin API)
-- **CORS configured:** Uses specific origin from env, not "*"
+- **Secrets properly redacted:** DATABASE_URL uses Config.redacted() and
+  Redacted.value()
+- **Cookie security:** httpOnly: true, secure: true, sameSite: "none"
+  (intentional for cross-origin API)
+- **CORS configured:** Uses specific origin from env, not "\*"
 - **No debug logging:** Dashboard cleaned up
 - **Env validation:** Effect Config validates at import time
 
 ### Summary
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 0 | All fixed |
-| Medium | 0 | All fixed/closed |
-| Low | 0 | All closed |
+| Severity | Count | Status           |
+| -------- | ----- | ---------------- |
+| Critical | 0     | -                |
+| High     | 0     | All fixed        |
+| Medium   | 0     | All fixed/closed |
+| Low      | 0     | All closed       |
 
 ### Sign-off
 
@@ -126,14 +137,14 @@ No known vulnerabilities found
 
 ## Review: 2026-01-21 - Phase 3.1 Code Review Fixes
 
-**Reviewer:** Claude (agent)
-**Commit:** Phase 3.1 complete (03.1-01 through 03.1-05)
-**Scope:**
+**Reviewer:** Claude (agent) **Commit:** Phase 3.1 complete (03.1-01 through
+03.1-05) **Scope:**
+
 - packages/env/src/server.ts (secrets handling with Effect Config)
 - packages/env/src/web.ts (web env config)
 - packages/core/src/auth/auth.service.ts (authentication)
 - packages/core/drizzle.config.ts (database config)
-- packages/core/src/payment/* (deleted - dead code removal)
+- packages/core/src/payment/\* (deleted - dead code removal)
 - apps/server/src/index.ts (caller)
 - packages/api/src/context.ts (caller)
 
@@ -146,14 +157,14 @@ No known vulnerabilities found
 
 ### Files Reviewed
 
-| File | Categories Checked | Result |
-|------|-------------------|--------|
-| packages/env/src/server.ts | Secrets Management | PASS - Uses Config.redacted() |
-| packages/env/src/web.ts | Secrets Management | PASS |
-| packages/core/src/auth/auth.service.ts | Auth, Secrets, SQL | PARTIAL - 2 findings |
-| packages/core/drizzle.config.ts | Secrets, SQL | PASS - Build-time only |
-| apps/server/src/index.ts | API Security, CORS | PASS |
-| packages/api/src/context.ts | Auth | PASS |
+| File                                   | Categories Checked | Result                        |
+| -------------------------------------- | ------------------ | ----------------------------- |
+| packages/env/src/server.ts             | Secrets Management | PASS - Uses Config.redacted() |
+| packages/env/src/web.ts                | Secrets Management | PASS                          |
+| packages/core/src/auth/auth.service.ts | Auth, Secrets, SQL | PARTIAL - 2 findings          |
+| packages/core/drizzle.config.ts        | Secrets, SQL       | PASS - Build-time only        |
+| apps/server/src/index.ts               | API Security, CORS | PASS                          |
+| packages/api/src/context.ts            | Auth               | PASS                          |
 
 ### Findings
 
@@ -161,8 +172,10 @@ No known vulnerabilities found
 
 - **File:** `packages/core/src/auth/auth.service.ts:42`
 - **Category:** Secrets Management / Configuration
-- **Description:** Polar checkout uses hardcoded `productId: "your-product-id"` placeholder
-- **Risk:** Checkout will fail or use wrong product if deployed without changing code
+- **Description:** Polar checkout uses hardcoded `productId: "your-product-id"`
+  placeholder
+- **Risk:** Checkout will fail or use wrong product if deployed without changing
+  code
 - **Recommendation:** Move to environment variable `POLAR_PRODUCT_ID`
 - **Status:** Open
 
@@ -172,30 +185,34 @@ No known vulnerabilities found
 - **Category:** Configuration
 - **Description:** Polar client uses hardcoded `server: "sandbox"`
 - **Risk:** Will use sandbox environment in production unless code is changed
-- **Recommendation:** Make configurable via env var `POLAR_ENVIRONMENT` (sandbox/production)
+- **Recommendation:** Make configurable via env var `POLAR_ENVIRONMENT`
+  (sandbox/production)
 - **Status:** Open (Low - non-blocking)
 
 ### Positive Findings
 
-- **Secrets properly redacted:** DATABASE_URL, BETTER_AUTH_SECRET, POLAR_ACCESS_TOKEN use Config.redacted() and Redacted.value()
-- **Cookie security:** httpOnly: true, secure: true, sameSite: "none" (intentional for cross-origin API)
+- **Secrets properly redacted:** DATABASE_URL, BETTER_AUTH_SECRET,
+  POLAR_ACCESS_TOKEN use Config.redacted() and Redacted.value()
+- **Cookie security:** httpOnly: true, secure: true, sameSite: "none"
+  (intentional for cross-origin API)
 - **No secrets in git:** .env files properly gitignored, none tracked
 - **Parameterized queries:** Drizzle ORM used throughout
-- **CORS configured:** Uses specific origin from env, not "*"
+- **CORS configured:** Uses specific origin from env, not "\*"
 - **Env validation:** Effect Config validates at import time, fails fast
 
 ### Summary
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 0 | - |
-| Medium | 1 | Open (SEC-004) |
-| Low | 1 | Open (SEC-005) |
+| Severity | Count | Status         |
+| -------- | ----- | -------------- |
+| Critical | 0     | -              |
+| High     | 0     | -              |
+| Medium   | 1     | Open (SEC-004) |
+| Low      | 1     | Open (SEC-005) |
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (3 exist: SEC-001, SEC-002, SEC-003)
+- [x] Checked for pre-existing blocking findings (3 exist: SEC-001, SEC-002,
+      SEC-003)
 - [x] Dependency audit passed (no vulnerabilities)
 - [ ] All Critical/High/Medium resolved (SEC-004 new Medium finding)
 - [x] Low findings documented (SEC-005)
@@ -205,25 +222,28 @@ No known vulnerabilities found
 
 ## Review: 2025-01-21 - Entity Documentation Generation
 
-**Reviewer:** Claude (agent)
-**Commit:** Entity generation for codebase intelligence
-**Scope:**
+**Reviewer:** Claude (agent) **Commit:** Entity generation for codebase
+intelligence **Scope:**
+
 - 35 new `.planning/intel/entities/*.md` files (documentation only)
 - `.planning/intel/index.json` (formatting fix)
 
 ### Dependency Audit
 
-Not applicable - no dependencies added or changed. Only markdown documentation files created.
+Not applicable - no dependencies added or changed. Only markdown documentation
+files created.
 
 ### Files Reviewed
 
-| File | Categories Checked | Result |
-|------|-------------------|--------|
-| .planning/intel/entities/*.md (35 files) | All | N/A - documentation only |
+| File                                      | Categories Checked | Result                   |
+| ----------------------------------------- | ------------------ | ------------------------ |
+| .planning/intel/entities/\*.md (35 files) | All                | N/A - documentation only |
 
 ### Findings
 
-None. This change only adds markdown documentation files to `.planning/intel/entities/`. These files:
+None. This change only adds markdown documentation files to
+`.planning/intel/entities/`. These files:
+
 - Contain no executable code
 - Handle no user input
 - Perform no authentication/authorization
@@ -231,31 +251,33 @@ None. This change only adds markdown documentation files to `.planning/intel/ent
 - Store no secrets
 - Are not served to users
 
-The only code change was a formatting fix to `.planning/intel/index.json` (auto-formatted by biome).
+The only code change was a formatting fix to `.planning/intel/index.json`
+(auto-formatted by biome).
 
 ### Summary
 
 | Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 0 | - |
-| Medium | 0 | - |
-| Low | 0 | - |
+| -------- | ----- | ------ |
+| Critical | 0     | -      |
+| High     | 0     | -      |
+| Medium   | 0     | -      |
+| Low      | 0     | -      |
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (3 exist, unrelated to this work)
+- [x] Checked for pre-existing blocking findings (3 exist, unrelated to this
+      work)
 - [x] Dependency audit passed (no dependencies changed)
 - [x] No new Critical/High/Medium findings from this change
 - [x] Documentation-only changes have no security implications
-- [x] Ready for completion (pre-existing findings are out of scope for documentation task)
+- [x] Ready for completion (pre-existing findings are out of scope for
+      documentation task)
 
 ---
 
 ## Review: 2026-01-19 - Initial Security Review Migration
 
-**Reviewer:** Claude (agent)
-**Commit:** Initial baseline from codebase analysis
+**Reviewer:** Claude (agent) **Commit:** Initial baseline from codebase analysis
 **Scope:** Pre-existing findings migrated from CONCERNS.md
 
 ### Dependency Audit
@@ -294,17 +316,18 @@ Pre-existing findings from codebase analysis (not a new review session).
 - **Category:** Logging
 - **Description:** console.log of subscription data in production code
 - **Risk:** Could expose sensitive info in production logs
-- **Recommendation:** Remove debug logging or guard with `process.env.NODE_ENV` check
+- **Recommendation:** Remove debug logging or guard with `process.env.NODE_ENV`
+  check
 - **Status:** Open
 
 ### Summary
 
 | Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 2 | Open |
-| Medium | 1 | Open |
-| Low | 0 | - |
+| -------- | ----- | ------ |
+| Critical | 0     | -      |
+| High     | 2     | Open   |
+| Medium   | 1     | Open   |
+| Low      | 0     | -      |
 
 ### Sign-off
 
@@ -322,24 +345,21 @@ Copy this template when adding a new review session:
 ```markdown
 ## Review: [YYYY-MM-DD] - [Brief Description]
 
-**Reviewer:** Claude (agent)
-**Commit:** [commit message or git ref]
-**Scope:**
+**Reviewer:** Claude (agent) **Commit:** [commit message or git ref] **Scope:**
+
 - [file1.ts] (changed)
 - [file2.ts] (imports file1)
 - [file3.ts] (callers of file1)
 
 ### Dependency Audit
 
-\`\`\`
-[output of pnpm audit --audit-level low]
-\`\`\`
+\`\`\` [output of pnpm audit --audit-level low] \`\`\`
 
 ### Files Reviewed
 
-| File | Categories Checked | Result |
-|------|-------------------|--------|
-| path/to/file.ts | Auth, Input Validation | PASS |
+| File            | Categories Checked     | Result |
+| --------------- | ---------------------- | ------ |
+| path/to/file.ts | Auth, Input Validation | PASS   |
 
 ### Findings
 
@@ -355,11 +375,11 @@ Copy this template when adding a new review session:
 ### Summary
 
 | Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | - |
-| High | 0 | - |
-| Medium | 0 | - |
-| Low | 0 | - |
+| -------- | ----- | ------ |
+| Critical | 0     | -      |
+| High     | 0     | -      |
+| Medium   | 0     | -      |
+| Low      | 0     | -      |
 
 ### Sign-off
 
