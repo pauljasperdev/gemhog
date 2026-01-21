@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1768986338455,
+  "updated": 1769001578045,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -16,9 +16,10 @@
         "hono",
         "hono/cors",
         "hono/logger",
+        "zod",
         "@hono/node-server"
       ],
-      "indexed": 1737475200000
+      "indexed": 1768990451449
     },
     "/home/lima/repo/apps/server/tsdown.config.ts": {
       "exports": ["default"],
@@ -50,24 +51,19 @@
       "indexed": 1737475200000
     },
     "/home/lima/repo/apps/web/src/app/dashboard/dashboard.tsx": {
-      "exports": ["default"],
-      "imports": [
-        "@tanstack/react-query",
-        "@/components/ui/button",
-        "@/lib/auth-client",
-        "@/utils/trpc"
-      ],
-      "indexed": 1737475200000
+      "exports": ["default", "Dashboard"],
+      "imports": ["@tanstack/react-query", "@/utils/trpc"],
+      "indexed": 1768990640304
     },
     "/home/lima/repo/apps/web/src/app/dashboard/page.tsx": {
-      "exports": ["default"],
+      "exports": ["default", "async"],
       "imports": [
         "next/headers",
         "next/navigation",
         "@/lib/auth-client",
         "./dashboard"
       ],
-      "indexed": 1737475200000
+      "indexed": 1768990602599
     },
     "/home/lima/repo/apps/web/src/app/layout.tsx": {
       "exports": ["default", "metadata"],
@@ -245,12 +241,8 @@
     },
     "/home/lima/repo/apps/web/src/lib/auth-client.ts": {
       "exports": ["authClient"],
-      "imports": [
-        "@gemhog/env/web",
-        "@polar-sh/better-auth",
-        "better-auth/react"
-      ],
-      "indexed": 1737475200000
+      "imports": ["@gemhog/env/web", "better-auth/react"],
+      "indexed": 1768990544750
     },
     "/home/lima/repo/apps/web/src/lib/utils.ts": {
       "exports": ["cn"],
@@ -304,9 +296,9 @@
       "indexed": 1737475200000
     },
     "/home/lima/repo/packages/core/drizzle.config.ts": {
-      "exports": ["default"],
-      "imports": ["dotenv", "drizzle-kit"],
-      "indexed": 1737475200000
+      "exports": ["default", "defineConfig"],
+      "imports": ["@gemhog/env/server", "drizzle-kit", "effect"],
+      "indexed": 1768990549229
     },
     "/home/lima/repo/packages/core/src/auth/auth.errors.ts": {
       "exports": [
@@ -318,24 +310,17 @@
       "imports": ["effect"],
       "indexed": 1737475200000
     },
-    "/home/lima/repo/packages/core/src/auth/auth.mock.ts": {
-      "exports": ["AuthServiceTest", "AuthServiceTestUnauthenticated"],
-      "imports": ["effect", "./auth.service"],
-      "indexed": 1737475200000
-    },
     "/home/lima/repo/packages/core/src/auth/auth.service.ts": {
-      "exports": ["AuthService", "AuthLive", "getAuth", "auth"],
+      "exports": ["getAuth", "auth", "getSession"],
       "imports": [
-        "@polar-sh/better-auth",
-        "@polar-sh/sdk",
+        "@gemhog/env/server",
         "better-auth",
         "better-auth/adapters/drizzle",
         "drizzle-orm/node-postgres",
         "effect",
-        "./auth.errors",
         "./auth.sql"
       ],
-      "indexed": 1737475200000
+      "indexed": 1768990789534
     },
     "/home/lima/repo/packages/core/src/auth/auth.sql.ts": {
       "exports": [
@@ -352,8 +337,8 @@
     },
     "/home/lima/repo/packages/core/src/auth/auth.test.ts": {
       "exports": [],
-      "imports": ["effect", "vitest", "./auth.mock", "./auth.service"],
-      "indexed": 1737475200000
+      "imports": ["vitest", "./auth.service"],
+      "indexed": 1769001578045
     },
     "/home/lima/repo/packages/core/src/auth/index.ts": {
       "exports": [
@@ -403,9 +388,9 @@
       "indexed": 1737475200000
     },
     "/home/lima/repo/packages/env/src/server.ts": {
-      "exports": ["env"],
-      "imports": ["dotenv/config", "@t3-oss/env-core", "zod"],
-      "indexed": 1737475200000
+      "exports": ["env", "ServerEnv"],
+      "imports": ["effect", "dotenv/config"],
+      "indexed": 1768990439378
     },
     "/home/lima/repo/packages/env/src/web.ts": {
       "exports": ["env"],
