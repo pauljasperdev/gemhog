@@ -14,7 +14,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - [x] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED) ✓
 - [x] **Phase 2: Security Workflow** - Security review process as a blocking gate ✓
 - [x] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS ✓
-- [ ] **Phase 3.1: Code Review Fixes** - Address code review findings (INSERTED)
+- [x] **Phase 3.1: Code Review Fixes** - Address code review findings (INSERTED) ✓
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent verification workflow
 
@@ -107,10 +107,10 @@ Plans:
 - [x] 03.1-03-PLAN.md — Replace t3-env with Effect Config
 - [x] 03.1-04-PLAN.md — Simplify auth service (remove Effect wrapper)
 - [x] 03.1-05-PLAN.md — Audit and remove unused dependencies
-- [ ] 03.1-06-PLAN.md — Fix drizzle.config.ts env import (gap closure)
-- [ ] 03.1-07-PLAN.md — Complete auth cleanup and Polar removal (gap closure)
-- [ ] 03.1-08-PLAN.md — Add AI endpoint validation and rate limiting (gap closure)
-- [ ] 03.1-09-PLAN.md — Security review and verification (gap closure)
+- [x] 03.1-06-PLAN.md — Fix drizzle.config.ts env import (gap closure)
+- [x] 03.1-07-PLAN.md — Complete auth cleanup and Polar removal (gap closure)
+- [x] 03.1-08-PLAN.md — Add AI endpoint validation and rate limiting (gap closure)
+- [x] 03.1-09-PLAN.md — Security review and verification (gap closure)
 
 ### Phase 4: SST Deployment
 **Goal**: Deploy SST-agnostic application to AWS
@@ -150,6 +150,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 4 -> 5
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
 | 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
 | 3. Core Consolidation | 5/5 | ✓ Complete | 2026-01-20 |
-| 3.1 Code Review Fixes | 5/9 | Gap closure in progress | - |
+| 3.1 Code Review Fixes | 9/9 | ✓ Complete | 2026-01-21 |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
