@@ -13,9 +13,6 @@
     },
     "./auth/auth.sql": {
       "default": "./src/auth/auth.sql.ts"
-    },
-    "./payment": {
-      "default": "./src/payment/index.ts"
     }
   },
   "scripts": {
