@@ -1,0 +1,472 @@
+{
+  "version": 1,
+  "updated": 1737475200000,
+  "files": {
+    "/home/lima/repo/apps/server/src/index.ts": {
+      "exports": [],
+      "imports": [
+        "@ai-sdk/devtools",
+        "@ai-sdk/google",
+        "@gemhog/api/context",
+        "@gemhog/api/routers/index",
+        "@gemhog/core/auth",
+        "@gemhog/env/server",
+        "@hono/trpc-server",
+        "ai",
+        "hono",
+        "hono/cors",
+        "hono/logger",
+        "@hono/node-server"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/server/tsdown.config.ts": {
+      "exports": ["default"],
+      "imports": ["tsdown"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/server/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/postcss.config.mjs": {
+      "exports": ["default"],
+      "imports": [],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/ai/page.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "@ai-sdk/react",
+        "@gemhog/env/web",
+        "ai",
+        "lucide-react",
+        "react",
+        "streamdown",
+        "@/components/ui/button",
+        "@/components/ui/input"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/dashboard/dashboard.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "@tanstack/react-query",
+        "@/components/ui/button",
+        "@/lib/auth-client",
+        "@/utils/trpc"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/dashboard/page.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "next/headers",
+        "next/navigation",
+        "@/lib/auth-client",
+        "./dashboard"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/layout.tsx": {
+      "exports": ["default", "metadata"],
+      "imports": [
+        "next/font/google",
+        "@/components/header",
+        "@/components/providers"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/login/page.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "react",
+        "@/components/sign-in-form",
+        "@/components/sign-up-form"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/page.tsx": {
+      "exports": ["default"],
+      "imports": ["@tanstack/react-query", "@/utils/trpc"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/app/success/page.tsx": {
+      "exports": ["default"],
+      "imports": [],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/header.tsx": {
+      "exports": ["default"],
+      "imports": ["next/link", "./mode-toggle", "./user-menu"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/loader.tsx": {
+      "exports": ["default"],
+      "imports": ["lucide-react"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/mode-toggle.tsx": {
+      "exports": ["ModeToggle"],
+      "imports": [
+        "lucide-react",
+        "next-themes",
+        "@/components/ui/button",
+        "@/components/ui/dropdown-menu"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/providers.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "@tanstack/react-query",
+        "@tanstack/react-query-devtools",
+        "@/utils/trpc",
+        "./theme-provider",
+        "./ui/sonner"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/sign-in-form.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "@tanstack/react-form",
+        "next/navigation",
+        "sonner",
+        "zod",
+        "@/lib/auth-client",
+        "./loader",
+        "./ui/button",
+        "./ui/input",
+        "./ui/label"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/sign-up-form.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "@tanstack/react-form",
+        "next/navigation",
+        "sonner",
+        "zod",
+        "@/lib/auth-client",
+        "./loader",
+        "./ui/button",
+        "./ui/input",
+        "./ui/label"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/theme-provider.tsx": {
+      "exports": ["ThemeProvider"],
+      "imports": ["next-themes"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/button.tsx": {
+      "exports": ["Button", "buttonVariants"],
+      "imports": [
+        "@base-ui/react/button",
+        "class-variance-authority",
+        "@/lib/utils"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/card.tsx": {
+      "exports": [
+        "Card",
+        "CardHeader",
+        "CardFooter",
+        "CardTitle",
+        "CardAction",
+        "CardDescription",
+        "CardContent"
+      ],
+      "imports": ["@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/checkbox.tsx": {
+      "exports": ["Checkbox"],
+      "imports": ["@base-ui/react/checkbox", "lucide-react", "@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/dropdown-menu.tsx": {
+      "exports": [
+        "DropdownMenu",
+        "DropdownMenuPortal",
+        "DropdownMenuTrigger",
+        "DropdownMenuContent",
+        "DropdownMenuGroup",
+        "DropdownMenuLabel",
+        "DropdownMenuItem",
+        "DropdownMenuCheckboxItem",
+        "DropdownMenuRadioGroup",
+        "DropdownMenuRadioItem",
+        "DropdownMenuSeparator",
+        "DropdownMenuShortcut",
+        "DropdownMenuSub",
+        "DropdownMenuSubTrigger",
+        "DropdownMenuSubContent"
+      ],
+      "imports": ["@base-ui/react/menu", "lucide-react", "@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/input.tsx": {
+      "exports": ["Input"],
+      "imports": ["@base-ui/react/input", "@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/label.tsx": {
+      "exports": ["Label"],
+      "imports": ["@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/skeleton.tsx": {
+      "exports": ["Skeleton"],
+      "imports": ["@/lib/utils"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/ui/sonner.tsx": {
+      "exports": ["Toaster"],
+      "imports": ["lucide-react", "next-themes", "sonner"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/components/user-menu.tsx": {
+      "exports": ["default"],
+      "imports": [
+        "next/link",
+        "next/navigation",
+        "@/components/ui/dropdown-menu",
+        "@/lib/auth-client",
+        "./ui/button",
+        "./ui/skeleton"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/lib/auth-client.ts": {
+      "exports": ["authClient"],
+      "imports": [
+        "@gemhog/env/web",
+        "@polar-sh/better-auth",
+        "better-auth/react"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/lib/utils.ts": {
+      "exports": ["cn"],
+      "imports": ["clsx", "tailwind-merge"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/src/utils/trpc.ts": {
+      "exports": ["queryClient", "trpc"],
+      "imports": [
+        "@gemhog/env/web",
+        "@tanstack/react-query",
+        "@trpc/client",
+        "@trpc/tanstack-react-query",
+        "sonner"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/tests/e2e/home.e2e.test.ts": {
+      "exports": [],
+      "imports": ["@playwright/test"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/api/src/context.ts": {
+      "exports": ["createContext", "CreateContextOptions", "Context"],
+      "imports": ["@gemhog/core/auth"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/api/src/example.test.ts": {
+      "exports": [],
+      "imports": ["vitest"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/api/src/index.ts": {
+      "exports": ["t", "router", "publicProcedure", "protectedProcedure"],
+      "imports": ["@trpc/server", "./context"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/api/src/routers/index.ts": {
+      "exports": ["appRouter", "AppRouter"],
+      "imports": ["../index"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/api/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/drizzle.config.ts": {
+      "exports": ["default"],
+      "imports": ["dotenv", "drizzle-kit"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/auth.errors.ts": {
+      "exports": [
+        "AuthError",
+        "SessionNotFoundError",
+        "SessionExpiredError",
+        "UnauthorizedError"
+      ],
+      "imports": ["effect"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/auth.mock.ts": {
+      "exports": ["AuthServiceTest", "AuthServiceTestUnauthenticated"],
+      "imports": ["effect", "./auth.service"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/auth.service.ts": {
+      "exports": ["AuthService", "AuthLive", "getAuth", "auth"],
+      "imports": [
+        "@polar-sh/better-auth",
+        "@polar-sh/sdk",
+        "better-auth",
+        "better-auth/adapters/drizzle",
+        "drizzle-orm/node-postgres",
+        "effect",
+        "./auth.errors",
+        "./auth.sql"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/auth.sql.ts": {
+      "exports": [
+        "user",
+        "session",
+        "account",
+        "verification",
+        "userRelations",
+        "sessionRelations",
+        "accountRelations"
+      ],
+      "imports": ["drizzle-orm", "drizzle-orm/pg-core"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/auth.test.ts": {
+      "exports": [],
+      "imports": ["effect", "vitest", "./auth.mock", "./auth.service"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/auth/index.ts": {
+      "exports": [
+        "AuthServiceTest",
+        "AuthServiceTestUnauthenticated",
+        "AuthLive",
+        "AuthService",
+        "auth",
+        "schema"
+      ],
+      "imports": [
+        "./auth.errors",
+        "./auth.mock",
+        "./auth.service",
+        "./auth.sql"
+      ],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/drizzle/client.ts": {
+      "exports": ["PgLive"],
+      "imports": ["@effect/sql-pg", "effect"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/drizzle/connection.int.test.ts": {
+      "exports": [],
+      "imports": ["drizzle-orm", "drizzle-orm/node-postgres", "pg", "vitest"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/drizzle/errors.ts": {
+      "exports": ["DatabaseError", "ConnectionError"],
+      "imports": ["effect"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/drizzle/index.ts": {
+      "exports": ["DrizzleLive", "DatabaseLive", "PgLive"],
+      "imports": ["@effect/sql-drizzle/Pg", "effect", "./client", "./errors"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/payment/index.ts": {
+      "exports": [
+        "PaymentServiceTest",
+        "getPolarClient",
+        "PaymentLive",
+        "PaymentService",
+        "polarClient"
+      ],
+      "imports": ["./payment.errors", "./payment.mock", "./payment.service"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/payment/payment.errors.ts": {
+      "exports": ["PaymentError", "CheckoutError", "SubscriptionError"],
+      "imports": ["effect"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/payment/payment.mock.ts": {
+      "exports": ["PaymentServiceTest"],
+      "imports": ["effect", "./payment.service"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/payment/payment.service.ts": {
+      "exports": [
+        "PaymentService",
+        "PaymentLive",
+        "getPolarClient",
+        "polarClient"
+      ],
+      "imports": ["@polar-sh/sdk", "effect"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/src/payment/payment.test.ts": {
+      "exports": [],
+      "imports": ["effect", "vitest", "./payment.mock", "./payment.service"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/core/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/env/src/native.ts": {
+      "exports": ["env"],
+      "imports": ["@t3-oss/env-core", "zod"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/env/src/server.ts": {
+      "exports": ["env"],
+      "imports": ["dotenv/config", "@t3-oss/env-core", "zod"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/env/src/web.ts": {
+      "exports": ["env"],
+      "imports": ["@t3-oss/env-nextjs", "zod"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/packages/env/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/playwright.config.ts": {
+      "exports": ["default"],
+      "imports": ["@playwright/test"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/vitest.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    },
+    "/home/lima/repo/vitest.integration.config.ts": {
+      "exports": ["default"],
+      "imports": ["vitest/config"],
+      "indexed": 1737475200000
+    }
+  }
+}
