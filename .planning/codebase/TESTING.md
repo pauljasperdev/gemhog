@@ -314,6 +314,53 @@ describe("Health Check", () => {
 });
 ```
 
+## TDD Workflow: Red-Green-Refactor
+
+Test-Driven Development follows a strict cycle:
+
+1. **RED**: Write a failing test that describes the behavior you want
+2. **GREEN**: Write the minimum code to make the test pass
+3. **REFACTOR**: Clean up while keeping tests green
+
+### Why "Red First" Matters
+
+- **Proves the test works**: A test that never fails might not test anything
+- **Forces interface design**: Think about how code will be used before implementing
+- **Creates living documentation**: Tests describe expected behavior
+
+### TDD Workflow Example
+
+```bash
+# 1. Write the test (it should fail)
+pnpm test:unit -- --run src/feature.test.ts
+# Expected: FAIL - feature not implemented yet
+
+# 2. Implement the feature
+# ... write code ...
+
+# 3. Run test again (it should pass)
+pnpm test:unit -- --run src/feature.test.ts
+# Expected: PASS
+
+# 4. Refactor if needed, keep tests green
+```
+
+### When to Use TDD
+
+**Good candidates for TDD:**
+
+- Business logic with defined inputs/outputs
+- API endpoints with request/response contracts
+- Data transformations, parsing, formatting
+- Validation rules
+
+**Skip TDD for:**
+
+- UI layout and styling
+- Configuration changes
+- Simple CRUD with no business logic
+- One-off scripts
+
 ## What to Mock
 
 **DO mock:**
