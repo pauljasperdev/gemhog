@@ -107,7 +107,7 @@ Recent decisions affecting current work:
 | vi.mock() pattern for unit test env isolation | Mock env module before importing dependent modules | 03.1-07 |
 | All security findings resolved | SEC-001/002/003 fixed, SEC-004/005 closed (Polar removed) | 03.1-09 |
 | E2E tests use extended Playwright fixture for error detection | Captures console.error and page exceptions | 03.2-03 |
-| TDD: Tests fail when app has errors - fix app, not test | Tests correctly detected NEXT_PUBLIC_SERVER_URL issue | 03.2-03 |
+| Direct process.env for NEXT_PUBLIC_* in web.ts | Next.js inlines at build time, Effect Config doesn't work | 03.2-03 |
 | Recreate Config definition in tests for isolation | Avoids triggering env validation at import time | 03.2-02 |
 | ConfigProvider.fromMap for isolated env testing | Precise control over env vars without touching process.env | 03.2-02 |
 
