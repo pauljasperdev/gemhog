@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3.1 complete - ready for next phase
+**Current focus:** Phase 3.2 inserted - ready for planning
 
 ## Current Position
 
@@ -43,6 +43,7 @@ Progress: ████████████ ~80% (Phase 1 + 1.1 + 2 + 3 + 3.1
 
 - Phase 1.1 inserted after Phase 1: Test file convention migration (URGENT) - standardize to *.test.ts, *.int.test.ts, *.e2e.test.ts
 - Phase 3.1 inserted after Phase 3: Code review fixes (URGENT) - address CODE_REVIEW.md findings before deployment
+- Phase 3.2 inserted after Phase 3.1: Code quality & TDD practices (URGENT) - dead code cleanup, test coverage gaps, TDD guidance in TESTING.md
 
 ### Decisions
 
@@ -272,4 +273,4 @@ Last session: 2026-01-21T13:27:30Z
 Stopped at: Completed 03.1-09-PLAN.md (security review and verification)
 Resume file: None
 
-Next: Phase 3.1 complete. Ready for next phase (Phase 4 or as specified in roadmap).
+Next: Phase 3.2 inserted. Run /gsd:plan-phase 3.2 to break down into plans.
