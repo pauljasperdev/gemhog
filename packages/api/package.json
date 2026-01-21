@@ -15,7 +15,6 @@
     "@gemhog/env": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
-    "dotenv": "catalog:",
     "hono": "^4.11.4",
     "zod": "catalog:"
   },
