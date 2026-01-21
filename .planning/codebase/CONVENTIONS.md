@@ -192,6 +192,211 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 ```
 
+## Effect-TS Patterns
+
+### Pattern Simplification
+
+**Prefer simple patterns over complex ones:**
+
+```typescript
+// GOOD: Simple patterns
+Effect.succeed(value)           // For static values
+Effect.void                     // For void operations
+Effect.map(fn)                  // For simple transformations
+Effect.flatMap(fn)              // For sequential operations
+Effect.all({ a, b, c })         // For parallel operations
+
+// BAD: Over-engineered
+Effect.gen(function* (_) {
+  return value                  // Unnecessary generator for static value
+})
+```
+
+**When to use Effect.gen:**
+
+- Complex control flow with conditionals and loops
+- Multiple interdependent operations where later ops depend on earlier results
+- Imperative style significantly improves readability
+
+```typescript
+// GOOD: Complex flow justifies Effect.gen
+Effect.gen(function* (_) {
+  const user = yield* _(getUser())
+  if (user.role === "admin") {
+    const permissions = yield* _(getAdminPermissions())
+    return { user, permissions }
+  }
+  return { user, permissions: [] }
+})
+
+// BAD: Simple chain doesn't need Effect.gen
+Effect.gen(function* (_) {
+  const a = yield* _(effectA)
+  const b = yield* _(effectB(a))
+  return b
+})
+
+// GOOD: Use flatMap instead
+effectA.pipe(Effect.flatMap((a) => effectB(a)))
+```
+
+### Error Handling
+
+**Use Effect.tryPromise for async operations:**
+
+```typescript
+// GOOD: Effect.tryPromise with typed error
+Effect.tryPromise({
+  try: async () => fetch("/api").then((r) => r.json()),
+  catch: (error) =>
+    new ApiError({
+      message: "API call failed",
+      cause: error,
+    }),
+})
+
+// BAD: Legacy Effect.promise with mapError
+Effect.promise(async () => fetch("/api")).pipe(
+  Effect.mapError((error: unknown) => new ApiError({ ... }))
+)
+```
+
+**Preserve error types in catchAll:**
+
+```typescript
+// GOOD: Let TypeScript infer error type
+storage.queryRaw(sql).pipe(
+  Effect.catchAll((error) => {
+    // error is StorageError (inferred)
+    return Effect.fail(new MyError({ message: error.message, cause: error }))
+  })
+)
+
+// BAD: Explicit unknown loses type information
+storage.queryRaw(sql).pipe(
+  Effect.catchAll((error: unknown) => { ... })
+)
+```
+
+**Acceptable `error: unknown` contexts:**
+
+- `Effect.tryPromise` catch handlers (per Effect-TS spec)
+- Error constructor `cause` parameters
+- When immediately wrapping in typed error
+
+### Type Safety
+
+**Never use type assertions to hide Effect dependencies:**
+
+```typescript
+// BAD: Hides dependencies, causes runtime errors
+const ServiceLayer = Layer.effect(
+  ServiceTag,
+  Effect.sync(() => implementation) as Effect<Service, never, never>
+)
+
+// GOOD: Declares dependencies explicitly
+const ServiceLayer = Layer.effect(
+  ServiceTag,
+  Effect.gen(function* (_) {
+    const dep1 = yield* _(Dependency1Tag)
+    const dep2 = yield* _(Dependency2Tag)
+    return implementation(dep1, dep2)
+  })
+)
+```
+
+**Avoid `as any` in Effect code:**
+
+- Unacceptable: Internal APIs, mocks, service interfaces
+- Acceptable (with caution): External API responses we don't control
+- Better: Use `@effect/schema` for validation
+
+```typescript
+// GOOD: Type-safe API response
+const ResponseSchema = Schema.Struct({
+  data: Schema.Array(Schema.String),
+  meta: Schema.Struct({ count: Schema.Number }),
+})
+
+Effect.tryPromise({
+  try: () => fetch("/api").then((r) => r.json()),
+  catch: (e) => new FetchError({ cause: e }),
+}).pipe(Effect.flatMap(Schema.decodeUnknown(ResponseSchema)))
+```
+
+### Test Patterns
+
+**Use layers for test mocks:**
+
+```typescript
+// GOOD: Mock via Layer
+const MockStorageLayer = Layer.succeed(StorageTag, {
+  query: () => Effect.succeed(mockResult),
+  save: () => Effect.void,
+})
+
+await Effect.runPromise(
+  serviceOperation.pipe(Effect.provide(MockStorageLayer))
+)
+
+// BAD: Helper functions with type constraints
+const runTest = <A, E, R>(effect: Effect.Effect<A, E, R>) => ...
+```
+
+**Prefix unused parameters in mocks:**
+
+```typescript
+// GOOD: Unused params prefixed with _
+const MockService = {
+  fetch: (_url: string, _options: Options) => Effect.succeed(mockData),
+}
+
+// BAD: Triggers noUnusedParameters warning
+const MockService = {
+  fetch: (url: string, options: Options) => Effect.succeed(mockData),
+}
+```
+
+**Direct Effect.runPromise in tests:**
+
+```typescript
+// GOOD: Direct and explicit
+const result = await Effect.runPromise(
+  myEffect.pipe(Effect.provide(TestLayer))
+)
+
+// BAD: Abstracted helper hiding complexity
+const result = await runTest(myEffect)
+```
+
+### Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Solution |
+|--------------|---------|----------|
+| `Effect.Adaptor` | Circumvents type safety | Direct Effect chains with proper typing |
+| `as Effect<A, E, never>` | Hides dependencies | Declare dependencies in layer signatures |
+| `Effect.gen` for single yield | Over-engineering | Direct pipe or flatMap |
+| `error: unknown` in catchAll | Loses type information | Let TypeScript infer error type |
+| `Effect.promise` + `mapError` | Legacy pattern | Use `Effect.tryPromise` |
+| `runTest` helpers | Type constraint issues | Direct `Effect.runPromise` |
+
+### Detection Commands
+
+```bash
+# Find type assertions hiding dependencies
+rg "as\s+(unknown\s+as\s+)?Effect<[^>]+,\s*[^>]+,\s*never>" --type ts
+
+# Find Effect.gen anti-patterns (single yield)
+rg "Effect\.gen\(function\* \(_\)" --type ts
+
+# Find error: unknown in error handlers
+rg "Effect\.(mapError|catchAll)\(\(error:\s*unknown\)" --type ts
+
+# Find legacy Effect.promise
+rg "Effect\.promise\(" --type ts
+```
+
 ---
 
 _Convention analysis: 2026-01-15_ _Update when patterns change_
