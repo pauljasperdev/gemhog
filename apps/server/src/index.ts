@@ -12,7 +12,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { z } from "zod";
 
-// Schema for AI message validation (SEC-001 fix)
+// Schema for AI message validation
 // Validates the UI message parts structure used by AI SDK v6
 const TextPartSchema = z.object({
   type: z.literal("text"),
@@ -52,7 +52,7 @@ const AIRequestSchema = z.object({
     .min(1, "At least one message required"),
 });
 
-// Simple in-memory rate limiter (SEC-002 fix)
+// Simple in-memory rate limiter
 // For production with multiple servers, use Redis-based rate limiting
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 10; // requests per window
@@ -111,7 +111,7 @@ app.use(
 );
 
 app.post("/ai", async (c) => {
-  // Rate limiting (SEC-002 fix)
+  // Rate limiting
   // Use IP as identifier (or session ID if authenticated)
   const clientId =
     c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "anonymous";
@@ -121,7 +121,7 @@ app.post("/ai", async (c) => {
 
   const body = await c.req.json();
 
-  // Validate input (SEC-001 fix)
+  // Validate input
   const parseResult = AIRequestSchema.safeParse(body);
   if (!parseResult.success) {
     return c.json(
