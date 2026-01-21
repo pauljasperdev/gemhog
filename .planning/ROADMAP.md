@@ -13,7 +13,8 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - [x] **Phase 1: Testing Infrastructure** - Set up static, unit, integration, and E2E testing ✓
 - [x] **Phase 1.1: Test File Convention Migration** - Migrate to *.test.ts, *.int.test.ts, *.e2e.test.ts convention (INSERTED) ✓
 - [x] **Phase 2: Security Workflow** - Security review process as a blocking gate ✓
-- [ ] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS
+- [x] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS ✓
+- [ ] **Phase 3.1: Code Review Fixes** - Address code review findings (INSERTED)
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent verification workflow
 
@@ -86,9 +87,29 @@ Plans:
 - [x] 03-04-PLAN.md — Update all consumers to import from @gemhog/core
 - [x] 03-05-PLAN.md — Delete old packages and update root scripts
 
+### Phase 3.1: Code Review Fixes (INSERTED)
+**Goal**: Address code review findings before deployment
+**Depends on**: Phase 3 (core consolidation complete)
+**Requirements**: Derived from code review (CODE_REVIEW.md)
+**Success Criteria** (what must be TRUE):
+  1. Database migrations exist and work (`pnpm db:generate`, `pnpm db:migrate`)
+  2. `drizzle.config.ts` uses `@gemhog/env/server` (no dotenv)
+  3. Payment service dead code is removed
+  4. Auth service has unnecessary Effect wrapper removed
+  5. t3-env replaced with Effect Config in `packages/env`
+  6. Unused dependencies audited and removed
+**Plans**: 5 plans
+
+Plans:
+- [ ] 03.1-01-PLAN.md — Generate initial database migrations
+- [ ] 03.1-02-PLAN.md — Remove dead payment service code
+- [ ] 03.1-03-PLAN.md — Replace t3-env with Effect Config
+- [ ] 03.1-04-PLAN.md — Simplify auth service (remove Effect wrapper)
+- [ ] 03.1-05-PLAN.md — Audit and remove unused dependencies
+
 ### Phase 4: SST Deployment
 **Goal**: Deploy SST-agnostic application to AWS
-**Depends on**: Phase 3 (core package structure must be stable)
+**Depends on**: Phase 3.1 (code review fixes must be complete)
 **Requirements**: INFRA-01, INFRA-02
 **Success Criteria** (what must be TRUE):
   1. Application deploys to AWS via `sst deploy`
@@ -116,7 +137,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -124,5 +145,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 4 -> 5
 | 1.1 Test File Convention Migration | 1/1 | ✓ Complete | 2026-01-19 |
 | 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
 | 3. Core Consolidation | 5/5 | ✓ Complete | 2026-01-20 |
+| 3.1 Code Review Fixes | 0/5 | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
