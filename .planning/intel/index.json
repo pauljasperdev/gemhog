@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769001578045,
+  "updated": 1769020318785,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -380,11 +380,6 @@
     "/home/lima/repo/packages/core/vitest.config.ts": {
       "exports": ["default"],
       "imports": ["vitest/config"],
-      "indexed": 1737475200000
-    },
-    "/home/lima/repo/packages/env/src/native.ts": {
-      "exports": ["env"],
-      "imports": ["@t3-oss/env-core", "zod"],
       "indexed": 1737475200000
     },
     "/home/lima/repo/packages/env/src/server.ts": {

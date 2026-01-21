@@ -15,6 +15,7 @@ V0 establishes the foundation: testing infrastructure, security workflow, core p
 - [x] **Phase 2: Security Workflow** - Security review process as a blocking gate ✓
 - [x] **Phase 3: Core Consolidation** - Merge packages into domain-driven core with Effect TS ✓
 - [x] **Phase 3.1: Code Review Fixes** - Address code review findings (INSERTED) ✓
+- [ ] **Phase 3.2: Code Quality & TDD Practices** - Dead code cleanup, test coverage, TDD guidance (INSERTED)
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent verification workflow
 
@@ -112,9 +113,30 @@ Plans:
 - [x] 03.1-08-PLAN.md — Add AI endpoint validation and rate limiting (gap closure)
 - [x] 03.1-09-PLAN.md — Security review and verification (gap closure)
 
+### Phase 3.2: Code Quality & TDD Practices (INSERTED)
+**Goal**: Remove dead code, improve test coverage, establish TDD practices and code standards
+**Depends on**: Phase 3.1 (code review fixes complete)
+**Requirements**: Derived from code review (CODE_REVIEW.md round 2)
+**Success Criteria** (what must be TRUE):
+  1. No archaeological comments in codebase (SEC-fix references, redundant test comments, etc.)
+  2. Unused `DatabaseError` and `ConnectionError` removed from `packages/core/src/drizzle/errors.ts`
+  3. Env schema validation has unit tests
+  4. Server/web startup failure on missing env vars has integration tests
+  5. E2E tests navigate to app pages and fail when app errors (TDD: red first)
+  6. TESTING.md documents TDD practices (write failing test first, then fix)
+  7. CONVENTIONS.md documents comment standards (explain why, not what was done)
+**Plans**: 5 plans
+
+Plans:
+- [ ] 03.2-01-PLAN.md — Dead code cleanup (comments + unused error classes)
+- [ ] 03.2-02-PLAN.md — Env schema validation unit tests
+- [ ] 03.2-03-PLAN.md — E2E error detection fixture
+- [ ] 03.2-04-PLAN.md — TDD and comment standards documentation
+- [ ] 03.2-05-PLAN.md — Server/web startup failure integration tests
+
 ### Phase 4: SST Deployment
 **Goal**: Deploy SST-agnostic application to AWS
-**Depends on**: Phase 3.1 (code review fixes must be complete)
+**Depends on**: Phase 3.2 (code quality and TDD practices complete)
 **Requirements**: INFRA-01, INFRA-02
 **Success Criteria** (what must be TRUE):
   1. Application deploys to AWS via `sst deploy`
@@ -142,7 +164,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 4 -> 5
+Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 3.2 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -151,5 +173,6 @@ Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1 -> 4 -> 5
 | 2. Security Workflow | 1/1 | ✓ Complete | 2026-01-19 |
 | 3. Core Consolidation | 5/5 | ✓ Complete | 2026-01-20 |
 | 3.1 Code Review Fixes | 9/9 | ✓ Complete | 2026-01-21 |
+| 3.2 Code Quality & TDD Practices | 0/5 | Not started | - |
 | 4. SST Deployment | 0/? | Not started | - |
 | 5. Agent Verification | 0/? | Not started | - |
