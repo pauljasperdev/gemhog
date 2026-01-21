@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-19
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-21
 
 ## Severity Definitions
 
@@ -45,21 +45,6 @@
 - Fix approach: Add test env vars to webServer config or create .env.test
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 
-**Hardcoded Polar product ID:**
-
-- Issue: Placeholder `"your-product-id"` in Polar checkout integration
-- File: `packages/auth/src/index.ts` (line 36)
-- Why: Scaffolding from template, not replaced
-- Impact: Checkout functionality will fail in production
-- Fix approach: Replace with actual Polar product ID
-
-**Hardcoded sandbox environment:**
-
-- Issue: `server: "sandbox"` hardcoded in Polar client
-- File: `packages/auth/src/lib/payments.ts` (line 6)
-- Why: Development setup, not parameterized
-- Impact: Production will incorrectly use sandbox
-- Fix approach: Use environment variable for server mode
 
 ## Known Bugs
 
@@ -72,25 +57,27 @@ Security findings from reviews. See `.planning/codebase/SECURITY-REVIEW.md` for
 full audit trail and details. Critical/High/Medium must be resolved before
 declaring work complete.
 
-### Current Open Findings
+### Current Findings Status
 
-**Summary (as of 2026-01-19):**
+**Summary (as of 2026-01-21):**
 
-| Severity | Open | Fixed |
-|----------|------|-------|
-| Critical | 0 | 0 |
-| High | 2 | 0 |
-| Medium | 1 | 0 |
-| Low | 0 | 0 |
+| Severity | Open | Fixed | Closed (N/A) |
+|----------|------|-------|--------------|
+| Critical | 0 | 0 | 0 |
+| High | 0 | 2 | 0 |
+| Medium | 0 | 1 | 2 |
+| Low | 0 | 0 | 1 |
 
-**Blocking findings exist:** YES (2 High, 1 Medium)
+**Blocking findings exist:** NO
 
-**Open findings (details in SECURITY-REVIEW.md):**
-- [SEC-001] High - Missing input validation on AI endpoint
-- [SEC-002] High - No rate limiting
-- [SEC-003] Medium - Debug logging exposes data
+**All findings resolved (details in SECURITY-REVIEW.md):**
+- [SEC-001] High - Input validation - FIXED (03.1-08)
+- [SEC-002] High - Rate limiting - FIXED (03.1-08)
+- [SEC-003] Medium - Debug logging - FIXED (03.1-07)
+- [SEC-004] Medium - Polar product ID - CLOSED (03.1-07, Polar removed)
+- [SEC-005] Low - Polar sandbox mode - CLOSED (03.1-07, Polar removed)
 
-_Last synced from SECURITY-REVIEW.md: 2026-01-19_
+_Last synced from SECURITY-REVIEW.md: 2026-01-21_
 
 ## Performance Bottlenecks
 
