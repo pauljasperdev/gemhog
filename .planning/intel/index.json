@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769020318785,
+  "updated": 1769023505084,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -19,7 +19,7 @@
         "zod",
         "@hono/node-server"
       ],
-      "indexed": 1768990451449
+      "indexed": 1769023214929
     },
     "/home/lima/repo/apps/server/tsdown.config.ts": {
       "exports": ["default"],
@@ -262,8 +262,8 @@
     },
     "/home/lima/repo/apps/web/tests/e2e/home.e2e.test.ts": {
       "exports": [],
-      "imports": ["@playwright/test"],
-      "indexed": 1737475200000
+      "imports": ["./fixtures"],
+      "indexed": 1769023324136
     },
     "/home/lima/repo/apps/web/vitest.config.ts": {
       "exports": ["default"],
@@ -367,15 +367,10 @@
       "imports": ["drizzle-orm", "drizzle-orm/node-postgres", "pg", "vitest"],
       "indexed": 1737475200000
     },
-    "/home/lima/repo/packages/core/src/drizzle/errors.ts": {
-      "exports": ["DatabaseError", "ConnectionError"],
-      "imports": ["effect"],
-      "indexed": 1737475200000
-    },
     "/home/lima/repo/packages/core/src/drizzle/index.ts": {
-      "exports": ["DrizzleLive", "DatabaseLive", "PgLive"],
-      "imports": ["@effect/sql-drizzle/Pg", "effect", "./client", "./errors"],
-      "indexed": 1737475200000
+      "exports": ["PgLive", "DrizzleLive", "DatabaseLive"],
+      "imports": ["@effect/sql-drizzle/Pg", "effect", "./client"],
+      "indexed": 1769023247839
     },
     "/home/lima/repo/packages/core/vitest.config.ts": {
       "exports": ["default"],
@@ -388,9 +383,9 @@
       "indexed": 1768990439378
     },
     "/home/lima/repo/packages/env/src/web.ts": {
-      "exports": ["env"],
-      "imports": ["@t3-oss/env-nextjs", "zod"],
-      "indexed": 1737475200000
+      "exports": ["env", "WebEnv"],
+      "imports": [],
+      "indexed": 1769023482761
     },
     "/home/lima/repo/packages/env/vitest.config.ts": {
       "exports": ["default"],
@@ -411,6 +406,21 @@
       "exports": ["default"],
       "imports": ["vitest/config"],
       "indexed": 1737475200000
+    },
+    "/home/lima/repo/apps/web/tests/e2e/fixtures.ts": {
+      "exports": ["expect", "test"],
+      "imports": ["@playwright/test"],
+      "indexed": 1769023214342
+    },
+    "/home/lima/repo/packages/env/src/server.test.ts": {
+      "exports": [],
+      "imports": ["effect", "vitest"],
+      "indexed": 1769023222225
+    },
+    "/home/lima/repo/packages/env/src/web.test.ts": {
+      "exports": [],
+      "imports": ["vitest"],
+      "indexed": 1769023505084
     }
   }
 }

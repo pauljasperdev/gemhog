@@ -1,37 +1,34 @@
 // packages/env/src/web.test.ts
-// Unit tests for WebConfig schema validation using Effect ConfigProvider
-// for isolated testing without touching process.env
-import { Config, ConfigProvider, Effect } from "effect";
-import { describe, expect, it } from "vitest";
+// Unit tests for web env validation
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Recreate the config definition for isolated testing
-// DO NOT import from ./web.ts - that would trigger validation with real env vars
-const WebConfig = Config.all({
-  NEXT_PUBLIC_SERVER_URL: Config.string("NEXT_PUBLIC_SERVER_URL"),
-});
+describe("web env validation", () => {
+  const originalEnv = process.env;
 
-// Helper to create a ConfigProvider from a map of env vars
-const createProvider = (vars: Record<string, string>) =>
-  ConfigProvider.fromMap(new Map(Object.entries(vars)));
+  beforeEach(() => {
+    // Reset module cache before each test
+    vi.resetModules();
+    // Create a fresh copy of process.env
+    process.env = { ...originalEnv };
+  });
 
-describe("WebConfig schema", () => {
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
   it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
-    const provider = createProvider({});
+    delete process.env.NEXT_PUBLIC_SERVER_URL;
 
-    await expect(
-      Effect.runPromise(WebConfig.pipe(Effect.withConfigProvider(provider))),
-    ).rejects.toThrow();
+    await expect(import("./web.js")).rejects.toThrow(
+      "NEXT_PUBLIC_SERVER_URL is required",
+    );
   });
 
   it("should succeed when NEXT_PUBLIC_SERVER_URL is provided", async () => {
-    const provider = createProvider({
-      NEXT_PUBLIC_SERVER_URL: "http://localhost:3000",
-    });
+    process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
 
-    const result = await Effect.runPromise(
-      WebConfig.pipe(Effect.withConfigProvider(provider)),
-    );
+    const { env } = await import("./web.js");
 
-    expect(result.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
+    expect(env.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
   });
 });
