@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable, and deployable
-**Current focus:** Phase 3.1 complete - all code review fixes addressed
+**Current focus:** Phase 3.1 gap closure plans - security fixes
 
 ## Current Position
 
-Phase: 3.1 of 7 (Code Review Fixes) - COMPLETE
-Plan: 5/5 plans complete (03.1-01 through 03.1-05)
-Status: Phase 3.1 complete, ready for Phase 4
-Last activity: 2026-01-21 - Completed 03.1-05 (Dependency audit)
+Phase: 3.1 of 7 (Code Review Fixes) - Gap closure in progress
+Plan: 6/9 plans complete (03.1-01 through 03.1-05 + 03.1-08)
+Status: Executing gap closure plans (03.1-06 to 03.1-09)
+Last activity: 2026-01-21 - Completed 03.1-08 (AI endpoint security)
 
-Progress: ██████████ ~70% (Phase 1 + 1.1 + 2 + 3 + 3.1 complete)
+Progress: ██████████ ~72% (Phase 1 + 1.1 + 2 + 3 + 3.1 + gap plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 3.7 min
-- Total execution time: 81 min
+- Total execution time: 85 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: ██████████ ~70% (Phase 1 + 1.1 + 2 + 3 + 3.1 compl
 | 1.1. Test File Convention | 1/1 | 2 min | 2.0 min |
 | 2. Security Workflow | 1/1 | 3 min | 3.0 min |
 | 3. Core Consolidation | 5/5 | 15 min | 3.0 min |
-| 3.1. Code Review Fixes | 5/5 | 40 min | 8.0 min |
+| 3.1. Code Review Fixes | 6/9 | 44 min | 7.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03.1-02 (3 min), 03.1-03 (15 min), 03.1-04 (15 min), 03.1-05 (4 min)
+- Last 5 plans: 03.1-03 (15 min), 03.1-04 (15 min), 03.1-05 (4 min), 03.1-08 (4 min)
 - Note: 03.1-03 and 03.1-04 took longer due to parallel agent coordination
 
 ## Accumulated Context
@@ -98,6 +98,9 @@ Recent decisions affecting current work:
 | Keep dotenv in packages/core | drizzle.config.ts needs dotenv directly (per 03.1-03 decision) | 03.1-05 |
 | Remove @effect/vitest from packages/core | Unused after auth simplification in 03.1-04 | 03.1-05 |
 | Use knip for dependency audits | Identifies truly unused dependencies vs false positives | 03.1-05 |
+| Inline rate limiting for AI endpoint | Simpler than external package for single-server | 03.1-08 |
+| UIMessage parts validation schema | AI SDK v6 uses parts array, not simple content string | 03.1-08 |
+| Discriminated union for message parts | TextPartSchema, FilePartSchema, OtherPartSchema with passthrough | 03.1-08 |
 
 ### Pending Todos
 
@@ -108,7 +111,9 @@ None.
 - Pre-existing lint issues remain in mode-toggle.tsx, label.tsx, .agent/prd.json (not in scope of 01-07)
 - Docker socket access needed for integration tests (environment-specific)
 - Playwright browser dependencies needed for E2E tests (environment-specific)
-- Security findings SEC-001, SEC-002, SEC-003 (High/Medium) documented in SECURITY-REVIEW.md - blocking for completion
+- Security finding SEC-003 (High) documented in SECURITY-REVIEW.md - remaining after 03.1-08
+- SEC-001 (Input validation) RESOLVED in 03.1-08
+- SEC-002 (Rate limiting) RESOLVED in 03.1-08
 - pnpm audit shows moderate vulnerability in esbuild (drizzle-kit dev dependency)
 
 ## Phase 1 Summary
@@ -224,6 +229,7 @@ Code review fixes complete:
 | 03.1-03 | Replace t3-env with Effect Config | 15 min | Complete |
 | 03.1-04 | Simplify auth by removing Effect wrapper | 15 min | Complete |
 | 03.1-05 | Audit and remove unused dependencies | 4 min | Complete |
+| 03.1-08 | AI endpoint security (validation + rate limiting) | 4 min | Complete |
 
 **Completed:**
 - Generated initial database migrations (user, session, account, verification tables)
@@ -237,11 +243,13 @@ Code review fixes complete:
 - Updated auth exports: getAuth, auth, getSession
 - Removed 9 unused dependencies identified by knip audit
 - Centralized dotenv to packages/env (and packages/core for drizzle.config.ts)
+- Added Zod validation for AI endpoint (SEC-001)
+- Added rate limiting to AI endpoint (SEC-002)
 
 ## Session Continuity
 
-Last session: 2026-01-21T09:36:03Z
-Stopped at: Completed 03.1-05-PLAN.md (Dependency audit)
+Last session: 2026-01-21T10:15:09Z
+Stopped at: Completed 03.1-08-PLAN.md (AI endpoint security)
 Resume file: None
 
-Next: Continue with Phase 4
+Next: Continue with remaining gap closure plans (03.1-06, 03.1-07, 03.1-09)
