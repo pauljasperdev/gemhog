@@ -1,21 +1,12 @@
+import { env } from "@gemhog/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Redacted } from "effect";
 import * as schema from "./auth.sql";
 
-// Deferred env import for testability (per 03.1-03 decision)
-// Allows unit tests to import this module without env vars
-const getEnv = () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { env } =
-    require("@gemhog/env/server") as typeof import("@gemhog/env/server");
-  return env;
-};
-
 // Create better-auth instance
 const createAuth = () => {
-  const env = getEnv();
   const db = drizzle(Redacted.value(env.DATABASE_URL), { schema });
 
   return betterAuth({
