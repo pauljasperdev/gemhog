@@ -9,18 +9,30 @@ import { describe, expect, it } from "vitest";
  * and verify it fails fast with clear error messages.
  *
  * This validates the Effect Config validation in @gemhog/env/server.
+ *
+ * Note: The server uses `dotenv/config` which auto-loads .env files.
+ * We set DOTENV_CONFIG_PATH to a non-existent file to prevent this,
+ * ensuring only explicitly passed env vars are used.
  */
 describe("server startup", () => {
+  const serverDir = path.resolve(__dirname, "..");
   const serverPath = path.resolve(__dirname, "index.ts");
   // Use tsx from node_modules/.bin - available via pnpm workspace hoisting
-  const tsxPath = path.resolve(__dirname, "..", "node_modules", ".bin", "tsx");
+  const tsxPath = path.resolve(serverDir, "node_modules", ".bin", "tsx");
 
   const runServer = (
     env: Record<string, string>,
   ): Promise<{ code: number | null; stderr: string; stdout: string }> => {
     return new Promise((resolve) => {
       const proc = spawn(tsxPath, [serverPath], {
-        env: { PATH: process.env.PATH, HOME: process.env.HOME, ...env },
+        cwd: serverDir,
+        env: {
+          PATH: process.env.PATH,
+          HOME: process.env.HOME,
+          // Prevent dotenv from loading .env file
+          DOTENV_CONFIG_PATH: "/nonexistent/.env",
+          ...env,
+        },
         stdio: ["ignore", "pipe", "pipe"],
       });
 
