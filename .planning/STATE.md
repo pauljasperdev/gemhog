@@ -108,6 +108,8 @@ Recent decisions affecting current work:
 | All security findings resolved | SEC-001/002/003 fixed, SEC-004/005 closed (Polar removed) | 03.1-09 |
 | E2E tests use extended Playwright fixture for error detection | Captures console.error and page exceptions | 03.2-03 |
 | TDD: Tests fail when app has errors - fix app, not test | Tests correctly detected NEXT_PUBLIC_SERVER_URL issue | 03.2-03 |
+| Recreate Config definition in tests for isolation | Avoids triggering env validation at import time | 03.2-02 |
+| ConfigProvider.fromMap for isolated env testing | Precise control over env vars without touching process.env | 03.2-02 |
 
 ### Pending Todos
 
@@ -276,7 +278,7 @@ Code quality and TDD practices:
 | Plan | Summary | Duration | Status |
 |------|---------|----------|--------|
 | 03.2-01 | Remove dead code and archaeological comments | - | Complete |
-| 03.2-02 | Add unit tests for env validation | - | Complete |
+| 03.2-02 | Add unit tests for env validation | 3 min | Complete |
 | 03.2-03 | E2E error detection fixture | 3 min | Complete |
 | 03.2-04 | Integration tests for auth | - | Pending |
 | 03.2-05 | TDD guidance in TESTING.md | - | Pending |
@@ -288,8 +290,8 @@ Code quality and TDD practices:
 
 ## Session Continuity
 
-Last session: 2026-01-21T19:22:36Z
-Stopped at: Completed 03.2-03-PLAN.md (E2E error detection fixture)
+Last session: 2026-01-21T19:23:51Z
+Stopped at: Completed 03.2-02-PLAN.md (env schema validation tests)
 Resume file: None
 
 Next: Continue with 03.2-04 (auth integration tests) or 03.2-05 (TDD guidance).
