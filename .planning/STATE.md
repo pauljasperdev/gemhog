@@ -9,20 +9,20 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (urgent 
 
 ## Current Position
 
-Phase: 3.4 of 8 (Integration Test Coverage) - IN PROGRESS
-Plan: 3/4 plans
-Status: Executing Wave 2
-Last activity: 2026-01-22 - Completed 03.4-03-PLAN.md (Auth flow integration tests)
+Phase: 3.4 of 8 (Integration Test Coverage) - COMPLETE
+Plan: 4/4 plans
+Status: Phase complete
+Last activity: 2026-01-22 - Completed 03.4-04-PLAN.md (tRPC procedure tests)
 
-Progress: ████████████████░░░ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4-01 + 3.4-02 + 03.4-03 complete)
+Progress: █████████████████░░░ ~92% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 31
+- Total plans completed: 35
 - Average duration: 4.1 min
-- Total execution time: 127 min
+- Total execution time: 154 min
 
 **By Phase:**
 
@@ -35,10 +35,11 @@ Progress: ████████████████░░░ ~90% (Phase 
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
+| 3.4. Integration Test Coverage| 4/4   | 27 min | 6.8 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (7 min), 03.3-01 (5 min), 03.3-02 (3 min)
+- Last 5 plans: 03.3-02 (3 min), 03.4-01 (2 min), 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min)
 
 ## Accumulated Context
 
@@ -135,6 +136,7 @@ affecting current work:
 | vi.mock for env isolation in integration tests                | Cleaner than process.env mutation for t3-env import-time validation | 03.4-03                         |
 | Dynamic import after vi.mock setup                            | Required for mock to take effect before module initialization       | 03.4-03                         |
 | better-auth returns { token, user } not { session, user }     | Corrected from original assumption during test implementation       | 03.4-03                         |
+| Use createCallerFactory for tRPC v11 testing                  | Modern pattern, deprecated createCaller still works but not recommended | 03.4-04                         |
 
 ### Pending Todos
 
@@ -372,16 +374,16 @@ Unifying env validation with t3-env - COMPLETE:
 - vi.resetModules + process.env mutation for env schema testing
 - Plain string access for env vars (no Redacted.value())
 
-## Phase 3.4 Summary (In Progress)
+## Phase 3.4 Summary
 
-Integration test coverage - IN PROGRESS:
+Integration test coverage - COMPLETE:
 
 | Plan    | Summary                                          | Duration | Status   |
 | ------- | ------------------------------------------------ | -------- | -------- |
 | 03.4-01 | Fix db:migrate env loading                       | 2 min    | Complete |
 | 03.4-02 | Update connection tests to use @effect/vitest    | 3 min    | Complete |
 | 03.4-03 | Auth flow integration tests                      | 21 min   | Complete |
-| 03.4-04 | tRPC procedure tests                             | -        | Pending  |
+| 03.4-04 | tRPC procedure tests                             | 1 min    | Complete |
 
 **Completed:**
 
@@ -392,6 +394,8 @@ Integration test coverage - IN PROGRESS:
 - Tests use SqlClient.SqlClient for Effect-based queries
 - Auth flow integration tests with signup/signin via better-auth API
 - Test fixtures for auth domain (truncateAuthTables, createTestUser)
+- tRPC procedure integration tests for healthCheck and privateData
+- Placeholder example.test.ts removed
 
 **Patterns Established:**
 
@@ -400,11 +404,21 @@ Integration test coverage - IN PROGRESS:
 - SqlClient.SqlClient for Effect-based database queries
 - vi.mock('@gemhog/env/server') + dynamic import for env isolation
 - Test fixtures live with their domain (auth/test-fixtures.ts)
+- createCallerFactory pattern for tRPC v11 testing
+
+**Integration Test Coverage:**
+
+- 6 test files, 17 tests total
+- apps/server: startup failure tests (4 tests)
+- apps/web: startup failure test (1 test)
+- packages/core/drizzle: connection tests (2 tests), migration tests (2 tests)
+- packages/core/auth: auth flow tests (5 tests)
+- packages/api: tRPC procedure tests (3 tests)
 
 ## Session Continuity
 
-Last session: 2026-01-22T16:10:06Z
-Stopped at: Completed 03.4-03-PLAN.md (Auth flow integration tests)
+Last session: 2026-01-22T16:26:38Z
+Stopped at: Completed 03.4-04-PLAN.md (tRPC procedure tests)
 Resume file: None
 
-Next: 03.4-04 (tRPC procedure tests)
+Next: Phase 4 (next phase in roadmap)
