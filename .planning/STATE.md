@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable,
-and deployable **Current focus:** Phase 3.3 In Progress - Unifying env validation
+and deployable **Current focus:** Phase 3.3 Complete - Ready for Phase 4
 
 ## Current Position
 
-Phase: 3.3 of 7 (Unify Env Validation with t3-env) - IN PROGRESS
-Plan: 1/2 plans complete (03.3-01)
-Status: Plan 01 complete - server.ts migrated to t3-env
-Last activity: 2026-01-22 - Completed 03.3-01 (server env uses t3-env)
+Phase: 3.3 of 7 (Unify Env Validation with t3-env) - COMPLETE
+Plan: 2/2 plans complete
+Status: Phase 03.3 complete - unified env validation with t3-env
+Last activity: 2026-01-22 - Completed 03.3-02 (web env uses t3-env)
 
-Progress: ██████████████░ ~87% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 03.3-01 complete)
+Progress: ███████████████ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 30
+- Total plans completed: 31
 - Average duration: 4.1 min
-- Total execution time: 124 min
+- Total execution time: 127 min
 
 **By Phase:**
 
@@ -34,11 +34,11 @@ Progress: ██████████████░ ~87% (Phase 1 + 1.1 + 2 
 | 3. Core Consolidation         | 5/5   | 15 min | 3.0 min  |
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
-| 3.3. Unify Env Validation     | 1/2   | 5 min  | 5.0 min  |
+| 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.2-03 (3 min), 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (7 min), 03.3-01 (5 min)
+- Last 5 plans: 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (7 min), 03.3-01 (5 min), 03.3-02 (3 min)
 
 ## Accumulated Context
 
@@ -126,6 +126,7 @@ affecting current work:
 | Remove Effect from packages/env for t3-env                    | Unified env validation approach (t3-env for both server and web)   | 03.3-01                         |
 | No redaction in t3-env                                        | Server vars never exposed to client, acceptable tradeoff           | 03.3-01                         |
 | vi.resetModules + dynamic import for env testing              | Tests manipulate process.env and reimport module for isolation     | 03.3-01                         |
+| Explicit runtimeEnv destructuring for Next.js                 | Must use explicit access for build-time inlining to work           | 03.3-02                         |
 
 ### Pending Todos
 
@@ -339,30 +340,34 @@ Code quality and TDD practices complete:
 
 ## Phase 3.3 Summary
 
-Unifying env validation with t3-env:
+Unifying env validation with t3-env - COMPLETE:
 
 | Plan    | Summary                                        | Duration | Status   |
 | ------- | ---------------------------------------------- | -------- | -------- |
 | 03.3-01 | Server env migration to t3-env                 | 5 min    | Complete |
-| 03.3-02 | Web env migration to t3-env                    | -        | Pending  |
+| 03.3-02 | Web env migration to t3-env                    | 3 min    | Complete |
 
 **Completed:**
 
-- Replaced Effect Config with @t3-oss/env-core in packages/env
+- Replaced Effect Config with @t3-oss/env-core in packages/env (server.ts)
+- Replaced plain validation function with @t3-oss/env-nextjs (web.ts)
 - Server env validates at import time using Zod schemas
+- Web env validates at import time with explicit runtimeEnv for Next.js inlining
 - Tests use vi.resetModules pattern for module isolation
 - Consumers (auth.service.ts, drizzle.config.ts) access env vars as plain strings
 
 **Patterns Established:**
 
-- t3-env createEnv pattern for server env validation
+- t3-env createEnv pattern for server env validation (@t3-oss/env-core)
+- t3-env createEnv pattern for client env validation (@t3-oss/env-nextjs)
+- Explicit runtimeEnv destructuring for Next.js build-time inlining
 - vi.resetModules + process.env mutation for env schema testing
 - Plain string access for env vars (no Redacted.value())
 
 ## Session Continuity
 
-Last session: 2026-01-22T11:36:14Z
-Stopped at: Completed 03.3-01-PLAN.md (server env migrated to t3-env)
+Last session: 2026-01-22T12:45:00Z
+Stopped at: Completed 03.3-02-PLAN.md (Phase 3.3 complete - unified env validation)
 Resume file: None
 
-Next: 03.3-02 (web.ts migration to @t3-oss/env-nextjs) then Phase 4
+Next: Phase 4 (SST foundation)
