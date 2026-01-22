@@ -5,39 +5,40 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable,
-and deployable **Current focus:** Phase 3.2 Complete - Ready for Phase 4
+and deployable **Current focus:** Phase 3.3 In Progress - Unifying env validation
 
 ## Current Position
 
-Phase: 3.2 of 7 (Code Quality & TDD Practices) - COMPLETE
-Plan: 6/6 plans complete (03.2-01, 03.2-02, 03.2-03, 03.2-04, 03.2-05, 03.2-06)
-Status: Phase complete (including gap closure)
-Last activity: 2026-01-22 - Completed 03.2-06 (gap closure: confirmed web.ts cannot use Effect Config)
+Phase: 3.3 of 7 (Unify Env Validation with t3-env) - IN PROGRESS
+Plan: 1/2 plans complete (03.3-01)
+Status: Plan 01 complete - server.ts migrated to t3-env
+Last activity: 2026-01-22 - Completed 03.3-01 (server env uses t3-env)
 
-Progress: ██████████████ ~85% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 complete)
+Progress: ██████████████░ ~87% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 03.3-01 complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 29
-- Average duration: 4.0 min
-- Total execution time: 119 min
+- Total plans completed: 30
+- Average duration: 4.1 min
+- Total execution time: 124 min
 
 **By Phase:**
 
-| Phase                       | Plans | Total  | Avg/Plan |
-| --------------------------- | ----- | ------ | -------- |
-| 1. Testing Infrastructure   | 7/7   | 21 min | 3.0 min  |
-| 1.1. Test File Convention   | 1/1   | 2 min  | 2.0 min  |
-| 2. Security Workflow        | 1/1   | 3 min  | 3.0 min  |
-| 3. Core Consolidation       | 5/5   | 15 min | 3.0 min  |
-| 3.1. Code Review Fixes      | 9/9   | 55 min | 6.1 min  |
-| 3.2. Code Quality & TDD     | 6/6   | 25 min | 4.2 min  |
+| Phase                         | Plans | Total  | Avg/Plan |
+| ----------------------------- | ----- | ------ | -------- |
+| 1. Testing Infrastructure     | 7/7   | 21 min | 3.0 min  |
+| 1.1. Test File Convention     | 1/1   | 2 min  | 2.0 min  |
+| 2. Security Workflow          | 1/1   | 3 min  | 3.0 min  |
+| 3. Core Consolidation         | 5/5   | 15 min | 3.0 min  |
+| 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
+| 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
+| 3.3. Unify Env Validation     | 1/2   | 5 min  | 5.0 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.2-02 (3 min), 03.2-03 (3 min), 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (7 min)
+- Last 5 plans: 03.2-03 (3 min), 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (7 min), 03.3-01 (5 min)
 
 ## Accumulated Context
 
@@ -49,6 +50,8 @@ Progress: ██████████████ ~85% (Phase 1 + 1.1 + 2 + 3
   CODE_REVIEW.md findings before deployment
 - Phase 3.2 inserted after Phase 3.1: Code quality & TDD practices (URGENT) -
   dead code cleanup, test coverage gaps, TDD guidance in TESTING.md
+- Phase 3.3 inserted after Phase 3.2: Unify env validation with t3-env (URGENT) -
+  replace mixed Effect Config/plain function with unified t3-env package
 
 ### Decisions
 
@@ -120,6 +123,9 @@ affecting current work:
 | Use tsx from local node_modules/.bin for startup tests        | Spawned process needs PATH but tsx isn't globally available        | 03.2-05                         |
 | Temp directory with symlinks for web startup tests            | Next.js auto-reads .env; symlink all except .env to test missing   | 03.2-05                         |
 | DOTENV_CONFIG_PATH=/nonexistent for server startup tests      | Prevent dotenv from auto-loading .env file in spawned process      | 03.2-05                         |
+| Remove Effect from packages/env for t3-env                    | Unified env validation approach (t3-env for both server and web)   | 03.3-01                         |
+| No redaction in t3-env                                        | Server vars never exposed to client, acceptable tradeoff           | 03.3-01                         |
+| vi.resetModules + dynamic import for env testing              | Tests manipulate process.env and reimport module for isolation     | 03.3-01                         |
 
 ### Pending Todos
 
@@ -140,7 +146,7 @@ None.
 - SEC-003 (Debug logging) FIXED in 03.1-07
 - SEC-004 (Polar productId) CLOSED in 03.1-07
 - SEC-005 (Polar sandbox) CLOSED in 03.1-07
-- pnpm audit: No known vulnerabilities
+- pnpm audit: lodash-es vulnerability via mermaid (moderate, tracking)
 
 ## Phase 1 Summary
 
@@ -331,10 +337,32 @@ Code quality and TDD practices complete:
 - Integration tests: web build failure (apps/web)
 - E2E tests: homepage loads, error detection fixture (apps/web)
 
+## Phase 3.3 Summary
+
+Unifying env validation with t3-env:
+
+| Plan    | Summary                                        | Duration | Status   |
+| ------- | ---------------------------------------------- | -------- | -------- |
+| 03.3-01 | Server env migration to t3-env                 | 5 min    | Complete |
+| 03.3-02 | Web env migration to t3-env                    | -        | Pending  |
+
+**Completed:**
+
+- Replaced Effect Config with @t3-oss/env-core in packages/env
+- Server env validates at import time using Zod schemas
+- Tests use vi.resetModules pattern for module isolation
+- Consumers (auth.service.ts, drizzle.config.ts) access env vars as plain strings
+
+**Patterns Established:**
+
+- t3-env createEnv pattern for server env validation
+- vi.resetModules + process.env mutation for env schema testing
+- Plain string access for env vars (no Redacted.value())
+
 ## Session Continuity
 
-Last session: 2026-01-22T11:33:00Z
-Stopped at: Completed 03.2-06-PLAN.md (gap closure: confirmed web.ts cannot use Effect Config)
+Last session: 2026-01-22T11:36:14Z
+Stopped at: Completed 03.3-01-PLAN.md (server env migrated to t3-env)
 Resume file: None
 
-Next: Phase 4 (Deployment Infrastructure) - SST configuration, AWS deployment, CI/CD pipeline
+Next: 03.3-02 (web.ts migration to @t3-oss/env-nextjs) then Phase 4
