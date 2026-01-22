@@ -10,6 +10,9 @@ export default defineConfig({
       "**/*.int.test.ts", // Integration tests have their own config
       "**/*.e2e.test.ts", // E2E tests use Playwright, not Vitest
     ],
+    // Disable file parallelism to prevent database race conditions
+    // Integration tests share the same database and can conflict
+    fileParallelism: false,
     reporters: ["default"],
     coverage: {
       provider: "v8",
