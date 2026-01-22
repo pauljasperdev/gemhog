@@ -28,8 +28,8 @@ features.
       coverage, TDD guidance (INSERTED) ✓
 - [x] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
       Config/plain function with t3-env (INSERTED) ✓
-- [ ] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
-      Effect constructs, auth flows, migrations (INSERTED)
+- [x] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
+      Effect constructs, auth flows, migrations (INSERTED) ✓
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -210,10 +210,10 @@ complete) **Requirements**: Derived from testing gaps discovered during review
 
 Plans:
 
-- [ ] 03.4-01-PLAN.md — Fix drizzle.config.ts env loading + migration tests
-- [ ] 03.4-02-PLAN.md — Effect layer connection tests
-- [ ] 03.4-03-PLAN.md — Auth flow integration tests
-- [ ] 03.4-04-PLAN.md — tRPC procedure tests
+- [x] 03.4-01-PLAN.md — Fix drizzle.config.ts env loading + migration tests
+- [x] 03.4-02-PLAN.md — Effect layer connection tests
+- [x] 03.4-03-PLAN.md — Auth flow integration tests
+- [x] 03.4-04-PLAN.md — tRPC procedure tests
 
 ### Phase 4: SST Deployment
 
@@ -261,6 +261,6 @@ Plans:
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
 | 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
-| 3.4 Integration Test Coverage      | 0/4            | Not started | -          |
+| 3.4 Integration Test Coverage      | 4/4            | ✓ Complete  | 2026-01-22 |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
