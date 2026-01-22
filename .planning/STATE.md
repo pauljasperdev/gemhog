@@ -9,20 +9,20 @@ and deployable **Current focus:** Phase 3.4 complete, ready for Phase 4
 
 ## Current Position
 
-Phase: 3.4 of 8 (Integration Test Coverage) - COMPLETE ✓
-Plan: 7/7 plans complete
-Status: Phase verified and complete
-Last activity: 2026-01-22 - Phase 3.4 verified, all must-haves satisfied
+Phase: 4 of 8 (SST Deployment) - IN PROGRESS
+Plan: 1/5 plans complete
+Status: Phase started, Plan 04-01 complete
+Last activity: 2026-01-22 - Completed 04-01-PLAN.md (SST dependencies and env fix)
 
-Progress: ██████████████████░░ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, 4-5 remain)
+Progress: ██████████████████░░ ~91% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, Phase 4 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 38
+- Total plans completed: 39
 - Average duration: 4.4 min
-- Total execution time: 173 min
+- Total execution time: 180 min
 
 **By Phase:**
 
@@ -36,10 +36,11 @@ Progress: ██████████████████░░ ~90% (Pha
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
 | 3.4. Integration Test Coverage| 7/7   | 46 min | 6.6 min  |
+| 4. SST Deployment             | 1/5   | 7 min  | 7.0 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min)
+- Last 5 plans: 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (7 min)
 
 ## Accumulated Context
 
@@ -143,6 +144,8 @@ affecting current work:
 | Use @effect/sql-drizzle for schema CRUD tests                 | Schema tests use Effect database layers even though auth doesn't use Effect (no better-auth wrapper) | 03.4-07 |
 | Effect.promise() for drizzle ops in Effect.gen                | Drizzle returns Promises, not Effects; wrap with Effect.promise()       | 03.4-07                         |
 | Effect.either for constraint violation tests                  | Captures expected errors without throwing, check result._tag            | 03.4-07                         |
+| hono/aws-lambda built into hono package                       | Not a separate @hono/aws-lambda package; use import from hono/aws-lambda| 04-01                           |
+| Test mocks must include all required env vars                 | When adding new env vars to server schema, update all vi.mock calls     | 04-01                           |
 
 ### Pending Todos
 
@@ -432,10 +435,29 @@ Integration test coverage - COMPLETE:
 - packages/api: tRPC procedure tests (3 tests)
 - apps/web/tests/e2e: auth E2E tests (4 tests), homepage E2E tests (2 tests)
 
+## Phase 4 Summary
+
+SST Deployment phase - IN PROGRESS:
+
+| Plan    | Summary                                          | Duration | Status   |
+| ------- | ------------------------------------------------ | -------- | -------- |
+| 04-01   | SST dependencies and env validation fix          | 7 min    | Complete |
+| 04-02   | SST config and infra structure                   | -        | Pending  |
+| 04-03   | Lambda handler with streaming                    | -        | Pending  |
+| 04-04   | Next.js deployment config                        | -        | Pending  |
+| 04-05   | Secrets and domain configuration                 | -        | Pending  |
+
+**Completed:**
+
+- Added GOOGLE_GENERATIVE_AI_API_KEY to server env schema
+- Installed sst ^3.17 as devDependency
+- Verified hono/aws-lambda adapter available (built into hono)
+- Fixed auth test mocks to include new required env var
+
 ## Session Continuity
 
-Last session: 2026-01-22T18:24:50Z
-Stopped at: Completed 03.4-06-PLAN.md (startup test simplification)
+Last session: 2026-01-22T19:55:38Z
+Stopped at: Completed 04-01-PLAN.md (SST dependencies and env fix)
 Resume file: None
 
-Next: Phase 4 (next phase in roadmap)
+Next: 04-02-PLAN.md (SST config and infra structure)
