@@ -163,6 +163,12 @@ pnpm verify
 - Pattern: `*.test.ts` files
 - Excludes: `*.int.test.ts`, `*.e2e.test.ts` (handled at root config level)
 
+**Effect Integration Tests:** @effect/vitest
+
+- Config: Same as integration tests (`vitest.integration.config.ts`)
+- Pattern: Use `layer()` and `it.effect()` from `@effect/vitest`
+- Purpose: Test Effect layers with automatic setup/teardown
+
 **Integration Tests:** Vitest 4.x
 
 - Config: `vitest.integration.config.ts` (root)
@@ -321,6 +327,55 @@ describe("Database Connection", () => {
 });
 ```
 
+### Effect Layer Integration Test
+
+```typescript
+import { Effect } from "effect";
+import { PgClient } from "@effect/sql-pg";
+import { SqlClient } from "@effect/sql";
+import { Redacted } from "effect";
+import { expect, layer } from "@effect/vitest";
+
+const TestPgLive = PgClient.layer({
+  url: Redacted.make(process.env.DATABASE_URL ?? "postgres://..."),
+});
+
+layer(TestPgLive)("Effect layer tests", (it) => {
+  it.effect("should connect and query", () =>
+    Effect.gen(function* () {
+      const sql = yield* SqlClient.SqlClient;
+      const result = yield* sql`SELECT 1 as value`;
+      expect(result[0].value).toBe(1);
+    })
+  );
+});
+```
+
+### tRPC Procedure Test (Modern Pattern)
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { TRPCError } from "@trpc/server";
+import { t } from "../index";
+import { appRouter } from "./index";
+
+// Use createCallerFactory (tRPC v11 recommended pattern)
+const createCaller = t.createCallerFactory(appRouter);
+
+describe("Procedures", () => {
+  it("should return OK for healthCheck", async () => {
+    const caller = createCaller({ session: null });
+    const result = await caller.healthCheck();
+    expect(result).toBe("OK");
+  });
+
+  it("should reject unauthorized access", async () => {
+    const caller = createCaller({ session: null });
+    await expect(caller.privateData()).rejects.toThrow(TRPCError);
+  });
+});
+```
+
 ### E2E Test (Playwright)
 
 ```typescript
@@ -405,13 +460,45 @@ pnpm test:unit -- --run src/feature.test.ts
 - Simple CRUD with no business logic
 - One-off scripts
 
+## Test Fixtures
+
+Test fixtures live with their domain (co-located):
+
+```
+packages/core/src/auth/
+├── auth.sql.ts         # Schema
+├── auth.service.ts     # Service
+├── auth.int.test.ts    # Integration tests
+└── test-fixtures.ts    # Test utilities (truncation, factories)
+```
+
+**Example test fixture:**
+
+```typescript
+// packages/core/src/auth/test-fixtures.ts
+import { sql } from "drizzle-orm";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+
+export async function truncateAuthTables(db: PostgresJsDatabase) {
+  await db.execute(sql`TRUNCATE TABLE session, account, verification, "user" CASCADE`);
+}
+
+export function createTestUser() {
+  return {
+    name: "Test User",
+    email: `test-${Date.now()}@example.com`,
+    password: "testpassword123",
+  };
+}
+```
+
 ## What to Mock
 
 **DO mock:**
 
 - External API calls (Google AI)
 - Time/dates for deterministic tests
-- Environment variables
+- Environment variables (use `vi.mock('@gemhog/env/server')` for t3-env isolation)
 
 **DON'T mock:**
 

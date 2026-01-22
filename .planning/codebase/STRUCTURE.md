@@ -245,13 +245,17 @@ packages/core/
 │   ├── drizzle/           # Database layer
 │   │   ├── client.ts      # Drizzle client instance
 │   │   ├── index.ts       # Effect layers (DatabaseLive)
-│   │   └── connection.int.test.ts
+│   │   ├── connection.int.test.ts  # Effect layer integration tests
+│   │   └── migrations.int.test.ts  # Migration verification tests
 │   ├── auth/              # Auth domain
-│   │   ├── auth.sql.ts    # Drizzle schema (user, session, account, verification)
+│   │   ├── auth.sql.ts      # Drizzle schema (user, session, account, verification)
 │   │   ├── auth.service.ts  # Auth service with lazy singleton
 │   │   ├── auth.errors.ts   # Domain errors (TaggedError)
 │   │   ├── auth.mock.ts     # Mock layer for testing
 │   │   ├── auth.test.ts     # Unit tests
+│   │   ├── auth.int.test.ts # Integration tests (better-auth API)
+│   │   ├── schema.int.test.ts # Schema CRUD integration tests
+│   │   ├── test-fixtures.ts # Test utilities (truncation, factories)
 │   │   └── index.ts         # Exports + Better-Auth config
 │   └── migrations/        # Database migrations
 │       ├── 0000_initial_schema.sql
@@ -284,8 +288,9 @@ packages/core/
 3. Add service: `[domain].service.ts` (Effect service + layer)
 4. Add errors: `[domain].errors.ts` (TaggedErrors)
 5. Add mock: `[domain].mock.ts` (test layer)
-6. Add index: `index.ts` (exports)
-7. Register export in `package.json` exports field
+6. Add fixtures: `test-fixtures.ts` (truncation, factories for tests)
+7. Add index: `index.ts` (exports)
+8. Register export in `package.json` exports field
 
 **Reference:** Pattern based on
 [terminal.shop](https://github.com/terminaldotshop/terminal) and

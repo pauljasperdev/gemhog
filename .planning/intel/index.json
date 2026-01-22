@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769106381074,
+  "updated": 1769107075024,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -675,14 +675,15 @@
     "/home/lima/repo/packages/core/src/auth/schema.int.test.ts": {
       "exports": [],
       "imports": [
+        "@effect/sql-drizzle/Pg",
+        "@effect/sql-pg",
+        "@effect/vitest",
         "drizzle-orm",
-        "drizzle-orm/node-postgres",
-        "pg",
+        "effect",
         "vitest",
-        "./auth.sql",
-        "./test-fixtures"
+        "./auth.sql"
       ],
-      "indexed": 1769106008354
+      "indexed": 1769107075024
     },
     "/home/lima/repo/apps/web/tests/e2e/auth.e2e.test.ts": {
       "exports": [],
