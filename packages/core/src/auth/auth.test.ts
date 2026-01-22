@@ -8,6 +8,7 @@ vi.mock("@gemhog/env/server", () => ({
     BETTER_AUTH_SECRET: { value: "test-secret" },
     BETTER_AUTH_URL: "http://localhost:3000",
     CORS_ORIGIN: "http://localhost:3001",
+    GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
     NODE_ENV: "test",
   },
 }));
