@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769023505084,
+  "updated": 1769082145671,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -297,8 +297,8 @@
     },
     "/home/lima/repo/packages/core/drizzle.config.ts": {
       "exports": ["default", "defineConfig"],
-      "imports": ["@gemhog/env/server", "drizzle-kit", "effect"],
-      "indexed": 1768990549229
+      "imports": ["@gemhog/env/server", "drizzle-kit"],
+      "indexed": 1769081616529
     },
     "/home/lima/repo/packages/core/src/auth/auth.errors.ts": {
       "exports": [
@@ -317,10 +317,9 @@
         "better-auth",
         "better-auth/adapters/drizzle",
         "drizzle-orm/node-postgres",
-        "effect",
         "./auth.sql"
       ],
-      "indexed": 1768990789534
+      "indexed": 1769081600423
     },
     "/home/lima/repo/packages/core/src/auth/auth.sql.ts": {
       "exports": [
@@ -379,13 +378,13 @@
     },
     "/home/lima/repo/packages/env/src/server.ts": {
       "exports": ["env", "ServerEnv"],
-      "imports": ["effect", "dotenv/config"],
-      "indexed": 1768990439378
+      "imports": ["@t3-oss/env-core", "zod", "dotenv/config"],
+      "indexed": 1769081494319
     },
     "/home/lima/repo/packages/env/src/web.ts": {
       "exports": ["env", "WebEnv"],
-      "imports": [],
-      "indexed": 1769023482761
+      "imports": ["@t3-oss/env-nextjs", "zod"],
+      "indexed": 1769082136267
     },
     "/home/lima/repo/packages/env/vitest.config.ts": {
       "exports": ["default"],
@@ -414,13 +413,13 @@
     },
     "/home/lima/repo/packages/env/src/server.test.ts": {
       "exports": [],
-      "imports": ["effect", "vitest"],
-      "indexed": 1769023222225
+      "imports": ["vitest"],
+      "indexed": 1769081585328
     },
     "/home/lima/repo/packages/env/src/web.test.ts": {
       "exports": [],
       "imports": ["vitest"],
-      "indexed": 1769023505084
+      "indexed": 1769082145671
     }
   }
 }

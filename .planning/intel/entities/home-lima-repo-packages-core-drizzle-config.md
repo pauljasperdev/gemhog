@@ -1,7 +1,7 @@
 ---
 path: /home/lima/repo/packages/core/drizzle.config.ts
 type: config
-updated: 2026-01-21
+updated: 2026-01-22
 status: active
 ---
 
@@ -9,18 +9,17 @@ status: active
 
 ## Purpose
 
-Configures Drizzle Kit for database schema management and migrations. Defines the schema file locations, migration output directory, PostgreSQL dialect, and database connection using environment variables.
+Configuration file for Drizzle Kit, defining database schema location, migration output directory, and PostgreSQL connection settings. Enables database migrations and schema management for the core package.
 
 ## Exports
 
-- `default`: The Drizzle Kit configuration object created via `defineConfig`
-- `defineConfig`: Re-exported from drizzle-kit (implicit via usage)
+- `default` - The Drizzle Kit configuration object
+- `defineConfig` - Re-exported from drizzle-kit (used internally)
 
 ## Dependencies
 
-- [[home-lima-repo-packages-env-src-server]]: Provides `env.DATABASE_URL` for database connection
-- drizzle-kit: Schema migration tooling and `defineConfig` helper
-- effect: `Redacted` type for safely unwrapping sensitive values
+- [[home-lima-repo-packages-env-src-server]] - Provides `env.DATABASE_URL` for database connection
+- drizzle-kit - Drizzle ORM toolkit for migrations and schema management
 
 ## Used By
 
@@ -28,6 +27,6 @@ TBD
 
 ## Notes
 
-- Schema files are discovered via glob pattern `./src/*/*.sql.ts`
-- Migrations output to `./src/migrations`
-- Uses Effect's `Redacted.value()` to safely extract the database URL, ensuring sensitive credentials are handled properly throughout the application
+- Schema files follow the pattern `./src/*/*.sql.ts` (all `.sql.ts` files one level deep in src subdirectories)
+- Migrations are output to `./src/migrations`
+- Uses PostgreSQL dialect

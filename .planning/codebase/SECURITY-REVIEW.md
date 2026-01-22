@@ -115,7 +115,7 @@ No known vulnerabilities found
   (intentional for cross-origin API)
 - **CORS configured:** Uses specific origin from env, not "\*"
 - **No debug logging:** Dashboard cleaned up
-- **Env validation:** Effect Config validates at import time
+- **Env validation:** t3-oss/env validates at import time
 
 ### Summary
 
@@ -140,7 +140,7 @@ No known vulnerabilities found
 **Reviewer:** Claude (agent) **Commit:** Phase 3.1 complete (03.1-01 through
 03.1-05) **Scope:**
 
-- packages/env/src/server.ts (secrets handling with Effect Config)
+- packages/env/src/server.ts (secrets handling with t3-oss/env)
 - packages/env/src/web.ts (web env config)
 - packages/core/src/auth/auth.service.ts (authentication)
 - packages/core/drizzle.config.ts (database config)
@@ -198,7 +198,7 @@ No known vulnerabilities found
 - **No secrets in git:** .env files properly gitignored, none tracked
 - **Parameterized queries:** Drizzle ORM used throughout
 - **CORS configured:** Uses specific origin from env, not "\*"
-- **Env validation:** Effect Config validates at import time, fails fast
+- **Env validation:** t3-oss/env validates at import time, fails fast
 
 ### Summary
 

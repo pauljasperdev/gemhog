@@ -14,16 +14,6 @@
   - Auth: API key in `GOOGLE_GENERATIVE_AI_API_KEY` env var
   - Endpoint: `POST /ai` (`apps/server/src/index.ts`)
 
-**Payment Processing:**
-
-- Polar.sh - Subscription billing and checkout
-  - SDK/Client: `@polar-sh/sdk`, `@polar-sh/better-auth`
-    (`packages/auth/package.json`)
-  - Auth: Access token in `POLAR_ACCESS_TOKEN` env var
-  - Features: Product checkout, customer portal
-  - Client setup: `packages/auth/src/lib/payments.ts`
-  - Better-Auth plugin: `packages/auth/src/index.ts`
-
 ## Data Storage
 
 **Databases:**
@@ -143,7 +133,6 @@ These integrations will be implemented after V0 foundation is complete.
   - `BETTER_AUTH_SECRET` - Auth encryption
   - `CORS_ORIGIN` - Allowed origins
   - `GOOGLE_GENERATIVE_AI_API_KEY` - AI features
-  - `POLAR_ACCESS_TOKEN` - Payments
   - `NEXT_PUBLIC_SERVER_URL` - API base URL
 - Secrets location: `apps/server/.env`, `apps/web/.env`
 - Local database: Docker Compose (`packages/db/docker-compose.yml`)
@@ -164,7 +153,7 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Outgoing:**
 
-- Polar checkout success URL: `POLAR_SUCCESS_URL` env var
+- Not detected
 
 ## Communication Protocols
 
@@ -191,8 +180,6 @@ DATABASE_URL          # PostgreSQL connection string
 BETTER_AUTH_SECRET    # Auth encryption secret
 BETTER_AUTH_URL       # Auth callback URL
 CORS_ORIGIN           # Allowed CORS origins
-POLAR_ACCESS_TOKEN    # Polar API access token
-POLAR_SUCCESS_URL     # Checkout success redirect
 ```
 
 **Web (`packages/env/src/web.ts`):**

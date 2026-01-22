@@ -158,7 +158,6 @@ _Last synced from SECURITY-REVIEW.md: 2026-01-21_
 
 **Missing setup documentation:**
 
-- Polar integration setup not documented
 - `GOOGLE_GENERATIVE_AI_API_KEY` requirement not documented in README
 - Environment variable purposes not explained
 

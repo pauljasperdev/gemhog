@@ -1,7 +1,7 @@
 ---
 path: /home/lima/repo/packages/core/src/auth/auth.service.ts
 type: service
-updated: 2026-01-21
+updated: 2026-01-22
 status: active
 ---
 
@@ -9,22 +9,21 @@ status: active
 
 ## Purpose
 
-Configures and exposes the better-auth authentication instance with PostgreSQL/Drizzle integration. Provides a lazy singleton pattern with deferred environment loading to support unit testing without requiring environment variables.
+Provides authentication services using better-auth with PostgreSQL/Drizzle ORM. Implements a lazy singleton pattern for the auth instance to defer initialization until first use.
 
 ## Exports
 
-- `getAuth()` - Returns the lazy-initialized better-auth instance singleton
-- `auth` - Proxy object providing backward-compatible access to the auth instance
-- `getSession(headers: Headers)` - Async helper to retrieve session from request headers
+- `getAuth` — Returns the singleton better-auth instance, creating it on first call
+- `auth` — Proxy object providing backward-compatible access to the auth instance properties
+- `getSession` — Async helper function to retrieve session from request headers
 
 ## Dependencies
 
-- [[auth-sql]] - Database schema for authentication tables
-- better-auth - Authentication library
-- better-auth/adapters/drizzle - Drizzle ORM adapter for better-auth
-- drizzle-orm/node-postgres - PostgreSQL driver for Drizzle
-- effect (Redacted) - Used to safely unwrap redacted DATABASE_URL
-- @gemhog/env/server - Environment configuration (dynamically imported)
+- [[home-lima-repo-packages-env-src-server]] — Environment variables (DATABASE_URL, CORS_ORIGIN)
+- [[home-lima-repo-packages-core-src-auth-auth-sql]] — Database schema for auth tables
+- better-auth — Authentication framework
+- better-auth/adapters/drizzle — Drizzle ORM adapter for better-auth
+- drizzle-orm/node-postgres — PostgreSQL driver for Drizzle
 
 ## Used By
 
@@ -32,6 +31,6 @@ TBD
 
 ## Notes
 
-- Uses deferred `require()` for env import to enable unit tests to import this module without environment variables being set (per 03.1-03 decision)
-- Cookie configuration uses `sameSite: "none"`, `secure: true`, `httpOnly: true` for cross-origin authentication
-- The `auth` proxy allows direct property access while maintaining lazy initialization
+- Uses lazy singleton pattern to avoid initialization at module load time (important for environments where DATABASE_URL may not be available immediately)
+- Proxy pattern on `auth` export allows transparent access to auth methods while maintaining lazy initialization
+- Cookie configuration uses `sameSite: "none"` with `secure: true` for cross-origin auth support
