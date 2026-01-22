@@ -17,6 +17,7 @@ export const web = new sst.aws.Nextjs("Web", {
   environment: {
     NEXT_PUBLIC_SERVER_URL: isPermanentStage ? `https://${domainApi}` : api.url,
     DATABASE_URL: secrets.DatabaseUrl.value,
+    DATABASE_URL_POOLER: secrets.DatabaseUrlPooler.value,
     BETTER_AUTH_SECRET: secrets.BetterAuthSecret.value,
     BETTER_AUTH_URL: isPermanentStage ? `https://${domainApi}` : api.url,
     CORS_ORIGIN: `https://${domain}`,

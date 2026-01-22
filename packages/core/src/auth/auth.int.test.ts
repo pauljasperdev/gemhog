@@ -18,6 +18,10 @@ const TEST_ENV = {
   DATABASE_URL:
     process.env.DATABASE_URL ??
     "postgresql://postgres:password@localhost:5432/gemhog",
+  DATABASE_URL_POOLER:
+    process.env.DATABASE_URL_POOLER ??
+    process.env.DATABASE_URL ??
+    "postgresql://postgres:password@localhost:5432/gemhog",
   BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
   BETTER_AUTH_URL: "http://localhost:3000",
   CORS_ORIGIN: "http://localhost:3001",

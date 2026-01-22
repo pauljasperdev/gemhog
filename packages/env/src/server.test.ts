@@ -37,11 +37,17 @@ describe("server env validation", () => {
       delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
       await expect(import("./server.js")).rejects.toThrow();
     });
+
+    it("should fail when DATABASE_URL_POOLER is missing", async () => {
+      delete process.env.DATABASE_URL_POOLER;
+      await expect(import("./server.js")).rejects.toThrow();
+    });
   });
 
   describe("valid config", () => {
     it("should succeed with all required vars", async () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.CORS_ORIGIN = "http://localhost:3001";
@@ -56,6 +62,7 @@ describe("server env validation", () => {
 
     it("should default NODE_ENV to 'development' when not provided", async () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.CORS_ORIGIN = "http://localhost:3001";
@@ -69,6 +76,7 @@ describe("server env validation", () => {
 
     it("should use provided NODE_ENV when specified", async () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.CORS_ORIGIN = "http://localhost:3001";
