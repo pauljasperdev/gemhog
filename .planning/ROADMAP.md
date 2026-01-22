@@ -227,11 +227,17 @@ Plans:
 1. Application deploys to AWS via `sst deploy`
 2. Application code has zero SST SDK imports
 3. Application reads all configuration from environment variables
-4. SST injects env vars at deploy time **Plans**: TBD
+4. SST injects env vars at deploy time
+
+**Plans**: 5 plans in 3 waves
 
 Plans:
 
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Install dependencies + fix GOOGLE_GENERATIVE_AI_API_KEY env gap
+- [ ] 04-02-PLAN.md — Create sst.config.ts and infra/secrets.ts, infra/neon.ts
+- [ ] 04-03-PLAN.md — Refactor Hono server (app.ts, lambda.ts, serve.ts)
+- [ ] 04-04-PLAN.md — Create infra/api.ts and infra/web.ts components
+- [ ] 04-05-PLAN.md — Deployment verification (checkpoint)
 
 ### Phase 5: Agent Verification
 
@@ -265,5 +271,5 @@ Plans:
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
 | 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
 | 3.4 Integration Test Coverage      | 7/7            | ✓ Complete  | 2026-01-22 |
-| 4. SST Deployment                  | 0/?            | Not started | -          |
+| 4. SST Deployment                  | 0/5            | In Progress | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
