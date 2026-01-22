@@ -36,6 +36,7 @@
 **Testing:**
 
 - Vitest 4.0.17 - Unit and integration testing (`vitest.config.ts`)
+- @effect/vitest 0.27 - Effect layer testing (`packages/core`)
 - Playwright 1.57.0 - E2E testing (`playwright.config.ts`)
 
 **Build/Dev:**

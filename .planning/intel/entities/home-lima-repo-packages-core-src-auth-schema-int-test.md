@@ -9,7 +9,7 @@ status: active
 
 ## Purpose
 
-Integration tests for the Drizzle auth schema definitions via typed CRUD operations. Verifies that schema tables (user, session, account, verification) work correctly with direct database operations, independent of better-auth.
+Integration tests for auth schema CRUD operations using Drizzle ORM with Effect layers. Verifies that the drizzle schema definitions work correctly independent of better-auth by testing typed CRUD operations directly against PostgreSQL.
 
 ## Exports
 
@@ -17,12 +17,13 @@ None
 
 ## Dependencies
 
-- [[auth.sql]] - Auth schema table definitions (user, session, account, verification)
-- [[test-fixtures]] - Test utilities including truncateAuthTables helper
-- drizzle-orm - ORM query builder and operators
-- drizzle-orm/node-postgres - PostgreSQL adapter for Drizzle
-- pg - PostgreSQL client (Pool)
-- vitest - Test framework
+- [[auth.sql]] (user, account, session, verification tables)
+- @effect/sql-drizzle/Pg (PgDrizzle database access)
+- @effect/sql-pg (PgClient layer)
+- @effect/vitest (Effect-aware test utilities)
+- drizzle-orm (eq query builder)
+- effect (Effect, Layer, Redacted)
+- vitest (describe)
 
 ## Used By
 
@@ -30,7 +31,7 @@ TBD
 
 ## Notes
 
-- Uses direct Drizzle API instead of Effect layer since it's testing schema definitions themselves
-- Requires running PostgreSQL database (uses DATABASE_URL env var or localhost default)
-- Truncates auth tables before each test for isolation
-- Tests CRUD operations, unique constraints, and foreign key relationships across auth tables
+- Uses explicit DATABASE_URL environment variable with fallback to local postgres connection
+- Creates test-specific Effect layers (TestPgLive, TestDrizzleLive) to bypass Config.redacted
+- Includes truncateAuthTables helper that clears tables in correct order respecting foreign key constraints (session → account → verification → user)
+- Tests cover: user insert/query, unique email constraint enforcement, and related table operations
