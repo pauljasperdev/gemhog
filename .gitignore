@@ -39,6 +39,9 @@ lerna-debug.log*
 # Better-T-Stack
 .alchemy
 
+# SST
+.sst
+
 # Testing
 coverage
 .nyc_output
