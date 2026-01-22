@@ -9,12 +9,12 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (urgent 
 
 ## Current Position
 
-Phase: 3.4 of 8 (Integration Test Coverage) - NOT STARTED
-Plan: 0/? plans
-Status: Phase inserted - needs planning
-Last activity: 2026-01-22 - Inserted Phase 3.4 for integration test coverage gaps
+Phase: 3.4 of 8 (Integration Test Coverage) - IN PROGRESS
+Plan: 2/4 plans
+Status: Executing Wave 1
+Last activity: 2026-01-22 - Completed 03.4-02-PLAN.md (@effect/vitest for connection tests)
 
-Progress: ███████████████ ~85% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete)
+Progress: ████████████████░░░ ~88% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4-01 + 3.4-02 complete)
 
 ## Performance Metrics
 
@@ -129,6 +129,9 @@ affecting current work:
 | No redaction in t3-env                                        | Server vars never exposed to client, acceptable tradeoff           | 03.3-01                         |
 | vi.resetModules + dynamic import for env testing              | Tests manipulate process.env and reimport module for isolation     | 03.3-01                         |
 | Explicit runtimeEnv destructuring for Next.js                 | Must use explicit access for build-time inlining to work           | 03.3-02                         |
+| Use dotenv directly in drizzle.config.ts                      | drizzle-kit only needs DATABASE_URL, not full env validation       | 03.4-01                         |
+| Use PgClient.layer() over layerConfig() for tests             | layerConfig() requires ConfigProvider; layer() accepts direct config | 03.4-02                         |
+| Use Redacted.make() for URL in test layer                     | PgClient expects Redacted type for url field                        | 03.4-02                         |
 
 ### Pending Todos
 
@@ -366,10 +369,35 @@ Unifying env validation with t3-env - COMPLETE:
 - vi.resetModules + process.env mutation for env schema testing
 - Plain string access for env vars (no Redacted.value())
 
+## Phase 3.4 Summary (In Progress)
+
+Integration test coverage - IN PROGRESS:
+
+| Plan    | Summary                                          | Duration | Status   |
+| ------- | ------------------------------------------------ | -------- | -------- |
+| 03.4-01 | Fix db:migrate env loading                       | 2 min    | Complete |
+| 03.4-02 | Update connection tests to use @effect/vitest    | 3 min    | Complete |
+| 03.4-03 | Auth flow integration tests                      | -        | Pending  |
+| 03.4-04 | tRPC procedure tests                             | -        | Pending  |
+
+**Completed:**
+
+- Fixed drizzle.config.ts to use dotenv directly (only needs DATABASE_URL)
+- Refactored connection.int.test.ts to use @effect/vitest layer() pattern
+- Added @effect/vitest ^0.27.0 as devDependency
+- Tests use PgClient.layer() with explicit URL for test isolation
+- Tests use SqlClient.SqlClient for Effect-based queries
+
+**Patterns Established:**
+
+- @effect/vitest layer() for Effect test context
+- PgClient.layer() with Redacted.make() for test isolation
+- SqlClient.SqlClient for Effect-based database queries
+
 ## Session Continuity
 
-Last session: 2026-01-22T12:45:00Z
-Stopped at: Completed 03.3-02-PLAN.md (Phase 3.3 complete - unified env validation)
+Last session: 2026-01-22T16:42:00Z
+Stopped at: Completed 03.4-02-PLAN.md (@effect/vitest for connection tests)
 Resume file: None
 
-Next: Phase 3.4 (Integration Test Coverage) - needs planning
+Next: 03.4-03 (Auth flow integration tests)
