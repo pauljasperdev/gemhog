@@ -2,12 +2,11 @@ import { env } from "@gemhog/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Redacted } from "effect";
 import * as schema from "./auth.sql";
 
 // Create better-auth instance
 const createAuth = () => {
-  const db = drizzle(Redacted.value(env.DATABASE_URL), { schema });
+  const db = drizzle(env.DATABASE_URL, { schema });
 
   return betterAuth({
     database: drizzleAdapter(db, { provider: "pg", schema }),
