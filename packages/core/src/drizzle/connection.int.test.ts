@@ -1,37 +1,37 @@
 // packages/core/src/drizzle/connection.int.test.ts
 
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { SqlClient } from "@effect/sql";
+import { PgClient } from "@effect/sql-pg";
+import { expect, layer } from "@effect/vitest";
+import { Effect, Redacted } from "effect";
+import { describe } from "vitest";
+
+// Test layer with explicit URL (bypasses Config.redacted)
+// Uses PgClient.layer() instead of PgClient.layerConfig() for test isolation
+const TestPgLive = PgClient.layer({
+  url: Redacted.make(
+    process.env.DATABASE_URL ??
+      "postgresql://postgres:password@localhost:5432/gemhog",
+  ),
+});
 
 describe("database connection", () => {
-  let pool: pg.Pool;
-  let db: ReturnType<typeof drizzle>;
+  layer(TestPgLive)("Effect layer", (it) => {
+    it.effect("should connect and execute query", () =>
+      Effect.gen(function* () {
+        const sql = yield* SqlClient.SqlClient;
+        const result = yield* sql`SELECT 1 as value`;
+        expect(result[0]?.value).toBe(1);
+      }),
+    );
 
-  beforeAll(() => {
-    const connectionString =
-      process.env.DATABASE_URL ||
-      "postgresql://postgres:password@localhost:5432/gemhog";
-
-    pool = new pg.Pool({ connectionString });
-    db = drizzle(pool);
-  });
-
-  afterAll(async () => {
-    await pool.end();
-  });
-
-  it("should connect and execute a query", async () => {
-    const result = await db.execute(sql`SELECT 1 as value`);
-    expect(result.rows[0]).toEqual({ value: 1 });
-  });
-
-  it("should return current timestamp", async () => {
-    const result = await db.execute(sql`SELECT NOW() as now`);
-    // biome-ignore lint/style/noNonNullAssertion: SELECT NOW() always returns one row
-    const row = result.rows[0]!;
-    // Raw SQL returns timestamp as string, verify it's a valid parseable date
-    expect(new Date(row.now as string).getTime()).not.toBeNaN();
+    it.effect("should return current timestamp", () =>
+      Effect.gen(function* () {
+        const sql = yield* SqlClient.SqlClient;
+        const result = yield* sql`SELECT NOW() as now`;
+        // @effect/sql-pg parses timestamp to Date
+        expect(result[0]?.now).toBeInstanceOf(Date);
+      }),
+    );
   });
 });
