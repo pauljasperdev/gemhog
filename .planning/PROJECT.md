@@ -54,6 +54,9 @@ deployable. No external product integrations yet.
 - Core package consolidation
   - Merge db + auth into `packages/core` with domain-driven structure
 - Effect TS integration for backend (testability, dependency injection)
+  - **Effect boundary:** All backend code uses Effect except auth. better-auth
+    has no Effect wrapper and is HTTP-boundary code where Effect adds no value.
+    Auth remains plain; revisit if Effect wrapper emerges.
 
 ### V1 (Deferred) — Features
 
