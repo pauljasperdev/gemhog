@@ -15,8 +15,9 @@ export default $config({
   },
   async run() {
     // Dynamic imports for infra modules
-    const secrets = await import("./infra/secrets");
-    const neon = await import("./infra/neon");
+    // These modules are imported for side effects (registering SST resources)
+    const _secrets = await import("./infra/secrets");
+    const _neon = await import("./infra/neon");
     const api = await import("./infra/api");
     const web = await import("./infra/web");
 
