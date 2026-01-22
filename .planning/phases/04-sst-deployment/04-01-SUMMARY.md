@@ -26,16 +26,19 @@ key-files:
     - packages/env/src/server.test.ts
     - package.json
     - pnpm-lock.yaml
+    - vitest.config.ts
 
 key-decisions:
   - "hono/aws-lambda built into hono package, not separate @hono/aws-lambda"
   - "Test mocks must include all required env vars from schema"
+  - "fileParallelism: false for database test isolation"
 
 patterns-established:
   - "All env vars in server schema must be added to vi.mock for @gemhog/env/server"
+  - "Database integration tests require fileParallelism: false to prevent race conditions"
 
 # Metrics
-duration: 7min
+duration: 10min
 completed: 2026-01-22
 ---
 
@@ -45,11 +48,11 @@ completed: 2026-01-22
 
 ## Performance
 
-- **Duration:** 7 min
+- **Duration:** 10 min
 - **Started:** 2026-01-22T19:48:52Z
-- **Completed:** 2026-01-22T19:55:38Z
+- **Completed:** 2026-01-22T19:58:50Z
 - **Tasks:** 2
-- **Files modified:** 6
+- **Files modified:** 7
 
 ## Accomplishments
 
@@ -64,6 +67,7 @@ Each task was committed atomically:
 
 1. **Task 1: Add GOOGLE_GENERATIVE_AI_API_KEY to env validation** - `25ea807` (feat)
 2. **Task 2: Install SST and Hono Lambda dependencies** - `3e42bd4` (chore)
+3. **Bug fix: Database test race condition** - `035b6ff` (fix)
 
 ## Files Created/Modified
 
@@ -73,6 +77,7 @@ Each task was committed atomically:
 - `packages/core/src/auth/auth.int.test.ts` - Added env var to mock
 - `package.json` - Added sst ^3.17 devDependency
 - `pnpm-lock.yaml` - Lockfile update
+- `vitest.config.ts` - Added fileParallelism: false
 
 ## Decisions Made
 
@@ -99,10 +104,21 @@ Each task was committed atomically:
 - **Verification:** All 40 tests pass
 - **Committed in:** 3e42bd4 (Task 2 commit)
 
+**2. [Rule 1 - Bug] Fixed database test race condition**
+
+- **Found during:** Post-commit verification
+- **Issue:** Integration tests running in parallel caused race conditions - better-auth
+  signup failed with "foreign key constraint violation" because session insert occurred
+  before user insert committed when tests ran concurrently
+- **Fix:** Added `fileParallelism: false` to vitest.config.ts to run test files sequentially
+- **Files modified:** vitest.config.ts
+- **Verification:** All 40 tests pass reliably
+- **Committed in:** 035b6ff
+
 ---
 
-**Total deviations:** 1 auto-fixed (1 bug)
-**Impact on plan:** Essential fix for test correctness. No scope creep.
+**Total deviations:** 2 auto-fixed (2 bugs)
+**Impact on plan:** Essential fixes for test reliability. No scope creep.
 
 ## Issues Encountered
 

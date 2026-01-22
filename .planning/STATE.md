@@ -21,8 +21,8 @@ Progress: ██████████████████░░ ~91% (Pha
 **Velocity:**
 
 - Total plans completed: 39
-- Average duration: 4.4 min
-- Total execution time: 180 min
+- Average duration: 4.5 min
+- Total execution time: 183 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: ██████████████████░░ ~91% (Pha
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
 | 3.4. Integration Test Coverage| 7/7   | 46 min | 6.6 min  |
-| 4. SST Deployment             | 1/5   | 7 min  | 7.0 min  |
+| 4. SST Deployment             | 1/5   | 10 min | 10.0 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (7 min)
+- Last 5 plans: 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (10 min)
 
 ## Accumulated Context
 
@@ -146,6 +146,7 @@ affecting current work:
 | Effect.either for constraint violation tests                  | Captures expected errors without throwing, check result._tag            | 03.4-07                         |
 | hono/aws-lambda built into hono package                       | Not a separate @hono/aws-lambda package; use import from hono/aws-lambda| 04-01                           |
 | Test mocks must include all required env vars                 | When adding new env vars to server schema, update all vi.mock calls     | 04-01                           |
+| fileParallelism: false for database tests                     | Database integration tests cause race conditions when run in parallel   | 04-01                           |
 
 ### Pending Todos
 
@@ -441,7 +442,7 @@ SST Deployment phase - IN PROGRESS:
 
 | Plan    | Summary                                          | Duration | Status   |
 | ------- | ------------------------------------------------ | -------- | -------- |
-| 04-01   | SST dependencies and env validation fix          | 7 min    | Complete |
+| 04-01   | SST dependencies and env validation fix          | 10 min   | Complete |
 | 04-02   | SST config and infra structure                   | -        | Pending  |
 | 04-03   | Lambda handler with streaming                    | -        | Pending  |
 | 04-04   | Next.js deployment config                        | -        | Pending  |
@@ -453,6 +454,7 @@ SST Deployment phase - IN PROGRESS:
 - Installed sst ^3.17 as devDependency
 - Verified hono/aws-lambda adapter available (built into hono)
 - Fixed auth test mocks to include new required env var
+- Fixed database test race condition with fileParallelism: false
 
 ## Session Continuity
 
