@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769082145671,
+  "updated": 1769097190005,
   "naming": {},
   "directories": {
     "components": {
@@ -31,7 +31,7 @@
     },
     ".test.ts": {
       "purpose": "Test files",
-      "count": 6
+      "count": 8
     }
   }
 }
