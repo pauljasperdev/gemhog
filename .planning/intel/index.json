@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769097190005,
+  "updated": 1769106381074,
   "files": {
     "/home/lima/repo/apps/server/src/index.ts": {
       "exports": [],
@@ -585,7 +585,7 @@
       "imports": [
         "@playwright/test"
       ],
-      "indexed": 1768986329700
+      "indexed": 1769106381074
     },
     "/home/lima/repo/vitest.config.ts": {
       "exports": [
@@ -671,6 +671,47 @@
         "./test-fixtures"
       ],
       "indexed": 1769097190005
+    },
+    "/home/lima/repo/packages/core/src/auth/schema.int.test.ts": {
+      "exports": [],
+      "imports": [
+        "drizzle-orm",
+        "drizzle-orm/node-postgres",
+        "pg",
+        "vitest",
+        "./auth.sql",
+        "./test-fixtures"
+      ],
+      "indexed": 1769106008354
+    },
+    "/home/lima/repo/apps/web/tests/e2e/auth.e2e.test.ts": {
+      "exports": [],
+      "imports": [
+        "./fixtures"
+      ],
+      "indexed": 1769106075539
+    },
+    "/home/lima/repo/apps/web/src/startup.int.test.ts": {
+      "exports": [],
+      "imports": [
+        "node:child_process",
+        "node:fs",
+        "node:os",
+        "node:path",
+        "node:util",
+        "vitest"
+      ],
+      "indexed": 1769106146769
+    },
+    "/home/lima/repo/apps/server/src/startup.int.test.ts": {
+      "exports": [],
+      "imports": [
+        "node:child_process",
+        "node:path",
+        "node:util",
+        "vitest"
+      ],
+      "indexed": 1769106234168
     }
   }
 }

@@ -1,7 +1,7 @@
 ---
 path: /home/lima/repo/apps/web/src/startup.int.test.ts
 type: test
-updated: 2026-01-21
+updated: 2026-01-22
 status: active
 ---
 
@@ -9,7 +9,7 @@ status: active
 
 ## Purpose
 
-Integration tests for web app startup failure scenarios. Tests that the Next.js build process fails fast with clear error messages when required environment variables are missing.
+Integration test that verifies the Next.js build fails appropriately when required environment variables are missing. Uses a temporary directory with symlinks to isolate the build from the project's `.env` file.
 
 ## Exports
 
@@ -17,11 +17,12 @@ None
 
 ## Dependencies
 
-- node:child_process (spawn)
+- node:child_process (exec)
 - node:fs
 - node:os
 - node:path
-- vitest (describe, expect, it, beforeEach, afterEach)
+- node:util (promisify)
+- vitest (test framework)
 
 ## Used By
 
@@ -29,7 +30,7 @@ TBD
 
 ## Notes
 
-- Tests build process rather than dev server because build validates env at startup via next.config.ts importing @gemhog/env/web
-- Creates a temp directory with symlinks to all web app files EXCEPT .env to test missing env var scenarios
-- Next.js automatically reads .env files from the project directory, so the symlink approach isolates the test from existing env files
-- Uses `next build` spawned as a child process with controlled environment variables
+- Creates a temporary directory with symlinks to essential files (src, node_modules, configs) while excluding `.env`
+- Uses 60-second timeout due to Next.js build duration
+- Tests that `NEXT_PUBLIC_SERVER_URL` is validated at build time
+- Cleanup happens in `afterEach` to remove temp directories

@@ -1,26 +1,19 @@
-# Codebase Intelligence
+# Codebase Intelligence Summary
 
-**Indexed entities:** 51
-**Last updated:** 2026-01-22
+Last updated: 2026-01-22T18:26:21.075Z
+Indexed files: 63
 
-## Dependency Hotspots
+## Key Directories
 
-Files with most dependents (change carefully):
-1. `/home/lima/repo/apps/web/src/components/ui/button.tsx` (5 dependents) [component]
-1. `/home/lima/repo/apps/web/src/lib/auth-client.ts` (5 dependents) [service]
-1. `/home/lima/repo/apps/web/src/lib/utils.ts` (3 dependents) [util]
-1. `/home/lima/repo/apps/web/src/utils/trpc.ts` (3 dependents) [service]
-1. `/home/lima/repo/packages/env/src/server.ts` (3 dependents) [config]
+- `components/`: UI components (16 files)
+- `lib/`: Utility functions (2 files)
+- `utils/`: Utility functions (1 files)
+- `tests/`: Test files (3 files)
+- `api/`: API endpoints (5 files)
 
-## Module Types
+## File Patterns
 
-- **Component**: 16 files
-- **Test**: 9 files
-- **Service**: 6 files
-- **Config**: 6 files
-- **Api**: 5 files
-- **Model**: 4 files
-- **Module**: 3 files
-- **Util**: 2 files
+- `*.config.ts`: Configuration (10 files)
+- `*.test.ts`: Test files (12 files)
 
-**Relationships tracked:** 65
+Total exports: 82
