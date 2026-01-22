@@ -24,8 +24,8 @@ features.
       with Effect TS ✓
 - [x] **Phase 3.1: Code Review Fixes** - Address code review findings (INSERTED)
       ✓
-- [x] **Phase 3.2: Code Quality & TDD Practices** - Dead code cleanup, test
-      coverage, TDD guidance (INSERTED) ✓
+- [ ] **Phase 3.2: Code Quality & TDD Practices** - Dead code cleanup, test
+      coverage, TDD guidance (INSERTED)
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -154,7 +154,8 @@ Criteria** (what must be TRUE):
 5. E2E tests navigate to app pages and fail when app errors (TDD: red first)
 6. TESTING.md documents TDD practices (write failing test first, then fix)
 7. CONVENTIONS.md documents comment standards (explain why, not what was done)
-   **Plans**: 5 plans
+8. packages/env/src/web.ts uses Effect Config (consistent with server.ts)
+   **Plans**: 6 plans
 
 Plans:
 
@@ -163,6 +164,7 @@ Plans:
 - [x] 03.2-03-PLAN.md — E2E error detection fixture
 - [x] 03.2-04-PLAN.md — TDD and comment standards documentation
 - [x] 03.2-05-PLAN.md — Server/web startup failure integration tests
+- [ ] 03.2-06-PLAN.md — Restore Effect Config in web.ts (gap closure)
 
 ### Phase 4: SST Deployment
 
@@ -208,6 +210,6 @@ Plans:
 | 2. Security Workflow               | 1/1            | ✓ Complete  | 2026-01-19 |
 | 3. Core Consolidation              | 5/5            | ✓ Complete  | 2026-01-20 |
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
-| 3.2 Code Quality & TDD Practices   | 5/5            | ✓ Complete  | 2026-01-21 |
+| 3.2 Code Quality & TDD Practices   | 5/6            | In Progress | -          |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
