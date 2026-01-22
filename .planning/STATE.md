@@ -10,19 +10,19 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (gap clo
 ## Current Position
 
 Phase: 3.4 of 8 (Integration Test Coverage) - GAP CLOSURE
-Plan: 5/7 plans (2 gap closure pending)
+Plan: 6/7 plans (1 gap closure pending)
 Status: Executing gap closure plans
-Last activity: 2026-01-22 - Completed 03.4-07 schema CRUD integration tests
+Last activity: 2026-01-22 - Completed 03.4-05-PLAN.md (E2E auth tests)
 
-Progress: █████████████████░░░ ~88% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete, 3.4 in gap closure)
+Progress: █████████████████░░░ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete, 3.4 gap closure 2/3)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 36
+- Total plans completed: 37
 - Average duration: 4.2 min
-- Total execution time: 158 min
+- Total execution time: 162 min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: █████████████████░░░ ~88% (Pha
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
-| 3.4. Integration Test Coverage| 5/7   | 31 min | 6.2 min  |
+| 3.4. Integration Test Coverage| 6/7   | 35 min | 5.8 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-01 (2 min), 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min), 03.4-07 (4 min)
+- Last 5 plans: 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-07 (4 min)
 
 ## Accumulated Context
 
@@ -137,6 +137,7 @@ affecting current work:
 | Dynamic import after vi.mock setup                            | Required for mock to take effect before module initialization       | 03.4-03                         |
 | better-auth returns { token, user } not { session, user }     | Corrected from original assumption during test implementation       | 03.4-03                         |
 | Use createCallerFactory for tRPC v11 testing                  | Modern pattern, deprecated createCaller still works but not recommended | 03.4-04                         |
+| Form-scoped selectors for E2E button clicks                   | Avoids conflicts with navbar buttons that have same text                | 03.4-05                         |
 
 ### Pending Todos
 
@@ -384,6 +385,7 @@ Integration test coverage - COMPLETE:
 | 03.4-02 | Update connection tests to use @effect/vitest    | 3 min    | Complete |
 | 03.4-03 | Auth flow integration tests                      | 21 min   | Complete |
 | 03.4-04 | tRPC procedure tests                             | 1 min    | Complete |
+| 03.4-05 | E2E auth tests (gap closure)                     | 4 min    | Complete |
 | 03.4-07 | Schema CRUD integration tests (gap closure)      | 4 min    | Complete |
 
 **Completed:**
@@ -399,6 +401,7 @@ Integration test coverage - COMPLETE:
 - Placeholder example.test.ts removed
 - Schema CRUD tests for auth.sql.ts definitions (user, session, account, verification)
 - Constraint verification (unique email, foreign keys)
+- E2E Playwright tests for signup and signin UI flows (4 tests)
 
 **Patterns Established:**
 
@@ -409,20 +412,23 @@ Integration test coverage - COMPLETE:
 - Test fixtures live with their domain (auth/test-fixtures.ts)
 - createCallerFactory pattern for tRPC v11 testing
 - Direct drizzle typed API for schema definition testing (separate from Effect layer)
+- Form-scoped E2E selectors to avoid navbar button conflicts
+- Unique email generation per E2E test for isolation
 
-**Integration Test Coverage:**
+**Integration/E2E Test Coverage:**
 
-- 7 test files, 25 tests total
+- 8 test files, 29 tests total (17 integration + 6 E2E + 6 unit)
 - apps/server: startup failure tests (4 tests)
 - apps/web: startup failure test (1 test)
 - packages/core/drizzle: connection tests (2 tests), migration tests (2 tests)
 - packages/core/auth: auth flow tests (5 tests), schema CRUD tests (8 tests)
 - packages/api: tRPC procedure tests (3 tests)
+- apps/web/tests/e2e: auth E2E tests (4 tests), homepage E2E tests (2 tests)
 
 ## Session Continuity
 
-Last session: 2026-01-22T18:22:34Z
-Stopped at: Completed 03.4-07-PLAN.md (schema CRUD integration tests)
+Last session: 2026-01-22T18:22:27Z
+Stopped at: Completed 03.4-05-PLAN.md (E2E auth tests)
 Resume file: None
 
 Next: 03.4-05 (E2E auth flow tests) or 03.4-06 (startup test simplification)
