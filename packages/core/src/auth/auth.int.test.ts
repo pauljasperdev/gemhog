@@ -21,6 +21,7 @@ const TEST_ENV = {
   BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
   BETTER_AUTH_URL: "http://localhost:3000",
   CORS_ORIGIN: "http://localhost:3001",
+  GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
   NODE_ENV: "test" as const,
 };
 
