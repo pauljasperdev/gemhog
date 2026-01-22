@@ -1,7 +1,7 @@
 ---
 path: /home/lima/repo/packages/env/src/server.ts
 type: config
-updated: 2026-01-21
+updated: 2026-01-22
 status: active
 ---
 
@@ -9,17 +9,18 @@ status: active
 
 ## Purpose
 
-Server-side environment configuration using Effect's Config system. Validates required environment variables at import time, failing fast if any are missing.
+Defines and validates server-side environment variables using t3-env with Zod schemas. Ensures all required environment variables are present and correctly typed at runtime.
 
 ## Exports
 
-- `env` - Validated server environment configuration object containing DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, CORS_ORIGIN, and NODE_ENV
+- `env` - Validated environment object containing DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, CORS_ORIGIN, and NODE_ENV
 - `ServerEnv` - TypeScript type representing the validated environment object
 
 ## Dependencies
 
-- `effect` - Effect library for typed configuration validation
-- `dotenv/config` - Loads environment variables from .env files
+- `@t3-oss/env-core` - Environment validation library
+- `zod` - Schema validation
+- `dotenv/config` - Loads .env files into process.env
 
 ## Used By
 
@@ -27,6 +28,7 @@ TBD
 
 ## Notes
 
-- Uses `Config.redacted()` for sensitive values (DATABASE_URL, BETTER_AUTH_SECRET) to prevent accidental logging
+- Automatically loads dotenv on import via side-effect import
+- `emptyStringAsUndefined: true` treats empty strings as missing values
 - NODE_ENV defaults to "development" if not specified
-- Validation runs synchronously at import time via `Effect.runSync()` - any missing required env vars will throw immediately
+- BETTER_AUTH_SECRET requires minimum 32 characters for security

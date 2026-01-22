@@ -1,7 +1,7 @@
 ---
 path: /home/lima/repo/packages/env/src/web.ts
 type: config
-updated: 2026-01-21
+updated: 2026-01-22
 status: active
 ---
 
@@ -9,16 +9,17 @@ status: active
 
 ## Purpose
 
-Defines and validates web/client-side environment variables using Effect's Config system. Ensures required environment variables are present at import time, failing fast if configuration is missing.
+Defines and validates client-side environment variables for the Next.js web application using t3-env. Provides type-safe access to public environment variables that are exposed to the browser.
 
 ## Exports
 
-- `env` - The validated environment configuration object containing `NEXT_PUBLIC_SERVER_URL`
-- `WebEnv` - TypeScript type representing the shape of the validated environment object
+- `env`: The validated environment object containing client-side environment variables (currently `NEXT_PUBLIC_SERVER_URL`)
+- `WebEnv`: TypeScript type representing the shape of the validated environment object
 
 ## Dependencies
 
-- effect (external) - Used for Config validation and Effect runtime
+- `@t3-oss/env-nextjs`: Framework for creating type-safe environment variable schemas in Next.js
+- `zod`: Schema validation library used to define environment variable types
 
 ## Used By
 
@@ -26,5 +27,6 @@ TBD
 
 ## Notes
 
-- Configuration is validated synchronously at import time via `Effect.runSync`, meaning the application will fail immediately if `NEXT_PUBLIC_SERVER_URL` is not set
-- Only exposes `NEXT_PUBLIC_*` prefixed variables, following Next.js convention for client-safe environment variables
+- Only includes `NEXT_PUBLIC_*` prefixed variables which are safe to expose to the client bundle
+- Uses `emptyStringAsUndefined: true` to treat empty strings as missing values for validation
+- The `NEXT_PUBLIC_SERVER_URL` is validated as a URL format using Zod's `z.url()` validator

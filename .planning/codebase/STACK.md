@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Updated:** 2026-01-20
+**Updated:** 2026-01-22
 
 ## Languages
 
@@ -37,7 +37,6 @@
 
 - Vitest 4.0.17 - Unit and integration testing (`vitest.config.ts`)
 - Playwright 1.57.0 - E2E testing (`playwright.config.ts`)
-- @effect/vitest 0.27 - Effect TS test utilities (`packages/core/`)
 
 **Build/Dev:**
 
@@ -77,20 +76,16 @@
 - Lucide React 0.546.0 - Icons (`apps/web/`)
 - Sonner 2.0.5 - Toast notifications (`apps/web/`)
 
-**Payment:**
-
-- @polar-sh/sdk 0.34.16 - Polar payment SDK (`packages/core/payment/`)
-- @polar-sh/better-auth 1.1.3 - Better Auth Polar plugin (`packages/core/`,
-  `apps/web/`)
-
 ## Configuration
 
 **Environment:**
 
-- t3-oss/env-core 0.13.1 - Environment validation (`packages/env/`)
+- @t3-oss/env-core 0.13.10 - Server env validation (`packages/env/`)
+- @t3-oss/env-nextjs 0.13.10 - Web env validation with Next.js support
+  (`packages/env/`)
 - Zod schemas for type-safe env vars
-- Server: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `POLAR_ACCESS_TOKEN`,
-  `CORS_ORIGIN`
+- Server: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CORS_ORIGIN`,
+  `NODE_ENV`
 - Client: `NEXT_PUBLIC_SERVER_URL`
 
 **Build:**
@@ -118,4 +113,4 @@
 
 ---
 
-_Updated: 2026-01-20_
+_Updated: 2026-01-22_

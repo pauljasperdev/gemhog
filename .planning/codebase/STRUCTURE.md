@@ -1,6 +1,6 @@
 # Codebase Structure
 
-**Updated:** 2026-01-20
+**Updated:** 2026-01-22
 
 ## Directory Layout
 
@@ -24,7 +24,7 @@ gemhog/
 │       └── package.json
 ├── packages/               # Shared internal libraries
 │   ├── api/               # tRPC router definitions
-│   ├── core/              # Domain-driven core (auth, payment, drizzle)
+│   ├── core/              # Domain-driven core (auth, drizzle)
 │   ├── env/               # Environment validation
 │   └── config/            # Shared TypeScript config
 ├── .planning/             # Planning documents (GSD)
@@ -71,21 +71,20 @@ gemhog/
 **packages/core/**
 
 - Purpose: Domain-driven core package (consolidated from db + auth)
-- Contains: Database layer, auth domain, payment domain
+- Contains: Database layer, auth domain
 - Key files:
   - `src/drizzle/index.ts` - Database client and Effect layers
   - `src/auth/index.ts` - Better-Auth config and AuthService
-  - `src/payment/index.ts` - Polar client and PaymentService
 - Subdirectories:
-  - `src/drizzle/` - Database connection, client, errors
+  - `src/drizzle/` - Database connection, client
   - `src/auth/` - Auth domain (service, schema, errors, mocks)
-  - `src/payment/` - Payment domain (service, errors, mocks)
+  - `src/migrations/` - Database migration files
 
 **packages/env/**
 
 - Purpose: Environment configuration
-- Contains: Zod-validated env schemas for different targets
-- Key files: `src/server.ts`, `src/web.ts`, `src/native.ts`
+- Contains: t3-env validated env schemas for server and web
+- Key files: `src/server.ts`, `src/web.ts`
 - Subdirectories: None
 
 ## Key File Locations
@@ -245,22 +244,18 @@ packages/core/
 ├── src/
 │   ├── drizzle/           # Database layer
 │   │   ├── client.ts      # Drizzle client instance
-│   │   ├── errors.ts      # Database errors (TaggedError)
 │   │   ├── index.ts       # Effect layers (DatabaseLive)
 │   │   └── connection.int.test.ts
 │   ├── auth/              # Auth domain
 │   │   ├── auth.sql.ts    # Drizzle schema (user, session, account, verification)
-│   │   ├── auth.service.ts  # Effect service (AuthService, AuthLive)
+│   │   ├── auth.service.ts  # Auth service with lazy singleton
 │   │   ├── auth.errors.ts   # Domain errors (TaggedError)
 │   │   ├── auth.mock.ts     # Mock layer for testing
 │   │   ├── auth.test.ts     # Unit tests
 │   │   └── index.ts         # Exports + Better-Auth config
-│   └── payment/           # Payment domain
-│       ├── payment.service.ts  # Effect service (PaymentService, PaymentLive)
-│       ├── payment.errors.ts   # Domain errors
-│       ├── payment.mock.ts     # Mock layer for testing
-│       ├── payment.test.ts     # Unit tests
-│       └── index.ts            # Exports + Polar client
+│   └── migrations/        # Database migrations
+│       ├── 0000_initial_schema.sql
+│       └── meta/_journal.json
 ├── docker-compose.yml     # Local PostgreSQL
 ├── drizzle.config.ts      # Schema glob: ./src/*/*.sql.ts
 └── package.json
@@ -269,9 +264,8 @@ packages/core/
 **Key Patterns:**
 
 - `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
-- Domain folders directly under `src/` (drizzle/, auth/, payment/)
-- Effect TS services with dependency injection via layers
-- Mock layers for testing (`AuthServiceTest`, `PaymentServiceTest`)
+- Domain folders directly under `src/` (drizzle/, auth/)
+- Lazy singleton pattern for better-auth instance
 - Co-located tests with `.test.ts` suffix
 
 **Export Paths:**
@@ -282,7 +276,6 @@ packages/core/
 | `@gemhog/core/drizzle`       | DB instance (explicit)             |
 | `@gemhog/core/auth`          | Auth instance + Better-Auth config |
 | `@gemhog/core/auth/auth.sql` | Raw schema tables                  |
-| `@gemhog/core/payment`       | Payment service + Polar client     |
 
 **Adding a New Domain:**
 
@@ -300,4 +293,4 @@ packages/core/
 
 ---
 
-_Updated: 2026-01-20_
+_Updated: 2026-01-22_

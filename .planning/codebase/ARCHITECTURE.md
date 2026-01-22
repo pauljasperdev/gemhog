@@ -1,7 +1,7 @@
 # Architecture
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-20 — Core package
-consolidation complete (Phase 03)
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-22 — Phase 03.1-03.3 cleanup
+(payment domain removed, t3-env unified)
 
 ## Pattern Overview
 
@@ -44,19 +44,19 @@ consolidation complete (Phase 03)
 **Core Layer:**
 
 - Purpose: Domain logic with Effect-based services, database, and schemas
-- Contains: Domain services (Auth, Payment), Drizzle schemas, Effect layers
+- Contains: Domain services (Auth), Drizzle schemas, Effect layers
 - Location: `packages/core/src/`
 - Structure:
-  - `drizzle/` — Database client, connection layer, errors
+  - `drizzle/` — Database client, connection layer
   - `auth/` — Authentication domain (service, schema, errors, mocks)
-  - `payment/` — Payment domain (service, errors, mocks)
-- Depends on: Env (DATABASE_URL, POLAR_ACCESS_TOKEN)
+  - `migrations/` — Database migration files
+- Depends on: Env (DATABASE_URL, BETTER_AUTH_SECRET)
 - Used by: Server, API procedures
 
 **Configuration Layer:**
 
 - Purpose: Environment validation and type-safe config
-- Contains: Zod schemas for env vars
+- Contains: t3-env validated env schemas for server and web
 - Location: `packages/env/src/`
 - Depends on: None
 - Used by: All layers
@@ -105,14 +105,14 @@ consolidation complete (Phase 03)
 **Effect Service:**
 
 - Purpose: Dependency-injected service with testable layers
-- Examples: `AuthService`, `PaymentService`
+- Examples: `AuthService`
   (`packages/core/src/auth/auth.service.ts`)
 - Pattern: Context.Tag + Layer for production, mock Layer for tests
 
 **Effect Layer:**
 
 - Purpose: Composable dependency providers
-- Examples: `AuthLive`, `PaymentLive`, `DatabaseLive` (`packages/core/src/`)
+- Examples: `DatabaseLive` (`packages/core/src/drizzle/`)
 - Pattern: `Layer.sync()` or `Layer.provide()` for composition
 
 **Tagged Error:**
@@ -145,7 +145,7 @@ consolidation complete (Phase 03)
 
 - Purpose: Client-side authentication operations
 - Examples: `authClient` (`apps/web/src/lib/auth-client.ts`)
-- Pattern: Better-Auth React client with Polar plugin
+- Pattern: Better-Auth React client
 
 ## Entry Points
 
@@ -179,12 +179,6 @@ consolidation complete (Phase 03)
 - Triggers: Session validation, sign-in/sign-out
 - Responsibilities: AuthService layer, Better-Auth configuration
 
-**Payment Domain:**
-
-- Location: `packages/core/src/payment/index.ts`
-- Triggers: Payment operations
-- Responsibilities: PaymentService layer, Polar SDK client
-
 ## Error Handling
 
 **Strategy:** Throw errors, catch at boundaries (route handlers, tRPC
@@ -204,8 +198,6 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 - Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`,
   `UnauthorizedError`
-- Database: `DatabaseError`, `ConnectionError`
-- Payment: `PaymentError`
 
 ## Cross-Cutting Concerns
 
@@ -244,29 +236,23 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Purpose: Testability, dependency injection, composable error handling
 - Scope: Core package services (`packages/core/`)
 - Implementation:
-  - `AuthService` with `AuthLive` layer
+  - Auth with lazy singleton pattern (plain functions, no Effect wrapper)
     (`packages/core/src/auth/auth.service.ts`)
-  - `PaymentService` with `PaymentLive` layer
-    (`packages/core/src/payment/payment.service.ts`)
   - `DatabaseLive` layer composing PgClient + Drizzle
     (`packages/core/src/drizzle/index.ts`)
-  - Mock layers for testing (`AuthServiceTest`, `PaymentServiceTest`)
-  - TaggedErrors for structured error handling across domains
-- Backward compatibility: Lazy proxy exports (`auth`, `polarClient`) for gradual
-  migration
+  - TaggedErrors for structured error handling
 
 **Core Package Consolidation — Completed Phase 03:**
 
 - Pattern: Merged `packages/db` + `packages/auth` → `packages/core`
 - Structure:
-  - `core/src/drizzle/` — Database client, connection, errors
-  - `core/src/auth/` — Auth domain (service, schema, errors, mocks)
-  - `core/src/payment/` — Payment domain (service, errors, mocks)
+  - `core/src/drizzle/` — Database client, connection
+  - `core/src/auth/` — Auth domain (service, schema, errors)
+  - `core/src/migrations/` — Database migration files
 - Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
 - Exports via `package.json`:
   - `@gemhog/core` → drizzle
   - `@gemhog/core/auth` → auth domain
-  - `@gemhog/core/payment` → payment domain
 - Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
   sibling folders when implementing V1 features
 
@@ -303,6 +289,6 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-20 — Phase 03 core
-consolidation complete, Effect TS implemented_ _Update when major patterns
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-22 — Phase 03.1-03.3
+cleanup (payment domain removed, t3-env unified)_ _Update when major patterns
 change_

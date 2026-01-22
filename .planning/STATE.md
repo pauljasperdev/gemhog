@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable,
-and deployable **Current focus:** Phase 3.3 Complete - Ready for Phase 4
+and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (urgent insertion)
 
 ## Current Position
 
-Phase: 3.3 of 7 (Unify Env Validation with t3-env) - COMPLETE
-Plan: 2/2 plans complete
-Status: Phase 03.3 complete - unified env validation with t3-env
-Last activity: 2026-01-22 - Completed 03.3-02 (web env uses t3-env)
+Phase: 3.4 of 8 (Integration Test Coverage) - NOT STARTED
+Plan: 0/? plans
+Status: Phase inserted - needs planning
+Last activity: 2026-01-22 - Inserted Phase 3.4 for integration test coverage gaps
 
-Progress: ███████████████ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete)
+Progress: ███████████████ ~85% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete)
 
 ## Performance Metrics
 
@@ -52,6 +52,8 @@ Progress: ███████████████ ~90% (Phase 1 + 1.1 + 2 
   dead code cleanup, test coverage gaps, TDD guidance in TESTING.md
 - Phase 3.3 inserted after Phase 3.2: Unify env validation with t3-env (URGENT) -
   replace mixed Effect Config/plain function with unified t3-env package
+- Phase 3.4 inserted after Phase 3.3: Integration test coverage (URGENT) -
+  fix db:migrate env loading, test Effect constructs, auth flows, migrations
 
 ### Decisions
 
@@ -370,4 +372,4 @@ Last session: 2026-01-22T12:45:00Z
 Stopped at: Completed 03.3-02-PLAN.md (Phase 3.3 complete - unified env validation)
 Resume file: None
 
-Next: Phase 4 (SST foundation)
+Next: Phase 3.4 (Integration Test Coverage) - needs planning
