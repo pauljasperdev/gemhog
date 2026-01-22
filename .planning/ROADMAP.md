@@ -26,6 +26,8 @@ features.
       ✓
 - [x] **Phase 3.2: Code Quality & TDD Practices** - Dead code cleanup, test
       coverage, TDD guidance (INSERTED) ✓
+- [ ] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
+      Config/plain function with t3-env (INSERTED)
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -169,10 +171,28 @@ Plans:
 - [x] 03.2-06-PLAN.md — Restore Effect Config in web.ts (gap closure) — Resolved:
       technically impossible, plain function correct
 
+### Phase 3.3: Unify Env Validation with t3-env (INSERTED)
+
+**Goal**: Replace mixed env validation (Effect Config for server, plain function
+for web) with unified t3-env across all packages **Depends on**: Phase 3.2 (code
+quality complete) **Requirements**: Derived from code review feedback **Success
+Criteria** (what must be TRUE):
+
+1. packages/env uses t3-env for both server.ts and web.ts
+2. Unified validation approach across server and client environments
+3. No mixed implementation (Effect Config + plain function)
+4. All existing tests pass with t3-env validation
+5. Type-safe environment variables with proper inference **Plans**: 2 plans
+
+Plans:
+
+- [ ] 03.3-01-PLAN.md — Server env migration (t3-env, tests, consumers)
+- [ ] 03.3-02-PLAN.md — Web env migration (t3-env, tests, verification)
+
 ### Phase 4: SST Deployment
 
-**Goal**: Deploy SST-agnostic application to AWS **Depends on**: Phase 3.2 (code
-quality and TDD practices complete) **Requirements**: INFRA-01, INFRA-02
+**Goal**: Deploy SST-agnostic application to AWS **Depends on**: Phase 3.3 (env
+validation unified) **Requirements**: INFRA-01, INFRA-02
 **Success Criteria** (what must be TRUE):
 
 1. Application deploys to AWS via `sst deploy`
@@ -204,7 +224,7 @@ Plans:
 ## Progress
 
 **Execution Order:** Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1
--> 3.2 -> 4 -> 5
+-> 3.2 -> 3.3 -> 4 -> 5
 
 | Phase                              | Plans Complete | Status      | Completed  |
 | ---------------------------------- | -------------- | ----------- | ---------- |
@@ -214,5 +234,6 @@ Plans:
 | 3. Core Consolidation              | 5/5            | ✓ Complete  | 2026-01-20 |
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
+| 3.3 Unify Env Validation (t3-env)  | 0/2            | Not started | -          |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
