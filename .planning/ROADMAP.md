@@ -26,8 +26,8 @@ features.
       ✓
 - [x] **Phase 3.2: Code Quality & TDD Practices** - Dead code cleanup, test
       coverage, TDD guidance (INSERTED) ✓
-- [ ] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
-      Config/plain function with t3-env (INSERTED)
+- [x] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
+      Config/plain function with t3-env (INSERTED) ✓
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -186,8 +186,8 @@ Criteria** (what must be TRUE):
 
 Plans:
 
-- [ ] 03.3-01-PLAN.md — Server env migration (t3-env, tests, consumers)
-- [ ] 03.3-02-PLAN.md — Web env migration (t3-env, tests, verification)
+- [x] 03.3-01-PLAN.md — Server env migration (t3-env, tests, consumers)
+- [x] 03.3-02-PLAN.md — Web env migration (t3-env, tests, verification)
 
 ### Phase 4: SST Deployment
 
@@ -234,6 +234,6 @@ Plans:
 | 3. Core Consolidation              | 5/5            | ✓ Complete  | 2026-01-20 |
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
-| 3.3 Unify Env Validation (t3-env)  | 0/2            | Not started | -          |
+| 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
