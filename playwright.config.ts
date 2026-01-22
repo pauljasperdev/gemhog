@@ -28,7 +28,7 @@ export default defineConfig({
         ...process.env,
         DATABASE_URL:
           process.env.DATABASE_URL ||
-          "postgresql://postgres:postgres@localhost:5432/gemhog_test",
+          "postgresql://postgres:password@localhost:5432/gemhog",
         BETTER_AUTH_SECRET:
           process.env.BETTER_AUTH_SECRET ||
           "test-secret-key-for-e2e-minimum-32-chars",
