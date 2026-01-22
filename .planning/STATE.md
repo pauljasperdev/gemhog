@@ -10,9 +10,9 @@ and deployable **Current focus:** Phase 3.2 Complete - Ready for Phase 4
 ## Current Position
 
 Phase: 3.2 of 7 (Code Quality & TDD Practices) - COMPLETE
-Plan: 5/5 plans complete (03.2-01, 03.2-02, 03.2-03, 03.2-04, 03.2-05)
-Status: Phase complete
-Last activity: 2026-01-21 - Completed 03.2-05 (startup failure integration tests)
+Plan: 6/6 plans complete (03.2-01, 03.2-02, 03.2-03, 03.2-04, 03.2-05, 03.2-06)
+Status: Phase complete (including gap closure)
+Last activity: 2026-01-22 - Completed 03.2-06 (gap closure: restore Effect Config in web.ts)
 
 Progress: ██████████████ ~85% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 complete)
 
@@ -20,9 +20,9 @@ Progress: ██████████████ ~85% (Phase 1 + 1.1 + 2 + 3
 
 **Velocity:**
 
-- Total plans completed: 28
+- Total plans completed: 29
 - Average duration: 4.0 min
-- Total execution time: 112 min
+- Total execution time: 115 min
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: ██████████████ ~85% (Phase 1 + 1.1 + 2 + 3
 | 2. Security Workflow        | 1/1   | 3 min  | 3.0 min  |
 | 3. Core Consolidation       | 5/5   | 15 min | 3.0 min  |
 | 3.1. Code Review Fixes      | 9/9   | 55 min | 6.1 min  |
-| 3.2. Code Quality & TDD     | 5/5   | 18 min | 3.6 min  |
+| 3.2. Code Quality & TDD     | 6/6   | 21 min | 3.5 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.2-01 (4 min), 03.2-02 (3 min), 03.2-03 (3 min), 03.2-04 (2 min), 03.2-05 (6 min)
+- Last 5 plans: 03.2-02 (3 min), 03.2-03 (3 min), 03.2-04 (2 min), 03.2-05 (6 min), 03.2-06 (3 min)
 
 ## Accumulated Context
 
@@ -112,7 +112,7 @@ affecting current work:
 | vi.mock() pattern for unit test env isolation                 | Mock env module before importing dependent modules                 | 03.1-07                         |
 | All security findings resolved                                | SEC-001/002/003 fixed, SEC-004/005 closed (Polar removed)          | 03.1-09                         |
 | E2E tests use extended Playwright fixture for error detection | Captures console.error and page exceptions                         | 03.2-03                         |
-| Direct process.env for NEXT*PUBLIC*\* in web.ts               | Next.js inlines at build time, Effect Config doesn't work          | 03.2-03                         |
+| Effect Config for web.ts (restored)                           | Effect Config reads process.env at module load, works with Next.js | 03.2-06                         |
 | Recreate Config definition in tests for isolation             | Avoids triggering env validation at import time                    | 03.2-02                         |
 | ConfigProvider.fromMap for isolated env testing               | Precise control over env vars without touching process.env         | 03.2-02                         |
 | TDD section in TESTING.md before "What to Mock"               | Logical reading flow for test documentation                        | 03.2-04                         |
@@ -309,16 +309,18 @@ Code quality and TDD practices complete:
 | 03.2-03 | E2E error detection fixture                    | 3 min    | Complete |
 | 03.2-04 | TDD and comment standards documentation        | 2 min    | Complete |
 | 03.2-05 | Startup failure integration tests              | 6 min    | Complete |
+| 03.2-06 | Gap closure: restore Effect Config in web.ts   | 3 min    | Complete |
 
 **Completed:**
 
 - Removed dead code and archaeological comments from codebase
-- Added unit tests for env validation schemas (Effect Config for server, direct validation for web)
+- Added unit tests for env validation schemas (Effect Config for both server and web)
 - E2E tests now use extended Playwright fixture that captures console.error and page exceptions
 - TDD practices section added to TESTING.md with RED-GREEN-REFACTOR workflow
 - Comment standards expanded in CONVENTIONS.md with concrete examples
 - Startup failure integration tests spawn real processes (tsx, next build) and verify exit codes
 - Full verification pipeline passes (static, unit, integration, e2e, security audit)
+- Gap closure: Restored Effect Config in web.ts for consistency with server.ts
 
 **Test Coverage Established:**
 
@@ -331,8 +333,8 @@ Code quality and TDD practices complete:
 
 ## Session Continuity
 
-Last session: 2026-01-21T19:35:44Z
-Stopped at: Completed 03.2-05-PLAN.md (startup failure integration tests)
+Last session: 2026-01-22T11:29:00Z
+Stopped at: Completed 03.2-06-PLAN.md (gap closure: restore Effect Config in web.ts)
 Resume file: None
 
 Next: Phase 4 (Deployment Infrastructure) - SST configuration, AWS deployment, CI/CD pipeline
