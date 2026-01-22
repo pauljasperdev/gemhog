@@ -1,16 +1,19 @@
 import "dotenv/config";
-import { Config, Effect } from "effect";
+import { createEnv } from "@t3-oss/env-core";
+import { z } from "zod";
 
-const ServerConfig = Config.all({
-  DATABASE_URL: Config.redacted("DATABASE_URL"),
-  BETTER_AUTH_SECRET: Config.redacted("BETTER_AUTH_SECRET"),
-  BETTER_AUTH_URL: Config.string("BETTER_AUTH_URL"),
-  CORS_ORIGIN: Config.string("CORS_ORIGIN"),
-  NODE_ENV: Config.string("NODE_ENV").pipe(Config.withDefault("development")),
+export const env = createEnv({
+  server: {
+    DATABASE_URL: z.string().min(1),
+    BETTER_AUTH_SECRET: z.string().min(32),
+    BETTER_AUTH_URL: z.url(),
+    CORS_ORIGIN: z.url(),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
+  },
+  runtimeEnv: process.env,
+  emptyStringAsUndefined: true,
 });
 
-// Validates at import time - fails fast if env missing
-export const env = Effect.runSync(ServerConfig);
-
-// Type helper for consumers that need the raw string
 export type ServerEnv = typeof env;
