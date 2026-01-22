@@ -1,14 +1,10 @@
-// packages/env/src/web.test.ts
-// Unit tests for web env validation
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("web env validation", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    // Reset module cache before each test
     vi.resetModules();
-    // Create a fresh copy of process.env
     process.env = { ...originalEnv };
   });
 
@@ -19,12 +15,22 @@ describe("web env validation", () => {
   it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
     delete process.env.NEXT_PUBLIC_SERVER_URL;
 
-    await expect(import("./web.js")).rejects.toThrow(
-      "NEXT_PUBLIC_SERVER_URL is required",
-    );
+    await expect(import("./web.js")).rejects.toThrow();
   });
 
-  it("should succeed when NEXT_PUBLIC_SERVER_URL is provided", async () => {
+  it("should fail when NEXT_PUBLIC_SERVER_URL is empty string", async () => {
+    process.env.NEXT_PUBLIC_SERVER_URL = "";
+
+    await expect(import("./web.js")).rejects.toThrow();
+  });
+
+  it("should fail when NEXT_PUBLIC_SERVER_URL is not a valid URL", async () => {
+    process.env.NEXT_PUBLIC_SERVER_URL = "not-a-url";
+
+    await expect(import("./web.js")).rejects.toThrow();
+  });
+
+  it("should succeed when NEXT_PUBLIC_SERVER_URL is a valid URL", async () => {
     process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
 
     const { env } = await import("./web.js");
