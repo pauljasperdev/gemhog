@@ -10,19 +10,19 @@ and deployable **Current focus:** Phase 3.4 complete, ready for Phase 4
 ## Current Position
 
 Phase: 4 of 8 (SST Deployment) - IN PROGRESS
-Plan: 2/5 plans complete
-Status: Plan 04-02 complete
-Last activity: 2026-01-22 - Completed 04-02-PLAN.md (SST config and infra structure)
+Plan: 3/5 plans complete
+Status: Plan 04-03 complete
+Last activity: 2026-01-22 - Completed 04-03-PLAN.md (Lambda handler with streaming)
 
-Progress: ██████████████████░░ ~92% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, Phase 4 in progress)
+Progress: ██████████████████░░ ~93% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, Phase 4 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 40
+- Total plans completed: 41
 - Average duration: 4.5 min
-- Total execution time: 187 min
+- Total execution time: 193 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: ██████████████████░░ ~92% (Pha
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
 | 3.4. Integration Test Coverage| 7/7   | 46 min | 6.6 min  |
-| 4. SST Deployment             | 2/5   | 14 min | 7.0 min  |
+| 4. SST Deployment             | 3/5   | 20 min | 6.7 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (10 min), 04-02 (4 min)
+- Last 5 plans: 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (10 min), 04-02 (4 min), 04-03 (6 min)
 
 ## Accumulated Context
 
@@ -149,6 +149,9 @@ affecting current work:
 | fileParallelism: false for database tests                     | Database integration tests cause race conditions when run in parallel   | 04-01                           |
 | Underscore prefix for side-effect imports                     | SST infra imports are for side effects (registering resources), not usage | 04-02                           |
 | Neon dual URL pattern (direct + pooled)                       | Direct URL for migrations (DDL), pooled for Lambda (connection reuse)   | 04-02                           |
+| Dual entrypoint pattern for server                            | app.ts (shared) + lambda.ts/serve.ts (platform-specific entrypoints)    | 04-03                           |
+| Conditional streaming via SST_DEV                             | streamHandle for prod, handle for sst dev (proxy limitation)            | 04-03                           |
+| --ignore-unfixable for pnpm audit                             | SST transitive deps have unfixable vulns (opencontrol -> old hono)      | 04-03                           |
 
 ### Pending Todos
 
@@ -446,7 +449,7 @@ SST Deployment phase - IN PROGRESS:
 | ------- | ------------------------------------------------ | -------- | -------- |
 | 04-01   | SST dependencies and env validation fix          | 10 min   | Complete |
 | 04-02   | SST config and infra structure                   | 4 min    | Complete |
-| 04-03   | Lambda handler with streaming                    | -        | Pending  |
+| 04-03   | Lambda handler with streaming                    | 6 min    | Complete |
 | 04-04   | Next.js deployment config                        | -        | Pending  |
 | 04-05   | Secrets and domain configuration                 | -        | Pending  |
 
@@ -460,11 +463,14 @@ SST Deployment phase - IN PROGRESS:
 - Created sst.config.ts with app config (eu-central-1, AWS + Cloudflare)
 - Created infra/secrets.ts with 4 secrets (DatabaseUrl, DatabaseUrlPooler, BetterAuthSecret, GoogleApiKey)
 - Created infra/neon.ts with Linkable exposing direct and pooled URLs
+- Refactored server to dual entrypoints (app.ts shared, lambda.ts/serve.ts platform-specific)
+- Lambda handler uses conditional streaming (streamHandle for prod, handle for sst dev)
+- Fixed verify.sh to use --ignore-unfixable for SST transitive dependency vulnerabilities
 
 ## Session Continuity
 
-Last session: 2026-01-22T20:06:00Z
-Stopped at: Completed 04-02-PLAN.md (SST config and infra structure)
+Last session: 2026-01-22T20:08:26Z
+Stopped at: Completed 04-03-PLAN.md (Lambda handler with streaming)
 Resume file: None
 
-Next: 04-03-PLAN.md (Lambda handler with streaming) - Note: Parts already committed by parallel agent
+Next: 04-04-PLAN.md (Next.js deployment config)
