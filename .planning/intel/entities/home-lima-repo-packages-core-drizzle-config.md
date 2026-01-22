@@ -9,17 +9,17 @@ status: active
 
 ## Purpose
 
-Configuration file for Drizzle Kit, defining database schema location, migration output directory, and PostgreSQL connection settings. Enables database migrations and schema management for the core package.
+Configures Drizzle Kit for database migrations and schema management. Defines schema file locations, migration output directory, and PostgreSQL connection settings.
 
 ## Exports
 
-- `default` - The Drizzle Kit configuration object
-- `defineConfig` - Re-exported from drizzle-kit (used internally)
+- **default**: Drizzle Kit configuration object with schema glob, migrations output path, dialect, and database credentials
+- **defineConfig**: Re-exported from drizzle-kit (used internally)
 
 ## Dependencies
 
-- [[home-lima-repo-packages-env-src-server]] - Provides `env.DATABASE_URL` for database connection
-- drizzle-kit - Drizzle ORM toolkit for migrations and schema management
+- drizzle-kit: Configuration helper and CLI tool
+- dotenv/config: Environment variable loading
 
 ## Used By
 
@@ -27,6 +27,6 @@ TBD
 
 ## Notes
 
-- Schema files follow the pattern `./src/*/*.sql.ts` (all `.sql.ts` files one level deep in src subdirectories)
-- Migrations are output to `./src/migrations`
-- Uses PostgreSQL dialect
+- Uses dotenv directly instead of `@gemhog/env/server` to avoid validating all env vars (only DATABASE_URL is needed for migrations)
+- Schema files are discovered via glob pattern `./src/*/*.sql.ts`
+- Migrations output to `./src/migrations`

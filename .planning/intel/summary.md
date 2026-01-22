@@ -1,6 +1,6 @@
 # Codebase Intelligence
 
-**Indexed entities:** 46
+**Indexed entities:** 51
 **Last updated:** 2026-01-22
 
 ## Dependency Hotspots
@@ -15,12 +15,12 @@ Files with most dependents (change carefully):
 ## Module Types
 
 - **Component**: 16 files
+- **Test**: 9 files
 - **Service**: 6 files
 - **Config**: 6 files
 - **Api**: 5 files
-- **Test**: 4 files
 - **Model**: 4 files
 - **Module**: 3 files
 - **Util**: 2 files
 
-**Relationships tracked:** 62
+**Relationships tracked:** 65
