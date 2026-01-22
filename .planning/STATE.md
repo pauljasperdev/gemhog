@@ -146,7 +146,7 @@ None.
 - SEC-003 (Debug logging) FIXED in 03.1-07
 - SEC-004 (Polar productId) CLOSED in 03.1-07
 - SEC-005 (Polar sandbox) CLOSED in 03.1-07
-- pnpm audit: lodash-es vulnerability via mermaid (moderate, tracking)
+- pnpm audit: No known vulnerabilities (lodash-es override added)
 
 ## Phase 1 Summary
 

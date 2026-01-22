@@ -119,16 +119,7 @@ _Last synced from SECURITY-REVIEW.md: 2026-01-21_
 
 ## Dependencies at Risk
 
-**lodash-es vulnerability via mermaid (MODERATE):**
-
-- Issue: Prototype pollution vulnerability in `_.unset` and `_.omit` functions
-  (GHSA-xxjr-mmjv-4gpg)
-- Path: `streamdown > mermaid > lodash-es` (>=4.0.0 <=4.17.22)
-- Patched: lodash-es >=4.17.23
-- Impact: Low - mermaid likely doesn't use vulnerable functions
-- Fix: Wait for mermaid/streamdown to update, or override lodash-es version in
-  pnpm if critical
-- Status: **Tracking** - discovered 2026-01-22, not exploitable in current usage
+**None critical** - All dependencies patched via pnpm overrides where needed.
 
 ## Missing Critical Features
 
