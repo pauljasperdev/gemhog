@@ -21,8 +21,8 @@ Progress: █████████████████░░░ ~92% (Pha
 **Velocity:**
 
 - Total plans completed: 38
-- Average duration: 4.2 min
-- Total execution time: 167 min
+- Average duration: 4.4 min
+- Total execution time: 173 min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: █████████████████░░░ ~92% (Pha
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
-| 3.4. Integration Test Coverage| 7/7   | 40 min | 5.7 min  |
+| 3.4. Integration Test Coverage| 7/7   | 46 min | 6.6 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (4 min)
+- Last 5 plans: 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (10 min)
 
 ## Accumulated Context
 
