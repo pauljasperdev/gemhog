@@ -4,8 +4,9 @@ import { describe, expect, it, vi } from "vitest";
 // Mock the env module before any imports that use it
 vi.mock("@gemhog/env/server", () => ({
   env: {
-    DATABASE_URL: { value: "postgresql://test:test@localhost:5432/test" },
-    BETTER_AUTH_SECRET: { value: "test-secret" },
+    DATABASE_URL: "postgresql://test:test@localhost:5432/test",
+    DATABASE_URL_POOLER: "postgresql://test:test@localhost:5432/test",
+    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
     BETTER_AUTH_URL: "http://localhost:3000",
     CORS_ORIGIN: "http://localhost:3001",
     GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",

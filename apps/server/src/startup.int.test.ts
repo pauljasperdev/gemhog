@@ -39,9 +39,18 @@ describe("server startup", () => {
     expect(output).toContain("DATABASE_URL");
   }, 10000);
 
+  it("should fail when DATABASE_URL_POOLER is missing", async () => {
+    const { code, output } = await runServer({
+      DATABASE_URL: "postgresql://localhost:5432/test",
+    });
+    expect(code).not.toBe(0);
+    expect(output).toContain("DATABASE_URL_POOLER");
+  }, 10000);
+
   it("should fail when BETTER_AUTH_SECRET is missing", async () => {
     const { code, output } = await runServer({
       DATABASE_URL: "postgresql://localhost:5432/test",
+      DATABASE_URL_POOLER: "postgresql://localhost:5432/test",
     });
     expect(code).not.toBe(0);
     expect(output).toContain("BETTER_AUTH_SECRET");
@@ -50,6 +59,7 @@ describe("server startup", () => {
   it("should fail when BETTER_AUTH_URL is missing", async () => {
     const { code, output } = await runServer({
       DATABASE_URL: "postgresql://localhost:5432/test",
+      DATABASE_URL_POOLER: "postgresql://localhost:5432/test",
       BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
     });
     expect(code).not.toBe(0);
@@ -59,6 +69,7 @@ describe("server startup", () => {
   it("should fail when CORS_ORIGIN is missing", async () => {
     const { code, output } = await runServer({
       DATABASE_URL: "postgresql://localhost:5432/test",
+      DATABASE_URL_POOLER: "postgresql://localhost:5432/test",
       BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
       BETTER_AUTH_URL: "http://localhost:3000",
     });
