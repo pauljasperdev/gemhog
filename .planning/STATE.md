@@ -10,19 +10,19 @@ and deployable **Current focus:** Phase 3.4 complete, ready for Phase 4
 ## Current Position
 
 Phase: 4 of 8 (SST Deployment) - IN PROGRESS
-Plan: 3/5 plans complete
-Status: Plan 04-03 complete
-Last activity: 2026-01-22 - Completed 04-03-PLAN.md (Lambda handler with streaming)
+Plan: 4/5 plans complete
+Status: Plan 04-04 complete
+Last activity: 2026-01-22 - Completed 04-04-PLAN.md (API and Web infrastructure)
 
-Progress: ██████████████████░░ ~93% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, Phase 4 in progress)
+Progress: ██████████████████░░ ~94% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete, Phase 4 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 41
+- Total plans completed: 42
 - Average duration: 4.5 min
-- Total execution time: 193 min
+- Total execution time: 196 min
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: ██████████████████░░ ~93% (Pha
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
 | 3.4. Integration Test Coverage| 7/7   | 46 min | 6.6 min  |
-| 4. SST Deployment             | 3/5   | 20 min | 6.7 min  |
+| 4. SST Deployment             | 4/5   | 23 min | 5.8 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-06 (5 min), 03.4-07 (10 min), 04-01 (10 min), 04-02 (4 min), 04-03 (6 min)
+- Last 5 plans: 03.4-07 (10 min), 04-01 (10 min), 04-02 (4 min), 04-03 (6 min), 04-04 (3 min)
 
 ## Accumulated Context
 
@@ -152,6 +152,9 @@ affecting current work:
 | Dual entrypoint pattern for server                            | app.ts (shared) + lambda.ts/serve.ts (platform-specific entrypoints)    | 04-03                           |
 | Conditional streaming via SST_DEV                             | streamHandle for prod, handle for sst dev (proxy limitation)            | 04-03                           |
 | --ignore-unfixable for pnpm audit                             | SST transitive deps have unfixable vulns (opencontrol -> old hono)      | 04-03                           |
+| Router for streaming support                                  | API Gateway doesn't support AWS Lambda streaming; Router + Function URL works | 04-04                           |
+| Transform for self-referencing env vars                       | BETTER_AUTH_URL needs api.url in personal stages; use $resolve + apply  | 04-04                           |
+| Nullish coalescing for CLOUDFLARE_ZONE_ID                     | Avoids non-null assertion lint error; empty string is valid fallback    | 04-04                           |
 
 ### Pending Todos
 
@@ -450,7 +453,7 @@ SST Deployment phase - IN PROGRESS:
 | 04-01   | SST dependencies and env validation fix          | 10 min   | Complete |
 | 04-02   | SST config and infra structure                   | 4 min    | Complete |
 | 04-03   | Lambda handler with streaming                    | 6 min    | Complete |
-| 04-04   | Next.js deployment config                        | -        | Pending  |
+| 04-04   | API and Web infrastructure                       | 3 min    | Complete |
 | 04-05   | Secrets and domain configuration                 | -        | Pending  |
 
 **Completed:**
@@ -466,11 +469,16 @@ SST Deployment phase - IN PROGRESS:
 - Refactored server to dual entrypoints (app.ts shared, lambda.ts/serve.ts platform-specific)
 - Lambda handler uses conditional streaming (streamHandle for prod, handle for sst dev)
 - Fixed verify.sh to use --ignore-unfixable for SST transitive dependency vulnerabilities
+- Created infra/api.ts with Hono Lambda function and Router
+- Created infra/web.ts with Next.js deployment configuration
+- Stage-conditional domains (prod, dev/test, personal stages)
+- CORS configured for gemhog.com and localhost:3001
+- Transform pattern for personal stage BETTER_AUTH_URL self-reference
 
 ## Session Continuity
 
-Last session: 2026-01-22T20:08:26Z
-Stopped at: Completed 04-03-PLAN.md (Lambda handler with streaming)
+Last session: 2026-01-22T20:15:18Z
+Stopped at: Completed 04-04-PLAN.md (API and Web infrastructure)
 Resume file: None
 
-Next: 04-04-PLAN.md (Next.js deployment config)
+Next: 04-05-PLAN.md (Deployment verification and secrets setup)
