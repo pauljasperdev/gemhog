@@ -52,6 +52,9 @@ importers:
       '@gemhog/config':
         specifier: workspace:*
         version: link:packages/config
+      '@playwright/mcp':
+        specifier: 0.0.47
+        version: 0.0.47
       '@playwright/test':
         specifier: ^1.57.0
         version: 1.57.0
@@ -280,6 +283,9 @@ importers:
         specifier: ^8.16.3
         version: 8.17.0
     devDependencies:
+      '@effect/vitest':
+        specifier: ^0.27.0
+        version: 0.27.0(effect@3.19.14)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))
       '@gemhog/config':
         specifier: workspace:*
         version: link:../config
@@ -669,6 +675,12 @@ packages:
       '@effect/experimental': ^0.58.0
       '@effect/platform': ^0.94.0
       effect: ^3.19.13
+
+  '@effect/vitest@0.27.0':
+    resolution: {integrity: sha512-8bM7n9xlMUYw9GqPIVgXFwFm2jf27m/R7psI64PGpwU5+26iwyxp9eAXEsfT5S6lqztYfpQQ1Ubp5o6HfNYzJQ==}
+    peerDependencies:
+      effect: ^3.19.0
+      vitest: ^3.2.0
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -1380,6 +1392,11 @@ packages:
 
   '@oxc-project/types@0.99.0':
     resolution: {integrity: sha512-LLDEhXB7g1m5J+woRSgfKsFPS3LhR9xRhTeIoEBm5WrkwMxn6eZ0Ld0c0K5eHB57ChZX6I3uSmmLjZ8pcjlRcw==}
+
+  '@playwright/mcp@0.0.47':
+    resolution: {integrity: sha512-XFSa5TNJjoDkCYtyJHCTYgP/Z9Rf1jzf7CfqvZVECcouvHWWH5vxCzhfAZB0VnJYjyqy+jnViGsij3u2yb3AOA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@playwright/test@1.57.0':
     resolution: {integrity: sha512-6TyEnHgd6SArQO8UO2OMTxshln3QMWBtPGrOCgs3wVEmQmwyuNtB10IZMfmYDE0riwNR1cu4q+pPcxMVtaG3TA==}
@@ -4013,8 +4030,18 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.57.0-alpha-2025-11-14:
+    resolution: {integrity: sha512-Elz1kUiW8naXjunmfgaYh9inaqxT04FjR/CDOi2IH7ZBDTov6tTcNV4bObNeHSBV76YVPHsRK/96v3kG9F+5sQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.57.0:
     resolution: {integrity: sha512-ilYQj1s8sr2ppEJ2YVadYBN0Mb3mdo9J0wQ+UuDhzYqURwSoW4n1Xs5vs7ORwgDGmyEh33tRMeS8KhdkMoLXQw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.57.0-alpha-2025-11-14:
+    resolution: {integrity: sha512-B91cAwJw+dlsPi6GnJD6bAUfso/ygmrxsXHnbFqOd5UmGo8bZzFf7WvSkB/47lOSYIP+9szVXwMwIsZ4Fj+rAQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -5284,6 +5311,11 @@ snapshots:
       effect: 3.19.14
       uuid: 11.1.0
 
+  '@effect/vitest@0.27.0(effect@3.19.14)(vitest@4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0))':
+    dependencies:
+      effect: 3.19.14
+      vitest: 4.0.17(@opentelemetry/api@1.9.0)(@types/node@22.19.6)(happy-dom@20.3.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.7(@types/node@22.19.6)(typescript@5.9.3))(tsx@4.21.0)
+
   '@emnapi/core@1.8.1':
     dependencies:
       '@emnapi/wasi-threads': 1.1.0
@@ -5801,6 +5833,11 @@ snapshots:
   '@oxc-project/types@0.108.0': {}
 
   '@oxc-project/types@0.99.0': {}
+
+  '@playwright/mcp@0.0.47':
+    dependencies:
+      playwright: 1.57.0-alpha-2025-11-14
+      playwright-core: 1.57.0-alpha-2025-11-14
 
   '@playwright/test@1.57.0':
     dependencies:
@@ -8530,9 +8567,17 @@ snapshots:
 
   playwright-core@1.57.0: {}
 
+  playwright-core@1.57.0-alpha-2025-11-14: {}
+
   playwright@1.57.0:
     dependencies:
       playwright-core: 1.57.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.57.0-alpha-2025-11-14:
+    dependencies:
+      playwright-core: 1.57.0-alpha-2025-11-14
     optionalDependencies:
       fsevents: 2.3.2
 
