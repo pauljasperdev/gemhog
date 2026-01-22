@@ -140,6 +140,9 @@ affecting current work:
 | Form-scoped selectors for E2E button clicks                   | Avoids conflicts with navbar buttons that have same text                | 03.4-05                         |
 | Keep temp dir + symlinks for web startup test                 | Next.js auto-reads .env from cwd, no flag to disable                    | 03.4-06                         |
 | Use promisified exec for startup tests                        | Cleaner than manual spawn/promise wrapping                              | 03.4-06                         |
+| Use @effect/sql-drizzle for schema CRUD tests                 | Schema tests use Effect database layers even though auth doesn't use Effect (no better-auth wrapper) | 03.4-07 |
+| Effect.promise() for drizzle ops in Effect.gen                | Drizzle returns Promises, not Effects; wrap with Effect.promise()       | 03.4-07                         |
+| Effect.either for constraint violation tests                  | Captures expected errors without throwing, check result._tag            | 03.4-07                         |
 
 ### Pending Todos
 
