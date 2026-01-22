@@ -9,20 +9,20 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (gap clo
 
 ## Current Position
 
-Phase: 3.4 of 8 (Integration Test Coverage) - GAP CLOSURE
-Plan: 6/7 plans (1 gap closure pending)
-Status: Executing gap closure plans
-Last activity: 2026-01-22 - Completed 03.4-05-PLAN.md (E2E auth tests)
+Phase: 3.4 of 8 (Integration Test Coverage) - GAP CLOSURE COMPLETE
+Plan: 7/7 plans complete
+Status: Gap closure complete
+Last activity: 2026-01-22 - Completed 03.4-06-PLAN.md (startup test simplification)
 
-Progress: █████████████████░░░ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete, 3.4 gap closure 2/3)
+Progress: █████████████████░░░ ~92% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 37
+- Total plans completed: 38
 - Average duration: 4.2 min
-- Total execution time: 162 min
+- Total execution time: 167 min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: █████████████████░░░ ~90% (Pha
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
-| 3.4. Integration Test Coverage| 6/7   | 35 min | 5.8 min  |
+| 3.4. Integration Test Coverage| 7/7   | 40 min | 5.7 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-07 (4 min)
+- Last 5 plans: 03.4-03 (21 min), 03.4-04 (1 min), 03.4-05 (4 min), 03.4-06 (5 min), 03.4-07 (4 min)
 
 ## Accumulated Context
 
@@ -138,6 +138,8 @@ affecting current work:
 | better-auth returns { token, user } not { session, user }     | Corrected from original assumption during test implementation       | 03.4-03                         |
 | Use createCallerFactory for tRPC v11 testing                  | Modern pattern, deprecated createCaller still works but not recommended | 03.4-04                         |
 | Form-scoped selectors for E2E button clicks                   | Avoids conflicts with navbar buttons that have same text                | 03.4-05                         |
+| Keep temp dir + symlinks for web startup test                 | Next.js auto-reads .env from cwd, no flag to disable                    | 03.4-06                         |
+| Use promisified exec for startup tests                        | Cleaner than manual spawn/promise wrapping                              | 03.4-06                         |
 
 ### Pending Todos
 
@@ -386,6 +388,7 @@ Integration test coverage - COMPLETE:
 | 03.4-03 | Auth flow integration tests                      | 21 min   | Complete |
 | 03.4-04 | tRPC procedure tests                             | 1 min    | Complete |
 | 03.4-05 | E2E auth tests (gap closure)                     | 4 min    | Complete |
+| 03.4-06 | Simplify startup tests (gap closure)             | 5 min    | Complete |
 | 03.4-07 | Schema CRUD integration tests (gap closure)      | 4 min    | Complete |
 
 **Completed:**
@@ -402,6 +405,7 @@ Integration test coverage - COMPLETE:
 - Schema CRUD tests for auth.sql.ts definitions (user, session, account, verification)
 - Constraint verification (unique email, foreign keys)
 - E2E Playwright tests for signup and signin UI flows (4 tests)
+- Simplified startup tests using promisified exec (44% reduction for web, 24% for server)
 
 **Patterns Established:**
 
@@ -427,8 +431,8 @@ Integration test coverage - COMPLETE:
 
 ## Session Continuity
 
-Last session: 2026-01-22T18:22:27Z
-Stopped at: Completed 03.4-05-PLAN.md (E2E auth tests)
+Last session: 2026-01-22T18:24:50Z
+Stopped at: Completed 03.4-06-PLAN.md (startup test simplification)
 Resume file: None
 
-Next: 03.4-05 (E2E auth flow tests) or 03.4-06 (startup test simplification)
+Next: Phase 4 (next phase in roadmap)
