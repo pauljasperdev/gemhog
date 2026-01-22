@@ -10,11 +10,11 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (urgent 
 ## Current Position
 
 Phase: 3.4 of 8 (Integration Test Coverage) - IN PROGRESS
-Plan: 2/4 plans
-Status: Executing Wave 1
-Last activity: 2026-01-22 - Completed 03.4-02-PLAN.md (@effect/vitest for connection tests)
+Plan: 3/4 plans
+Status: Executing Wave 2
+Last activity: 2026-01-22 - Completed 03.4-03-PLAN.md (Auth flow integration tests)
 
-Progress: ████████████████░░░ ~88% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4-01 + 3.4-02 complete)
+Progress: ████████████████░░░ ~90% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4-01 + 3.4-02 + 03.4-03 complete)
 
 ## Performance Metrics
 
@@ -132,6 +132,9 @@ affecting current work:
 | Use dotenv directly in drizzle.config.ts                      | drizzle-kit only needs DATABASE_URL, not full env validation       | 03.4-01                         |
 | Use PgClient.layer() over layerConfig() for tests             | layerConfig() requires ConfigProvider; layer() accepts direct config | 03.4-02                         |
 | Use Redacted.make() for URL in test layer                     | PgClient expects Redacted type for url field                        | 03.4-02                         |
+| vi.mock for env isolation in integration tests                | Cleaner than process.env mutation for t3-env import-time validation | 03.4-03                         |
+| Dynamic import after vi.mock setup                            | Required for mock to take effect before module initialization       | 03.4-03                         |
+| better-auth returns { token, user } not { session, user }     | Corrected from original assumption during test implementation       | 03.4-03                         |
 
 ### Pending Todos
 
@@ -377,7 +380,7 @@ Integration test coverage - IN PROGRESS:
 | ------- | ------------------------------------------------ | -------- | -------- |
 | 03.4-01 | Fix db:migrate env loading                       | 2 min    | Complete |
 | 03.4-02 | Update connection tests to use @effect/vitest    | 3 min    | Complete |
-| 03.4-03 | Auth flow integration tests                      | -        | Pending  |
+| 03.4-03 | Auth flow integration tests                      | 21 min   | Complete |
 | 03.4-04 | tRPC procedure tests                             | -        | Pending  |
 
 **Completed:**
@@ -387,17 +390,21 @@ Integration test coverage - IN PROGRESS:
 - Added @effect/vitest ^0.27.0 as devDependency
 - Tests use PgClient.layer() with explicit URL for test isolation
 - Tests use SqlClient.SqlClient for Effect-based queries
+- Auth flow integration tests with signup/signin via better-auth API
+- Test fixtures for auth domain (truncateAuthTables, createTestUser)
 
 **Patterns Established:**
 
 - @effect/vitest layer() for Effect test context
 - PgClient.layer() with Redacted.make() for test isolation
 - SqlClient.SqlClient for Effect-based database queries
+- vi.mock('@gemhog/env/server') + dynamic import for env isolation
+- Test fixtures live with their domain (auth/test-fixtures.ts)
 
 ## Session Continuity
 
-Last session: 2026-01-22T16:42:00Z
-Stopped at: Completed 03.4-02-PLAN.md (@effect/vitest for connection tests)
+Last session: 2026-01-22T16:10:06Z
+Stopped at: Completed 03.4-03-PLAN.md (Auth flow integration tests)
 Resume file: None
 
-Next: 03.4-03 (Auth flow integration tests)
+Next: 03.4-04 (tRPC procedure tests)
