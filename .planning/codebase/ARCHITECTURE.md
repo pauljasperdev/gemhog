@@ -256,6 +256,31 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
   sibling folders when implementing V1 features
 
+## Production Deployment (SST v3)
+
+**Infrastructure as Code (`infra/`):**
+
+- `sst.config.ts` - Root configuration with AWS + Cloudflare providers
+- `infra/secrets.ts` - SST secrets (DatabaseUrl, BetterAuthSecret, GoogleApiKey)
+- `infra/neon.ts` - Neon database Linkable with dual URLs (direct for migrations, pooled for Lambda)
+- `infra/api.ts` - Hono Lambda function with Router (enables streaming via Function URL)
+- `infra/web.ts` - Next.js deployment via OpenNext
+
+**Deployment Data Flow:**
+
+1. `sst deploy --stage dev` triggers infrastructure provisioning
+2. SST reads secrets from AWS SSM Parameter Store
+3. Lambda function deployed with environment variables from secrets
+4. Router routes traffic from API Gateway to Lambda Function URL (streaming)
+5. Next.js deployed via OpenNext to AWS Lambda@Edge
+6. Cloudflare DNS records created for custom domains
+
+**Stage Domains:**
+
+- `prod`: gemhog.com / api.gemhog.com
+- `dev`/`test`: dev.gemhog.com / api.dev.gemhog.com
+- Personal stages: {stage}.gemhog.com / api.{stage}.gemhog.com
+
 ## Active Architecture Principles
 
 **SST-Agnostic Architecture:**

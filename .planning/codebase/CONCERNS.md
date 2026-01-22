@@ -130,13 +130,13 @@ _Last synced from SECURITY-REVIEW.md: 2026-01-21_
 - Blocks: Onboarding new developers
 - Implementation complexity: Low
 
-**Missing environment validation for AI key:**
+**SST Cloudflare configuration required:**
 
-- Problem: `GOOGLE_GENERATIVE_AI_API_KEY` not in Zod schema
-- File: `packages/env/src/server.ts`
-- Current workaround: Runtime crash if missing
-- Blocks: Fail-fast validation at startup
-- Implementation complexity: Low
+- Problem: Cloudflare deployment requires zone ID and API token
+- Files: `infra/api.ts`, `infra/web.ts`
+- Requirements: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_DEFAULT_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`
+- Workaround: Set environment variables before `sst deploy`
+- Implementation complexity: Low (one-time setup)
 
 ## Test Coverage Gaps
 
