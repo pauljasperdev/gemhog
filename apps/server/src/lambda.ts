@@ -1,4 +1,4 @@
-import { handle, streamHandle } from "@hono/aws-lambda";
+import { handle, streamHandle } from "hono/aws-lambda";
 import { app } from "./app";
 
 // Conditional handler: streaming not supported in sst dev

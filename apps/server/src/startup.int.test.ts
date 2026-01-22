@@ -19,7 +19,7 @@ describe("server startup", () => {
       DOTENV_CONFIG_PATH: "/nonexistent/.env",
     };
     try {
-      await execAsync("pnpm tsx src/index.ts", {
+      await execAsync("pnpm tsx src/serve.ts", {
         cwd: serverDir,
         env: { ...baseEnv, ...envVars } as unknown as NodeJS.ProcessEnv,
       });
