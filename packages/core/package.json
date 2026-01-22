@@ -40,6 +40,7 @@
     "@effect/vitest": "^0.27.0",
     "@gemhog/config": "workspace:*",
     "@types/pg": "^8.15.6",
+    "dotenv": "catalog:",
     "drizzle-kit": "^0.31.8",
     "typescript": "catalog:"
   }
