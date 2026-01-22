@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable,
-and deployable **Current focus:** Phase 4 - SST Deployment (next)
+and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (gap closure)
 
 ## Current Position
 
-Phase: 3.4 of 8 (Integration Test Coverage) - COMPLETE
-Plan: 4/4 plans
-Status: Phase complete
-Last activity: 2026-01-22 - Completed 03.4-04-PLAN.md (tRPC procedure tests)
+Phase: 3.4 of 8 (Integration Test Coverage) - GAP CLOSURE
+Plan: 4/7 plans (3 gap closure pending)
+Status: Gap closure plans created
+Last activity: 2026-01-22 - Created gap closure plans for E2E auth, startup simplification, schema CRUD
 
-Progress: █████████████████░░░ ~92% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 + 3.4 complete)
+Progress: █████████████████░░░ ~88% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete, 3.4 in gap closure)
 
 ## Performance Metrics
 
