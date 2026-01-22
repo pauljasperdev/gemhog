@@ -28,8 +28,8 @@ features.
       coverage, TDD guidance (INSERTED) ✓
 - [x] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
       Config/plain function with t3-env (INSERTED) ✓
-- [ ] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
-      Effect constructs, auth flows, migrations (INSERTED) — gap closure in progress
+- [x] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
+      Effect constructs, auth flows, migrations (INSERTED) ✓
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -214,9 +214,9 @@ Plans:
 - [x] 03.4-02-PLAN.md — Effect layer connection tests
 - [x] 03.4-03-PLAN.md — Auth flow integration tests
 - [x] 03.4-04-PLAN.md — tRPC procedure tests
-- [ ] 03.4-05-PLAN.md — E2E auth tests (gap closure)
-- [ ] 03.4-06-PLAN.md — Simplify startup tests (gap closure)
-- [ ] 03.4-07-PLAN.md — Schema CRUD tests (gap closure)
+- [x] 03.4-05-PLAN.md — E2E auth tests (gap closure)
+- [x] 03.4-06-PLAN.md — Simplify startup tests (gap closure)
+- [x] 03.4-07-PLAN.md — Schema CRUD tests (gap closure)
 
 ### Phase 4: SST Deployment
 
@@ -264,6 +264,6 @@ Plans:
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
 | 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
-| 3.4 Integration Test Coverage      | 4/7            | Gap Closure | -          |
+| 3.4 Integration Test Coverage      | 7/7            | ✓ Complete  | 2026-01-22 |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
