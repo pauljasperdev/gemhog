@@ -109,8 +109,23 @@
 
 - SST v3 on AWS - Infrastructure-as-code deployment
 - SST-agnostic app code (reads env vars only, no SST SDK imports)
-- PostgreSQL database
+- PostgreSQL database (Neon)
 - Test stage for external AWS resources (S3, etc.) during development
+
+## Infrastructure
+
+**SST v3 (infra/):**
+
+- `sst.config.ts` - App config with AWS (eu-central-1) + Cloudflare providers
+- `infra/secrets.ts` - SST secrets (DatabaseUrl, BetterAuthSecret, GoogleApiKey)
+- `infra/neon.ts` - Neon database Linkable (direct + pooled URLs)
+- `infra/api.ts` - Hono Lambda function with Router for streaming support
+- `infra/web.ts` - Next.js deployment with OpenNext
+
+**Lambda Adapter:**
+
+- hono/aws-lambda - Built into Hono, provides handle/streamHandle
+- Conditional streaming: streamHandle for prod, handle for sst dev (proxy limitation)
 
 ---
 
