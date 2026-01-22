@@ -175,6 +175,44 @@ pnpm verify
 - Tests: `apps/web/tests/e2e/*.e2e.test.ts`
 - Auto-starts dev servers via webServer config
 
+### Playwright MCP Server (Interactive Debugging)
+
+A Playwright MCP server is configured for Claude Code, providing interactive browser
+control for debugging and UI verification. This is NOT required for standard
+`pnpm verify` runs.
+
+**Configuration:** `.mcp.json` (server entry point) and `playwright-mcp.config.json`
+(browser options). The server runs headless Chromium in isolated mode.
+
+**When to use Playwright MCP:**
+
+- Debugging E2E test failures (visually inspect what's happening)
+- After making UI changes (verify visual appearance and interactions)
+- When introducing new user workflows (manually test the flow)
+- When E2E tests pass but behavior seems wrong (visual confirmation)
+- Investigating flaky E2E tests (step through interactively)
+
+**When NOT to use Playwright MCP:**
+
+- Standard `pnpm verify` runs (automated tests are sufficient)
+- Backend-only changes (no UI impact)
+- Unit or integration test debugging (no browser needed)
+
+**Usage pattern for agents:**
+
+1. Navigate to the relevant page with `browser_navigate`
+2. Use `browser_snapshot` to understand page structure (preferred over screenshots)
+3. Interact using `browser_click`, `browser_type`, `browser_fill_form`
+4. Verify results with `browser_snapshot` or `browser_take_screenshot`
+5. Close with `browser_close` when done
+
+**Encourage usage when:**
+
+- E2E tests are failing and logs aren't sufficient
+- User reports a visual bug that tests don't catch
+- Implementing new UI features that need visual verification
+- Debugging client-side JavaScript issues
+
 **Pre-commit:** Lefthook
 
 - Config: `lefthook.yml`
@@ -286,7 +324,8 @@ describe("Database Connection", () => {
 ### E2E Test (Playwright)
 
 ```typescript
-import { test, expect } from "@playwright/test";
+// Import from fixtures for automatic error detection (console errors, page exceptions)
+import { expect, test } from "./fixtures";
 
 test.describe("Homepage", () => {
   test("should load and display title", async ({ page }) => {
@@ -295,6 +334,10 @@ test.describe("Homepage", () => {
   });
 });
 ```
+
+**Note:** Always import from `./fixtures` instead of `@playwright/test`. The fixtures
+file extends Playwright with error detection that fails tests when the page has
+console errors or JavaScript exceptions.
 
 ### tRPC Procedure Test
 
@@ -366,7 +409,7 @@ pnpm test:unit -- --run src/feature.test.ts
 
 **DO mock:**
 
-- External API calls (Google AI, Polar)
+- External API calls (Google AI)
 - Time/dates for deterministic tests
 - Environment variables
 

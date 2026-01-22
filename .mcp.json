@@ -1,11 +1,15 @@
 {
   "mcpServers": {
     "playwright": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "@playwright/mcp@latest",
+        "node_modules/@playwright/mcp/cli.js",
+        "--browser",
+        "chromium",
+        "--headless",
+        "--isolated",
         "--config",
-        "/home/lima/repo/playwright-mcp.config.json"
+        "playwright-mcp.config.json"
       ]
     }
   }
