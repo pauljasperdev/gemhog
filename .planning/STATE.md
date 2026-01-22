@@ -10,9 +10,9 @@ and deployable **Current focus:** Phase 3.4 - Integration Test Coverage (gap clo
 ## Current Position
 
 Phase: 3.4 of 8 (Integration Test Coverage) - GAP CLOSURE
-Plan: 4/7 plans (3 gap closure pending)
-Status: Gap closure plans created
-Last activity: 2026-01-22 - Created gap closure plans for E2E auth, startup simplification, schema CRUD
+Plan: 5/7 plans (2 gap closure pending)
+Status: Executing gap closure plans
+Last activity: 2026-01-22 - Completed 03.4-07 schema CRUD integration tests
 
 Progress: █████████████████░░░ ~88% (Phase 1 + 1.1 + 2 + 3 + 3.1 + 3.2 + 3.3 complete, 3.4 in gap closure)
 
@@ -20,9 +20,9 @@ Progress: █████████████████░░░ ~88% (Pha
 
 **Velocity:**
 
-- Total plans completed: 35
-- Average duration: 4.1 min
-- Total execution time: 154 min
+- Total plans completed: 36
+- Average duration: 4.2 min
+- Total execution time: 158 min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: █████████████████░░░ ~88% (Pha
 | 3.1. Code Review Fixes        | 9/9   | 55 min | 6.1 min  |
 | 3.2. Code Quality & TDD       | 6/6   | 25 min | 4.2 min  |
 | 3.3. Unify Env Validation     | 2/2   | 8 min  | 4.0 min  |
-| 3.4. Integration Test Coverage| 4/4   | 27 min | 6.8 min  |
+| 3.4. Integration Test Coverage| 5/7   | 31 min | 6.2 min  |
 
 **Recent Trend:**
 
-- Last 5 plans: 03.3-02 (3 min), 03.4-01 (2 min), 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min)
+- Last 5 plans: 03.4-01 (2 min), 03.4-02 (3 min), 03.4-03 (21 min), 03.4-04 (1 min), 03.4-07 (4 min)
 
 ## Accumulated Context
 
@@ -384,6 +384,7 @@ Integration test coverage - COMPLETE:
 | 03.4-02 | Update connection tests to use @effect/vitest    | 3 min    | Complete |
 | 03.4-03 | Auth flow integration tests                      | 21 min   | Complete |
 | 03.4-04 | tRPC procedure tests                             | 1 min    | Complete |
+| 03.4-07 | Schema CRUD integration tests (gap closure)      | 4 min    | Complete |
 
 **Completed:**
 
@@ -396,6 +397,8 @@ Integration test coverage - COMPLETE:
 - Test fixtures for auth domain (truncateAuthTables, createTestUser)
 - tRPC procedure integration tests for healthCheck and privateData
 - Placeholder example.test.ts removed
+- Schema CRUD tests for auth.sql.ts definitions (user, session, account, verification)
+- Constraint verification (unique email, foreign keys)
 
 **Patterns Established:**
 
@@ -405,20 +408,21 @@ Integration test coverage - COMPLETE:
 - vi.mock('@gemhog/env/server') + dynamic import for env isolation
 - Test fixtures live with their domain (auth/test-fixtures.ts)
 - createCallerFactory pattern for tRPC v11 testing
+- Direct drizzle typed API for schema definition testing (separate from Effect layer)
 
 **Integration Test Coverage:**
 
-- 6 test files, 17 tests total
+- 7 test files, 25 tests total
 - apps/server: startup failure tests (4 tests)
 - apps/web: startup failure test (1 test)
 - packages/core/drizzle: connection tests (2 tests), migration tests (2 tests)
-- packages/core/auth: auth flow tests (5 tests)
+- packages/core/auth: auth flow tests (5 tests), schema CRUD tests (8 tests)
 - packages/api: tRPC procedure tests (3 tests)
 
 ## Session Continuity
 
-Last session: 2026-01-22T16:26:38Z
-Stopped at: Completed 03.4-04-PLAN.md (tRPC procedure tests)
+Last session: 2026-01-22T18:22:34Z
+Stopped at: Completed 03.4-07-PLAN.md (schema CRUD integration tests)
 Resume file: None
 
-Next: Phase 4 (next phase in roadmap)
+Next: 03.4-05 (E2E auth flow tests) or 03.4-06 (startup test simplification)
