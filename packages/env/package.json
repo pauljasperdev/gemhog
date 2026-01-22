@@ -8,8 +8,9 @@
     "./web": "./src/web.ts"
   },
   "dependencies": {
+    "@t3-oss/env-core": "^0.13.10",
     "dotenv": "catalog:",
-    "effect": "^3.19"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@gemhog/config": "workspace:*",
