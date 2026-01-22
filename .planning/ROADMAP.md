@@ -28,6 +28,8 @@ features.
       coverage, TDD guidance (INSERTED) ✓
 - [x] **Phase 3.3: Unify Env Validation with t3-env** - Replace mixed Effect
       Config/plain function with t3-env (INSERTED) ✓
+- [ ] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
+      Effect constructs, auth flows, migrations (INSERTED)
 - [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
@@ -189,10 +191,34 @@ Plans:
 - [x] 03.3-01-PLAN.md — Server env migration (t3-env, tests, consumers)
 - [x] 03.3-02-PLAN.md — Web env migration (t3-env, tests, verification)
 
+### Phase 3.4: Integration Test Coverage (INSERTED)
+
+**Goal**: Fix env loading for db:migrate, improve integration test coverage to
+test actual constructs and auth flows **Depends on**: Phase 3.3 (env validation
+complete) **Requirements**: Derived from testing gaps discovered during review
+**Success Criteria** (what must be TRUE):
+
+1. `pnpm db:migrate` works from monorepo root (drizzle.config.ts loads env
+   correctly)
+2. `connection.int.test.ts` uses Effect layers from packages/core (not manual
+   pool creation)
+3. Migration application is tested (apply migrations, verify schema)
+4. Auth signup/signin flow has integration tests
+5. packages/api has real tRPC procedure tests (not just placeholder)
+
+**Plans**: 4 plans
+
+Plans:
+
+- [ ] 03.4-01-PLAN.md — Fix drizzle.config.ts env loading + migration tests
+- [ ] 03.4-02-PLAN.md — Effect layer connection tests
+- [ ] 03.4-03-PLAN.md — Auth flow integration tests
+- [ ] 03.4-04-PLAN.md — tRPC procedure tests
+
 ### Phase 4: SST Deployment
 
-**Goal**: Deploy SST-agnostic application to AWS **Depends on**: Phase 3.3 (env
-validation unified) **Requirements**: INFRA-01, INFRA-02
+**Goal**: Deploy SST-agnostic application to AWS **Depends on**: Phase 3.4
+(integration test coverage complete) **Requirements**: INFRA-01, INFRA-02
 **Success Criteria** (what must be TRUE):
 
 1. Application deploys to AWS via `sst deploy`
@@ -224,7 +250,7 @@ Plans:
 ## Progress
 
 **Execution Order:** Phases execute in numeric order: 1 -> 1.1 -> 2 -> 3 -> 3.1
--> 3.2 -> 3.3 -> 4 -> 5
+-> 3.2 -> 3.3 -> 3.4 -> 4 -> 5
 
 | Phase                              | Plans Complete | Status      | Completed  |
 | ---------------------------------- | -------------- | ----------- | ---------- |
@@ -235,5 +261,6 @@ Plans:
 | 3.1 Code Review Fixes              | 9/9            | ✓ Complete  | 2026-01-21 |
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
 | 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
+| 3.4 Integration Test Coverage      | 0/4            | Not started | -          |
 | 4. SST Deployment                  | 0/?            | Not started | -          |
 | 5. Agent Verification              | 0/?            | Not started | -          |
