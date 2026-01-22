@@ -2,7 +2,9 @@
   "browser": {
     "browserName": "chromium",
     "launchOptions": {
-      "headless": true
+      "channel": null,
+      "headless": true,
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"]
     }
   }
 }
