@@ -7,6 +7,7 @@
   ],
   "type": "module",
   "scripts": {
+    "sso": "aws sso login --sso-session=gemhog",
     "dev:init": "rm -rf node_modules && pnpm install &&  pnpm playwright:install",
     "playwright:install": "pnpm exec playwright install chromium --with-deps",
     "dev": "pnpm -r dev",
@@ -60,6 +61,7 @@
     "overrides": {
       "esbuild": ">=0.25.0",
       "lodash-es": ">=4.17.23"
-    }
+    },
+    "auditConfig": {}
   }
 }
