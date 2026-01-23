@@ -28,7 +28,9 @@
       "!**/.source",
       "!**/convex/_generated",
       "!**/.playwright-results",
-      "!**/.planning/intel"
+      "!**/.planning/intel",
+      "!**/node_modules",
+      "!**/.open-next"
     ]
   },
   "formatter": {

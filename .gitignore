@@ -41,6 +41,7 @@ lerna-debug.log*
 
 # SST
 .sst
+sst-env.d.ts
 
 # Testing
 coverage
@@ -54,3 +55,4 @@ temp
 
 .opencode
 .playwright-results/
+
