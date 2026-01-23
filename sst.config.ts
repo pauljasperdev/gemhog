@@ -8,7 +8,10 @@ export default $config({
       protect: ["prod"].includes(input.stage),
       home: "aws",
       providers: {
-        aws: { region: "eu-central-1" },
+        aws: {
+          region: "eu-central-1",
+          profile: input.stage === "prod" ? "gemhog.prod" : "gemhog.dev",
+        },
         cloudflare: true,
       },
     };
