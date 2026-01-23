@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 export default $config({
   app(input) {
     return {
@@ -13,15 +12,20 @@ export default $config({
           profile: input.stage === "prod" ? "gemhog.prod" : "gemhog.dev",
         },
         cloudflare: true,
+        // hack until closed: https://github.com/anomalyco/sst/issues/6198
+        "aws-native": {
+          version: "1.49.0",
+          region: "eu-central-1",
+          profile: input.stage === "prod" ? "gemhog.prod" : "gemhog.dev",
+        },
       },
     };
   },
   async run() {
-    const _secrets = await import("./infra/secrets");
-    const _neon = await import("./infra/neon");
+    await import("./infra/secrets");
+    await import("./infra/neon");
     const api = await import("./infra/api");
     const web = await import("./infra/web");
-
     return {
       ...(api.outputs || {}),
       ...(web.outputs || {}),
