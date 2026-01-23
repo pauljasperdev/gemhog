@@ -1,7 +1,7 @@
 # Codebase Intelligence Summary
 
-Last updated: 2026-01-22T18:37:55.025Z
-Indexed files: 63
+Last updated: 2026-01-22T20:57:04.875Z
+Indexed files: 72
 
 ## Key Directories
 
@@ -13,7 +13,7 @@ Indexed files: 63
 
 ## File Patterns
 
-- `*.config.ts`: Configuration (10 files)
+- `*.config.ts`: Configuration (11 files)
 - `*.test.ts`: Test files (12 files)
 
-Total exports: 82
+Total exports: 97

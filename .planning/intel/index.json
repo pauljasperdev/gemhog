@@ -1,26 +1,7 @@
 {
   "version": 1,
-  "updated": 1769107075024,
+  "updated": 1769115424873,
   "files": {
-    "/home/lima/repo/apps/server/src/index.ts": {
-      "exports": [],
-      "imports": [
-        "@ai-sdk/devtools",
-        "@ai-sdk/google",
-        "@gemhog/api/context",
-        "@gemhog/api/routers/index",
-        "@gemhog/core/auth",
-        "@gemhog/env/server",
-        "@hono/trpc-server",
-        "ai",
-        "hono",
-        "hono/cors",
-        "hono/logger",
-        "zod",
-        "@hono/node-server"
-      ],
-      "indexed": 1769023214929
-    },
     "/home/lima/repo/apps/server/tsdown.config.ts": {
       "exports": [
         "default"
@@ -483,7 +464,7 @@
         "vitest",
         "./auth.service"
       ],
-      "indexed": 1769001578045
+      "indexed": 1769115389914
     },
     "/home/lima/repo/packages/core/src/auth/index.ts": {
       "exports": [
@@ -555,7 +536,7 @@
         "zod",
         "dotenv/config"
       ],
-      "indexed": 1769081494319
+      "indexed": 1769115310419
     },
     "/home/lima/repo/packages/env/src/web.ts": {
       "exports": [
@@ -589,12 +570,13 @@
     },
     "/home/lima/repo/vitest.config.ts": {
       "exports": [
-        "default"
+        "default",
+        "defineConfig"
       ],
       "imports": [
         "vitest/config"
       ],
-      "indexed": 1737475200000
+      "indexed": 1769111901659
     },
     "/home/lima/repo/vitest.integration.config.ts": {
       "exports": [
@@ -620,7 +602,7 @@
       "imports": [
         "vitest"
       ],
-      "indexed": 1769081585328
+      "indexed": 1769115339280
     },
     "/home/lima/repo/packages/env/src/web.test.ts": {
       "exports": [],
@@ -670,7 +652,7 @@
         "vitest",
         "./test-fixtures"
       ],
-      "indexed": 1769097190005
+      "indexed": 1769115396253
     },
     "/home/lima/repo/packages/core/src/auth/schema.int.test.ts": {
       "exports": [],
@@ -712,7 +694,111 @@
         "node:util",
         "vitest"
       ],
-      "indexed": 1769106234168
+      "indexed": 1769115424873
+    },
+    "/home/lima/repo/apps/server/src/app.ts": {
+      "exports": [
+        "app"
+      ],
+      "imports": [
+        "@ai-sdk/devtools",
+        "@ai-sdk/google",
+        "@gemhog/api/context",
+        "@gemhog/api/routers/index",
+        "@gemhog/core/auth",
+        "@gemhog/env/server",
+        "@hono/trpc-server",
+        "ai",
+        "hono",
+        "hono/cors",
+        "hono/logger",
+        "zod"
+      ],
+      "indexed": 1769112146915
+    },
+    "/home/lima/repo/sst.config.ts": {
+      "exports": [
+        "default"
+      ],
+      "imports": [],
+      "indexed": 1769114370725
+    },
+    "/home/lima/repo/apps/server/src/lambda.ts": {
+      "exports": [
+        "handler"
+      ],
+      "imports": [
+        "hono/aws-lambda",
+        "./app"
+      ],
+      "indexed": 1769112217643
+    },
+    "/home/lima/repo/infra/secrets.ts": {
+      "exports": [
+        "secrets"
+      ],
+      "imports": [],
+      "indexed": 1769115345504
+    },
+    "/home/lima/repo/apps/server/src/serve.ts": {
+      "exports": [],
+      "imports": [
+        "@hono/node-server",
+        "./app"
+      ],
+      "indexed": 1769112250425
+    },
+    "/home/lima/repo/infra/neon.ts": {
+      "exports": [
+        "neon"
+      ],
+      "imports": [
+        "./secrets"
+      ],
+      "indexed": 1769115350713
+    },
+    "/home/lima/repo/infra/api.ts": {
+      "exports": [
+        "api",
+        "outputs"
+      ],
+      "imports": [
+        "./router",
+        "./secrets"
+      ],
+      "indexed": 1769115366848
+    },
+    "/home/lima/repo/infra/web.ts": {
+      "exports": [
+        "web",
+        "outputs"
+      ],
+      "imports": [
+        "./api",
+        "./router",
+        "./secrets"
+      ],
+      "indexed": 1769115372715
+    },
+    "/home/lima/repo/infra/utils.ts": {
+      "exports": [
+        "isPermanentStage"
+      ],
+      "imports": [],
+      "indexed": 1769114324026
+    },
+    "/home/lima/repo/infra/router.ts": {
+      "exports": [
+        "isPermanentStage",
+        "baseDomain",
+        "domain",
+        "domainApi",
+        "router"
+      ],
+      "imports": [
+        "./utils"
+      ],
+      "indexed": 1769114334067
     }
   }
 }
