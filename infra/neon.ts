@@ -6,3 +6,10 @@ export const neon = new sst.Linkable("Neon", {
     urlPooler: secrets.DatabaseUrlPooler.value,
   },
 });
+
+new sst.x.DevCommand("Database", {
+  dev: {
+    autostart: true,
+    command: "pnpm db:start",
+  },
+});

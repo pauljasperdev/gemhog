@@ -1,21 +1,18 @@
 import { domain, domainApi } from "./router";
 import { secrets } from "./secrets";
 
+const webDomain = {
+  name: domain,
+  dns: sst.cloudflare.dns({
+    zone: secrets.CloudflareZoneId.value,
+  }),
+};
+
 export const web = new sst.aws.Nextjs("Web", {
   path: "apps/web",
-  domain: {
-    name: domain,
-    dns: sst.cloudflare.dns({
-      zone: secrets.CloudflareZoneId.value,
-    }),
-  },
+  domain: webDomain,
   environment: {
     NEXT_PUBLIC_SERVER_URL: `https://${domainApi}`,
-    DATABASE_URL: secrets.DatabaseUrl.value,
-    DATABASE_URL_POOLER: secrets.DatabaseUrlPooler.value,
-    BETTER_AUTH_SECRET: secrets.BetterAuthSecret.value,
-    BETTER_AUTH_URL: `https://${domainApi}`,
-    CORS_ORIGIN: `https://${domain}`,
   },
 });
 
