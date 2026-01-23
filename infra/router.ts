@@ -1,30 +1,24 @@
-import { isPermanentStage } from "./utils";
-
-export { isPermanentStage };
+import { secrets } from "./secrets";
 
 export const baseDomain = "gemhog.com";
 
-export const domain =
-  $app.stage === "prod"
+export const domain = $dev
+  ? "localhost:3001"
+  : $app.stage === "prod"
     ? baseDomain
-    : isPermanentStage
-      ? `${$app.stage}.${baseDomain}`
-      : `${$app.stage}.${baseDomain}`;
+    : `${$app.stage}.${baseDomain}`;
 
-export const domainApi =
-  $app.stage === "prod"
+export const domainApi = $dev
+  ? "localhost:3000"
+  : $app.stage === "prod"
     ? `api.${baseDomain}`
-    : isPermanentStage
-      ? `api.${$app.stage}.${baseDomain}`
-      : `${$app.stage}.api.${baseDomain}`;
+    : `api.${$app.stage}.${baseDomain}`;
 
-export const router = isPermanentStage
-  ? new sst.aws.Router("ApiRouter", {
-      domain: {
-        name: domainApi,
-        dns: sst.cloudflare.dns({
-          zone: process.env.CLOUDFLARE_ZONE_ID ?? "",
-        }),
-      },
-    })
-  : undefined;
+export const router = new sst.aws.Router("ApiRouter", {
+  domain: {
+    name: domainApi,
+    dns: sst.cloudflare.dns({
+      zone: secrets.CloudflareZoneId.value,
+    }),
+  },
+});

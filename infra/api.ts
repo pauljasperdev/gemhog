@@ -1,20 +1,19 @@
-import { domain, domainApi, isPermanentStage, router } from "./router";
+import { domain, domainApi, router } from "./router";
 import { secrets } from "./secrets";
 
-const cors = {
-  allowOrigins: [`https://${domain}`, "http://localhost:3001"],
-  allowMethods: ["GET", "POST", "OPTIONS"],
-  allowHeaders: ["Content-Type", "Authorization"],
-  allowCredentials: true,
-};
+// const cors = {
+//   allowOrigins: [`https://${domain}`, "http://localhost:3001"],
+//   allowMethods: ["GET", "POST", "OPTIONS"],
+//   allowHeaders: ["Content-Type", "Authorization"],
+//   allowCredentials: true,
+// };
 
 export const api = new sst.aws.Function("Api", {
   handler: "apps/server/src/lambda.handler",
   streaming: !$dev,
-  url:
-    isPermanentStage && router
-      ? { router: { instance: router, domain: domainApi }, cors }
-      : { cors },
+  url: {
+    router: { instance: router, domain: domainApi },
+  },
   environment: {
     DATABASE_URL: secrets.DatabaseUrl.value,
     DATABASE_URL_POOLER: secrets.DatabaseUrlPooler.value,
@@ -22,7 +21,6 @@ export const api = new sst.aws.Function("Api", {
     BETTER_AUTH_URL: `https://${domainApi}`,
     CORS_ORIGIN: `https://${domain}`,
     GOOGLE_GENERATIVE_AI_API_KEY: secrets.GoogleApiKey.value,
-    NODE_ENV: "production",
   },
 });
 
