@@ -3,4 +3,5 @@ export const secrets = {
   DatabaseUrlPooler: new sst.Secret("DatabaseUrlPooler"),
   BetterAuthSecret: new sst.Secret("BetterAuthSecret"),
   GoogleApiKey: new sst.Secret("GoogleApiKey"),
+  CloudflareZoneId: new sst.Secret("CloudflareZoneId"),
 };
