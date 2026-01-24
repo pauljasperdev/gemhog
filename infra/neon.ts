@@ -13,3 +13,10 @@ new sst.x.DevCommand("Database", {
     command: "pnpm db:start",
   },
 });
+
+new sst.x.DevCommand("Studio", {
+  dev: {
+    autostart: true,
+    command: "pnpm db:studio",
+  },
+});
