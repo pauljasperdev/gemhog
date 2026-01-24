@@ -24,6 +24,10 @@ export default $config({
   async run() {
     // hack until closed: https://github.com/anomalyco/sst/issues/6198
     $transform(aws.lambda.FunctionUrl, (args, _opts, name) => {
+      if (name.includes("WebServer") || name.includes("WebImageOptimizer")) {
+        return;
+      }
+
       new awsnative.lambda.Permission(`${name}InvokePermission`, {
         action: "lambda:InvokeFunction",
         functionName: args.functionName,
