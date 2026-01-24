@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Make the repo restructure-ready, testable, security-checkable,
-and deployable **Current focus:** Phase 3.4 complete, ready for Phase 4
+and deployable **Current focus:** Phase 4 complete, ready for Phase 5
 
 ## Current Position
 
@@ -446,7 +446,7 @@ Integration test coverage - COMPLETE:
 
 ## Phase 4 Summary
 
-SST Deployment phase - IN PROGRESS:
+SST Deployment phase - COMPLETE:
 
 | Plan    | Summary                                          | Duration | Status   |
 | ------- | ------------------------------------------------ | -------- | -------- |
