@@ -79,6 +79,8 @@ These integrations will be implemented after V0 foundation is complete.
   - Database adapter: Drizzle ORM
   - Token storage: HTTP-only cookies
   - Session management: Database-backed sessions
+  - **Skill:** Use `/better-auth-best-practices` when implementing or modifying
+    authentication features
 
 **Cookie Configuration:**
 
