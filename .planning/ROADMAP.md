@@ -30,7 +30,7 @@ features.
       Config/plain function with t3-env (INSERTED) ✓
 - [x] **Phase 3.4: Integration Test Coverage** - Fix db:migrate env issue, test
       Effect constructs, auth flows, migrations (INSERTED) ✓
-- [ ] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS
+- [x] **Phase 4: SST Deployment** - Deploy SST-agnostic application to AWS ✓
 - [ ] **Phase 5: Agent Verification** - Document and integrate full agent
       verification workflow
 
@@ -233,11 +233,11 @@ Plans:
 
 Plans:
 
-- [ ] 04-01-PLAN.md — Install dependencies + fix GOOGLE_GENERATIVE_AI_API_KEY env gap
-- [ ] 04-02-PLAN.md — Create sst.config.ts and infra/secrets.ts, infra/neon.ts
-- [ ] 04-03-PLAN.md — Refactor Hono server (app.ts, lambda.ts, serve.ts)
-- [ ] 04-04-PLAN.md — Create infra/api.ts and infra/web.ts components
-- [ ] 04-05-PLAN.md — Deployment verification (checkpoint)
+- [x] 04-01-PLAN.md — Install dependencies + fix GOOGLE_GENERATIVE_AI_API_KEY env gap
+- [x] 04-02-PLAN.md — Create sst.config.ts and infra/secrets.ts, infra/neon.ts
+- [x] 04-03-PLAN.md — Refactor Hono server (app.ts, lambda.ts, serve.ts)
+- [x] 04-04-PLAN.md — Create infra/api.ts and infra/web.ts components
+- [x] 04-05-PLAN.md — Deployment verification (checkpoint)
 
 ### Phase 5: Agent Verification
 
@@ -271,5 +271,5 @@ Plans:
 | 3.2 Code Quality & TDD Practices   | 6/6            | ✓ Complete  | 2026-01-22 |
 | 3.3 Unify Env Validation (t3-env)  | 2/2            | ✓ Complete  | 2026-01-22 |
 | 3.4 Integration Test Coverage      | 7/7            | ✓ Complete  | 2026-01-22 |
-| 4. SST Deployment                  | 0/5            | In Progress | -          |
+| 4. SST Deployment                  | 5/5            | ✓ Complete  | 2026-01-24 |
 | 5. Agent Verification              | 0/?            | Not started | -          |
