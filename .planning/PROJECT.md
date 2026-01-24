@@ -34,46 +34,67 @@ higher-risk allocation of their portfolio.
 
 ## Scope & Phases
 
-### V0 (Active) — Foundation
+### V0 (Validated) — Foundation
 
-Goal: Make the repo restructure-ready, testable, security-checkable, and
-deployable. No external product integrations yet.
+Completed. Established testable, deployable codebase with security gates.
 
-- Testing infrastructure for agent verification workflow
-  - Static: Biome lint + TypeScript strict type checking
-  - Unit: Vitest for pure logic, mocked externals
-  - Integration: Local Postgres Docker + Test-stage AWS resources (via env vars)
-  - Security verification: Checklist-based review producing `SECURITY-REVIEW.md`
-  - E2E verification: Playwright MCP against localhost dev server
-  - Verification order: static → unit → integration → security → Playwright MCP
-- Security verification as a blocking workflow gate
-  - Critical/high findings block merge
-  - Findings recorded in `SECURITY-REVIEW.md`; ongoing items tracked in
-    `.planning/codebase/CONCERNS.md`
-- SST v3 migration for AWS deployment
-- Core package consolidation
-  - Merge db + auth into `packages/core` with domain-driven structure
-- Effect TS integration for backend (testability, dependency injection)
-  - **Effect boundary:** All backend code uses Effect except auth. better-auth
-    has no Effect wrapper and is HTTP-boundary code where Effect adds no value.
-    Auth remains plain; revisit if Effect wrapper emerges.
+- ✓ Testing infrastructure (Biome, Vitest, Playwright MCP)
+- ✓ Security verification workflow (`SECURITY-REVIEW.md`)
+- ✓ SST v3 deployment
+- ✓ Core package consolidation (`packages/core`)
+- ✓ Effect TS integration for backend
 
-### V1 (Deferred) — Features
+### V1 (Active) — Launch Readiness
 
-Blocked until V0 foundation is complete.
+Goal: Make Gemhog shareable. Landing page with email capture, monitoring, and
+legal compliance. No product features yet — infrastructure for launch.
+
+- Landing page transformation
+  - Convert Next.js scaffold into marketing page
+  - Email signup form for newsletter subscribers
+  - Value prop: "We listen to 20 hours of investment podcasts so you don't have
+    to"
+- Email infrastructure
+  - Subscriber storage in Postgres
+  - AWS SES integration for sending
+  - Unsubscribe endpoint (CAN-SPAM/GDPR compliance)
+  - Double opt-in flow
+- Branding & shareable assets
+  - Favicon
+  - Open Graph image (social preview card)
+  - Logo integration (assets provided separately)
+  - Meta tags (title, description)
+- Legal compliance
+  - Privacy policy page
+  - Cookie consent (for analytics)
+  - Email consent checkbox
+- Analytics & monitoring
+  - Posthog integration
+  - Sentry error tracking
+- SEO basics
+  - robots.txt
+  - Proper meta tags
+- Auth changes
+  - Hide public signup (invite-only for future beta)
+  - Keep existing auth for later beta users
+
+### V2 (Deferred) — Product Features
+
+Blocked until V1 launch readiness is complete.
 
 - Stock pages with dynamic routes based on available data
 - Thesis extraction from podcast transcripts (Podscan.fm API)
 - Thesis analysis against financial data (reports, metrics)
 - Cron job for transcript analysis pipeline
-- Landing page with newsletter signup (AWS SES for delivery)
+- Newsletter content creation and sending
 - Twitter/X automation for new analysis posts
 - Bluesky automation for new analysis posts
 - Discovery feed of stock picks by category/strategy
+- Admin UI for subscriber management
 
 ## Constraints (Non-Negotiable)
 
-### V0 Constraints
+### Foundation Constraints (from V0)
 
 - **SST-agnostic application code**: App code reads env vars only; no SST SDK
   imports. SST injects env vars at deploy time; local/test use `.env` files.
@@ -85,6 +106,17 @@ Blocked until V0 foundation is complete.
   findings block deployment. See `.planning/codebase/SECURITY-CHECKLIST.md`.
 
 ### V1 Constraints
+
+- **Serverless email**: Use AWS SES directly, no hosted email services
+  (Listmonk, Resend). Keep costs at $0 for low volume.
+- **Free-tier monitoring**: Sentry free tier for errors, CloudWatch for logs.
+  No paid observability tools.
+- **No admin UI**: Subscriber management via direct database access or scripts.
+  Admin dashboard deferred to V2.
+- **GDPR/CAN-SPAM compliance**: Double opt-in, clear unsubscribe, privacy
+  policy required before collecting emails.
+
+### V2 Constraints
 
 - **No investment advice**: Research summaries only; user decides.
 - **US stocks only**: Scope limited to US equities for simpler sourcing and
@@ -118,7 +150,7 @@ Examples:
 
 Theses are not financial targets or price predictions.
 
-### Data Sources (V1)
+### Data Sources (V2)
 
 - **Transcripts**: Podscan.fm API
 - **Fundamentals**: SEC EDGAR (XBRL from 10-K/10-Q filings) — free,
@@ -138,6 +170,5 @@ Theses are not financial targets or price predictions.
 
 ---
 
-_Last updated: 2026-01-19 — streamlined scope/constraints, V0 foundation active;
-V1 product features deferred; replaced Stooq with EODHD (or alternative) for EOD
-price data._
+_Last updated: 2026-01-24 — V0 validated; V1 (launch readiness) now active;
+product features moved to V2._
