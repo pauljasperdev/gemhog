@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": 1769115424873,
+  "updated": 1769260115942,
   "files": {
     "/home/lima/repo/apps/server/tsdown.config.ts": {
       "exports": [
@@ -779,13 +779,6 @@
         "./secrets"
       ],
       "indexed": 1769115372715
-    },
-    "/home/lima/repo/infra/utils.ts": {
-      "exports": [
-        "isPermanentStage"
-      ],
-      "imports": [],
-      "indexed": 1769114324026
     },
     "/home/lima/repo/infra/router.ts": {
       "exports": [
