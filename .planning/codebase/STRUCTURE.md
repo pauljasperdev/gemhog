@@ -260,7 +260,6 @@ packages/core/
 │   └── migrations/        # Database migrations
 │       ├── 0000_initial_schema.sql
 │       └── meta/_journal.json
-├── docker-compose.yml     # Local PostgreSQL
 ├── drizzle.config.ts      # Schema glob: ./src/*/*.sql.ts
 └── package.json
 ```

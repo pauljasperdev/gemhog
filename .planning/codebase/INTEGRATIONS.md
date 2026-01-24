@@ -135,7 +135,7 @@ These integrations will be implemented after V0 foundation is complete.
   - `GOOGLE_GENERATIVE_AI_API_KEY` - AI features
   - `NEXT_PUBLIC_SERVER_URL` - API base URL
 - Secrets location: `apps/server/.env`, `apps/web/.env`
-- Local database: Docker Compose (`packages/db/docker-compose.yml`)
+- Local database: Docker Compose (`infra/docker-compose.yml`)
 
 **Staging:**
 
