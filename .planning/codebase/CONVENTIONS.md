@@ -227,6 +227,15 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 export { Input };
 ```
 
+**Skills for UI work:**
+
+- `/frontend-design` — Use when creating web components, pages, dashboards, or
+  React components with high design quality
+- `/web-design-guidelines` — Use when reviewing UI code for accessibility,
+  design best practices, or UX audit
+- `/copywriting` — Use when writing or improving marketing copy for homepage,
+  landing pages, pricing pages, feature pages, or CTAs
+
 **tRPC Procedures:**
 
 ```typescript

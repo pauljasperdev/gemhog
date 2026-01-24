@@ -48,6 +48,17 @@ methodology for AI-assisted development. All project context lives in the
 | `SECURITY-REVIEW.md`    | Security findings and audit trail    | Check for blocking findings before work    |
 | `CONCERNS.md`           | Known issues, tech debt              | Before major refactoring                   |
 
+## Available Skills
+
+Use these skills (invoke with `/skill-name`) for specialized tasks:
+
+| Skill                        | Purpose                                        | When to Use                                             |
+| ---------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
+| `/frontend-design`           | Create production-grade UI with high design quality | Building web components, pages, dashboards, React components |
+| `/web-design-guidelines`     | Review UI code for best practices compliance   | Reviewing UI, checking accessibility, auditing UX       |
+| `/copywriting`               | Write or improve marketing copy                | Homepage, landing pages, pricing, CTAs, feature pages   |
+| `/better-auth-best-practices`| Integrate Better Auth authentication framework | Implementing or modifying authentication features       |
+
 ## Important Constraints
 
 - **Security-first**: Critical/high security findings block merge. Review
