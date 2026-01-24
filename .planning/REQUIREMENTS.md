@@ -97,40 +97,40 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAND-01 | TBD | Pending |
-| LAND-02 | TBD | Pending |
-| LAND-03 | TBD | Pending |
-| LAND-04 | TBD | Pending |
-| LAND-05 | TBD | Pending |
-| EMAIL-01 | TBD | Pending |
-| EMAIL-02 | TBD | Pending |
-| EMAIL-03 | TBD | Pending |
-| EMAIL-04 | TBD | Pending |
-| EMAIL-05 | TBD | Pending |
-| EMAIL-06 | TBD | Pending |
-| EMAIL-07 | TBD | Pending |
-| BRAND-01 | TBD | Pending |
-| BRAND-02 | TBD | Pending |
-| BRAND-03 | TBD | Pending |
-| BRAND-04 | TBD | Pending |
-| LEGAL-01 | TBD | Pending |
-| LEGAL-02 | TBD | Pending |
-| LEGAL-03 | TBD | Pending |
-| LEGAL-04 | TBD | Pending |
-| ANLY-01 | TBD | Pending |
-| ANLY-02 | TBD | Pending |
-| ANLY-03 | TBD | Pending |
-| MNTR-01 | TBD | Pending |
-| MNTR-02 | TBD | Pending |
-| MNTR-03 | TBD | Pending |
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
+| LAND-01 | 4 | Pending |
+| LAND-02 | 4 | Pending |
+| LAND-03 | 4 | Pending |
+| LAND-04 | 4 | Pending |
+| LAND-05 | 4 | Pending |
+| EMAIL-01 | 2 | Pending |
+| EMAIL-02 | 2 | Pending |
+| EMAIL-03 | 2 | Pending |
+| EMAIL-04 | 2 | Pending |
+| EMAIL-05 | 2 | Pending |
+| EMAIL-06 | 2 | Pending |
+| EMAIL-07 | 2 | Pending |
+| BRAND-01 | 5 | Pending |
+| BRAND-02 | 5 | Pending |
+| BRAND-03 | 5 | Pending |
+| BRAND-04 | 5 | Pending |
+| LEGAL-01 | 5 | Pending |
+| LEGAL-02 | 4 | Pending |
+| LEGAL-03 | 4 | Pending |
+| LEGAL-04 | 5 | Pending |
+| ANLY-01 | 3 | Pending |
+| ANLY-02 | 3 | Pending |
+| ANLY-03 | 3 | Pending |
+| MNTR-01 | 1 | Pending |
+| MNTR-02 | 1 | Pending |
+| MNTR-03 | 1 | Pending |
+| AUTH-01 | 5 | Pending |
+| AUTH-02 | 5 | Pending |
 
 **Coverage:**
 - V1 requirements: 28 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 28
+- Mapped to phases: 28
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after initial definition*
+*Last updated: 2026-01-24 - Traceability completed during roadmap creation*
