@@ -21,14 +21,6 @@ export const api = new sst.aws.Function("Api", {
   },
 });
 
-// hack until closed: https://github.com/anomalyco/sst/issues/6198
-new awsnative.lambda.Permission("ApiInvokePermission", {
-  action: "lambda:InvokeFunction",
-  functionName: api.name,
-  principal: "*",
-  invokedViaFunctionUrl: true,
-});
-
 export const outputs = {
   apiUrl: api.url,
 };

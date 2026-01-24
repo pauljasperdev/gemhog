@@ -22,6 +22,16 @@ export default $config({
     };
   },
   async run() {
+    // hack until closed: https://github.com/anomalyco/sst/issues/6198
+    $transform(aws.lambda.FunctionUrl, (args, _opts, name) => {
+      new awsnative.lambda.Permission(`${name}InvokePermission`, {
+        action: "lambda:InvokeFunction",
+        functionName: args.functionName,
+        principal: "*",
+        invokedViaFunctionUrl: true,
+      });
+    });
+
     await import("./infra/secrets");
     await import("./infra/neon");
     const api = await import("./infra/api");
