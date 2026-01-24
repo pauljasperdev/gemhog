@@ -6,6 +6,7 @@ export const api = new sst.aws.Function("Api", {
   streaming: !$dev,
   url: {
     authorization: "none",
+    cors: false,
     router: {
       instance: router,
       path: "/",
