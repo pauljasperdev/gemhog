@@ -102,7 +102,7 @@
 **Development:**
 
 - Any platform with Node.js
-- PostgreSQL (via Docker or local) - `packages/core/docker-compose.yml`
+- PostgreSQL 18 (via Docker or Neon) - `infra/docker-compose.yml`
 - pnpm for package management
 
 **Production:**

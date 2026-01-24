@@ -2,7 +2,7 @@ name: gemhog
 
 services:
   postgres:
-    image: postgres
+    image: postgres:18
     container_name: gemhog-postgres
     environment:
       POSTGRES_DB: gemhog
