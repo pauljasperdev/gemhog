@@ -9,14 +9,22 @@ export default $config({
       providers: {
         aws: {
           region: "eu-central-1",
-          profile: input.stage === "prod" ? "gemhog.prod" : "gemhog.dev",
+          profile: process.env.CODEBUILD_BUILD_ID
+            ? undefined
+            : input.stage === "prod"
+              ? "gemhog.prod"
+              : "gemhog.dev",
         },
         cloudflare: true,
         // hack until closed: https://github.com/anomalyco/sst/issues/6198
         "aws-native": {
           version: "1.49.0",
           region: "eu-central-1",
-          profile: input.stage === "prod" ? "gemhog.prod" : "gemhog.dev",
+          profile: process.env.CODEBUILD_BUILD_ID
+            ? undefined
+            : input.stage === "prod"
+              ? "gemhog.prod"
+              : "gemhog.dev",
         },
       },
     };
