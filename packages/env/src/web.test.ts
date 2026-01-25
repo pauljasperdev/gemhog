@@ -1,4 +1,40 @@
+import fs from "node:fs";
+import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+/**
+ * GUARDRAIL: Ensures every env var in the schema has a corresponding test.
+ * If this test fails, you added an env var to web.ts but forgot to test it.
+ */
+describe("env var test coverage", () => {
+  it("every env var in schema must have a test", () => {
+    const schemaPath = path.join(__dirname, "web.ts");
+    const testPath = path.join(__dirname, "web.test.ts");
+
+    const schemaContent = fs.readFileSync(schemaPath, "utf-8");
+    const testContent = fs.readFileSync(testPath, "utf-8");
+
+    // Extract env var names from schema (matches: SOME_VAR: z.something())
+    const envVarPattern = /^\s+(NEXT_PUBLIC_\w+|[A-Z][A-Z0-9_]+):\s*z\./gm;
+    const schemaVars = [...schemaContent.matchAll(envVarPattern)].map(
+      (m) => m[1],
+    );
+
+    // Check each schema var appears in tests
+    const missingTests = schemaVars.filter(
+      (varName) => !testContent.includes(varName),
+    );
+
+    if (missingTests.length > 0) {
+      throw new Error(
+        `Missing tests for env vars: ${missingTests.join(", ")}\n` +
+          "Add tests for these variables in web.test.ts",
+      );
+    }
+
+    expect(schemaVars.length).toBeGreaterThan(0);
+  });
+});
 
 describe("web env validation", () => {
   const originalEnv = process.env;
