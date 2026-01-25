@@ -1,6 +1,9 @@
 import { env } from "@gemhog/env/web";
 import * as Sentry from "@sentry/nextjs";
 
+// Export hook for Next.js router transition instrumentation
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
 // Generate or retrieve session ID for error correlation (not user ID for privacy)
 const getSessionId = () => {
   if (typeof window === "undefined") return undefined;
