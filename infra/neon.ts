@@ -19,4 +19,7 @@ new sst.x.DevCommand("Studio", {
     autostart: true,
     command: "pnpm db:studio",
   },
+  environment: {
+    DATABASE_URL: secrets.DatabaseUrl.value,
+  },
 });
