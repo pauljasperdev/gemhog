@@ -11,6 +11,10 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { z } from "zod";
+import { captureError, initSentry } from "./sentry";
+
+// Initialize Sentry before setting up routes
+initSentry();
 
 // Schema for AI message validation
 // Validates the UI message parts structure used by AI SDK v6
@@ -146,6 +150,13 @@ app.post("/ai", async (c) => {
 
 app.get("/", (c) => {
   return c.text("OK");
+});
+
+// Error handling - capture errors to Sentry with request context
+app.onError((err, c) => {
+  captureError(err, c);
+  console.error(err);
+  return c.json({ error: "Internal Server Error" }, 500);
 });
 
 export { app };
