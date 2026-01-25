@@ -231,6 +231,8 @@ export { Input };
 
 - `/frontend-design` — Use when creating web components, pages, dashboards, or
   React components with high design quality
+- `/vercel-react-best-practices` — Use when writing, reviewing, or refactoring
+  React/Next.js code for optimal performance patterns
 - `/web-design-guidelines` — Use when reviewing UI code for accessibility,
   design best practices, or UX audit
 - `/copywriting` — Use when writing or improving marketing copy for homepage,
