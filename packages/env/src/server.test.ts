@@ -88,4 +88,60 @@ describe("server env validation", () => {
       expect(env.NODE_ENV).toBe("production");
     });
   });
+
+  describe("optional Sentry vars", () => {
+    const setRequiredEnvVars = () => {
+      process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
+      process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
+      process.env.BETTER_AUTH_URL = "http://localhost:3000";
+      process.env.CORS_ORIGIN = "http://localhost:3001";
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+    };
+
+    it("should succeed without any Sentry vars", async () => {
+      setRequiredEnvVars();
+      delete process.env.SENTRY_DSN;
+      delete process.env.SENTRY_AUTH_TOKEN;
+      delete process.env.SENTRY_ORG;
+      delete process.env.SENTRY_PROJECT;
+
+      const { env } = await import("./server.js");
+
+      expect(env.SENTRY_DSN).toBeUndefined();
+      expect(env.SENTRY_AUTH_TOKEN).toBeUndefined();
+      expect(env.SENTRY_ORG).toBeUndefined();
+      expect(env.SENTRY_PROJECT).toBeUndefined();
+    });
+
+    it("should succeed with all Sentry vars set", async () => {
+      setRequiredEnvVars();
+      process.env.SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.SENTRY_AUTH_TOKEN = "sntrys_test_token";
+      process.env.SENTRY_ORG = "my-org";
+      process.env.SENTRY_PROJECT = "my-project";
+
+      const { env } = await import("./server.js");
+
+      expect(env.SENTRY_DSN).toBe("https://key@sentry.io/123");
+      expect(env.SENTRY_AUTH_TOKEN).toBe("sntrys_test_token");
+      expect(env.SENTRY_ORG).toBe("my-org");
+      expect(env.SENTRY_PROJECT).toBe("my-project");
+    });
+
+    it("should treat empty Sentry vars as undefined", async () => {
+      setRequiredEnvVars();
+      process.env.SENTRY_DSN = "";
+      process.env.SENTRY_AUTH_TOKEN = "";
+      process.env.SENTRY_ORG = "";
+      process.env.SENTRY_PROJECT = "";
+
+      const { env } = await import("./server.js");
+
+      expect(env.SENTRY_DSN).toBeUndefined();
+      expect(env.SENTRY_AUTH_TOKEN).toBeUndefined();
+      expect(env.SENTRY_ORG).toBeUndefined();
+      expect(env.SENTRY_PROJECT).toBeUndefined();
+    });
+  });
 });
