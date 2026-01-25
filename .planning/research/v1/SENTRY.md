@@ -1,7 +1,7 @@
 # Sentry Research
 
-**Researched:** 2026-01-24
-**Overall Confidence:** HIGH (official Sentry documentation verified)
+**Researched:** 2026-01-24 **Overall Confidence:** HIGH (official Sentry
+documentation verified)
 
 ## Summary
 
@@ -29,7 +29,13 @@ pnpm add @sentry/nextjs
 
 The wizard creates these files. For manual setup:
 
-**`instrumentation-client.ts`** (client-side):
+**`src/instrumentation-client.ts`** (client-side entry):
+
+```typescript
+export { onRouterTransitionStart } from "./lib/sentry/instrumentation.client";
+```
+
+**`src/lib/sentry/instrumentation.client.ts`** (client-side implementation):
 
 ```typescript
 import * as Sentry from "@sentry/nextjs";
@@ -41,7 +47,7 @@ Sentry.init({
   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
 
   // Session Replay - captures 100% of sessions with errors
-  replaysSessionSampleRate: 0,  // Disable background sampling (quota)
+  replaysSessionSampleRate: 0, // Disable background sampling (quota)
   replaysOnErrorSampleRate: 1.0, // Always capture error sessions
 
   integrations: [
@@ -63,18 +69,24 @@ Sentry.init({
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
 ```
 
-**`instrumentation.ts`** (server-side registration):
+**`src/instrumentation.ts`** (server-side entry):
+
+```typescript
+export { onRequestError, register } from "./lib/sentry/instrumentation";
+```
+
+**`src/lib/sentry/instrumentation.ts`** (server-side registration):
 
 ```typescript
 import * as Sentry from "@sentry/nextjs";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("./sentry.server.config");
+    await import("./server.config");
   }
 
   if (process.env.NEXT_RUNTIME === "edge") {
-    await import("./sentry.edge.config");
+    await import("./edge.config");
   }
 }
 
@@ -82,7 +94,7 @@ export async function register() {
 export const onRequestError = Sentry.captureRequestError;
 ```
 
-**`sentry.server.config.ts`**:
+**`src/lib/sentry/server.config.ts`**:
 
 ```typescript
 import * as Sentry from "@sentry/nextjs";
@@ -96,7 +108,7 @@ Sentry.init({
 });
 ```
 
-**`sentry.edge.config.ts`**:
+**`src/lib/sentry/edge.config.ts`**:
 
 ```typescript
 import * as Sentry from "@sentry/nextjs";
@@ -224,7 +236,7 @@ export async function createProject(formData: FormData) {
     { recordResponse: true },
     async () => {
       // Your server action logic
-    }
+    },
   );
 }
 ```
@@ -352,8 +364,8 @@ export { handler };
 
 ### Overview
 
-Source maps are essential for readable stack traces. For serverless, upload
-them to Sentry during CI/CD rather than bundling with the Lambda (affects cold
+Source maps are essential for readable stack traces. For serverless, upload them
+to Sentry during CI/CD rather than bundling with the Lambda (affects cold
 start).
 
 ### SST v3 Autodeploy Integration
@@ -417,35 +429,35 @@ For Next.js, `withSentryConfig` handles source map upload automatically if
 
 ### Automatically Captured (Next.js)
 
-| Event Type | Details |
-|------------|---------|
-| Unhandled exceptions | Client and server JS errors |
-| Unhandled promise rejections | Async errors without catch |
-| React render errors | Via error boundaries |
-| API route errors | Server-side exceptions |
-| Server component errors | Via `onRequestError` hook |
-| HTTP spans | Incoming/outgoing requests |
-| Database queries | Via OpenTelemetry |
-| Page transitions | App Router navigation |
+| Event Type                   | Details                     |
+| ---------------------------- | --------------------------- |
+| Unhandled exceptions         | Client and server JS errors |
+| Unhandled promise rejections | Async errors without catch  |
+| React render errors          | Via error boundaries        |
+| API route errors             | Server-side exceptions      |
+| Server component errors      | Via `onRequestError` hook   |
+| HTTP spans                   | Incoming/outgoing requests  |
+| Database queries             | Via OpenTelemetry           |
+| Page transitions             | App Router navigation       |
 
 ### Automatically Captured (Hono/Lambda)
 
-| Event Type | Details |
-|------------|---------|
-| Unhandled exceptions | Via Sentry.init + onError |
-| HTTP requests | Via OpenTelemetry httpIntegration |
-| Fetch requests | Via nativeNodeFetchIntegration |
+| Event Type           | Details                           |
+| -------------------- | --------------------------------- |
+| Unhandled exceptions | Via Sentry.init + onError         |
+| HTTP requests        | Via OpenTelemetry httpIntegration |
+| Fetch requests       | Via nativeNodeFetchIntegration    |
 
 ### Requires Manual Instrumentation
 
-| Event Type | How to Capture |
-|------------|----------------|
-| Server Actions | `Sentry.withServerActionInstrumentation()` |
-| Caught/handled errors | `Sentry.captureException(error)` |
-| User context | `Sentry.setUser({ id, email })` |
-| Custom spans | `Sentry.startSpan()` |
-| Business events | `Sentry.captureMessage()` |
-| Custom tags | `Sentry.setTag()` |
+| Event Type            | How to Capture                             |
+| --------------------- | ------------------------------------------ |
+| Server Actions        | `Sentry.withServerActionInstrumentation()` |
+| Caught/handled errors | `Sentry.captureException(error)`           |
+| User context          | `Sentry.setUser({ id, email })`            |
+| Custom spans          | `Sentry.startSpan()`                       |
+| Business events       | `Sentry.captureMessage()`                  |
+| Custom tags           | `Sentry.setTag()`                          |
 
 ### Manual Capture Examples
 
@@ -469,12 +481,9 @@ Sentry.captureMessage("High-value transaction processed", {
 });
 
 // Custom span for performance tracking
-await Sentry.startSpan(
-  { name: "ai.generate", op: "ai" },
-  async () => {
-    await generateAIResponse(prompt);
-  }
-);
+await Sentry.startSpan({ name: "ai.generate", op: "ai" }, async () => {
+  await generateAIResponse(prompt);
+});
 ```
 
 ## Performance Monitoring
@@ -505,6 +514,7 @@ tracesSampleRate: process.env.NODE_ENV === "production" ? 0.05 : 1.0,
 ### Quota Impact
 
 Performance transactions count toward quota. With 5K errors/month:
+
 - At 0.1 sample rate with 1000 daily requests: ~100 transactions/day = 3K/month
 - Leaves 2K for actual errors
 - Adjust sample rate based on traffic patterns
@@ -527,21 +537,25 @@ Sentry.init({
 ### Recommended Initial Alerts
 
 **1. First Error (Critical)**
+
 - Trigger: When a new issue is first seen
 - Action: Email immediately
 - Purpose: Catch new bugs immediately
 
 **2. Error Spike (High Priority)**
+
 - Trigger: Error count > 10 in 1 hour
 - Action: Slack notification
 - Purpose: Detect outages/regressions
 
 **3. High-Impact Errors**
+
 - Trigger: Users affected > 5 in 1 hour
 - Action: Slack + Email
 - Purpose: Prioritize user-facing issues
 
 **4. Production Only**
+
 - Filter: Environment = "prod"
 - Purpose: Reduce noise from dev/staging
 
@@ -647,15 +661,16 @@ Sentry.init({
 
 ### What 5K Errors/Month Covers
 
-| Scenario | Errors/Month | Coverage |
-|----------|--------------|----------|
-| Small app, few users | 100-500 | Comfortable |
-| Medium app, moderate traffic | 500-2000 | OK with sampling |
-| Launch/spike events | 2000+ | May hit limit |
+| Scenario                     | Errors/Month | Coverage         |
+| ---------------------------- | ------------ | ---------------- |
+| Small app, few users         | 100-500      | Comfortable      |
+| Medium app, moderate traffic | 500-2000     | OK with sampling |
+| Launch/spike events          | 2000+        | May hit limit    |
 
 ### Staying Within Limits
 
 **1. Aggressive Client-Side Filtering**
+
 ```typescript
 ignoreErrors: [
   "ResizeObserver loop",
@@ -667,11 +682,13 @@ ignoreErrors: [
 ```
 
 **2. Sample Rates**
+
 - Errors: 100% (don't miss bugs)
 - Transactions: 5-10% in production
 - Replays: 0% background, 100% on error
 
 **3. Rate Limiting in SDK**
+
 ```typescript
 Sentry.init({
   maxBreadcrumbs: 50, // Reduce from default 100
@@ -680,6 +697,7 @@ Sentry.init({
 ```
 
 **4. Inbound Filters (Sentry Dashboard)**
+
 - Filter browser extensions
 - Filter localhost errors
 - Filter legacy browsers
@@ -693,6 +711,7 @@ Sentry.init({
 ### Upgrade Path
 
 Team plan starts at $26/month for 50K errors. Consider upgrading when:
+
 - Regularly hitting quota
 - Need more than 1 user
 - Want longer data retention (90 days vs 30)
@@ -722,8 +741,12 @@ Team plan starts at $26/month for 50K errors. Consider upgrading when:
 
 - [ ] `@sentry/nextjs` installed
 - [ ] `@sentry/node` in server package
-- [ ] `instrumentation-client.ts` created
-- [ ] `instrumentation.ts` created
+- [ ] `src/instrumentation-client.ts` created
+- [ ] `src/instrumentation.ts` created
+- [ ] `src/lib/sentry/instrumentation.client.ts` created
+- [ ] `src/lib/sentry/instrumentation.ts` created
+- [ ] `src/lib/sentry/server.config.ts` created
+- [ ] `src/lib/sentry/edge.config.ts` created
 - [ ] `global-error.tsx` created
 - [ ] Sentry DSN in SST secrets
 - [ ] Source map upload in CI/CD
@@ -752,7 +775,8 @@ Team plan starts at $26/month for 50K errors. Consider upgrading when:
 
 ### SST Documentation (MEDIUM confidence)
 
-- [SST v2 Source Maps](https://docs.sst.dev/advanced/source-maps) - v2 docs, patterns apply to v3
+- [SST v2 Source Maps](https://docs.sst.dev/advanced/source-maps) - v2 docs,
+  patterns apply to v3
 
 ### Community Resources
 

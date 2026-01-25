@@ -7,28 +7,17 @@ const execAsync = promisify(exec);
 
 const serverDir = path.resolve(__dirname, "..");
 
-/**
- * Tests server build succeeds with .env.example configuration.
- * This catches missing env vars in .env.example that would break production builds.
- */
 describe("server build with .env.example", () => {
   it("should succeed with .env.example configuration", async () => {
     const { stdout, stderr } = await execAsync("pnpm build", {
       cwd: serverDir,
       env: {
         ...process.env,
-        // .env.example is used via dotenv in the build process
       },
     });
-    // Build should complete without error
     expect(stdout + stderr).not.toContain("Invalid environment variables");
   }, 60000);
 });
-
-/**
- * Tests server startup failure when required env vars are missing.
- * Uses DOTENV_CONFIG_PATH=/nonexistent to prevent .env auto-loading.
- */
 describe("server startup - missing env vars", () => {
   const runServer = async (envVars: Record<string, string>) => {
     const baseEnv = {
