@@ -23,6 +23,7 @@
       "!**/.wrangler",
       "!**/.alchemy",
       "!**/.sst",
+      "!**/sst-env.d.ts",
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
       "!**/.source",
