@@ -12,29 +12,60 @@ describe("web env validation", () => {
     process.env = originalEnv;
   });
 
-  it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
-    delete process.env.NEXT_PUBLIC_SERVER_URL;
+  describe("required vars", () => {
+    it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
+      delete process.env.NEXT_PUBLIC_SERVER_URL;
 
-    await expect(import("./web.js")).rejects.toThrow();
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should fail when NEXT_PUBLIC_SERVER_URL is empty string", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "";
+
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should fail when NEXT_PUBLIC_SERVER_URL is not a valid URL", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "not-a-url";
+
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should succeed when NEXT_PUBLIC_SERVER_URL is a valid URL", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
+    });
   });
 
-  it("should fail when NEXT_PUBLIC_SERVER_URL is empty string", async () => {
-    process.env.NEXT_PUBLIC_SERVER_URL = "";
+  describe("optional vars", () => {
+    it("should succeed without NEXT_PUBLIC_SENTRY_DSN", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      delete process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-    await expect(import("./web.js")).rejects.toThrow();
-  });
+      const { env } = await import("./web.js");
 
-  it("should fail when NEXT_PUBLIC_SERVER_URL is not a valid URL", async () => {
-    process.env.NEXT_PUBLIC_SERVER_URL = "not-a-url";
+      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBeUndefined();
+    });
 
-    await expect(import("./web.js")).rejects.toThrow();
-  });
+    it("should succeed with NEXT_PUBLIC_SENTRY_DSN set", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
 
-  it("should succeed when NEXT_PUBLIC_SERVER_URL is a valid URL", async () => {
-    process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      const { env } = await import("./web.js");
 
-    const { env } = await import("./web.js");
+      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe("https://key@sentry.io/123");
+    });
 
-    expect(env.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
+    it("should treat empty NEXT_PUBLIC_SENTRY_DSN as undefined", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "";
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBeUndefined();
+    });
   });
 });
