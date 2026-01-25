@@ -1,12 +1,12 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 interface SectionErrorBoundaryProps {
   children: ReactNode;
   section?: string;
-  fallback?: ReactNode;
+  fallback?: ReactElement;
 }
 
 /**
@@ -34,8 +34,12 @@ export function SectionErrorBoundary({
           scope.setTag("section", section);
         }
       }}
-      fallback={({ error, resetError }) =>
-        fallback || (
+      fallback={({ error, resetError }) => {
+        const err = error instanceof Error ? error : new Error(String(error));
+        if (fallback) {
+          return fallback;
+        }
+        return (
           <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-center">
             <h3 className="font-medium text-foreground">
               This section encountered an error
@@ -49,14 +53,14 @@ export function SectionErrorBoundary({
             </button>
             {isDev && (
               <pre className="mt-4 max-h-48 overflow-auto rounded bg-destructive/10 p-2 text-left text-destructive text-xs">
-                {error.message}
+                {err.message}
                 {"\n\n"}
-                {error.stack}
+                {err.stack}
               </pre>
             )}
           </div>
-        )
-      }
+        );
+      }}
     >
       {children}
     </Sentry.ErrorBoundary>
