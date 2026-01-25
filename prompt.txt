@@ -1,0 +1,3 @@
+remove all files in phases/03.4 to avoid confusion for future tasks. there has beed changes to
+  the codebase made. before EACH! file delete, verify that the stable planning doucments in
+  @.planning/codebase/ refelct the current state
