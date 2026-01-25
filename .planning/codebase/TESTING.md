@@ -70,6 +70,53 @@ Migrations are managed via Drizzle Kit in `packages/core`.
 
 **Tests must pass before work is complete. "Runs but fails" is NOT acceptable.**
 
+**"pnpm verify passes" is NOT sufficient.** You must verify that tests actually
+cover the new code. Passing tests mean nothing if they don't test what you built.
+
+### CRITICAL: Everything MUST Be Tested
+
+This is non-negotiable. Every new feature, every new code path, every new
+configuration MUST have corresponding tests. No exceptions.
+
+**Hard lessons learned:**
+
+1. **New env vars added without tests** — Agent added `SENTRY_DSN` to env schema
+   but no tests. Build passed because var was optional. Production would have
+   failed silently. Now enforced by guardrail tests.
+
+2. **Build config broken, tests passed** — `tsdown.config.ts` pointed to
+   non-existent `index.ts`. No test caught this because there was no build test.
+   Now enforced by `.env.example` build tests.
+
+3. **Missing .env.example entries** — Agent added env var to schema but not to
+   `.env.example`. Build failed on user's machine. Now caught by build tests.
+
+4. **Platform-specific test failures** — Symlink-based tests passed on Linux,
+   failed on Mac. Tests must be cross-platform.
+
+### Mandatory Test Coverage
+
+| What You Add | Required Test |
+|--------------|---------------|
+| New env var in schema | Unit test in `packages/env/src/*.test.ts` |
+| New env var for builds | Entry in `apps/*/. env.example` |
+| New API endpoint | Unit test + integration test |
+| New UI component | Unit test (logic) + E2E test (user flow) |
+| New database table | Migration test + query tests |
+| New build config | Build test in `*.int.test.ts` |
+
+### Guardrail Tests (Enforced Automatically)
+
+These tests fail CI if you forget to add tests:
+
+| Guardrail | Location | What it catches |
+|-----------|----------|-----------------|
+| Env var test coverage | `packages/env/src/*.test.ts` | Schema var without test |
+| Build with .env.example | `apps/*/src/startup.int.test.ts` | Missing .env.example entry |
+
+**If a guardrail test fails, you MUST add the missing test. Do not disable the
+guardrail.**
+
 ### Agent Rules
 
 1. **Run tests BEFORE declaring work complete** — not after
@@ -78,6 +125,10 @@ Migrations are managed via Drizzle Kit in `packages/core`.
    ignore them
 4. **Infrastructure changes require working tests** — if you add test tooling,
    verify it actually works end-to-end
+5. **Verify tests actually test new code** — "pnpm verify passes" is not enough
+   if you added code without tests
+6. **New code = new tests** — every feature, endpoint, component, env var needs
+   tests
 
 ### FORBIDDEN: Modifying Tests to Pass
 
@@ -427,6 +478,51 @@ Test-Driven Development follows a strict cycle:
   implementing
 - **Creates living documentation**: Tests describe expected behavior
 
+### TDD is MANDATORY for New Features
+
+**All new features that require testing MUST follow TDD:**
+
+1. **Write the test FIRST** — before any implementation
+2. **Run the test — it MUST FAIL** — this proves the test actually tests something
+3. **Implement the feature** — minimum code to make the test pass
+4. **Run the test — it MUST PASS** — proves implementation works
+5. **Refactor if needed** — keep tests green
+
+**If you cannot demonstrate the test fails before implementation, you have no
+proof the test works.** A test that was written after the code and never failed
+might be testing nothing.
+
+**Example workflow:**
+
+```bash
+# 1. Write test for new env var validation
+# packages/env/src/server.test.ts
+it("should fail when NEW_VAR is missing", async () => {
+  delete process.env.NEW_VAR;
+  await expect(import("./server.js")).rejects.toThrow();
+});
+
+# 2. Run test - MUST FAIL (NEW_VAR not in schema yet)
+pnpm test:unit -- packages/env/src/server.test.ts
+# Expected: FAIL - NEW_VAR is not defined in schema
+
+# 3. Add NEW_VAR to schema
+# packages/env/src/server.ts
+NEW_VAR: z.string().min(1),
+
+# 4. Run test - MUST PASS
+pnpm test:unit -- packages/env/src/server.test.ts
+# Expected: PASS
+```
+
+**This applies to:**
+- New env vars
+- New API endpoints
+- New validation rules
+- New UI components with logic
+- New database queries
+- Guardrail tests
+
 ### TDD Workflow Example
 
 ```bash
@@ -446,19 +542,23 @@ pnpm test:unit -- --run src/feature.test.ts
 
 ### When to Use TDD
 
-**Good candidates for TDD:**
+**TDD is required for:**
 
+- Environment variables (schema + validation)
 - Business logic with defined inputs/outputs
 - API endpoints with request/response contracts
 - Data transformations, parsing, formatting
 - Validation rules
+- Database queries and mutations
+- Any feature that has testable behavior
 
-**Skip TDD for:**
+**TDD is optional for:**
 
-- UI layout and styling
-- Configuration changes
-- Simple CRUD with no business logic
-- One-off scripts
+- Pure UI layout and styling (no logic)
+- One-off scripts not committed to repo
+
+**When in doubt, use TDD.** If something can fail, it needs a test. If it needs
+a test, write the test first.
 
 ## Test Fixtures
 
