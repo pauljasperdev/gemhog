@@ -13,6 +13,11 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
+    // Sentry (optional - only needed for production error monitoring)
+    SENTRY_DSN: z.string().optional(),
+    SENTRY_AUTH_TOKEN: z.string().optional(),
+    SENTRY_ORG: z.string().optional(),
+    SENTRY_PROJECT: z.string().optional(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
