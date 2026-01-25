@@ -34,10 +34,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Backend/API errors appear in Sentry dashboard with request context
   3. Source maps are uploaded during deploy (stack traces show original code)
   4. Error boundaries display user-friendly fallback UI
-**Plans:** TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 01-01: Sentry setup and configuration
+- [ ] 01-01-PLAN.md - Sentry SDK integration with error boundaries and SST secrets
 
 ### Phase 2: Email Infrastructure
 
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Error Monitoring | 0/1 | Not started | - |
+| 1. Error Monitoring | 0/1 | Ready | - |
 | 2. Email Infrastructure | 0/3 | Not started | - |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
