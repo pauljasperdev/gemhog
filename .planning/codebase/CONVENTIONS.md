@@ -110,6 +110,9 @@
 
 ### When to Comment
 
+**Default:** Self-documenting code. Comments only when they add necessary
+context (why, risks, or non-obvious behavior).
+
 **DO comment:**
 
 - Non-obvious business logic (explain the WHY)

@@ -12,7 +12,8 @@ complete
 - pnpm workspace monorepo structure
 - Type-safe API via tRPC (client-server communication)
 - Shared packages for cross-app code reuse
-- React/Next.js frontend consuming Hono backend
+- React/Next.js frontend with Next API routes for auth/tRPC
+- Hono backend reserved for long-running/streaming endpoints
 - Effect TS for backend dependency injection and error handling
 
 ## Layers
@@ -31,14 +32,22 @@ complete
 - Contains: tRPC routers, procedures, context
 - Location: `packages/api/src/`
 - Depends on: Core layer (auth)
-- Used by: Web app, Server
+- Used by: Web app
 
-**Server Layer:**
+**Server Layer (Hono):**
 
-- Purpose: HTTP routing, middleware, external integrations
-- Contains: Hono server, auth handlers, AI endpoint
+- Purpose: Long-running/streaming endpoints
+- Contains: Hono server, AI endpoint
 - Location: `apps/server/src/`
-- Depends on: API layer, Core layer (auth), Env
+- Depends on: Core layer (auth), Env
+- Used by: Web app (HTTP requests)
+
+**Web Backend Layer (Next API):**
+
+- Purpose: Auth + tRPC request handling on the same origin
+- Contains: Next.js route handlers for `/api/auth/*` and `/api/trpc/*`
+- Location: `apps/web/src/app/api/`
+- Depends on: API layer, Core layer (auth)
 - Used by: Web app (HTTP requests)
 
 **Core Layer:**
@@ -65,20 +74,21 @@ complete
 
 **HTTP Request (tRPC Query):**
 
-1. Web client calls `trpc.healthCheck.queryOptions()`
+1. Web client calls `useQuery(trpc.healthCheck.queryOptions())`
    (`apps/web/src/app/page.tsx`)
-2. tRPC client sends HTTP request (`apps/web/src/utils/trpc.ts`)
-3. Hono server receives request (`apps/server/src/index.ts`)
+2. tRPC client sends HTTP request (`apps/web/src/trpc/client.ts`)
+3. Next API handler receives request
+   (`apps/web/src/app/api/trpc/[trpc]/route.ts`)
 4. tRPC adapter routes to appRouter (`packages/api/src/routers/index.ts`)
 5. Procedure executes and returns response
-6. React Query caches result
+6. TanStack Query caches result
 7. Component re-renders with data
 
 **Authentication Flow:**
 
 1. User submits credentials (`apps/web/src/components/sign-in-form.tsx`)
-2. authClient.signIn() called (`apps/web/src/lib/auth-client.ts`)
-3. HTTP POST to `/api/auth/*` (`apps/server/src/index.ts`)
+2. authClient.signIn() called (`apps/web/src/server/better-auth/client.ts`)
+3. HTTP POST to `/api/auth/*` (`apps/web/src/app/api/auth/[...all]/route.ts`)
 4. Better-Auth validates credentials via `auth.handler`
    (`packages/core/src/auth/auth.service.ts`)
 5. Session created in database (`packages/core/src/auth/auth.sql.ts`)
@@ -89,7 +99,7 @@ complete
 
 1. User sends message (`apps/web/src/app/ai/page.tsx`)
 2. useChat() hook triggers request
-3. HTTP POST to `/ai` endpoint (`apps/server/src/index.ts`)
+3. HTTP POST to `/ai` endpoint (`apps/server/src/app.ts`)
 4. Google Gemini model called via AI SDK
 5. Streaming response returned
 6. Streamdown component renders markdown
@@ -105,8 +115,7 @@ complete
 **Effect Service:**
 
 - Purpose: Dependency-injected service with testable layers
-- Examples: `AuthService`
-  (`packages/core/src/auth/auth.service.ts`)
+- Examples: `AuthService` (`packages/core/src/auth/auth.service.ts`)
 - Pattern: Context.Tag + Layer for production, mock Layer for tests
 
 **Effect Layer:**
@@ -144,16 +153,16 @@ complete
 **Auth Client:**
 
 - Purpose: Client-side authentication operations
-- Examples: `authClient` (`apps/web/src/lib/auth-client.ts`)
+- Examples: `authClient` (`apps/web/src/server/better-auth/client.ts`)
 - Pattern: Better-Auth React client
 
 ## Entry Points
 
 **Server:**
 
-- Location: `apps/server/src/index.ts`
+- Location: `apps/server/src/serve.ts`
 - Triggers: HTTP requests on port 3000
-- Responsibilities: Route handling, CORS, auth, tRPC, AI
+- Responsibilities: Route handling, AI streaming
 
 **Web:**
 
@@ -192,7 +201,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
   (`packages/api/src/index.ts`)
 - Auth: Error callback on auth operations
   (`apps/web/src/components/sign-in-form.tsx`)
-- API: Toast notifications for user feedback (`apps/web/src/utils/trpc.ts`)
+- API: Toast notifications for user feedback (`apps/web/src/trpc/client.ts`)
 
 **Domain Errors:**
 
@@ -213,7 +222,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 **Logging:**
 
-- Console.log for server startup (`apps/server/src/index.ts`)
+- Console.log for server startup (`apps/server/src/serve.ts`)
 - Hono logger middleware for requests
 - No sensitive data in logs (passwords, tokens, PII)
 
@@ -225,7 +234,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 **Authentication:**
 
-- Better-Auth middleware handles `/api/auth/*` routes
+- Better-Auth handler handles `/api/auth/*` routes (Next API)
 - protectedProcedure middleware checks session (`packages/api/src/index.ts`)
 - HTTP-only secure cookies for session storage
 
@@ -236,7 +245,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Purpose: Testability, dependency injection, composable error handling
 - Scope: Core package services (`packages/core/`)
 - Implementation:
-  - Auth with lazy singleton pattern (plain functions, no Effect wrapper)
+  - Auth with direct Better Auth instance
     (`packages/core/src/auth/auth.service.ts`)
   - `DatabaseLive` layer composing PgClient + Drizzle
     (`packages/core/src/drizzle/index.ts`)
@@ -262,8 +271,10 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 - `sst.config.ts` - Root configuration with AWS + Cloudflare providers
 - `infra/secrets.ts` - SST secrets (DatabaseUrl, BetterAuthSecret, GoogleApiKey)
-- `infra/neon.ts` - Neon database Linkable with dual URLs (direct for migrations, pooled for Lambda)
-- `infra/api.ts` - Hono Lambda function with Router (enables streaming via Function URL)
+- `infra/neon.ts` - Neon database Linkable with dual URLs (direct for
+  migrations, pooled for Lambda)
+- `infra/api.ts` - Hono Lambda function with Router (enables streaming via
+  Function URL)
 - `infra/web.ts` - Next.js deployment via OpenNext
 
 **Deployment Data Flow:**
@@ -314,5 +325,5 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-24 — Phase 4 SST deployment
-complete_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-24 — Phase 4 SST
+deployment complete_ _Update when major patterns change_

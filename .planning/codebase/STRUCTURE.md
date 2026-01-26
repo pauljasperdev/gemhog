@@ -1,15 +1,15 @@
 # Codebase Structure
 
-**Updated:** 2026-01-22
+**Updated:** 2026-01-26
 
 ## Directory Layout
 
 ```
 gemhog/
 ├── apps/                    # Deployable applications
-│   ├── server/             # Hono backend API server
+│   ├── server/             # Hono backend (streaming/long-running)
 │   │   ├── src/
-│   │   │   └── index.ts    # Server entry point
+│   │   │   └── serve.ts    # Server entry point
 │   │   ├── tsdown.config.ts
 │   │   ├── .env            # Server environment
 │   │   └── package.json
@@ -18,7 +18,8 @@ gemhog/
 │       │   ├── app/        # Next.js App Router pages
 │       │   ├── components/ # React components
 │       │   ├── lib/        # Utility functions
-│       │   └── utils/      # Helper utilities
+│       │   ├── server/     # Next server helpers (auth wrappers)
+│       │   └── trpc/       # tRPC client setup (TanStack Query)
 │       ├── tests/e2e/      # Playwright E2E tests
 │       ├── next.config.ts
 │       └── package.json
@@ -43,22 +44,23 @@ gemhog/
 
 **apps/server/**
 
-- Purpose: Backend API server
-- Contains: Hono routes, tRPC handlers, AI endpoint
-- Key files: `src/index.ts` (entry point)
+- Purpose: Backend for streaming/long-running work
+- Contains: Hono routes, AI endpoint
+- Key files: `src/serve.ts` (entry point), `src/app.ts` (Hono app)
 - Subdirectories: `src/` only
 
 **apps/web/**
 
 - Purpose: Next.js frontend application
-- Contains: React pages, components, utilities
+- Contains: React pages, components, Next API routes, utilities
 - Key files: `src/app/layout.tsx` (root layout)
 - Subdirectories:
-  - `src/app/` - Next.js App Router pages
+  - `src/app/` - Next.js App Router pages + API routes
   - `src/components/` - React components
   - `src/components/ui/` - shadcn/ui primitives
   - `src/lib/` - Utility functions
-  - `src/utils/` - Helper utilities
+  - `src/server/` - Next server helpers
+  - `src/trpc/` - tRPC client setup
   - `tests/e2e/` - Playwright E2E tests
 
 **packages/api/**
@@ -74,7 +76,7 @@ gemhog/
 - Contains: Database layer, auth domain
 - Key files:
   - `src/drizzle/index.ts` - Database client and Effect layers
-  - `src/auth/index.ts` - Better-Auth config and AuthService
+  - `src/auth/index.ts` - Better-Auth config and helpers
 - Subdirectories:
   - `src/drizzle/` - Database connection, client
   - `src/auth/` - Auth domain (service, schema, errors, mocks)
@@ -91,7 +93,7 @@ gemhog/
 
 **Entry Points:**
 
-- `apps/server/src/index.ts` - Backend server entry
+- `apps/server/src/serve.ts` - Backend server entry
 - `apps/web/src/app/layout.tsx` - Frontend root layout
 
 **Configuration:**
@@ -105,6 +107,9 @@ gemhog/
 **Core Logic:**
 
 - `packages/api/src/routers/index.ts` - tRPC routes
+- `apps/web/src/app/api/trpc/[trpc]/route.ts` - Next tRPC handler
+- `apps/web/src/app/api/auth/[...all]/route.ts` - Next Better Auth handler
+- `apps/web/src/trpc/client.ts` - tRPC client (TanStack Query)
 - `packages/core/src/auth/index.ts` - Auth configuration
 - `packages/core/src/auth/auth.sql.ts` - Auth database schema
 - `packages/core/src/drizzle/client.ts` - Database client
@@ -150,7 +155,7 @@ gemhog/
 **Files:**
 
 - `kebab-case.tsx` - React components (`user-menu.tsx`, `sign-in-form.tsx`)
-- `kebab-case.ts` - TypeScript modules (`auth-client.ts`)
+- `kebab-case.ts` - TypeScript modules (`trpc/client.ts`)
 - `index.ts` - Barrel exports for packages
 
 **Directories:**
@@ -249,7 +254,7 @@ packages/core/
 │   │   └── migrations.int.test.ts  # Migration verification tests
 │   ├── auth/              # Auth domain
 │   │   ├── auth.sql.ts      # Drizzle schema (user, session, account, verification)
-│   │   ├── auth.service.ts  # Auth service with lazy singleton
+│   │   ├── auth.service.ts  # Better Auth config
 │   │   ├── auth.errors.ts   # Domain errors (TaggedError)
 │   │   ├── auth.mock.ts     # Mock layer for testing
 │   │   ├── auth.test.ts     # Unit tests
@@ -268,7 +273,7 @@ packages/core/
 
 - `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
 - Domain folders directly under `src/` (drizzle/, auth/)
-- Lazy singleton pattern for better-auth instance
+- Direct Better Auth instance in core
 - Co-located tests with `.test.ts` suffix
 
 **Export Paths:**

@@ -1,10 +1,9 @@
 import type { AppRouter } from "@gemhog/api/routers/index";
-
-import { env } from "@gemhog/env/web";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
+import SuperJSON from "superjson";
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -22,10 +21,11 @@ export const queryClient = new QueryClient({
 const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: `${env.NEXT_PUBLIC_SERVER_URL}/trpc`,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
+      url: "/api/trpc",
+      transformer: SuperJSON,
+      fetch(input: URL | RequestInfo, init?: RequestInit) {
+        return fetch(input, {
+          ...init,
           credentials: "include",
         });
       },
