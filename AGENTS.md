@@ -78,7 +78,7 @@ Use these skills (invoke with `/skill-name`) for specialized tasks:
 **Before completing any plan, you MUST run:**
 
 ```bash
-pnpm db:start && pnpm verify
+pnpm db:start && pnpm test
 ```
 
 **This is non-negotiable.** See `.planning/codebase/TESTING.md` for full
@@ -99,9 +99,8 @@ details.
 
 If you're not using GSD commands, follow these verification steps manually:
 
-1. **Before commits**: Run `pnpm verify:commit`
-2. **Before completing work**: Run `pnpm verify` (full pipeline)
-3. **Security review**: Work through `.planning/codebase/SECURITY-CHECKLIST.md`
-4. **Record findings**: Append to `.planning/codebase/SECURITY-REVIEW.md`
+1. **Before completing work**: Run `pnpm test` (full pipeline)
+2. **Security review**: Work through `.planning/codebase/SECURITY-CHECKLIST.md`
+3. **Record findings**: Append to `.planning/codebase/SECURITY-REVIEW.md`
 
 See the detailed docs in `.planning/codebase/` for complete requirements.

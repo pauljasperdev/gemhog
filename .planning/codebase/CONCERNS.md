@@ -34,12 +34,9 @@
 
 **Integration test script bug (BLOCKER):**
 
-- Issue: `test:integration` uses `--project @gemhog/db` but db is excluded from
-  root vitest.config.ts
-- File: `package.json` line 29
-- Impact: `pnpm test:integration` always fails with "No projects matched the
-  filter"
-- Fix approach: Change to `--config packages/db/vitest.config.ts`
+- Issue: Integration test config may have stale project references
+- Impact: Integration tests may fail with "No projects matched the filter"
+- Fix approach: Verify `vitest.integration.config.ts` has correct project references
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 
 **E2E test missing env vars (BLOCKER):**
@@ -47,7 +44,7 @@
 - Issue: Playwright webServer fails to start - requires BETTER_AUTH_SECRET (min
   32 chars)
 - File: `playwright.config.ts`
-- Impact: `pnpm test:e2e` always fails with "Invalid environment variables"
+- Impact: E2E tests always fail with "Invalid environment variables"
 - Fix approach: Add test env vars to webServer config or create .env.test
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 

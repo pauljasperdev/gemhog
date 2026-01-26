@@ -129,26 +129,22 @@ gemhog/
 
 **Root package.json scripts:**
 
-| Script             | Purpose                                              |
-| ------------------ | ---------------------------------------------------- |
-| `dev:init`         | Re-install dependencies and install Playwright deps  |
-| `dev`              | Run all apps in development mode                     |
-| `dev:web`          | Run Next.js frontend only                            |
-| `dev:server`       | Run Hono backend only                                |
-| `db:start`         | Start local PostgreSQL via Docker                    |
-| `db:stop`          | Stop PostgreSQL container                            |
-| `db:push`          | Push schema changes to database                      |
-| `db:generate`      | Generate Drizzle migrations                          |
-| `db:migrate`       | Run Drizzle migrations                               |
-| `db:studio`        | Open Drizzle Studio                                  |
-| `check`            | Run Biome linting and formatting                     |
-| `check-types`      | Run TypeScript type checking                         |
-| `test:unit`        | Run Vitest unit tests                                |
-| `test:integration` | Run Vitest integration tests (requires `db:start`)   |
-| `test:e2e`         | Run Playwright E2E tests                             |
-| `verify:commit`    | Pre-commit verification (check + types + unit tests) |
-| `verify`           | Full verification pipeline                           |
-| `security:audit`   | Run pnpm audit for dependency vulnerabilities        |
+| Script        | Purpose                                             |
+| ------------- | --------------------------------------------------- |
+| `setup`       | Re-install dependencies and install Playwright deps |
+| `dev`         | Run all apps in development mode                    |
+| `dev:web`     | Run Next.js frontend only                           |
+| `dev:server`  | Run Hono backend only                               |
+| `build`       | Build all packages                                  |
+| `check`       | Biome lint + format + auto-fix + TypeScript types   |
+| `test`        | Full test pipeline (static + unit + integration + e2e + audit) |
+| `test:audit`  | Run pnpm audit for dependency vulnerabilities       |
+| `db:start`    | Start local PostgreSQL via Docker                   |
+| `db:stop`     | Stop PostgreSQL container                            |
+| `db:push`     | Push schema changes to database                      |
+| `db:generate` | Generate Drizzle migrations                          |
+| `db:migrate`  | Run Drizzle migrations                               |
+| `db:studio`   | Open Drizzle Studio                                  |
 
 ## Naming Conventions
 
@@ -227,7 +223,7 @@ gemhog/
 **scripts/**
 
 - Purpose: Build and verification scripts
-- Contains: `verify.sh` (full verification pipeline)
+- Contains: `test.sh` (full test pipeline)
 - Committed: Yes
 
 **node_modules/**

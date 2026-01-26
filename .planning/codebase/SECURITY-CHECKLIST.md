@@ -29,7 +29,7 @@ places.
 3. **Run dependency audit:**
 
    ```bash
-   pnpm security:audit
+   pnpm test:audit
    ```
 
    - Moderate or higher: blocking, must fix or document justification

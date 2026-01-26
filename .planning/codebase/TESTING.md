@@ -7,17 +7,17 @@
 1. Install deps and start integration test infrastructure
 
 ```bash
-pnpm dev:init && pnpm test:integration:up
+pnpm setup && pnpm db:start
 ```
 
-2. You MUST verify `pnpm verify` has no prior erros. If so fix them!
+2. You MUST verify `pnpm test` has no prior erros. If so fix them!
 
 3. There MUST NOT be any prior security issues. read
    `.planning/codebase/SECURITY-REVIEW.md`. If so fix them!
 
 ### Before marking a plan as complete
 
-**This is non-negotiable.** ALL test MUST pass to mark a plan `pnpm verify`
+**This is non-negotiable.** ALL test MUST pass to mark a plan `pnpm test`
 passes. No exceptions. Not test skipping.
 
 Security volnurabilites MUST have been audited and FIXED!
@@ -55,22 +55,18 @@ Migrations are managed via Drizzle Kit in `packages/core`.
 
 ## Available Test Commands
 
-| Test Type           | Command                 | Notes                               |
-| ------------------- | ----------------------- | ----------------------------------- |
-| Static Analysis     | `pnpm check`            | Biome lint + format                 |
-| Type Check          | `pnpm check-types`      | TypeScript strict                   |
-| Unit Tests          | `pnpm test:unit`        | Vitest                              |
-| Integration Tests   | `pnpm test:integration` | Requires `pnpm db:start` first      |
-| E2E Tests           | `pnpm test:e2e`         | Playwright, auto-starts dev servers |
-| Pre-commit Hooks    | Lefthook                | Runs on git commit                  |
-| Dependency Security | `pnpm security:audit`   | Checks for vulnerable dependencies  |
-| **Full Pipeline**   | `pnpm verify`           | Runs all of the above               |
+| Test Type           | Command           | Notes                                    |
+| ------------------- | ----------------- | ---------------------------------------- |
+| Static Analysis     | `pnpm check`      | Biome lint + format + auto-fix + types   |
+| Pre-commit Hooks    | Lefthook          | Runs on git commit                       |
+| Dependency Security | `pnpm test:audit` | Checks for vulnerable dependencies       |
+| **Full Pipeline**   | `pnpm test`       | Runs all of the above + unit/int/e2e     |
 
 ## Verification Requirements
 
 **Tests must pass before work is complete. "Runs but fails" is NOT acceptable.**
 
-**"pnpm verify passes" is NOT sufficient.** You must verify that tests actually
+**"pnpm test passes" is NOT sufficient.** You must verify that tests actually
 cover the new code. Passing tests mean nothing if they don't test what you
 built.
 
@@ -126,7 +122,7 @@ guardrail.**
    ignore them
 4. **Infrastructure changes require working tests** — if you add test tooling,
    verify it actually works end-to-end
-5. **Verify tests actually test new code** — "pnpm verify passes" is not enough
+5. **Verify tests actually test new code** — "pnpm test passes" is not enough
    if you added code without tests
 6. **New code = new tests** — every feature, endpoint, component, env var needs
    tests
@@ -135,7 +131,7 @@ guardrail.**
 
 **Agents are NEVER allowed to:**
 
-- Modify `verify.sh` or test scripts to skip tests
+- Modify `test.sh` or test scripts to skip tests
 - Add conditionals that bypass test execution (e.g., "if Docker not available,
   skip")
 - Change test configs to exclude failing tests
@@ -159,21 +155,18 @@ The user decides whether to:
 
 ### When to Run What
 
-| When                         | Command                                      |
-| ---------------------------- | -------------------------------------------- |
-| Any code change              | `pnpm verify:commit` (static + types + unit) |
-| Database/schema changes      | `pnpm test:integration`                      |
-| UI/user flow changes         | `pnpm test:e2e`                              |
-| **Before completing a plan** | `pnpm verify` (full pipeline)                |
-| Before merge/release         | `pnpm verify` (full pipeline)                |
+| When                         | Command                  |
+| ---------------------------- | ------------------------ |
+| **Before completing a plan** | `pnpm test` (full pipeline) |
+| Before merge/release         | `pnpm test` (full pipeline) |
 
 ### Verification Order (Fail Fast, Expensive Last)
 
 ```
-1. Static Analysis (pnpm check)      - Biome lint, ~1s
-2. Type Check (pnpm check-types)     - TypeScript strict, ~3s
-3. Unit Tests (pnpm test:unit)       - Vitest, mocked externals, ~1s
-4. Integration Tests                  - Docker + Postgres required
+1. Static Analysis (pnpm check)      - Biome lint + auto-fix + TypeScript strict
+2. Unit Tests (vitest run)           - Vitest, mocked externals
+3. Integration Tests                  - Docker + Postgres required
+4. Dependency Security Audit          - pnpm audit
 5. E2E Tests                         - Full app startup, Playwright
 ```
 
@@ -182,27 +175,14 @@ Run cheap/fast tests first. Stop on first failure.
 ## Test Commands
 
 ```bash
-# Static analysis (Biome lint + format check)
+# Static analysis + types (Biome lint + format + auto-fix + TypeScript)
 pnpm check
 
-# Type checking
-pnpm check-types
+# Dependency security audit
+pnpm test:audit
 
-# Unit tests (Vitest, all packages)
-pnpm test:unit
-
-# Integration tests (start database first)
-pnpm test:integration:up
-pnpm test:integration
-
-# E2E tests (requires env vars, starts dev servers)
-pnpm test:e2e
-
-# Pre-commit equivalent (manual)
-pnpm verify:commit
-
-# Full verification pipeline
-pnpm verify
+# Full test pipeline (static + types + unit + integration + audit + e2e)
+pnpm test
 ```
 
 ## Test Framework
@@ -239,7 +219,7 @@ pnpm verify
 
 A Playwright MCP server is configured for Claude Code, providing interactive
 browser control for debugging and UI verification. This is NOT required for
-standard `pnpm verify` runs.
+standard `pnpm test` runs.
 
 **Configuration:** `.mcp.json` (server entry point) and
 `playwright-mcp.config.json` (browser options). The server runs headless
@@ -255,7 +235,7 @@ Chromium in isolated mode.
 
 **When NOT to use Playwright MCP:**
 
-- Standard `pnpm verify` runs (automated tests are sufficient)
+- Standard `pnpm test` runs (automated tests are sufficient)
 - Backend-only changes (no UI impact)
 - Unit or integration test debugging (no browser needed)
 
@@ -311,11 +291,11 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 Tests are co-located with implementation using clear suffixes:
 
-| Suffix          | Type        | Command                 | Description              |
-| --------------- | ----------- | ----------------------- | ------------------------ |
-| `*.test.ts`     | Unit        | `pnpm test:unit`        | Fast, mocked externals   |
-| `*.int.test.ts` | Integration | `pnpm test:integration` | Real DB, Docker required |
-| `*.e2e.test.ts` | E2E         | `pnpm test:e2e`         | Playwright, full app     |
+| Suffix          | Type        | Description              |
+| --------------- | ----------- | ------------------------ |
+| `*.test.ts`     | Unit        | Fast, mocked externals   |
+| `*.int.test.ts` | Integration | Real DB, Docker required |
+| `*.e2e.test.ts` | E2E         | Playwright, full app     |
 
 **Example structure:**
 
@@ -334,8 +314,8 @@ src/
 Any package can have integration tests. Simply:
 
 1. Create `src/something.int.test.ts` (co-located with implementation)
-2. Run `pnpm db:integraion:up` to start the infra
-3. Run `pnpm test:integration` - tests are automatically discovered and run
+2. Run `pnpm db:start` to start the infra
+3. Run `pnpm test` - tests are automatically discovered and run
 
 The `vitest.integration.config.ts` discovers all `*.int.test.ts` files across:
 
@@ -509,7 +489,7 @@ it("should fail when NEW_VAR is missing", async () => {
 });
 
 # 2. Run test - MUST FAIL (NEW_VAR not in schema yet)
-pnpm test:unit -- packages/env/src/server.test.ts
+vitest run -- packages/env/src/server.test.ts
 # Expected: FAIL - NEW_VAR is not defined in schema
 
 # 3. Add NEW_VAR to schema
@@ -517,7 +497,7 @@ pnpm test:unit -- packages/env/src/server.test.ts
 NEW_VAR: z.string().min(1),
 
 # 4. Run test - MUST PASS
-pnpm test:unit -- packages/env/src/server.test.ts
+vitest run -- packages/env/src/server.test.ts
 # Expected: PASS
 ```
 
@@ -534,14 +514,14 @@ pnpm test:unit -- packages/env/src/server.test.ts
 
 ```bash
 # 1. Write the test (it should fail)
-pnpm test:unit -- --run src/feature.test.ts
+vitest run -- --run src/feature.test.ts
 # Expected: FAIL - feature not implemented yet
 
 # 2. Implement the feature
 # ... write code ...
 
 # 3. Run test again (it should pass)
-pnpm test:unit -- --run src/feature.test.ts
+vitest run -- --run src/feature.test.ts
 # Expected: PASS
 
 # 4. Refactor if needed, keep tests green
