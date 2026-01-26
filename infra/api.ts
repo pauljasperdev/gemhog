@@ -13,8 +13,12 @@ export const api = new sst.aws.Function("Api", {
     },
   },
   environment: {
-    DATABASE_URL: secrets.DatabaseUrl.value,
-    DATABASE_URL_POOLER: secrets.DatabaseUrlPooler.value,
+    DATABASE_URL: $dev
+      ? "postgresql://postgres:password@localhost:5432/gemhog"
+      : secrets.DatabaseUrl.value,
+    DATABASE_URL_POOLER: $dev
+      ? "postgresql://postgres:password@localhost:5432/gemhog"
+      : secrets.DatabaseUrlPooler.value,
     BETTER_AUTH_SECRET: secrets.BetterAuthSecret.value,
     BETTER_AUTH_URL: `https://${domainApi}`,
     CORS_ORIGIN: $dev ? "http://localhost:3001" : `https://${domain}`,
