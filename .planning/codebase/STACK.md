@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Updated:** 2026-01-24
+**Updated:** 2026-01-26
 
 ## Languages
 
@@ -50,8 +50,7 @@
 
 **Critical:**
 
-- tRPC 11.7.2 - End-to-end type-safe API (`packages/api/`, `apps/web/`,
-  `apps/server/`)
+- tRPC 11.7.2 - End-to-end type-safe API (`packages/api/`, `apps/web/`)
 - better-auth 1.4.9 - Authentication framework (`packages/core/auth/`)
 - Drizzle ORM 0.45.1 - TypeScript-first ORM (`packages/core/drizzle/`)
 - ai 6.0.3 - Vercel AI SDK (`apps/web/`, `apps/server/`)
@@ -85,8 +84,8 @@
 - @t3-oss/env-nextjs 0.13.10 - Web env validation with Next.js support
   (`packages/env/`)
 - Zod schemas for type-safe env vars
-- Server: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CORS_ORIGIN`,
-  `NODE_ENV`
+- Server: `DATABASE_URL`, `DATABASE_URL_POOLER`, `BETTER_AUTH_SECRET`,
+  `BETTER_AUTH_URL`, `CORS_ORIGIN`, `GOOGLE_GENERATIVE_AI_API_KEY`, `NODE_ENV`
 - Client: `NEXT_PUBLIC_SERVER_URL`
 
 **Build:**
@@ -125,7 +124,8 @@
 **Lambda Adapter:**
 
 - hono/aws-lambda - Built into Hono, provides handle/streamHandle
-- Conditional streaming: streamHandle for prod, handle for sst dev (proxy limitation)
+- Conditional streaming: streamHandle for prod, handle for sst dev (proxy
+  limitation)
 
 ---
 

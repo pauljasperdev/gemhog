@@ -1,17 +1,12 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { google } from "@ai-sdk/google";
-import { createContext } from "@gemhog/api/context";
-import { appRouter } from "@gemhog/api/routers/index";
-import { auth } from "@gemhog/core/auth";
 import { env } from "@gemhog/env/server";
-import { trpcServer } from "@hono/trpc-server";
 import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { captureError, initSentry } from "./sentry";
 
-// Initialize Sentry before setting up routes
 initSentry();
 
 const app = new Hono();
@@ -24,18 +19,6 @@ app.use(
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  }),
-);
-
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
-
-app.use(
-  "/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext: (_opts, context) => {
-      return createContext({ context });
-    },
   }),
 );
 
@@ -58,7 +41,6 @@ app.get("/", (c) => {
   return c.text("OK");
 });
 
-// Error handling - capture errors to Sentry with request context
 app.onError((err, c) => {
   captureError(err, c);
   console.error(err);

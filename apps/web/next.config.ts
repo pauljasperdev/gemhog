@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
-  transpilePackages: ["shiki"],
+  transpilePackages: ["@gemhog/api", "@gemhog/core", "@gemhog/env", "shiki"],
 };
 
 export default withSentryConfig(nextConfig, {
@@ -13,13 +13,10 @@ export default withSentryConfig(nextConfig, {
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  // Tunnel route to avoid ad blockers
   tunnelRoute: "/monitoring",
 
-  // Silent unless in CI
   silent: !process.env.CI,
 
-  // Delete source maps after upload for security
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,
   },

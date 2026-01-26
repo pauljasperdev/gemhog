@@ -10,7 +10,7 @@
 
 - Google Generative AI (Gemini) - AI chat responses
   - SDK/Client: `@ai-sdk/google` v3.0.8 (`apps/server/package.json`)
-  - Model: `gemini-2.5-flash` (`apps/server/src/index.ts`)
+  - Model: `gemini-2.5-flash` (`apps/server/src/app.ts`)
   - Auth: API key in `GOOGLE_GENERATIVE_AI_API_KEY` env var
   - Endpoint: `POST /ai` (`apps/server/src/index.ts`)
 
@@ -20,9 +20,9 @@
 
 - PostgreSQL - Primary data store
   - Connection: via `DATABASE_URL` env var
-  - Client: Drizzle ORM v0.45.1 (`packages/db/`)
+  - Client: Drizzle ORM v0.45.1 (`packages/core/`)
   - Driver: `pg` v8.16.3
-  - Migrations: Drizzle Kit (`packages/db/drizzle.config.ts`)
+  - Migrations: Drizzle Kit (`packages/core/drizzle.config.ts`)
 
 **File Storage:**
 
@@ -75,7 +75,8 @@ These integrations will be implemented after V0 foundation is complete.
 **Auth Provider:**
 
 - Better-Auth - Email/password authentication
-  - Implementation: `packages/auth/src/index.ts`
+  - Implementation: `packages/core/src/auth/auth.service.ts`
+  - Handler: `apps/web/src/app/api/auth/[...all]/route.ts`
   - Database adapter: Drizzle ORM
   - Token storage: HTTP-only cookies
   - Session management: Database-backed sessions
@@ -84,9 +85,8 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Cookie Configuration:**
 
-- `sameSite: "none"` - Cross-origin support
-- `secure: true` - HTTPS only
-- `httpOnly: true` - Not accessible to JavaScript
+- Default Better Auth cookie settings for same-origin
+- For cross-domain use, set `sameSite: "none"` and `secure: true`
 
 **OAuth Integrations:**
 
@@ -136,7 +136,7 @@ These integrations will be implemented after V0 foundation is complete.
   - `CORS_ORIGIN` - Allowed origins
   - `GOOGLE_GENERATIVE_AI_API_KEY` - AI features
   - `NEXT_PUBLIC_SERVER_URL` - API base URL
-- Secrets location: `apps/server/.env`, `apps/web/.env`
+- Secrets location: `apps/web/.env` (Next auth/tRPC), `apps/server/.env` (Hono)
 - Local database: Docker Compose (`infra/docker-compose.yml`)
 
 **Staging:**
@@ -162,16 +162,17 @@ These integrations will be implemented after V0 foundation is complete.
 **tRPC:**
 
 - Type-safe RPC between web and server
-- HTTP batch link (`apps/web/src/utils/trpc.ts`)
-- Endpoint: `/trpc` (`apps/server/src/index.ts`)
+- HTTP batch link (`apps/web/src/trpc/client.ts`)
+- Endpoint: `/api/trpc` (`apps/web/src/app/api/trpc/[trpc]/route.ts`)
 - Credentials: `include` for auth cookies
 
 **HTTP/REST:**
 
-- Hono server for HTTP routing
-- CORS middleware configured
-- Auth endpoints: `/api/auth/*`
-- AI endpoint: `POST /ai`
+- Next API for auth and tRPC
+- Hono server for AI routing
+- Auth endpoints: `/api/auth/*` (Next)
+- tRPC endpoint: `/api/trpc` (Next)
+- AI endpoint: `POST /ai` (Hono)
 
 ## Environment Variable Reference
 
@@ -179,9 +180,11 @@ These integrations will be implemented after V0 foundation is complete.
 
 ```
 DATABASE_URL          # PostgreSQL connection string
+DATABASE_URL_POOLER   # Pooled PostgreSQL connection string
 BETTER_AUTH_SECRET    # Auth encryption secret
 BETTER_AUTH_URL       # Auth callback URL
 CORS_ORIGIN           # Allowed CORS origins
+GOOGLE_GENERATIVE_AI_API_KEY # Google AI API key
 ```
 
 **Web (`packages/env/src/web.ts`):**
@@ -192,9 +195,7 @@ NEXT_PUBLIC_SERVER_URL    # Backend API URL
 
 **Server-only (not in schema):**
 
-```
-GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
-```
+- None
 
 **Newsletter (AWS SES) — Deferred V1:**
 

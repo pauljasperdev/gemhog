@@ -34,6 +34,64 @@ Quick reference for blocking check before any work.
 
 ---
 
+## Review: 2026-01-26 - Next Auth + tRPC Migration
+
+**Reviewer:** Claude (agent) **Commit:** Pending **Scope:**
+
+- packages/api/src/context.ts (Next-compatible context)
+- packages/api/src/index.ts (superjson + zod error formatter)
+- packages/core/src/auth/auth.service.ts (Better Auth config)
+- apps/web/src/dev.int.test.ts (dev server smoke test)
+- apps/web/package.json (dev/build scripts)
+- apps/web/src/app/api/auth/[...all]/route.ts (Better Auth Next handler)
+- apps/web/src/app/api/trpc/[trpc]/route.ts (tRPC Next handler)
+- apps/web/src/trpc/client.ts (TanStack Query client)
+- apps/web/src/server/better-auth/\* (Next auth wrappers)
+- apps/web/src/app/dashboard/page.tsx (server session read)
+- apps/web/tests/e2e/auth.e2e.test.ts (session-backed flow)
+- playwright.config.ts (E2E env)
+- biome.json (ignore nested config)
+
+### Dependency Audit
+
+```
+pnpm security:audit
+No new vulnerabilities were ignored
+```
+
+### Files Reviewed
+
+| File                                        | Categories Checked     | Result |
+| ------------------------------------------- | ---------------------- | ------ |
+| apps/web/src/app/api/auth/[...all]/route.ts | Auth, Session Handling | PASS   |
+| apps/web/src/app/api/trpc/[trpc]/route.ts   | Auth, Input Handling   | PASS   |
+| packages/api/src/context.ts                 | Auth, Headers          | PASS   |
+| packages/core/src/auth/auth.service.ts      | Auth, Secrets          | PASS   |
+| apps/web/tests/e2e/auth.e2e.test.ts         | Auth Flow              | PASS   |
+
+### Findings
+
+None.
+
+### Summary
+
+| Severity | Count | Status |
+| -------- | ----- | ------ |
+| Critical | 0     | -      |
+| High     | 0     | -      |
+| Medium   | 0     | -      |
+| Low      | 0     | -      |
+
+### Sign-off
+
+- [x] Checked for pre-existing blocking findings (none)
+- [x] Dependency audit passed
+- [x] All Critical/High/Medium resolved
+- [x] Low findings documented (none)
+- [x] Ready for completion
+
+---
+
 ## Review: 2026-01-21 - Gap Closure (03.1-06 through 03.1-09)
 
 **Reviewer:** Claude (agent) **Commit:** Gap closure plans addressing

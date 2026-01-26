@@ -52,13 +52,13 @@ methodology for AI-assisted development. All project context lives in the
 
 Use these skills (invoke with `/skill-name`) for specialized tasks:
 
-| Skill                        | Purpose                                        | When to Use                                             |
-| ---------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| `/frontend-design`           | Create production-grade UI with high design quality | Building web components, pages, dashboards, React components |
-| `/vercel-react-best-practices` | React/Next.js performance optimization from Vercel | Writing, reviewing, or refactoring React/Next.js code for performance |
-| `/web-design-guidelines`     | Review UI code for best practices compliance   | Reviewing UI, checking accessibility, auditing UX       |
-| `/copywriting`               | Write or improve marketing copy                | Homepage, landing pages, pricing, CTAs, feature pages   |
-| `/better-auth-best-practices`| Integrate Better Auth authentication framework | Implementing or modifying authentication features       |
+| Skill                          | Purpose                                             | When to Use                                                           |
+| ------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------- |
+| `/frontend-design`             | Create production-grade UI with high design quality | Building web components, pages, dashboards, React components          |
+| `/vercel-react-best-practices` | React/Next.js performance optimization from Vercel  | Writing, reviewing, or refactoring React/Next.js code for performance |
+| `/web-design-guidelines`       | Review UI code for best practices compliance        | Reviewing UI, checking accessibility, auditing UX                     |
+| `/copywriting`                 | Write or improve marketing copy                     | Homepage, landing pages, pricing, CTAs, feature pages                 |
+| `/better-auth-best-practices`  | Integrate Better Auth authentication framework      | Implementing or modifying authentication features                     |
 
 ## Important Constraints
 
@@ -70,6 +70,8 @@ Use these skills (invoke with `/skill-name`) for specialized tasks:
   context.
 - **Effect TS for backend**: Required for testability and dependency injection
   (pending implementation).
+- **Self-documenting code**: Comments only when they add necessary context (why,
+  risks, or non-obvious behavior).
 
 ## Verification Requirements
 

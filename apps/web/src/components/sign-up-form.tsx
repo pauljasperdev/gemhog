@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/server/better-auth/client";
 
 import Loader from "./loader";
 import { Button } from "./ui/button";

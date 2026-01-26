@@ -1,5 +1,3 @@
-// packages/core/src/auth/auth.int.test.ts
-
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import {
@@ -13,7 +11,6 @@ import {
 } from "vitest";
 import { createTestUser, truncateAuthTables } from "./test-fixtures";
 
-// Test environment values for better-auth
 const TEST_ENV = {
   DATABASE_URL:
     process.env.DATABASE_URL ??
@@ -29,20 +26,9 @@ const TEST_ENV = {
   NODE_ENV: "test" as const,
 };
 
-// Mock @gemhog/env/server to provide test env values
 vi.mock("@gemhog/env/server", () => ({
   env: TEST_ENV,
 }));
-
-/**
- * Auth flow integration tests.
- *
- * Tests real authentication flows against the database via better-auth API.
- * Each test runs with a fresh database state (tables truncated before each test).
- *
- * Note: Password hashing adds ~100-150ms per signup, making these tests
- * slower than unit tests. This is expected for integration tests.
- */
 describe("auth integration", () => {
   let pool: Pool;
   let db: ReturnType<typeof drizzle>;
@@ -50,13 +36,10 @@ describe("auth integration", () => {
   let auth: any;
 
   beforeAll(async () => {
-    // Use the same database URL as auth service
     pool = new Pool({ connectionString: TEST_ENV.DATABASE_URL });
     db = drizzle(pool);
-
-    // Dynamic import after mock is set up
-    const { getAuth } = await import("./auth.service");
-    auth = getAuth();
+    const { auth: authInstance } = await import("./auth.service");
+    auth = authInstance;
   });
 
   afterAll(async () => {
@@ -64,7 +47,6 @@ describe("auth integration", () => {
   });
 
   beforeEach(async () => {
-    // Clean slate for each test
     await truncateAuthTables(db);
   });
 
@@ -80,12 +62,9 @@ describe("auth integration", () => {
         },
       });
 
-      // Verify user was created
       expect(result.user).toBeDefined();
       expect(result.user.email).toBe(testUser.email);
       expect(result.user.name).toBe(testUser.name);
-
-      // Verify token was created (better-auth returns { token, user })
       expect(result.token).toBeDefined();
     });
 
@@ -94,7 +73,6 @@ describe("auth integration", () => {
         email: "duplicate@example.com",
       });
 
-      // First signup should succeed
       await auth.api.signUpEmail({
         body: {
           email: testUser.email,
@@ -103,7 +81,6 @@ describe("auth integration", () => {
         },
       });
 
-      // Second signup with same email should fail
       await expect(
         auth.api.signUpEmail({
           body: {
@@ -120,7 +97,6 @@ describe("auth integration", () => {
     it("should authenticate valid credentials", async () => {
       const testUser = createTestUser();
 
-      // First signup
       await auth.api.signUpEmail({
         body: {
           email: testUser.email,
@@ -129,7 +105,6 @@ describe("auth integration", () => {
         },
       });
 
-      // Then signin
       const result = await auth.api.signInEmail({
         body: {
           email: testUser.email,
@@ -137,7 +112,6 @@ describe("auth integration", () => {
         },
       });
 
-      // Verify token was created (better-auth returns { token, user })
       expect(result.token).toBeDefined();
       expect(result.user).toBeDefined();
       expect(result.user.email).toBe(testUser.email);
@@ -146,7 +120,6 @@ describe("auth integration", () => {
     it("should reject invalid password", async () => {
       const testUser = createTestUser();
 
-      // First signup
       await auth.api.signUpEmail({
         body: {
           email: testUser.email,
@@ -155,7 +128,6 @@ describe("auth integration", () => {
         },
       });
 
-      // Try signin with wrong password
       await expect(
         auth.api.signInEmail({
           body: {
@@ -167,7 +139,6 @@ describe("auth integration", () => {
     });
 
     it("should reject non-existent user", async () => {
-      // Try signin without signup
       await expect(
         auth.api.signInEmail({
           body: {

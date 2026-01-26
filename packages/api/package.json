@@ -13,7 +13,9 @@
   "dependencies": {
     "@gemhog/core": "workspace:*",
     "@trpc/server": "catalog:",
-    "hono": "^4.11.4"
+    "hono": "^4.11.4",
+    "superjson": "^2.2.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@gemhog/config": "workspace:*",

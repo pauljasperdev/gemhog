@@ -71,7 +71,8 @@ Migrations are managed via Drizzle Kit in `packages/core`.
 **Tests must pass before work is complete. "Runs but fails" is NOT acceptable.**
 
 **"pnpm verify passes" is NOT sufficient.** You must verify that tests actually
-cover the new code. Passing tests mean nothing if they don't test what you built.
+cover the new code. Passing tests mean nothing if they don't test what you
+built.
 
 ### CRITICAL: Everything MUST Be Tested
 
@@ -96,22 +97,22 @@ configuration MUST have corresponding tests. No exceptions.
 
 ### Mandatory Test Coverage
 
-| What You Add | Required Test |
-|--------------|---------------|
-| New env var in schema | Unit test in `packages/env/src/*.test.ts` |
-| New env var for builds | Entry in `apps/*/. env.example` |
-| New API endpoint | Unit test + integration test |
-| New UI component | Unit test (logic) + E2E test (user flow) |
-| New database table | Migration test + query tests |
-| New build config | Build test in `*.int.test.ts` |
+| What You Add           | Required Test                             |
+| ---------------------- | ----------------------------------------- |
+| New env var in schema  | Unit test in `packages/env/src/*.test.ts` |
+| New env var for builds | Entry in `apps/*/. env.example`           |
+| New API endpoint       | Unit test + integration test              |
+| New UI component       | Unit test (logic) + E2E test (user flow)  |
+| New database table     | Migration test + query tests              |
+| New build config       | Build test in `*.int.test.ts`             |
 
 ### Guardrail Tests (Enforced Automatically)
 
 These tests fail CI if you forget to add tests:
 
-| Guardrail | Location | What it catches |
-|-----------|----------|-----------------|
-| Env var test coverage | `packages/env/src/*.test.ts` | Schema var without test |
+| Guardrail               | Location                         | What it catches            |
+| ----------------------- | -------------------------------- | -------------------------- |
+| Env var test coverage   | `packages/env/src/*.test.ts`     | Schema var without test    |
 | Build with .env.example | `apps/*/src/startup.int.test.ts` | Missing .env.example entry |
 
 **If a guardrail test fails, you MUST add the missing test. Do not disable the
@@ -225,6 +226,8 @@ pnpm verify
 - Config: `vitest.integration.config.ts` (root)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
+- Includes dev server smoke test: `apps/web/src/dev.int.test.ts` (ensures
+  `pnpm dev:web` starts with repo defaults)
 
 **E2E:** Playwright
 
@@ -234,12 +237,13 @@ pnpm verify
 
 ### Playwright MCP Server (Interactive Debugging)
 
-A Playwright MCP server is configured for Claude Code, providing interactive browser
-control for debugging and UI verification. This is NOT required for standard
-`pnpm verify` runs.
+A Playwright MCP server is configured for Claude Code, providing interactive
+browser control for debugging and UI verification. This is NOT required for
+standard `pnpm verify` runs.
 
-**Configuration:** `.mcp.json` (server entry point) and `playwright-mcp.config.json`
-(browser options). The server runs headless Chromium in isolated mode.
+**Configuration:** `.mcp.json` (server entry point) and
+`playwright-mcp.config.json` (browser options). The server runs headless
+Chromium in isolated mode.
 
 **When to use Playwright MCP:**
 
@@ -258,7 +262,8 @@ control for debugging and UI verification. This is NOT required for standard
 **Usage pattern for agents:**
 
 1. Navigate to the relevant page with `browser_navigate`
-2. Use `browser_snapshot` to understand page structure (preferred over screenshots)
+2. Use `browser_snapshot` to understand page structure (preferred over
+   screenshots)
 3. Interact using `browser_click`, `browser_type`, `browser_fill_form`
 4. Verify results with `browser_snapshot` or `browser_take_screenshot`
 5. Close with `browser_close` when done
@@ -397,7 +402,7 @@ layer(TestPgLive)("Effect layer tests", (it) => {
       const sql = yield* SqlClient.SqlClient;
       const result = yield* sql`SELECT 1 as value`;
       expect(result[0].value).toBe(1);
-    })
+    }),
   );
 });
 ```
@@ -441,9 +446,9 @@ test.describe("Homepage", () => {
 });
 ```
 
-**Note:** Always import from `./fixtures` instead of `@playwright/test`. The fixtures
-file extends Playwright with error detection that fails tests when the page has
-console errors or JavaScript exceptions.
+**Note:** Always import from `./fixtures` instead of `@playwright/test`. The
+fixtures file extends Playwright with error detection that fails tests when the
+page has console errors or JavaScript exceptions.
 
 ### tRPC Procedure Test
 
@@ -483,7 +488,8 @@ Test-Driven Development follows a strict cycle:
 **All new features that require testing MUST follow TDD:**
 
 1. **Write the test FIRST** — before any implementation
-2. **Run the test — it MUST FAIL** — this proves the test actually tests something
+2. **Run the test — it MUST FAIL** — this proves the test actually tests
+   something
 3. **Implement the feature** — minimum code to make the test pass
 4. **Run the test — it MUST PASS** — proves implementation works
 5. **Refactor if needed** — keep tests green
@@ -516,6 +522,7 @@ pnpm test:unit -- packages/env/src/server.test.ts
 ```
 
 **This applies to:**
+
 - New env vars
 - New API endpoints
 - New validation rules
@@ -580,7 +587,9 @@ import { sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export async function truncateAuthTables(db: PostgresJsDatabase) {
-  await db.execute(sql`TRUNCATE TABLE session, account, verification, "user" CASCADE`);
+  await db.execute(
+    sql`TRUNCATE TABLE session, account, verification, "user" CASCADE`,
+  );
 }
 
 export function createTestUser() {
@@ -598,7 +607,8 @@ export function createTestUser() {
 
 - External API calls (Google AI)
 - Time/dates for deterministic tests
-- Environment variables (use `vi.mock('@gemhog/env/server')` for t3-env isolation)
+- Environment variables (use `vi.mock('@gemhog/env/server')` for t3-env
+  isolation)
 
 **DON'T mock:**
 

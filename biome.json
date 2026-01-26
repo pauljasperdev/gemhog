@@ -30,6 +30,8 @@
       "!**/convex/_generated",
       "!**/.playwright-results",
       "!**/.planning/intel",
+      "!t3/t3",
+      "!t3/t3",
       "!**/node_modules",
       "!**/.open-next"
     ]
