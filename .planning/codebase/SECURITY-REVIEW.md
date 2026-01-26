@@ -55,7 +55,7 @@ Quick reference for blocking check before any work.
 ### Dependency Audit
 
 ```
-pnpm security:audit
+pnpm test:audit
 No new vulnerabilities were ignored
 ```
 
@@ -108,7 +108,7 @@ VERIFICATION.md findings **Scope:**
 ### Dependency Audit
 
 ```
-pnpm security:audit
+pnpm test:audit
 No known vulnerabilities found
 ```
 

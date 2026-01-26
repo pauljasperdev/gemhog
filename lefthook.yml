@@ -7,7 +7,7 @@ pre-commit:
       glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
       run: npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typecheck:
-      run: pnpm check-types
+      run: pnpm -r check-types
 
 # Post-checkout hook for dependency updates (optional quality of life)
 post-checkout:
