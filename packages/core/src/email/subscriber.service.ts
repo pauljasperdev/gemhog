@@ -40,43 +40,53 @@ export const SubscriberServiceLive = Layer.effect(
         .where(eq(subscriber.email, email))
         .pipe(
           Effect.map((rows: Subscriber[]) => rows[0] ?? null),
-          Effect.catchAll((error) =>
-            Effect.fail(
+          Effect.mapError(
+            (error) =>
               new SubscriberError({
                 message: `Failed to find subscriber: ${email}`,
                 cause: error,
               }),
-            ),
           ),
         );
+
+    const requireByEmail = (
+      email: string,
+    ): Effect.Effect<Subscriber, SubscriberNotFoundError | SubscriberError> =>
+      findByEmailQuery(email).pipe(
+        Effect.flatMap((sub) =>
+          sub
+            ? Effect.succeed(sub)
+            : Effect.fail(new SubscriberNotFoundError({ email })),
+        ),
+      );
 
     return {
       subscribe: (email) =>
         Effect.gen(function* () {
           const existing = yield* findByEmailQuery(email);
 
+          if (existing && existing.status === "unsubscribed") {
+            yield* db
+              .update(subscriber)
+              .set({
+                status: "pending",
+                subscribedAt: new Date(),
+                unsubscribedAt: null,
+              })
+              .where(eq(subscriber.email, email))
+              .pipe(
+                Effect.mapError(
+                  (error) =>
+                    new SubscriberError({
+                      message: `Failed to re-subscribe: ${email}`,
+                      cause: error,
+                    }),
+                ),
+              );
+            return { id: existing.id, isNew: true };
+          }
+
           if (existing) {
-            if (existing.status === "unsubscribed") {
-              yield* db
-                .update(subscriber)
-                .set({
-                  status: "pending",
-                  subscribedAt: new Date(),
-                  unsubscribedAt: null,
-                })
-                .where(eq(subscriber.email, email))
-                .pipe(
-                  Effect.catchAll((error) =>
-                    Effect.fail(
-                      new SubscriberError({
-                        message: `Failed to re-subscribe: ${email}`,
-                        cause: error,
-                      }),
-                    ),
-                  ),
-                );
-              return { id: existing.id, isNew: true };
-            }
             return { id: existing.id, isNew: false };
           }
 
@@ -85,13 +95,12 @@ export const SubscriberServiceLive = Layer.effect(
             .values({ email })
             .returning({ id: subscriber.id })
             .pipe(
-              Effect.catchAll((error) =>
-                Effect.fail(
+              Effect.mapError(
+                (error) =>
                   new SubscriberError({
                     message: `Failed to create subscriber: ${email}`,
                     cause: error,
                   }),
-                ),
               ),
             );
 
@@ -107,58 +116,48 @@ export const SubscriberServiceLive = Layer.effect(
         }),
 
       verify: (email) =>
-        Effect.gen(function* () {
-          const existing = yield* findByEmailQuery(email);
-
-          if (!existing) {
-            return yield* Effect.fail(new SubscriberNotFoundError({ email }));
-          }
-
-          yield* db
-            .update(subscriber)
-            .set({
-              status: "active",
-              verifiedAt: new Date(),
-            })
-            .where(eq(subscriber.email, email))
-            .pipe(
-              Effect.catchAll((error) =>
-                Effect.fail(
-                  new SubscriberError({
-                    message: `Failed to verify subscriber: ${email}`,
-                    cause: error,
-                  }),
-                ),
-              ),
-            );
-        }),
+        requireByEmail(email).pipe(
+          Effect.flatMap(() =>
+            db
+              .update(subscriber)
+              .set({
+                status: "active",
+                verifiedAt: new Date(),
+              })
+              .where(eq(subscriber.email, email)),
+          ),
+          Effect.mapError((error) =>
+            error._tag === "SubscriberNotFoundError"
+              ? error
+              : new SubscriberError({
+                  message: `Failed to verify subscriber: ${email}`,
+                  cause: error,
+                }),
+          ),
+          Effect.asVoid,
+        ),
 
       unsubscribe: (email) =>
-        Effect.gen(function* () {
-          const existing = yield* findByEmailQuery(email);
-
-          if (!existing) {
-            return yield* Effect.fail(new SubscriberNotFoundError({ email }));
-          }
-
-          yield* db
-            .update(subscriber)
-            .set({
-              status: "unsubscribed",
-              unsubscribedAt: new Date(),
-            })
-            .where(eq(subscriber.email, email))
-            .pipe(
-              Effect.catchAll((error) =>
-                Effect.fail(
-                  new SubscriberError({
-                    message: `Failed to unsubscribe: ${email}`,
-                    cause: error,
-                  }),
-                ),
-              ),
-            );
-        }),
+        requireByEmail(email).pipe(
+          Effect.flatMap(() =>
+            db
+              .update(subscriber)
+              .set({
+                status: "unsubscribed",
+                unsubscribedAt: new Date(),
+              })
+              .where(eq(subscriber.email, email)),
+          ),
+          Effect.mapError((error) =>
+            error._tag === "SubscriberNotFoundError"
+              ? error
+              : new SubscriberError({
+                  message: `Failed to unsubscribe: ${email}`,
+                  cause: error,
+                }),
+          ),
+          Effect.asVoid,
+        ),
 
       findByEmail: findByEmailQuery,
     };
