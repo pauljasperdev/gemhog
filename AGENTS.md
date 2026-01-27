@@ -59,6 +59,7 @@ Use these skills (invoke with `/skill-name`) for specialized tasks:
 | `/web-design-guidelines`       | Review UI code for best practices compliance        | Reviewing UI, checking accessibility, auditing UX                     |
 | `/copywriting`                 | Write or improve marketing copy                     | Homepage, landing pages, pricing, CTAs, feature pages                 |
 | `/better-auth-best-practices`  | Integrate Better Auth authentication framework      | Implementing or modifying authentication features                     |
+| `/effect-ts`                   | Comprehensive Effect-TS guide with correct APIs     | Building Effect applications, services, layers, or MCP servers        |
 
 ## Important Constraints
 

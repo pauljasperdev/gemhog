@@ -56,7 +56,7 @@
 - ai 6.0.3 - Vercel AI SDK (`apps/web/`, `apps/server/`)
 - @ai-sdk/google 3.0.1 - Google Gemini integration (`apps/server/`)
 
-**Effect TS:**
+**Effect TS:** (use `/effect-ts` skill when working with these)
 
 - effect 3.19 - Functional effect system (`packages/core/`)
 - @effect/sql 0.49 - SQL abstraction layer
