@@ -6,7 +6,7 @@ vi.mock("@gemhog/env/server", () => ({
     DATABASE_URL_POOLER: "postgresql://test:test@localhost:5432/test",
     BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
     BETTER_AUTH_URL: "http://localhost:3000",
-    CORS_ORIGIN: "http://localhost:3001",
+    APP_URL: "http://localhost:3001",
     GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
     NODE_ENV: "test",
   },
