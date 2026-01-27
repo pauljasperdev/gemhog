@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 5 (Email Infrastructure)
-Plan: 4 of 5 in current phase
+Plan: 6 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-27 - Completed 02-04-PLAN.md (API endpoints and status pages)
+Last activity: 2026-01-27 - Completed 02-06-PLAN.md (Core email Effect-TS refactoring, env cleanup)
 
-Progress: [██████░░░░] 60%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 21min (last 4 measured)
-- Total execution time: 85min (GSD-tracked)
+- Total plans completed: 7 (Phase 1: 1, Phase 2: 6 of 7)
+- Average duration: 28min (last 5 measured)
+- Total execution time: 139min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 | 1 | N/A | N/A (manual) |
-| 2 | 4/5 | 78min | 19.5min |
+| 1 | 1/1 | N/A | N/A (manual) |
+| 2 | 6/7 | 132min+ | ~26min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (7min), 02-02 (14min), 02-03 (14min), 02-04 (43min)
-- Trend: Increasing (02-04 was larger scope -- API routes + pages + tests)
+- Last 5 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min)
+- Trend: 02-06 was larger scope (refactoring + env + conventions + deferrals)
 
 *Updated after each plan completion*
 
@@ -58,6 +58,10 @@ Recent decisions affecting current work:
 - [02-04]: Shared EmailLayers composition in lib/email-layers.ts for all email API routes
 - [02-04]: List-Unsubscribe + List-Unsubscribe-Post headers in verification emails (RFC 8058)
 - [02-04]: Pending subscribers receive fresh verification email on re-signup
+- [02-06]: mapError (not catchAll) for DB query error wrapping -- preserves downstream typed errors
+- [02-06]: makeEmailServiceLive factory replaces EmailServiceLive+EmailServiceAuto (env reads at app layer)
+- [02-06]: SUBSCRIBER_TOKEN_SECRET removed from env schema -- token signing uses BETTER_AUTH_SECRET
+- [02-06]: Items 18 (bigserial+nanoid IDs) and 19 (test subfolder) explicitly deferred with rationale
 
 ### Pending Todos
 
@@ -66,9 +70,10 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
+- email-layers.ts temporarily uses EmailServiceConsole until 02-07 wires makeEmailServiceLive factory
 
 ## Session Continuity
 
-Last session: 2026-01-27T14:03:16Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-01-27T21:21:49Z
+Stopped at: Completed 02-06-PLAN.md. Ready for 02-07 execution.
 Resume file: None
