@@ -42,6 +42,7 @@ export default $config({
 
     await import("./infra/secrets");
     await import("./infra/neon");
+    await import("./infra/email");
     const api = await import("./infra/api");
     const web = await import("./infra/web");
     return {
