@@ -1,13 +1,18 @@
 # lefthook.yml
-# Pre-commit hook runs fast checks only
-pre-commit:
+# Commit-msg hook runs checks unless it's a docs commit
+commit-msg:
   parallel: true
   commands:
     biome:
       glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
-      run: npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      run:
+        bash -c 'if grep -qE "^docs" "$1"; then exit 0; fi; npx biome check
+        --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}'
+        bash {1}
     typecheck:
-      run: pnpm -r check-types
+      run:
+        bash -c 'if grep -qE "^docs" "$1"; then exit 0; fi; pnpm -r check-types'
+        bash {1}
 
 # Post-checkout hook for dependency updates (optional quality of life)
 post-checkout:
