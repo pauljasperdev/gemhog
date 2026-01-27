@@ -62,9 +62,6 @@ Use these skills (invoke with `/skill-name`) for specialized tasks:
 
 ## Important Constraints
 
-- **Security-first**: Critical/high security findings block merge. Review
-  `SECURITY-CHECKLIST.md` before implementing features handling user data or
-  payments.
 - **SST-agnostic code**: Application code reads env vars only — no SST SDK
   imports. This enables local development and agent verification without cloud
   context.
@@ -84,12 +81,6 @@ pnpm db:start && pnpm test
 **This is non-negotiable.** See `.planning/codebase/TESTING.md` for full
 details.
 
-## Security Requirements
-
-**Security review required before declaring work complete.** See
-`.planning/codebase/SECURITY-CHECKLIST.md` for the checklist and
-`.planning/codebase/SECURITY-REVIEW.md` for the audit trail.
-
 **Severity blocking:**
 
 - Critical/High/Medium findings block completion
@@ -100,7 +91,5 @@ details.
 If you're not using GSD commands, follow these verification steps manually:
 
 1. **Before completing work**: Run `pnpm test` (full pipeline)
-2. **Security review**: Work through `.planning/codebase/SECURITY-CHECKLIST.md`
-3. **Record findings**: Append to `.planning/codebase/SECURITY-REVIEW.md`
 
 See the detailed docs in `.planning/codebase/` for complete requirements.
