@@ -5,7 +5,7 @@
 First, install the dependencies:
 
 ```bash
-pnpm setup
+pnpm init
 ```
 
 ## Local development
