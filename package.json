@@ -15,7 +15,7 @@
     "build": "pnpm -r build",
     "check": "biome check --error-on-warnings --write . && pnpm -r check-types",
     "test": "./scripts/test.sh",
-    "test:audit": "pnpm audit --audit-level low",
+    "test:audit": "pnpm audit --audit-level moderate --ignore-unfixable",
     "db:push": "pnpm --filter @gemhog/core db:push",
     "db:studio": "pnpm --filter @gemhog/core db:studio",
     "db:generate": "pnpm --filter @gemhog/core db:generate",

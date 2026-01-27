@@ -20,12 +20,7 @@ echo "OK integration"
 echo ""
 
 echo "=== Dependency Security ==="
-# --ignore-unfixable: Skip vulnerabilities in transitive deps we can't fix (e.g., SST's opencontrol)
-pnpm audit --audit-level moderate --ignore-unfixable || {
-  echo "FAIL: Dependency vulnerabilities found (moderate or higher)"
-  echo "Run 'pnpm audit' for details"
-  exit 1
-}
+pnpm test:audit
 echo "OK dependencies"
 echo ""
 
