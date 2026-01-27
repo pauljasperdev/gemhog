@@ -50,7 +50,7 @@ Plans:
   3. Unsubscribe link in email successfully changes subscriber status
   4. Test email can be sent via CLI/script to verify SES is working
   5. Email headers include List-Unsubscribe for one-click unsubscribe
-**Plans:** 5 plans
+**Plans:** 7 plans
 
 Plans:
 - [ ] 02-01-PLAN.md — Rename CORS_ORIGIN to APP_URL across codebase
@@ -58,6 +58,8 @@ Plans:
 - [ ] 02-03-PLAN.md — Subscriber and email services (Effect DI, templates, mocks, tests)
 - [ ] 02-04-PLAN.md — API endpoints and status pages (subscribe, verify, unsubscribe flows)
 - [ ] 02-05-PLAN.md — SST Email infrastructure (SES, secrets, deploy)
+- [ ] 02-06-PLAN.md — Core package Effect-TS fixes (token, subscriber, email service patterns)
+- [ ] 02-07-PLAN.md — App layer refactor (tRPC subscriber router, server component pages, infra cleanup)
 
 ### Phase 3: Analytics
 
@@ -121,7 +123,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 0/5 | Not started | - |
+| 2. Email Infrastructure | 5/7 | In progress | - |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
