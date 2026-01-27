@@ -450,6 +450,36 @@ const result = await runTest(myEffect);
 | `Effect.promise` + `mapError` | Legacy pattern          | Use `Effect.tryPromise`                  |
 | `runTest` helpers             | Type constraint issues  | Direct `Effect.runPromise`               |
 
+### Observability with Effect
+
+**Sentry tracing:** Use Effect's built-in tracing (`Effect.withSpan`) which
+integrates with OpenTelemetry. Sentry's Node SDK auto-instruments via
+OpenTelemetry, so `Effect.withSpan` annotations become Sentry spans
+automatically. Do NOT manually call `Sentry.startSpan` inside Effect code.
+
+```typescript
+// GOOD: Effect.withSpan integrates with Sentry via OpenTelemetry
+myEffect.pipe(Effect.withSpan("subscriber.subscribe"))
+
+// BAD: Manual Sentry calls inside Effect code
+Effect.gen(function* () {
+  return Sentry.startSpan({ name: "subscribe" }, () => { ... })
+})
+```
+
+**Logging:** Use `Console.log` from Effect (not `console.log`) in Effect
+pipelines. This enables consistent logging behavior and testability.
+
+```typescript
+import { Console, Effect } from "effect";
+
+// GOOD: Effect Console
+yield* Console.log("Processing subscriber");
+
+// BAD: Direct console in Effect pipeline
+console.log("Processing subscriber");
+```
+
 ### Detection Commands
 
 ```bash
@@ -465,6 +495,39 @@ rg "Effect\.(mapError|catchAll)\(\(error:\s*unknown\)" --type ts
 # Find legacy Effect.promise
 rg "Effect\.promise\(" --type ts
 ```
+
+---
+
+## Deferred Improvements
+
+Items identified during code review that are deferred to future phases:
+
+### Database ID Strategy (Code Review Item 18)
+
+**Current:** UUIDs as primary keys
+(`text("id").$defaultFn(() => crypto.randomUUID())`).
+**Proposed:** `bigserial` primary key with `nanoid` public_id column for fast
+lookups and no internal ID exposure.
+**Why deferred:** Requires migration of existing data, schema changes across all
+tables, and updates to all code referencing `id` fields. Better done as a
+dedicated schema migration phase when there are more tables and the pattern is
+established project-wide.
+**When to implement:** Before public beta launch, as part of a dedicated database
+schema hardening phase.
+
+### Test File Organization (Code Review Item 19)
+
+**Current:** Test files co-located with implementation (`email.service.ts` +
+`email.service.test.ts` in same directory).
+**Proposed:** Move test files into a `tests/` subfolder per domain (e.g.,
+`packages/core/src/email/tests/email.service.test.ts`).
+**Why deferred:** The current co-location pattern is already documented in
+TESTING.md and used project-wide. Changing now would require updating vitest
+configs, glob patterns in `vitest.config.ts` and `vitest.integration.config.ts`,
+and all import paths in test files. The benefit is organizational clarity, but the
+cost is significant churn across all domains.
+**When to implement:** When a domain grows beyond ~8 files and the flat structure
+becomes hard to navigate. Can be done incrementally per domain.
 
 ---
 
