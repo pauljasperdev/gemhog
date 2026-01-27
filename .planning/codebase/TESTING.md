@@ -7,7 +7,7 @@
 1. Install deps and start integration test infrastructure
 
 ```bash
-pnpm setup && pnpm db:start
+pnpm init && pnpm db:start
 ```
 
 2. You MUST verify `pnpm test` has no prior erros. If so fix them!
@@ -55,12 +55,12 @@ Migrations are managed via Drizzle Kit in `packages/core`.
 
 ## Available Test Commands
 
-| Test Type           | Command           | Notes                                    |
-| ------------------- | ----------------- | ---------------------------------------- |
-| Static Analysis     | `pnpm check`      | Biome lint + format + auto-fix + types   |
-| Pre-commit Hooks    | Lefthook          | Runs on git commit                       |
-| Dependency Security | `pnpm test:audit` | Checks for vulnerable dependencies       |
-| **Full Pipeline**   | `pnpm test`       | Runs all of the above + unit/int/e2e     |
+| Test Type           | Command           | Notes                                  |
+| ------------------- | ----------------- | -------------------------------------- |
+| Static Analysis     | `pnpm check`      | Biome lint + format + auto-fix + types |
+| Pre-commit Hooks    | Lefthook          | Runs on git commit                     |
+| Dependency Security | `pnpm test:audit` | Checks for vulnerable dependencies     |
+| **Full Pipeline**   | `pnpm test`       | Runs all of the above + unit/int/e2e   |
 
 ## Verification Requirements
 
@@ -122,8 +122,8 @@ guardrail.**
    ignore them
 4. **Infrastructure changes require working tests** — if you add test tooling,
    verify it actually works end-to-end
-5. **Verify tests actually test new code** — "pnpm test passes" is not enough
-   if you added code without tests
+5. **Verify tests actually test new code** — "pnpm test passes" is not enough if
+   you added code without tests
 6. **New code = new tests** — every feature, endpoint, component, env var needs
    tests
 
@@ -155,8 +155,8 @@ The user decides whether to:
 
 ### When to Run What
 
-| When                         | Command                  |
-| ---------------------------- | ------------------------ |
+| When                         | Command                     |
+| ---------------------------- | --------------------------- |
 | **Before completing a plan** | `pnpm test` (full pipeline) |
 | Before merge/release         | `pnpm test` (full pipeline) |
 
