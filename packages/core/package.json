@@ -29,6 +29,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.975.0",
     "@effect/sql": "^0.49",
     "@effect/sql-drizzle": "^0.48",
     "@effect/sql-pg": "^0.50",

@@ -1,5 +1,6 @@
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { Context, Effect, Layer } from "effect";
-import type { EmailSendError } from "./email.errors";
+import { EmailSendError } from "./email.errors";
 
 export interface SendEmailParams {
   to: string;
@@ -33,3 +34,44 @@ export const EmailServiceConsole = Layer.succeed(EmailServiceTag, {
       }
     }),
 });
+
+export const EmailServiceLive = Layer.sync(EmailServiceTag, () => {
+  const client = new SESv2Client({
+    region: process.env.AWS_REGION ?? "eu-central-1",
+  });
+  const senderEmail = process.env.SES_FROM_EMAIL ?? "hello@gemhog.com";
+
+  return {
+    send: ({ to, subject, html, headers }) =>
+      Effect.tryPromise({
+        try: () =>
+          client.send(
+            new SendEmailCommand({
+              FromEmailAddress: senderEmail,
+              Destination: { ToAddresses: [to] },
+              Content: {
+                Simple: {
+                  Subject: { Data: subject },
+                  Body: { Html: { Data: html } },
+                  Headers: headers
+                    ? Object.entries(headers).map(([name, value]) => ({
+                        Name: name,
+                        Value: value,
+                      }))
+                    : undefined,
+                },
+              },
+            }),
+          ),
+        catch: (error) =>
+          new EmailSendError({
+            message: `Failed to send email to ${to}`,
+            cause: error,
+          }),
+      }),
+  };
+});
+
+export const EmailServiceAuto = process.env.SES_FROM_EMAIL
+  ? EmailServiceLive
+  : EmailServiceConsole;

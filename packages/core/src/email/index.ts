@@ -1,7 +1,12 @@
 export * from "./email.errors";
 export { MockEmailService, MockSubscriberService } from "./email.mock";
 export type { EmailService, SendEmailParams } from "./email.service";
-export { EmailServiceConsole, EmailServiceTag } from "./email.service";
+export {
+  EmailServiceAuto,
+  EmailServiceConsole,
+  EmailServiceLive,
+  EmailServiceTag,
+} from "./email.service";
 export {
   unsubscribeConfirmationEmail,
   verificationEmail,
