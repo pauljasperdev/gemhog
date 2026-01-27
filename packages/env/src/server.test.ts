@@ -225,43 +225,4 @@ describe("server env validation", () => {
       expect(env.SES_FROM_EMAIL).toBeUndefined();
     });
   });
-
-  describe("optional SUBSCRIBER_TOKEN_SECRET", () => {
-    const setRequiredEnvVars = () => {
-      process.env.DATABASE_URL = "postgresql://localhost:5432/test";
-      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
-      process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
-      process.env.BETTER_AUTH_URL = "http://localhost:3000";
-      process.env.APP_URL = "http://localhost:3001";
-      process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
-    };
-
-    it("should succeed without SUBSCRIBER_TOKEN_SECRET", async () => {
-      setRequiredEnvVars();
-      delete process.env.SUBSCRIBER_TOKEN_SECRET;
-
-      const { env } = await import("./server.js");
-
-      expect(env.SUBSCRIBER_TOKEN_SECRET).toBeUndefined();
-    });
-
-    it("should succeed with a valid SUBSCRIBER_TOKEN_SECRET (32+ chars)", async () => {
-      setRequiredEnvVars();
-      process.env.SUBSCRIBER_TOKEN_SECRET =
-        "a-valid-token-secret-at-least-32-characters-long";
-
-      const { env } = await import("./server.js");
-
-      expect(env.SUBSCRIBER_TOKEN_SECRET).toBe(
-        "a-valid-token-secret-at-least-32-characters-long",
-      );
-    });
-
-    it("should fail with a short SUBSCRIBER_TOKEN_SECRET (< 32 chars)", async () => {
-      setRequiredEnvVars();
-      process.env.SUBSCRIBER_TOKEN_SECRET = "too-short";
-
-      await expect(import("./server.js")).rejects.toThrow();
-    });
-  });
 });
