@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 5 (Email Infrastructure)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-27 - Completed 02-01-PLAN.md (Rename CORS_ORIGIN to APP_URL)
+Last activity: 2026-01-27 - Completed 02-02-PLAN.md (Email domain foundation)
 
-Progress: [███.......] 33%
+Progress: [████......] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 7min (last measured)
-- Total execution time: 7min (GSD-tracked)
+- Total plans completed: 3
+- Average duration: 10.5min (last 2 measured)
+- Total execution time: 21min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1 | N/A | N/A (manual) |
-| 2 | 1/5 | 7min | 7min |
+| 2 | 2/5 | 21min | 10.5min |
 
 **Recent Trend:**
-- Last 5 plans: Phase 1 (manual), 02-01 (7min)
-- Trend: First GSD-tracked plan
+- Last 5 plans: Phase 1 (manual), 02-01 (7min), 02-02 (14min)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -50,6 +50,9 @@ Recent decisions affecting current work:
 - [V1]: GDPR/CAN-SPAM compliance (double opt-in, unsubscribe, privacy policy)
 - [V1]: tRPC and Better Auth moved to Next.js API routes (Hono reserved for AI streaming only)
 - [02-01]: CORS_ORIGIN renamed to APP_URL for semantic correctness (expanded use: CORS, token URLs, redirect URLs)
+- [02-02]: SUBSCRIBER_TOKEN_SECRET optional in dev (production enforced via SST secret)
+- [02-02]: Token module uses pure functions with secret parameter (no Effect wrapping, no env var reading)
+- [02-02]: No UTM columns in subscriber schema (PostHog handles attribution in Phase 3)
 
 ### Pending Todos
 
@@ -61,6 +64,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-27T11:34:39Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-01-27T11:57:40Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
