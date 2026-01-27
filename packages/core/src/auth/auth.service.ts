@@ -4,7 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./auth.sql";
 import { db } from "./drizzle.db";
 
-const trustedOrigins = [env.CORS_ORIGIN, env.BETTER_AUTH_URL].filter(
+const trustedOrigins = [env.APP_URL, env.BETTER_AUTH_URL].filter(
   (origin): origin is string => Boolean(origin),
 );
 
