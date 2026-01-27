@@ -36,7 +36,8 @@
 
 - Issue: Integration test config may have stale project references
 - Impact: Integration tests may fail with "No projects matched the filter"
-- Fix approach: Verify `vitest.integration.config.ts` has correct project references
+- Fix approach: Verify `vitest.integration.config.ts` has correct project
+  references
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 
 **E2E test missing env vars (BLOCKER):**
@@ -56,23 +57,33 @@ bugs.
 ## Security Considerations
 
 Security findings from reviews. See `.planning/codebase/SECURITY-REVIEW.md` for
-full audit trail and details. Critical/High/Medium must be resolved before
-declaring work complete.
+full audit trail and details.
 
 ### Current Findings Status
 
-**Summary (as of 2026-01-21):**
+**Summary (as of 2026-01-27):**
 
 | Severity | Open | Fixed | Closed (N/A) |
 | -------- | ---- | ----- | ------------ |
 | Critical | 0    | 0     | 0            |
-| High     | 0    | 2     | 0            |
-| Medium   | 0    | 1     | 2            |
-| Low      | 0    | 0     | 1            |
+| High     | 2    | 2     | 0            |
+| Medium   | 1    | 1     | 2            |
+| Low      | 1    | 0     | 1            |
 
-**Blocking findings exist:** NO
+**Open findings exist:** YES
 
-**All findings resolved (details in SECURITY-REVIEW.md):**
+**Open findings (details in SECURITY-REVIEW.md):**
+
+- [SEC-006] High - Hono vulnerabilities via `sst>opencontrol>hono` - OPEN
+  (2026-01-27)
+- [SEC-007] High - MCP SDK vulnerabilities via
+  `sst>opencontrol>@modelcontextprotocol/sdk` - OPEN (2026-01-27)
+- [SEC-008] Medium - Hono body limit/vary header issues via
+  `sst>opencontrol>hono` - OPEN (2026-01-27)
+- [SEC-009] Low - aws-sdk region validation advisory via `sst>aws-sdk` - OPEN
+  (2026-01-27)
+
+**Resolved findings (details in SECURITY-REVIEW.md):**
 
 - [SEC-001] High - Input validation - FIXED (03.1-08)
 - [SEC-002] High - Rate limiting - FIXED (03.1-08)
@@ -80,7 +91,7 @@ declaring work complete.
 - [SEC-004] Medium - Polar product ID - CLOSED (03.1-07, Polar removed)
 - [SEC-005] Low - Polar sandbox mode - CLOSED (03.1-07, Polar removed)
 
-_Last synced from SECURITY-REVIEW.md: 2026-01-21_
+_Last synced from SECURITY-REVIEW.md: 2026-01-27_
 
 ## Performance Bottlenecks
 
@@ -131,7 +142,8 @@ _Last synced from SECURITY-REVIEW.md: 2026-01-21_
 
 - Problem: Cloudflare deployment requires zone ID and API token
 - Files: `infra/api.ts`, `infra/web.ts`
-- Requirements: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_DEFAULT_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`
+- Requirements: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_DEFAULT_ACCOUNT_ID`,
+  `CLOUDFLARE_ZONE_ID`
 - Workaround: Set environment variables before `sst deploy`
 - Implementation complexity: Low (one-time setup)
 

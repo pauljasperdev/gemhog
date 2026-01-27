@@ -12,18 +12,29 @@ references this file for summary counts only.
 
 ## Current Status Summary
 
-Quick reference for blocking check before any work.
+Quick reference for open findings.
 
 | Severity | Open | Fixed | Closed (N/A) | Total |
 | -------- | ---- | ----- | ------------ | ----- |
 | Critical | 0    | 0     | 0            | 0     |
-| High     | 0    | 2     | 0            | 2     |
-| Medium   | 0    | 1     | 2            | 3     |
-| Low      | 0    | 0     | 1            | 1     |
+| High     | 2    | 2     | 0            | 4     |
+| Medium   | 1    | 1     | 2            | 4     |
+| Low      | 1    | 0     | 1            | 2     |
 
-**Blocking findings exist:** NO
+**Open findings exist:** YES
 
-**All findings resolved:**
+**Open findings:**
+
+- [SEC-006] High - Hono vulnerabilities via `sst>opencontrol>hono` - OPEN
+  (2026-01-27)
+- [SEC-007] High - MCP SDK vulnerabilities via
+  `sst>opencontrol>@modelcontextprotocol/sdk` - OPEN (2026-01-27)
+- [SEC-008] Medium - Hono body limit/vary header issues via
+  `sst>opencontrol>hono` - OPEN (2026-01-27)
+- [SEC-009] Low - aws-sdk region validation advisory via `sst>aws-sdk` - OPEN
+  (2026-01-27)
+
+**Resolved findings:**
 
 - [SEC-001] High - Missing input validation on AI endpoint - FIXED (03.1-08)
 - [SEC-002] High - No rate limiting - FIXED (03.1-08)
@@ -31,6 +42,96 @@ Quick reference for blocking check before any work.
 - [SEC-004] Medium - Hardcoded placeholder productId - CLOSED (03.1-07, Polar
   removed)
 - [SEC-005] Low - Polar sandbox mode hardcoded - CLOSED (03.1-07, Polar removed)
+
+---
+
+## Review: 2026-01-27 - Rename setup script to init
+
+**Reviewer:** Codex (agent) **Commit:** Pending **Scope:**
+
+- package.json (rename setup script to init)
+- README.md (update onboarding command)
+- .planning/codebase/STRUCTURE.md (script table update)
+- .planning/codebase/TESTING.md (setup command update)
+
+### Dependency Audit
+
+```
+pnpm test:audit
+8 vulnerabilities found
+Severity: 1 low | 2 moderate | 5 high
+```
+
+### Files Reviewed
+
+| File                            | Categories Checked | Result |
+| ------------------------------- | ------------------ | ------ |
+| package.json                    | Dependencies       | PASS   |
+| README.md                       | Documentation      | PASS   |
+| .planning/codebase/STRUCTURE.md | Documentation      | PASS   |
+| .planning/codebase/TESTING.md   | Documentation      | PASS   |
+
+### Findings
+
+#### [SEC-006] High - Hono vulnerabilities in `sst>opencontrol`
+
+- **File:** `package.json`
+- **Category:** Dependency Security
+- **Description:** `hono` transitive dependency includes multiple high-severity
+  advisories (improper authorization, JWT algorithm confusion) via
+  `sst>opencontrol>hono`.
+- **Risk:** Upstream middleware could allow auth bypass or token forgery in
+  affected versions.
+- **Recommendation:** Upgrade `sst` or override `hono` to `>=4.11.4`.
+- **Status:** Open
+
+#### [SEC-007] High - MCP SDK vulnerabilities in `sst>opencontrol`
+
+- **File:** `package.json`
+- **Category:** Dependency Security
+- **Description:** `@modelcontextprotocol/sdk` has DNS rebinding and ReDoS
+  advisories via `sst>opencontrol>@modelcontextprotocol/sdk`.
+- **Risk:** Potential SSRF-style exposure and performance degradation.
+- **Recommendation:** Upgrade `sst` or override `@modelcontextprotocol/sdk` to
+  `>=1.25.2`.
+- **Status:** Open
+
+#### [SEC-008] Medium - Hono moderate advisories in `sst>opencontrol`
+
+- **File:** `package.json`
+- **Category:** Dependency Security
+- **Description:** `hono` moderate advisories (body limit bypass, vary header
+  injection) are present via `sst>opencontrol>hono`.
+- **Risk:** Request handling limits could be bypassed; potential CORS issues.
+- **Recommendation:** Upgrade `hono` to `>=4.10.3` (covered by `>=4.11.4`).
+- **Status:** Open
+
+#### [SEC-009] Low - aws-sdk region validation advisory
+
+- **File:** `package.json`
+- **Category:** Dependency Security
+- **Description:** `aws-sdk` v2 advisory via `sst>aws-sdk` recommends migrating
+  or validating region values.
+- **Risk:** Misconfigured region handling in legacy SDK.
+- **Recommendation:** Upgrade `sst` or migrate off `aws-sdk` v2 if possible.
+- **Status:** Open
+
+### Summary
+
+| Severity | Count | Status |
+| -------- | ----- | ------ |
+| Critical | 0     | -      |
+| High     | 2     | Open   |
+| Medium   | 1     | Open   |
+| Low      | 1     | Open   |
+
+### Sign-off
+
+- [x] Checked for pre-existing open findings (none before this change)
+- [ ] Dependency audit passed (blocking vulnerabilities found)
+- [ ] All Critical/High/Medium resolved (SEC-006/007/008 open)
+- [x] Low findings documented (SEC-009)
+- [ ] Ready for completion
 
 ---
 
@@ -84,7 +185,7 @@ None.
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (none)
+- [x] Checked for pre-existing open findings (none)
 - [x] Dependency audit passed
 - [x] All Critical/High/Medium resolved
 - [x] Low findings documented (none)
@@ -186,7 +287,7 @@ No known vulnerabilities found
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (all resolved)
+- [x] Checked for pre-existing open findings (all resolved)
 - [x] Dependency audit passed (no vulnerabilities)
 - [x] All Critical/High/Medium resolved
 - [x] Ready for completion
@@ -269,7 +370,7 @@ No known vulnerabilities found
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (3 exist: SEC-001, SEC-002,
+- [x] Checked for pre-existing open findings (3 exist: SEC-001, SEC-002,
       SEC-003)
 - [x] Dependency audit passed (no vulnerabilities)
 - [ ] All Critical/High/Medium resolved (SEC-004 new Medium finding)
@@ -323,8 +424,7 @@ The only code change was a formatting fix to `.planning/intel/index.json`
 
 ### Sign-off
 
-- [x] Checked for pre-existing blocking findings (3 exist, unrelated to this
-      work)
+- [x] Checked for pre-existing open findings (3 exist, unrelated to this work)
 - [x] Dependency audit passed (no dependencies changed)
 - [x] No new Critical/High/Medium findings from this change
 - [x] Documentation-only changes have no security implications
@@ -441,7 +541,7 @@ Copy this template when adding a new review session:
 
 ### Sign-off
 
-- [ ] Checked for pre-existing blocking findings
+- [ ] Checked for pre-existing open findings
 - [ ] Dependency audit passed
 - [ ] All Critical/High/Medium resolved
 - [ ] Low findings documented

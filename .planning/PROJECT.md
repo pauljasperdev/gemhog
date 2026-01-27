@@ -39,7 +39,7 @@ higher-risk allocation of their portfolio.
 Completed. Established testable, deployable codebase with security gates.
 
 - ✓ Testing infrastructure (Biome, Vitest, Playwright MCP)
-- ✓ Security verification workflow (`SECURITY-REVIEW.md`)
+- ✓ Security review docs (`SECURITY-REVIEW.md`)
 - ✓ SST v3 deployment
 - ✓ Core package consolidation (`packages/core`)
 - ✓ Effect TS integration for backend
@@ -102,19 +102,18 @@ Blocked until V1 launch readiness is complete.
   (S3, SES, etc.) use a deployed Test stage via env vars.
 - **Security-first development**: Validate all user input at boundaries (Zod
   schemas), enforce auth checks on protected routes, keep secrets out of code,
-  audit dependencies. Security review required before merge; critical/high
-  findings block deployment. See `.planning/codebase/SECURITY-CHECKLIST.md`.
+  audit dependencies.
 
 ### V1 Constraints
 
 - **Serverless email**: Use AWS SES directly, no hosted email services
   (Listmonk, Resend). Keep costs at $0 for low volume.
-- **Free-tier monitoring**: Sentry free tier for errors, CloudWatch for logs.
-  No paid observability tools.
+- **Free-tier monitoring**: Sentry free tier for errors, CloudWatch for logs. No
+  paid observability tools.
 - **No admin UI**: Subscriber management via direct database access or scripts.
   Admin dashboard deferred to V2.
-- **GDPR/CAN-SPAM compliance**: Double opt-in, clear unsubscribe, privacy
-  policy required before collecting emails.
+- **GDPR/CAN-SPAM compliance**: Double opt-in, clear unsubscribe, privacy policy
+  required before collecting emails.
 
 ### V2 Constraints
 

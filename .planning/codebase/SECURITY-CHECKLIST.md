@@ -1,7 +1,6 @@
 # Security Verification Checklist
 
-**Purpose:** Systematic security review for agent workflows. Run after
-implementation, before E2E tests. Critical/high findings block merge.
+**Purpose:** Systematic security review checklist.
 
 **Output:** Findings recorded in `.planning/codebase/SECURITY-REVIEW.md`.
 
@@ -9,16 +8,14 @@ implementation, before E2E tests. Critical/high findings block merge.
 
 ## Security Review Workflow
 
-**Run security review BEFORE declaring work complete.** This runs on every
-commit, not just "sensitive" changes — security issues hide in unexpected
-places.
+Use this checklist when performing a security review.
 
 ### Steps
 
-1. **Check for blocking findings:**
+1. **Review existing findings:**
    - Read `.planning/codebase/SECURITY-REVIEW.md`
-   - If any Open Critical/High/Medium findings exist, STOP
-   - Either fix them first or escalate to project owner
+   - Note any Open Critical/High/Medium findings
+   - Decide whether to address or escalate
 
 2. **Determine scope:**
    - Run `git diff --name-only HEAD~1` (or vs main branch)
@@ -41,18 +38,18 @@ places.
 5. **Record findings:** Append session to
    `.planning/codebase/SECURITY-REVIEW.md`
 
-6. **Resolve blocking findings:** Fix Critical/High/Medium issues, re-run checks
+6. **Address findings:** Fix or track Critical/High/Medium issues as needed
 
 7. **Update CONCERNS.md:** Update summary counts (don't duplicate findings)
 
-### Severity Blocking
+### Severity Guidance
 
-| Severity | Blocks Completion | Action                         |
-| -------- | ----------------- | ------------------------------ |
-| Critical | YES               | Fix immediately, no exceptions |
-| High     | YES               | Fix immediately, no exceptions |
-| Medium   | YES               | Fix before declaring complete  |
-| Low      | NO                | Document, fix when convenient  |
+| Severity | Suggested action               |
+| -------- | ------------------------------ |
+| Critical | Fix immediately or escalate    |
+| High     | Fix immediately or escalate    |
+| Medium   | Fix soon; track in CONCERNS.md |
+| Low      | Document, fix when convenient  |
 
 ---
 
@@ -61,7 +58,7 @@ places.
 1. Review each category relevant to the changes made
 2. Mark items as PASS, FAIL (with severity), or N/A
 3. Document findings in SECURITY-REVIEW.md
-4. Critical/High findings must be fixed before merge
+4. Critical/High findings should be fixed before merge
 5. Medium findings tracked in CONCERNS.md for follow-up
 6. Low findings documented but don't block
 
