@@ -181,6 +181,51 @@ describe("server env validation", () => {
     });
   });
 
+  describe("optional SES_FROM_EMAIL", () => {
+    const setRequiredEnvVars = () => {
+      process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
+      process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
+      process.env.BETTER_AUTH_URL = "http://localhost:3000";
+      process.env.APP_URL = "http://localhost:3001";
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+    };
+
+    it("should succeed without SES_FROM_EMAIL", async () => {
+      setRequiredEnvVars();
+      delete process.env.SES_FROM_EMAIL;
+
+      const { env } = await import("./server.js");
+
+      expect(env.SES_FROM_EMAIL).toBeUndefined();
+    });
+
+    it("should succeed with a valid SES_FROM_EMAIL", async () => {
+      setRequiredEnvVars();
+      process.env.SES_FROM_EMAIL = "hello@gemhog.com";
+
+      const { env } = await import("./server.js");
+
+      expect(env.SES_FROM_EMAIL).toBe("hello@gemhog.com");
+    });
+
+    it("should fail with an invalid SES_FROM_EMAIL", async () => {
+      setRequiredEnvVars();
+      process.env.SES_FROM_EMAIL = "not-an-email";
+
+      await expect(import("./server.js")).rejects.toThrow();
+    });
+
+    it("should treat empty SES_FROM_EMAIL as undefined", async () => {
+      setRequiredEnvVars();
+      process.env.SES_FROM_EMAIL = "";
+
+      const { env } = await import("./server.js");
+
+      expect(env.SES_FROM_EMAIL).toBeUndefined();
+    });
+  });
+
   describe("optional SUBSCRIBER_TOKEN_SECRET", () => {
     const setRequiredEnvVars = () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";

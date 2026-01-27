@@ -13,6 +13,8 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
+    // Email sending (optional for local dev - uses console logger instead of SES)
+    SES_FROM_EMAIL: z.string().email().optional(),
     // Subscriber token signing (optional for local dev, required in production via SST secret)
     SUBSCRIBER_TOKEN_SECRET: z.string().min(32).optional(),
     // Sentry (optional - only needed for production error monitoring)

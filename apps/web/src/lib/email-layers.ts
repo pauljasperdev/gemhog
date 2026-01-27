@@ -1,8 +1,8 @@
 import { DatabaseLive } from "@gemhog/core/drizzle";
-import { EmailServiceConsole, SubscriberServiceLive } from "@gemhog/core/email";
+import { EmailServiceAuto, SubscriberServiceLive } from "@gemhog/core/email";
 import { Layer } from "effect";
 
 export const EmailLayers = Layer.mergeAll(
-  EmailServiceConsole,
+  EmailServiceAuto,
   SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
 );
