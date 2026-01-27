@@ -7,7 +7,7 @@
 1. Install deps and start integration test infrastructure
 
 ```bash
-pnpm init && pnpm db:start
+pnpm bootstrap && pnpm db:start
 ```
 
 2. You MUST verify `pnpm test` has no prior erros. If so fix them!
