@@ -23,7 +23,7 @@ export const web = new sst.aws.Nextjs("Web", {
       : secrets.DatabaseUrlPooler.value,
     BETTER_AUTH_SECRET: secrets.BetterAuthSecret.value,
     BETTER_AUTH_URL: $dev ? "http://localhost:3001" : `https://${domain}`,
-    CORS_ORIGIN: $dev ? "http://localhost:3001" : `https://${domain}`,
+    APP_URL: $dev ? "http://localhost:3001" : `https://${domain}`,
     GOOGLE_GENERATIVE_AI_API_KEY: secrets.GoogleApiKey.value,
     // Sentry error monitoring
     NEXT_PUBLIC_SENTRY_DSN: secrets.SentryDsn.value,

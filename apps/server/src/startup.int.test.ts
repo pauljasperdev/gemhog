@@ -73,7 +73,7 @@ describe("server startup - missing env vars", () => {
     expect(output).toContain("BETTER_AUTH_URL");
   }, 10000);
 
-  it("should fail when CORS_ORIGIN is missing", async () => {
+  it("should fail when APP_URL is missing", async () => {
     const { code, output } = await runServer({
       DATABASE_URL: "postgresql://localhost:5432/test",
       DATABASE_URL_POOLER: "postgresql://localhost:5432/test",
@@ -81,6 +81,6 @@ describe("server startup - missing env vars", () => {
       BETTER_AUTH_URL: "http://localhost:3000",
     });
     expect(code).not.toBe(0);
-    expect(output).toContain("CORS_ORIGIN");
+    expect(output).toContain("APP_URL");
   }, 10000);
 });

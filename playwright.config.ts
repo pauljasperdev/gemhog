@@ -34,7 +34,7 @@ export default defineConfig({
         process.env.BETTER_AUTH_SECRET ||
         "test-secret-key-for-e2e-minimum-32-chars",
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
-      CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3001",
+      APP_URL: process.env.APP_URL || "http://localhost:3001",
       GOOGLE_GENERATIVE_AI_API_KEY:
         process.env.GOOGLE_GENERATIVE_AI_API_KEY || "test-google-api-key",
       NEXT_PUBLIC_SERVER_URL:

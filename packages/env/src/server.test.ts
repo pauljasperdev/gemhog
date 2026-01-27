@@ -64,8 +64,8 @@ describe("server env validation", () => {
       await expect(import("./server.js")).rejects.toThrow();
     });
 
-    it("should fail when CORS_ORIGIN is missing", async () => {
-      delete process.env.CORS_ORIGIN;
+    it("should fail when APP_URL is missing", async () => {
+      delete process.env.APP_URL;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
@@ -86,13 +86,13 @@ describe("server env validation", () => {
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
-      process.env.CORS_ORIGIN = "http://localhost:3001";
+      process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
 
       const { env } = await import("./server.js");
 
       expect(env.BETTER_AUTH_URL).toBe("http://localhost:3000");
-      expect(env.CORS_ORIGIN).toBe("http://localhost:3001");
+      expect(env.APP_URL).toBe("http://localhost:3001");
       expect(env.GOOGLE_GENERATIVE_AI_API_KEY).toBe("test-google-api-key");
     });
 
@@ -101,7 +101,7 @@ describe("server env validation", () => {
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
-      process.env.CORS_ORIGIN = "http://localhost:3001";
+      process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
       delete process.env.NODE_ENV;
 
@@ -115,7 +115,7 @@ describe("server env validation", () => {
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
-      process.env.CORS_ORIGIN = "http://localhost:3001";
+      process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
       process.env.NODE_ENV = "production";
 
@@ -131,7 +131,7 @@ describe("server env validation", () => {
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
       process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
-      process.env.CORS_ORIGIN = "http://localhost:3001";
+      process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
     };
 
