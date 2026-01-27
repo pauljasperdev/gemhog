@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 5 (Email Infrastructure)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-27 - Completed 02-02-PLAN.md (Email domain foundation)
+Last activity: 2026-01-27 - Completed 02-04-PLAN.md (API endpoints and status pages)
 
-Progress: [████......] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 10.5min (last 2 measured)
-- Total execution time: 21min (GSD-tracked)
+- Total plans completed: 5
+- Average duration: 21min (last 4 measured)
+- Total execution time: 85min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1 | N/A | N/A (manual) |
-| 2 | 2/5 | 21min | 10.5min |
+| 2 | 4/5 | 78min | 19.5min |
 
 **Recent Trend:**
-- Last 5 plans: Phase 1 (manual), 02-01 (7min), 02-02 (14min)
-- Trend: Stable
+- Last 5 plans: 02-01 (7min), 02-02 (14min), 02-03 (14min), 02-04 (43min)
+- Trend: Increasing (02-04 was larger scope -- API routes + pages + tests)
 
 *Updated after each plan completion*
 
@@ -51,8 +51,13 @@ Recent decisions affecting current work:
 - [V1]: tRPC and Better Auth moved to Next.js API routes (Hono reserved for AI streaming only)
 - [02-01]: CORS_ORIGIN renamed to APP_URL for semantic correctness (expanded use: CORS, token URLs, redirect URLs)
 - [02-02]: SUBSCRIBER_TOKEN_SECRET optional in dev (production enforced via SST secret)
-- [02-02]: Token module uses pure functions with secret parameter (no Effect wrapping, no env var reading)
 - [02-02]: No UTM columns in subscriber schema (PostHog handles attribution in Phase 3)
+- [02-03]: Token module converted to Effect patterns (createToken/verifyToken return Effects)
+- [02-03]: SubscriberService does NOT send emails -- API layer orchestrates both services
+- [02-04]: Effect.catchTag inside pipeline (not try/catch around runPromise) for typed error handling
+- [02-04]: Shared EmailLayers composition in lib/email-layers.ts for all email API routes
+- [02-04]: List-Unsubscribe + List-Unsubscribe-Post headers in verification emails (RFC 8058)
+- [02-04]: Pending subscribers receive fresh verification email on re-signup
 
 ### Pending Todos
 
@@ -60,10 +65,10 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
 
 ## Session Continuity
 
-Last session: 2026-01-27T11:57:40Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-01-27T14:03:16Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None
