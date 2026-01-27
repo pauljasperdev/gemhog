@@ -10,28 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 2 of 5 (Email Infrastructure)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
-Last activity: 2026-01-27 - Phase 1 complete, architecture refactored (tRPC/auth moved to Next.js)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-27 - Completed 02-01-PLAN.md (Rename CORS_ORIGIN to APP_URL)
 
-Progress: [██........] 20%
+Progress: [███.......] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: Manual (outside GSD)
-- Total execution time: N/A (manual)
+- Total plans completed: 2
+- Average duration: 7min (last measured)
+- Total execution time: 7min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 | 1 | N/A | N/A |
+| 1 | 1 | N/A | N/A (manual) |
+| 2 | 1/5 | 7min | 7min |
 
 **Recent Trend:**
-- Last 5 plans: Phase 1 (manual)
-- Trend: N/A (first phase)
+- Last 5 plans: Phase 1 (manual), 02-01 (7min)
+- Trend: First GSD-tracked plan
 
 *Updated after each plan completion*
 
@@ -48,6 +49,7 @@ Recent decisions affecting current work:
 - [V1]: Free-tier monitoring (Sentry free, CloudWatch for logs)
 - [V1]: GDPR/CAN-SPAM compliance (double opt-in, unsubscribe, privacy policy)
 - [V1]: tRPC and Better Auth moved to Next.js API routes (Hono reserved for AI streaming only)
+- [02-01]: CORS_ORIGIN renamed to APP_URL for semantic correctness (expanded use: CORS, token URLs, redirect URLs)
 
 ### Pending Todos
 
@@ -59,6 +61,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-27
-Stopped at: Phase 1 complete (manual), ready to plan Phase 2
+Last session: 2026-01-27T11:34:39Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
