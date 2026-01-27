@@ -12,4 +12,5 @@ export {
   SubscriberServiceTag,
 } from "./subscriber.service";
 export * as subscriberSchema from "./subscriber.sql";
+export type { TokenPayload } from "./token";
 export { createToken, verifyToken } from "./token";
