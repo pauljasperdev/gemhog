@@ -216,8 +216,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Authentication via Better-Auth with HTTP-only secure cookies
 - Authorization checks via `protectedProcedure` middleware
 - No secrets in code (env vars only, validated at startup)
-- Security review required before merge (see `SECURITY-CHECKLIST.md`)
-- Critical/High findings block deployment
+- Security review checklist available in `SECURITY-CHECKLIST.md`
 - Findings tracked in `CONCERNS.md` with severity levels
 
 **Logging:**

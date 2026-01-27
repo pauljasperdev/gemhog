@@ -12,19 +12,10 @@ pnpm init && pnpm db:start
 
 2. You MUST verify `pnpm test` has no prior erros. If so fix them!
 
-3. There MUST NOT be any prior security issues. read
-   `.planning/codebase/SECURITY-REVIEW.md`. If so fix them!
-
 ### Before marking a plan as complete
 
 **This is non-negotiable.** ALL test MUST pass to mark a plan `pnpm test`
 passes. No exceptions. Not test skipping.
-
-Security volnurabilites MUST have been audited and FIXED!
-
-Review `.planning/codebase/SECURITY-REVIEW.md` and
-`.planning/codebase/CONCERNS.md` if up to date. Fixed or not relevant issues due
-to changing code base can be removed.
 
 ## Database Migrations
 

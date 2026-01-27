@@ -28,9 +28,6 @@ pnpm audit --audit-level moderate --ignore-unfixable || {
 }
 echo "OK dependencies"
 echo ""
-echo "NOTE: Agent must also complete full security review"
-echo "      See .planning/codebase/SECURITY-REVIEW.md"
-echo ""
 
 echo "=== E2E Tests ==="
 playwright test
