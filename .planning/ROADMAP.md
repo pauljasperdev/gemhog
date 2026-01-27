@@ -50,12 +50,13 @@ Plans:
   3. Unsubscribe link in email successfully changes subscriber status
   4. Test email can be sent via CLI/script to verify SES is working
   5. Email headers include List-Unsubscribe for one-click unsubscribe
-**Plans:** TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 02-01: SES domain verification and DNS setup
-- [ ] 02-02: Subscriber database schema and API endpoints
-- [ ] 02-03: Double opt-in and unsubscribe flow
+- [ ] 02-01-PLAN.md — SST Email infrastructure, secrets, and env var wiring
+- [ ] 02-02-PLAN.md — Subscriber domain (schema, service, tokens, tests)
+- [ ] 02-03-PLAN.md — Email sending domain (SES service, templates, tests)
+- [ ] 02-04-PLAN.md — API endpoints, verification/unsubscribe flows, status pages
 
 ### Phase 3: Analytics
 
@@ -119,7 +120,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 0/3 | Not started | - |
+| 2. Email Infrastructure | 0/4 | Not started | - |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
