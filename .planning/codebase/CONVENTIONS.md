@@ -241,6 +241,13 @@ export { Input };
 - `/copywriting` — Use when writing or improving marketing copy for homepage,
   landing pages, pricing pages, feature pages, or CTAs
 
+**Skills for backend work:**
+
+- `/effect-ts` — Use when building Effect applications, services, layers, or MCP
+  servers. Covers correct APIs, common misconceptions, and patterns.
+- `/better-auth-best-practices` — Use when implementing or modifying
+  authentication features
+
 **tRPC Procedures:**
 
 ```typescript
