@@ -79,6 +79,7 @@ describe("web env validation", () => {
     it("should use local defaults in development", async () => {
       delete process.env.NEXT_PUBLIC_SERVER_URL;
       delete process.env.NEXT_PUBLIC_SENTRY_DSN;
+      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
       process.env.LOCAL_ENV = "1";
 
       const { env } = await import("./web.js");
@@ -88,6 +89,9 @@ describe("web env validation", () => {
       );
       expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe(
         localDevWebEnv.NEXT_PUBLIC_SENTRY_DSN,
+      );
+      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBe(
+        localDevWebEnv.NEXT_PUBLIC_POSTHOG_KEY,
       );
     });
   });
@@ -118,6 +122,33 @@ describe("web env validation", () => {
       const { env } = await import("./web.js");
 
       expect(env.NEXT_PUBLIC_SENTRY_DSN).toBeUndefined();
+    });
+
+    it("should succeed without NEXT_PUBLIC_POSTHOG_KEY", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBeUndefined();
+    });
+
+    it("should succeed with NEXT_PUBLIC_POSTHOG_KEY set", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test123";
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBe("phc_test123");
+    });
+
+    it("should treat empty NEXT_PUBLIC_POSTHOG_KEY as undefined", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "";
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBeUndefined();
     });
   });
 });
