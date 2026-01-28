@@ -1,4 +1,29 @@
+import { SubscriberServiceTag, verifyToken } from "@gemhog/core/email";
+import { env } from "@gemhog/env/server";
+import { Effect } from "effect";
 import Link from "next/link";
+
+import { EmailLayers } from "@/lib/email-layers";
+
+type VerifyStatus = "success" | "expired" | "invalid" | "error";
+
+async function getVerifyStatus(token: string): Promise<VerifyStatus> {
+  const program = Effect.gen(function* () {
+    const subscriberService = yield* SubscriberServiceTag;
+    const payload = yield* verifyToken(token, env.BETTER_AUTH_SECRET);
+    yield* subscriberService.verify(payload.email);
+    return "success" as VerifyStatus;
+  }).pipe(
+    Effect.catchTag("InvalidTokenError", (error) =>
+      Effect.succeed(
+        (error.reason === "expired" ? "expired" : "invalid") as VerifyStatus,
+      ),
+    ),
+    Effect.catchAll(() => Effect.succeed("error" as VerifyStatus)),
+  );
+
+  return Effect.runPromise(program.pipe(Effect.provide(EmailLayers)));
+}
 
 function SuccessContent() {
   return (
@@ -27,24 +52,15 @@ function ExpiredContent() {
         This link has expired
       </h1>
       <p className="mt-4 text-gray-600">
-        Your verification link is no longer valid. Enter your email below to
-        receive a new one.
+        Your verification link is no longer valid. Please return to the home
+        page to request a new one.
       </p>
-      <form action="/api/subscribe" method="POST" className="mt-6 flex gap-2">
-        <input
-          type="email"
-          name="email"
-          placeholder="you@example.com"
-          required
-          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          className="rounded-md bg-blue-600 px-4 py-2 font-semibold text-sm text-white hover:bg-blue-700"
-        >
-          Resend
-        </button>
-      </form>
+      <Link
+        href="/"
+        className="mt-6 inline-block rounded-md bg-blue-600 px-6 py-3 font-semibold text-sm text-white hover:bg-blue-700"
+      >
+        Back to home
+      </Link>
     </>
   );
 }
@@ -87,9 +103,11 @@ function ErrorContent() {
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
-  const { status } = await searchParams;
+  const { token } = await searchParams;
+
+  const status = token ? await getVerifyStatus(token) : "invalid";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -98,7 +116,6 @@ export default async function VerifyPage({
         {status === "expired" && <ExpiredContent />}
         {status === "invalid" && <InvalidContent />}
         {status === "error" && <ErrorContent />}
-        {!status && <ErrorContent />}
       </div>
     </div>
   );
