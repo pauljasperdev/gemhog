@@ -17,7 +17,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Error Monitoring** - Sentry integration for frontend and backend error visibility
-- [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
+- [ ] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow (gaps found: missing tests)
 - [ ] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 7/7 | Complete | 2026-01-28 |
+| 2. Email Infrastructure | 7/7 | Gaps found | - |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
