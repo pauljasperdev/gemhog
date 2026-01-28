@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
+import { CookieConsentBanner } from "@/components/cookie-consent";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
             <Header />
             {children}
           </div>
+          <CookieConsentBanner />
         </Providers>
       </body>
     </html>
