@@ -1,7 +1,7 @@
 ---
 phase: 02-email-infrastructure
 verified: 2026-01-28T08:53:40Z
-status: human_needed
+status: gaps_found
 score: 5/5 must-haves verified
 test_results:
   static: passed
@@ -30,8 +30,8 @@ human_verification:
 
 **Phase Goal:** Subscribers can sign up and verify their email, with proper deliverability and compliance
 **Verified:** 2026-01-28T08:53:40Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Status:** gaps_found
+**Re-verification:** No — initial verification, updated with test coverage gaps found during review
 
 ## Goal Achievement
 
@@ -118,6 +118,20 @@ Dependency Audit:   OK (no security issues)
 | packages/core/src/email/email.templates.ts | 29   | <!-- CAN-SPAM footer placeholder --> | ℹ️ Info  | Documented placeholder for future footer; tested & expected |
 
 **No blocking anti-patterns found.** The CAN-SPAM footer placeholder is documented in tests and acceptable for phase completion.
+
+### Test Coverage Gaps
+
+Plan 02-07 introduced new app-layer code (tRPC subscriber router, server component pages) but deleted the old route tests without creating replacements. The core/service layer is well covered but the app layer has gaps:
+
+| Gap | File | What's Missing | Severity |
+|-----|------|----------------|----------|
+| tRPC subscriber router | `packages/api/src/routers/subscriber.ts` | No unit test for `subscribe` mutation — old `POST /api/subscribe` tests deleted, no replacement | High |
+| Verify page logic | `apps/web/src/app/verify/page.tsx` | `getVerifyStatus()` untested — token→status mapping (success/expired/invalid/error) | Medium |
+| Unsubscribe page logic | `apps/web/src/app/unsubscribe/page.tsx` | `getUnsubscribeStatus()` untested — token→status mapping (success/invalid/error) | Medium |
+
+Per TESTING.md: "New API endpoint → Unit test + integration test" and "'pnpm test passes' is NOT sufficient — you must verify that tests actually cover the new code."
+
+These gaps require a gap closure plan (`/gsd:plan-phase 2 --gaps`).
 
 ### Human Verification Required
 
