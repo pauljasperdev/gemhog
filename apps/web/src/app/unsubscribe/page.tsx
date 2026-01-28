@@ -1,4 +1,27 @@
+import { SubscriberServiceTag, verifyToken } from "@gemhog/core/email";
+import { env } from "@gemhog/env/server";
+import { Effect } from "effect";
 import Link from "next/link";
+
+import { EmailLayers } from "@/lib/email-layers";
+
+type UnsubscribeStatus = "success" | "invalid" | "error";
+
+async function getUnsubscribeStatus(token: string): Promise<UnsubscribeStatus> {
+  const program = Effect.gen(function* () {
+    const subscriberService = yield* SubscriberServiceTag;
+    const payload = yield* verifyToken(token, env.BETTER_AUTH_SECRET);
+    yield* subscriberService.unsubscribe(payload.email);
+    return "success" as UnsubscribeStatus;
+  }).pipe(
+    Effect.catchTag("InvalidTokenError", () =>
+      Effect.succeed("invalid" as UnsubscribeStatus),
+    ),
+    Effect.catchAll(() => Effect.succeed("error" as UnsubscribeStatus)),
+  );
+
+  return Effect.runPromise(program.pipe(Effect.provide(EmailLayers)));
+}
 
 function SuccessContent() {
   return (
@@ -60,9 +83,11 @@ function ErrorContent() {
 export default async function UnsubscribePage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
-  const { status } = await searchParams;
+  const { token } = await searchParams;
+
+  const status = token ? await getUnsubscribeStatus(token) : "invalid";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">

@@ -14,12 +14,14 @@ import { z } from "zod";
 
 import { publicProcedure, router } from "../index";
 
-const EmailLayers = Layer.mergeAll(
-  env.SES_FROM_EMAIL
-    ? makeEmailServiceLive(env.SES_FROM_EMAIL)
-    : EmailServiceConsole,
-  SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
-);
+function getEmailLayers() {
+  return Layer.mergeAll(
+    env.SES_FROM_EMAIL
+      ? makeEmailServiceLive(env.SES_FROM_EMAIL)
+      : EmailServiceConsole,
+    SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
+  );
+}
 
 export const subscriberRouter = router({
   subscribe: publicProcedure
@@ -28,6 +30,7 @@ export const subscriberRouter = router({
       const { email } = input;
       const secret = env.BETTER_AUTH_SECRET;
       const appUrl = env.APP_URL;
+      const EmailLayers = getEmailLayers();
 
       const program = Effect.gen(function* () {
         const subscriberService = yield* SubscriberServiceTag;

@@ -23,9 +23,20 @@ vi.mock("@/lib/email-layers", () => ({
   ),
 }));
 
-import { GET, POST } from "./route";
+vi.mock("@gemhog/env/server", () => ({
+  env: {
+    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+    APP_URL: "http://localhost:3001",
+    DATABASE_URL: "postgresql://localhost/test",
+    DATABASE_URL_POOLER: "postgresql://localhost/test",
+    BETTER_AUTH_URL: "http://localhost:3001",
+    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+  },
+}));
 
-const TEST_SECRET = "test-secret";
+import { POST } from "./route";
+
+const TEST_SECRET = "test-secret-at-least-32-characters-long";
 
 async function makeToken(
   payload: TokenPayload,
@@ -34,91 +45,73 @@ async function makeToken(
   return Effect.runPromise(createToken(payload, secret));
 }
 
-function makeNextRequest(url: string): import("next/server").NextRequest {
-  // NextRequest requires the full URL
-  const { NextRequest } = require("next/server");
-  return new NextRequest(url);
-}
-
 describe("POST /api/unsubscribe", () => {
   beforeEach(() => {
-    vi.stubEnv("SUBSCRIBER_TOKEN_SECRET", TEST_SECRET);
-    vi.stubEnv("APP_URL", "http://localhost:3001");
+    vi.clearAllMocks();
   });
 
-  it("returns 200 for valid token", async () => {
+  it("returns 200 for valid unsubscribe token", async () => {
     const token = await makeToken({
       email: "test@example.com",
       action: "unsubscribe",
       expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
     });
 
+    const { NextRequest } = await import("next/server");
     const response = await POST(
-      makeNextRequest(`http://localhost:3001/api/unsubscribe?token=${token}`),
+      new NextRequest(`http://localhost:3001/api/unsubscribe?token=${token}`, {
+        method: "POST",
+      }),
     );
+
     expect(response.status).toBe(200);
     const data = await response.json();
     expect(data.message).toBe("Unsubscribed successfully");
   });
 
-  it("returns 400 for invalid token", async () => {
+  it("returns 400 for missing token", async () => {
+    const { NextRequest } = await import("next/server");
     const response = await POST(
-      makeNextRequest("http://localhost:3001/api/unsubscribe?token=bad-token"),
+      new NextRequest("http://localhost:3001/api/unsubscribe", {
+        method: "POST",
+      }),
     );
+
+    expect(response.status).toBe(400);
+    const data = await response.json();
+    expect(data.error).toBe("Missing token");
+  });
+
+  it("returns 400 for tampered token", async () => {
+    const { NextRequest } = await import("next/server");
+    const response = await POST(
+      new NextRequest(
+        "http://localhost:3001/api/unsubscribe?token=tampered-token",
+        { method: "POST" },
+      ),
+    );
+
     expect(response.status).toBe(400);
     const data = await response.json();
     expect(data.error).toBe("Invalid or expired link");
   });
 
-  it("returns 400 for missing token", async () => {
-    const response = await POST(
-      makeNextRequest("http://localhost:3001/api/unsubscribe"),
-    );
-    expect(response.status).toBe(400);
-    const data = await response.json();
-    expect(data.error).toBe("Missing token");
-  });
-});
-
-describe("GET /api/unsubscribe", () => {
-  beforeEach(() => {
-    vi.stubEnv("SUBSCRIBER_TOKEN_SECRET", TEST_SECRET);
-    vi.stubEnv("APP_URL", "http://localhost:3001");
-  });
-
-  it("redirects to /unsubscribe?status=success for valid token", async () => {
+  it("returns 400 for expired token", async () => {
     const token = await makeToken({
       email: "test@example.com",
       action: "unsubscribe",
-      expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
+      expiresAt: Date.now() - 1000,
     });
 
-    const response = await GET(
-      makeNextRequest(`http://localhost:3001/api/unsubscribe?token=${token}`),
+    const { NextRequest } = await import("next/server");
+    const response = await POST(
+      new NextRequest(`http://localhost:3001/api/unsubscribe?token=${token}`, {
+        method: "POST",
+      }),
     );
 
-    expect(response.status).toBe(307);
-    const location = response.headers.get("location");
-    expect(location).toContain("/unsubscribe?status=success");
-  });
-
-  it("redirects to /unsubscribe?status=invalid for invalid token", async () => {
-    const response = await GET(
-      makeNextRequest("http://localhost:3001/api/unsubscribe?token=bad-token"),
-    );
-
-    expect(response.status).toBe(307);
-    const location = response.headers.get("location");
-    expect(location).toContain("/unsubscribe?status=invalid");
-  });
-
-  it("redirects to /unsubscribe?status=invalid for missing token", async () => {
-    const response = await GET(
-      makeNextRequest("http://localhost:3001/api/unsubscribe"),
-    );
-
-    expect(response.status).toBe(307);
-    const location = response.headers.get("location");
-    expect(location).toContain("/unsubscribe?status=invalid");
+    expect(response.status).toBe(400);
+    const data = await response.json();
+    expect(data.error).toBe("Invalid or expired link");
   });
 });
