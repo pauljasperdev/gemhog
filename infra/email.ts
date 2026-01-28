@@ -1,7 +1,11 @@
+import { baseDomain } from "./router";
 import { secrets } from "./secrets";
 
+const emailDomain =
+  $app.stage === "prod" ? baseDomain : `${$app.stage}.${baseDomain}`;
+
 export const email = new sst.aws.Email("Email", {
-  sender: "gemhog.com",
+  sender: emailDomain,
   dns: sst.cloudflare.dns({
     zone: secrets.CloudflareZoneId.value,
   }),
