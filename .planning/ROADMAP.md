@@ -17,7 +17,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Error Monitoring** - Sentry integration for frontend and backend error visibility
-- [ ] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow (gaps found: missing tests)
+- [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
 - [ ] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
@@ -50,7 +50,7 @@ Plans:
   3. Unsubscribe link in email successfully changes subscriber status
   4. Test email can be sent via CLI/script to verify SES is working
   5. Email headers include List-Unsubscribe for one-click unsubscribe
-**Plans:** 9 plans (7 complete + 2 gap closure)
+**Plans:** 9 plans
 
 Plans:
 - [x] 02-01-PLAN.md — Rename CORS_ORIGIN to APP_URL across codebase
@@ -60,8 +60,8 @@ Plans:
 - [x] 02-05-PLAN.md — SST Email infrastructure (SES, secrets, deploy)
 - [x] 02-06-PLAN.md — Core package Effect-TS fixes (token, subscriber, email service patterns)
 - [x] 02-07-PLAN.md — App layer refactor (tRPC subscriber router, server component pages, infra cleanup)
-- [ ] 02-08-PLAN.md — Gap closure: tRPC subscriber router unit tests
-- [ ] 02-09-PLAN.md — Gap closure: verify/unsubscribe page logic extraction and tests
+- [x] 02-08-PLAN.md — Gap closure: tRPC subscriber router unit tests
+- [x] 02-09-PLAN.md — Gap closure: verify/unsubscribe page logic extraction and tests
 
 ### Phase 3: Analytics
 
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 7/9 | Gap closure | - |
+| 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
