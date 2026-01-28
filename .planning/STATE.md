@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 2 - Email Infrastructure
+**Current focus:** Phase 2 complete. Ready for Phase 3 - Analytics
 
 ## Current Position
 
-Phase: 2 of 5 (Email Infrastructure)
-Plan: 6 of 7 in current phase
-Status: In progress
-Last activity: 2026-01-27 - Completed 02-06-PLAN.md (Core email Effect-TS refactoring, env cleanup)
+Phase: 2 of 5 (Email Infrastructure) -- COMPLETE
+Plan: 7 of 7 in current phase
+Status: Phase complete
+Last activity: 2026-01-28 - Completed 02-07-PLAN.md (App layer refactor: tRPC router, server components, infra cleanup)
 
-Progress: [████████░░] 80%
+Progress: [██████████] 100% (Phase 2)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7 (Phase 1: 1, Phase 2: 6 of 7)
-- Average duration: 28min (last 5 measured)
-- Total execution time: 139min (GSD-tracked)
+- Total plans completed: 8 (Phase 1: 1, Phase 2: 7 of 7)
+- Average duration: 26min (last 6 measured)
+- Total execution time: 152min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
-| 2 | 6/7 | 132min+ | ~26min |
+| 2 | 7/7 | 145min+ | ~24min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min)
-- Trend: 02-06 was larger scope (refactoring + env + conventions + deferrals)
+- Last 6 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min)
+- Trend: 02-07 was fast (focused refactoring with clear spec from code review items)
 
 *Updated after each plan completion*
 
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 - [02-06]: makeEmailServiceLive factory replaces EmailServiceLive+EmailServiceAuto (env reads at app layer)
 - [02-06]: SUBSCRIBER_TOKEN_SECRET removed from env schema -- token signing uses BETTER_AUTH_SECRET
 - [02-06]: Items 18 (bigserial+nanoid IDs) and 19 (test subfolder) explicitly deferred with rationale
+- [02-07]: Lazy EmailLayers construction (getEmailLayers function) for testability in tRPC router
+- [02-07]: vi.mock @gemhog/env/server for tests that transitively import typed env
+- [02-07]: Subscribe via tRPC mutation (not Next.js route handler)
 
 ### Pending Todos
 
@@ -70,10 +73,9 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- email-layers.ts temporarily uses EmailServiceConsole until 02-07 wires makeEmailServiceLive factory
 
 ## Session Continuity
 
-Last session: 2026-01-27T21:21:49Z
-Stopped at: Completed 02-06-PLAN.md. Ready for 02-07 execution.
+Last session: 2026-01-28T08:34:05Z
+Stopped at: Completed 02-07-PLAN.md. Phase 2 (Email Infrastructure) is complete. Ready for Phase 3 (Analytics).
 Resume file: None
