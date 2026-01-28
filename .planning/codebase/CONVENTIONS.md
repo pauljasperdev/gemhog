@@ -266,240 +266,12 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 ```
 
-## Effect-TS Patterns
+## Effect-TS
 
-### Pattern Simplification
-
-**Prefer simple patterns over complex ones:**
-
-```typescript
-// GOOD: Simple patterns
-Effect.succeed(value); // For static values
-Effect.void; // For void operations
-Effect.map(fn); // For simple transformations
-Effect.flatMap(fn); // For sequential operations
-Effect.all({ a, b, c }); // For parallel operations
-
-// BAD: Over-engineered
-Effect.gen(function* (_) {
-  return value; // Unnecessary generator for static value
-});
-```
-
-**When to use Effect.gen:**
-
-- Complex control flow with conditionals and loops
-- Multiple interdependent operations where later ops depend on earlier results
-- Imperative style significantly improves readability
-
-```typescript
-// GOOD: Complex flow justifies Effect.gen
-Effect.gen(function* (_) {
-  const user = yield* _(getUser());
-  if (user.role === "admin") {
-    const permissions = yield* _(getAdminPermissions());
-    return { user, permissions };
-  }
-  return { user, permissions: [] };
-});
-
-// BAD: Simple chain doesn't need Effect.gen
-Effect.gen(function* (_) {
-  const a = yield* _(effectA);
-  const b = yield* _(effectB(a));
-  return b;
-});
-
-// GOOD: Use flatMap instead
-effectA.pipe(Effect.flatMap((a) => effectB(a)));
-```
-
-### Error Handling
-
-**Use Effect.tryPromise for async operations:**
-
-```typescript
-// GOOD: Effect.tryPromise with typed error
-Effect.tryPromise({
-  try: async () => fetch("/api").then((r) => r.json()),
-  catch: (error) =>
-    new ApiError({
-      message: "API call failed",
-      cause: error,
-    }),
-})
-
-// BAD: Legacy Effect.promise with mapError
-Effect.promise(async () => fetch("/api")).pipe(
-  Effect.mapError((error: unknown) => new ApiError({ ... }))
-)
-```
-
-**Preserve error types in catchAll:**
-
-```typescript
-// GOOD: Let TypeScript infer error type
-storage.queryRaw(sql).pipe(
-  Effect.catchAll((error) => {
-    // error is StorageError (inferred)
-    return Effect.fail(new MyError({ message: error.message, cause: error }))
-  })
-)
-
-// BAD: Explicit unknown loses type information
-storage.queryRaw(sql).pipe(
-  Effect.catchAll((error: unknown) => { ... })
-)
-```
-
-**Acceptable `error: unknown` contexts:**
-
-- `Effect.tryPromise` catch handlers (per Effect-TS spec)
-- Error constructor `cause` parameters
-- When immediately wrapping in typed error
-
-### Type Safety
-
-**Never use type assertions to hide Effect dependencies:**
-
-```typescript
-// BAD: Hides dependencies, causes runtime errors
-const ServiceLayer = Layer.effect(
-  ServiceTag,
-  Effect.sync(() => implementation) as Effect<Service, never, never>,
-);
-
-// GOOD: Declares dependencies explicitly
-const ServiceLayer = Layer.effect(
-  ServiceTag,
-  Effect.gen(function* (_) {
-    const dep1 = yield* _(Dependency1Tag);
-    const dep2 = yield* _(Dependency2Tag);
-    return implementation(dep1, dep2);
-  }),
-);
-```
-
-**Avoid `as any` in Effect code:**
-
-- Unacceptable: Internal APIs, mocks, service interfaces
-- Acceptable (with caution): External API responses we don't control
-- Better: Use `@effect/schema` for validation
-
-```typescript
-// GOOD: Type-safe API response
-const ResponseSchema = Schema.Struct({
-  data: Schema.Array(Schema.String),
-  meta: Schema.Struct({ count: Schema.Number }),
-});
-
-Effect.tryPromise({
-  try: () => fetch("/api").then((r) => r.json()),
-  catch: (e) => new FetchError({ cause: e }),
-}).pipe(Effect.flatMap(Schema.decodeUnknown(ResponseSchema)));
-```
-
-### Test Patterns
-
-**Use layers for test mocks:**
-
-```typescript
-// GOOD: Mock via Layer
-const MockStorageLayer = Layer.succeed(StorageTag, {
-  query: () => Effect.succeed(mockResult),
-  save: () => Effect.void,
-})
-
-await Effect.runPromise(
-  serviceOperation.pipe(Effect.provide(MockStorageLayer))
-)
-
-// BAD: Helper functions with type constraints
-const runTest = <A, E, R>(effect: Effect.Effect<A, E, R>) => ...
-```
-
-**Prefix unused parameters in mocks:**
-
-```typescript
-// GOOD: Unused params prefixed with _
-const MockService = {
-  fetch: (_url: string, _options: Options) => Effect.succeed(mockData),
-};
-
-// BAD: Triggers noUnusedParameters warning
-const MockService = {
-  fetch: (url: string, options: Options) => Effect.succeed(mockData),
-};
-```
-
-**Direct Effect.runPromise in tests:**
-
-```typescript
-// GOOD: Direct and explicit
-const result = await Effect.runPromise(
-  myEffect.pipe(Effect.provide(TestLayer)),
-);
-
-// BAD: Abstracted helper hiding complexity
-const result = await runTest(myEffect);
-```
-
-### Anti-Patterns to Avoid
-
-| Anti-Pattern                  | Problem                 | Solution                                 |
-| ----------------------------- | ----------------------- | ---------------------------------------- |
-| `Effect.Adaptor`              | Circumvents type safety | Direct Effect chains with proper typing  |
-| `as Effect<A, E, never>`      | Hides dependencies      | Declare dependencies in layer signatures |
-| `Effect.gen` for single yield | Over-engineering        | Direct pipe or flatMap                   |
-| `error: unknown` in catchAll  | Loses type information  | Let TypeScript infer error type          |
-| `Effect.promise` + `mapError` | Legacy pattern          | Use `Effect.tryPromise`                  |
-| `runTest` helpers             | Type constraint issues  | Direct `Effect.runPromise`               |
-
-### Observability with Effect
-
-**Sentry tracing:** Use Effect's built-in tracing (`Effect.withSpan`) which
-integrates with OpenTelemetry. Sentry's Node SDK auto-instruments via
-OpenTelemetry, so `Effect.withSpan` annotations become Sentry spans
-automatically. Do NOT manually call `Sentry.startSpan` inside Effect code.
-
-```typescript
-// GOOD: Effect.withSpan integrates with Sentry via OpenTelemetry
-myEffect.pipe(Effect.withSpan("subscriber.subscribe"))
-
-// BAD: Manual Sentry calls inside Effect code
-Effect.gen(function* () {
-  return Sentry.startSpan({ name: "subscribe" }, () => { ... })
-})
-```
-
-**Logging:** Use `Console.log` from Effect (not `console.log`) in Effect
-pipelines. This enables consistent logging behavior and testability.
-
-```typescript
-import { Console, Effect } from "effect";
-
-// GOOD: Effect Console
-yield* Console.log("Processing subscriber");
-
-// BAD: Direct console in Effect pipeline
-console.log("Processing subscriber");
-```
-
-### Detection Commands
-
-```bash
-# Find type assertions hiding dependencies
-rg "as\s+(unknown\s+as\s+)?Effect<[^>]+,\s*[^>]+,\s*never>" --type ts
-
-# Find Effect.gen anti-patterns (single yield)
-rg "Effect\.gen\(function\* \(_\)" --type ts
-
-# Find error: unknown in error handlers
-rg "Effect\.(mapError|catchAll)\(\(error:\s*unknown\)" --type ts
-
-# Find legacy Effect.promise
-rg "Effect\.promise\(" --type ts
-```
+Effect guidance lives in the `/effect-ts` skill to avoid duplicate or drifting
+standards. Use it for all Effect work (services, layers, handlers, tests, and
+observability). If a local rule is needed, document it in the codebase where the
+pattern lives, not here.
 
 ---
 
@@ -510,29 +282,27 @@ Items identified during code review that are deferred to future phases:
 ### Database ID Strategy (Code Review Item 18)
 
 **Current:** UUIDs as primary keys
-(`text("id").$defaultFn(() => crypto.randomUUID())`).
-**Proposed:** `bigserial` primary key with `nanoid` public_id column for fast
-lookups and no internal ID exposure.
-**Why deferred:** Requires migration of existing data, schema changes across all
-tables, and updates to all code referencing `id` fields. Better done as a
-dedicated schema migration phase when there are more tables and the pattern is
-established project-wide.
-**When to implement:** Before public beta launch, as part of a dedicated database
-schema hardening phase.
+(`text("id").$defaultFn(() => crypto.randomUUID())`). **Proposed:** `bigserial`
+primary key with `nanoid` public_id column for fast lookups and no internal ID
+exposure. **Why deferred:** Requires migration of existing data, schema changes
+across all tables, and updates to all code referencing `id` fields. Better done
+as a dedicated schema migration phase when there are more tables and the pattern
+is established project-wide. **When to implement:** Before public beta launch,
+as part of a dedicated database schema hardening phase.
 
 ### Test File Organization (Code Review Item 19)
 
 **Current:** Test files co-located with implementation (`email.service.ts` +
-`email.service.test.ts` in same directory).
-**Proposed:** Move test files into a `tests/` subfolder per domain (e.g.,
-`packages/core/src/email/tests/email.service.test.ts`).
-**Why deferred:** The current co-location pattern is already documented in
-TESTING.md and used project-wide. Changing now would require updating vitest
-configs, glob patterns in `vitest.config.ts` and `vitest.integration.config.ts`,
-and all import paths in test files. The benefit is organizational clarity, but the
-cost is significant churn across all domains.
-**When to implement:** When a domain grows beyond ~8 files and the flat structure
-becomes hard to navigate. Can be done incrementally per domain.
+`email.service.test.ts` in same directory). **Proposed:** Move test files into a
+`tests/` subfolder per domain (e.g.,
+`packages/core/src/email/tests/email.service.test.ts`). **Why deferred:** The
+current co-location pattern is already documented in TESTING.md and used
+project-wide. Changing now would require updating vitest configs, glob patterns
+in `vitest.config.ts` and `vitest.integration.config.ts`, and all import paths
+in test files. The benefit is organizational clarity, but the cost is
+significant churn across all domains. **When to implement:** When a domain grows
+beyond ~8 files and the flat structure becomes hard to navigate. Can be done
+incrementally per domain.
 
 ---
 
