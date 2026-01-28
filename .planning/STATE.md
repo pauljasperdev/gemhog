@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 3 — Analytics (Posthog integration)
+**Current focus:** Phase 3 — Analytics (complete)
 
 ## Current Position
 
-Phase: 3 of 5 (Analytics) -- NOT STARTED
-Plan: 0 of 1
-Status: Ready to plan Phase 3
-Last activity: 2026-01-28 - Phase 2 complete, verification passed
+Phase: 3 of 5 (Analytics) -- COMPLETE
+Plan: 1 of 1
+Status: Phase complete
+Last activity: 2026-01-28 - Completed 03-01-PLAN.md
 
-Progress: [░░░░░░░░░░] 0% (Phase 3)
+Progress: [██████████] 100% (Phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10 (Phase 1: 1, Phase 2: 7 core + 2 gap closure)
-- Average duration: 23min (last 8 measured)
-- Total execution time: 181min (GSD-tracked)
+- Total plans completed: 11 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1)
+- Average duration: 22min (last 9 measured)
+- Total execution time: 191min (GSD-tracked)
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [░░░░░░░░░░] 0% (Phase 3)
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
+| 3 | 1/1 | 10min | 10min |
 
 **Recent Trend:**
-- Last 8 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min)
-- Trend: 02-08 took longer due to Node.js 25 Turbopack compatibility fix
+- Last 9 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min)
+- Trend: 03-01 fast execution -- most SDK setup was pre-staged, focused on consent banner + events + tests
 
 *Updated after each plan completion*
 
@@ -69,6 +70,11 @@ Recent decisions affecting current work:
 - [02-09]: HMAC test token helper function avoids mock interference with createToken
 - [02-08]: Module-scoped call tracking arrays for mock assertion in tRPC tests
 - [02-08]: Conditional skip for web build tests on Node.js 25+ (Turbopack incompatibility)
+- [03-01]: cookieless_mode: "on_reject" for PostHog consent management (not deprecated opt_out_capturing_by_default)
+- [03-01]: Custom DOM event pattern for CookieSettingsButton re-open trigger
+- [03-01]: snake_case event names per PostHog convention
+- [03-01]: Anonymous-only analytics (no posthog.identify calls)
+- [03-01]: PostHog defaults: "2025-11-30" for auto SPA pageview tracking
 
 ### Pending Todos
 
@@ -78,9 +84,10 @@ None yet.
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
 - Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
+- Docker/Postgres not available in execution environment -- integration tests cannot run, unit tests pass (85/85)
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 2 complete with verification passed. Ready for `/gsd:discuss-phase 3` or `/gsd:plan-phase 3`.
+Stopped at: Phase 3 complete. Ready for Phase 4 planning.
 Resume file: None
