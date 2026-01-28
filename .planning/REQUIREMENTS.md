@@ -41,9 +41,9 @@ Requirements for launch readiness. Landing page with email capture, monitoring, 
 
 ### Analytics
 
-- [ ] **ANLY-01**: Posthog tracks page views after cookie consent
-- [ ] **ANLY-02**: Email signup events are tracked (started, completed)
-- [ ] **ANLY-03**: Posthog respects cookie consent (no tracking until accepted)
+- [x] **ANLY-01**: Posthog tracks page views after cookie consent
+- [x] **ANLY-02**: Email signup events are tracked (started, completed)
+- [x] **ANLY-03**: Posthog respects cookie consent (no tracking until accepted)
 
 ### Monitoring
 
@@ -117,9 +117,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LEGAL-02 | 4 | Pending |
 | LEGAL-03 | 4 | Pending |
 | LEGAL-04 | 5 | Pending |
-| ANLY-01 | 3 | Pending |
-| ANLY-02 | 3 | Pending |
-| ANLY-03 | 3 | Pending |
+| ANLY-01 | 3 | Complete |
+| ANLY-02 | 3 | Complete |
+| ANLY-03 | 3 | Complete |
 | MNTR-01 | 1 | Complete |
 | MNTR-02 | 1 | Complete |
 | MNTR-03 | 1 | Complete |
