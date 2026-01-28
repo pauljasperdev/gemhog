@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 2 — test coverage gaps found during review, need gap closure plan
+**Current focus:** Phase 2 — executing gap closure plans
 
 ## Current Position
 
-Phase: 2 of 5 (Email Infrastructure) -- GAPS FOUND
-Plan: 7 of 7 complete, gap closure needed
-Status: Verification found test coverage gaps
-Last activity: 2026-01-28 - Review found missing tests for 02-07 app layer code (tRPC router, server component pages)
+Phase: 2 of 5 (Email Infrastructure) -- GAP CLOSURE
+Plan: 02-09 complete (verify/unsubscribe status tests), 02-08 pending (subscriber router tests)
+Status: Gap closure in progress
+Last activity: 2026-01-28 - Completed 02-09 (verify/unsubscribe page logic tests)
 
-Progress: [██████████] 100% (Phase 2)
+Progress: [██████████] 100% (Phase 2 core) + gap closure
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8 (Phase 1: 1, Phase 2: 7 of 7)
-- Average duration: 26min (last 6 measured)
-- Total execution time: 152min (GSD-tracked)
+- Total plans completed: 9 (Phase 1: 1, Phase 2: 7 core + 1 gap closure)
+- Average duration: 24min (last 7 measured)
+- Total execution time: 156min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
-| 2 | 7/7 | 145min+ | ~24min |
+| 2 | 8/9 | 149min+ | ~21min |
 
 **Recent Trend:**
-- Last 6 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min)
-- Trend: 02-07 was fast (focused refactoring with clear spec from code review items)
+- Last 7 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min)
+- Trend: 02-09 was fast (files already existed, just needed verification and commits)
 
 *Updated after each plan completion*
 
@@ -65,6 +65,8 @@ Recent decisions affecting current work:
 - [02-07]: Lazy EmailLayers construction (getEmailLayers function) for testability in tRPC router
 - [02-07]: vi.mock @gemhog/env/server for tests that transitively import typed env
 - [02-07]: Subscribe via tRPC mutation (not Next.js route handler)
+- [02-09]: Mock email-layers with Context.GenericTag services for server component logic testing
+- [02-09]: HMAC test token helper function avoids mock interference with createToken
 
 ### Pending Todos
 
@@ -73,10 +75,11 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- Test coverage gaps: tRPC subscriber router (high), verify page logic (medium), unsubscribe page logic (medium) — need gap closure plan
+- Test coverage gaps: tRPC subscriber router (high) -- 02-08 will close this gap
+- Web build integration tests (startup.int.test.ts) flaky due to Next.js filesystem race conditions -- environmental, not code issue
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 2 verification found test coverage gaps. Need `/gsd:plan-phase 2 --gaps` to create gap closure plan.
+Stopped at: Completed 02-09. Next: execute 02-08 for subscriber router tests.
 Resume file: None
