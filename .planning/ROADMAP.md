@@ -73,10 +73,10 @@ Plans:
   2. Email signup events (started, completed) appear in Posthog
   3. No tracking occurs before user makes consent choice
   4. Posthog dashboard shows conversion funnel (visit -> signup started -> completed)
-**Plans:** TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 03-01: Posthog integration and consent-aware initialization
+- [ ] 03-01-PLAN.md -- PostHog SDK setup, cookie consent banner, and signup funnel events
 
 ### Phase 4: Landing Page
 
