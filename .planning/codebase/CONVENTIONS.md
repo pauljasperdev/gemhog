@@ -248,6 +248,11 @@ export { Input };
 - `/better-auth-best-practices` — Use when implementing or modifying
   authentication features
 
+**Skills for agent workflow:**
+
+- `/find-skills` — Use when users ask how to do X, want to find a skill, or need
+  suggestions for extending capabilities
+
 **tRPC Procedures:**
 
 ```typescript

@@ -60,6 +60,7 @@ Use these skills (invoke with `/skill-name`) for specialized tasks:
 | `/copywriting`                 | Write or improve marketing copy                     | Homepage, landing pages, pricing, CTAs, feature pages                 |
 | `/better-auth-best-practices`  | Integrate Better Auth authentication framework      | Implementing or modifying authentication features                     |
 | `/effect-ts`                   | Comprehensive Effect-TS guide with correct APIs     | Building Effect applications, services, layers, or MCP servers        |
+| `/find-skills`                 | Discover and install agent skills                   | When users ask how to do X or need skill suggestions                  |
 
 ## Important Constraints
 
