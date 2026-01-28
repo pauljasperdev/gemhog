@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { VerifyAnalytics } from "./verify-analytics";
 import { getVerifyStatus } from "./verify-status";
 
 function SuccessContent() {
@@ -88,6 +88,7 @@ export default async function VerifyPage({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <VerifyAnalytics status={status} />
       <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
         {status === "success" && <SuccessContent />}
         {status === "expired" && <ExpiredContent />}
