@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { localDevWebEnv } from "./local-dev";
 
 /**
  * GUARDRAIL: Ensures every env var in the schema has a corresponding test.
@@ -16,9 +17,9 @@ describe("env var test coverage", () => {
 
     // Extract env var names from schema (matches: SOME_VAR: z.something())
     const envVarPattern = /^\s+(NEXT_PUBLIC_\w+|[A-Z][A-Z0-9_]+):\s*z\./gm;
-    const schemaVars = [...schemaContent.matchAll(envVarPattern)].map(
-      (m) => m[1],
-    );
+    const schemaVars = [...schemaContent.matchAll(envVarPattern)]
+      .map((m) => m[1])
+      .filter((value): value is string => Boolean(value));
 
     // Check each schema var appears in tests
     const missingTests = schemaVars.filter(
@@ -73,6 +74,21 @@ describe("web env validation", () => {
       const { env } = await import("./web.js");
 
       expect(env.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
+    });
+
+    it("should use local defaults in development", async () => {
+      delete process.env.NEXT_PUBLIC_SERVER_URL;
+      delete process.env.NEXT_PUBLIC_SENTRY_DSN;
+      process.env.LOCAL_ENV = "1";
+
+      const { env } = await import("./web.js");
+
+      expect(env.NEXT_PUBLIC_SERVER_URL).toBe(
+        localDevWebEnv.NEXT_PUBLIC_SERVER_URL,
+      );
+      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe(
+        localDevWebEnv.NEXT_PUBLIC_SENTRY_DSN,
+      );
     });
   });
 

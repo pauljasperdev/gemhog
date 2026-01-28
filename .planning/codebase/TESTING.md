@@ -74,10 +74,11 @@ configuration MUST have corresponding tests. No exceptions.
 
 2. **Build config broken, tests passed** — `tsdown.config.ts` pointed to
    non-existent `index.ts`. No test caught this because there was no build test.
-   Now enforced by `.env.example` build tests.
+   Now enforced by build tests with local defaults.
 
-3. **Missing .env.example entries** — Agent added env var to schema but not to
-   `.env.example`. Build failed on user's machine. Now caught by build tests.
+3. **Missing local defaults** — Agent added env var to schema but not to
+   `@gemhog/env/local-dev`. Build failed on user's machine. Now caught by build
+   tests.
 
 4. **Platform-specific test failures** — Symlink-based tests passed on Linux,
    failed on Mac. Tests must be cross-platform.
@@ -87,7 +88,7 @@ configuration MUST have corresponding tests. No exceptions.
 | What You Add           | Required Test                             |
 | ---------------------- | ----------------------------------------- |
 | New env var in schema  | Unit test in `packages/env/src/*.test.ts` |
-| New env var for builds | Entry in `apps/*/. env.example`           |
+| New env var for builds | Entry in `@gemhog/env/local-dev`          |
 | New API endpoint       | Unit test + integration test              |
 | New UI component       | Unit test (logic) + E2E test (user flow)  |
 | New database table     | Migration test + query tests              |
@@ -97,10 +98,10 @@ configuration MUST have corresponding tests. No exceptions.
 
 These tests fail CI if you forget to add tests:
 
-| Guardrail               | Location                         | What it catches            |
-| ----------------------- | -------------------------------- | -------------------------- |
-| Env var test coverage   | `packages/env/src/*.test.ts`     | Schema var without test    |
-| Build with .env.example | `apps/*/src/startup.int.test.ts` | Missing .env.example entry |
+| Guardrail                 | Location                         | What it catches             |
+| ------------------------- | -------------------------------- | --------------------------- |
+| Env var test coverage     | `packages/env/src/*.test.ts`     | Schema var without test     |
+| Build with local defaults | `apps/*/src/startup.int.test.ts` | Missing local default entry |
 
 **If a guardrail test fails, you MUST add the missing test. Do not disable the
 guardrail.**

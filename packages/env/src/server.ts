@@ -1,6 +1,11 @@
-import "dotenv/config";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+import { localDevServerEnv } from "./local-dev";
+
+const isLocalDefaultsEnabled = process.env.LOCAL_ENV === "1";
+const runtimeEnv = isLocalDefaultsEnabled
+  ? { ...localDevServerEnv, ...process.env }
+  : process.env;
 
 export const env = createEnv({
   server: {
@@ -21,7 +26,7 @@ export const env = createEnv({
     SENTRY_ORG: z.string().optional(),
     SENTRY_PROJECT: z.string().optional(),
   },
-  runtimeEnv: process.env,
+  runtimeEnv,
   emptyStringAsUndefined: true,
 });
 

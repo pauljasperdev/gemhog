@@ -1,0 +1,13 @@
+export const localDevServerEnv = {
+  DATABASE_URL: "postgresql://postgres:password@localhost:5432/gemhog",
+  DATABASE_URL_POOLER: "postgresql://postgres:password@localhost:5432/gemhog",
+  BETTER_AUTH_SECRET: "ZpgIiuzmFRdZ6OSFTJQ1PHqgRLyhnzIe",
+  BETTER_AUTH_URL: "http://localhost:3000",
+  APP_URL: "http://localhost:3001",
+  GOOGLE_GENERATIVE_AI_API_KEY: "XXXXXXXXXXXXXXXXXXXXX",
+} as const;
+
+export const localDevWebEnv = {
+  NEXT_PUBLIC_SERVER_URL: "http://localhost:3001",
+  NEXT_PUBLIC_SENTRY_DSN: "XXXXXX",
+} as const;

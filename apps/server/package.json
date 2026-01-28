@@ -6,7 +6,7 @@
     "build": "tsdown",
     "check-types": "tsc -b",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/serve.ts --outfile server",
-    "dev": "tsx watch src/serve.ts",
+    "dev": "LOCAL_ENV=1 tsx watch src/serve.ts",
     "start": "node dist/serve.js"
   },
   "dependencies": {

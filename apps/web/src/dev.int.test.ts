@@ -1,17 +1,16 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { readFileSync, rmSync } from "node:fs";
+import { rmSync } from "node:fs";
 import path from "node:path";
-import dotenv from "dotenv";
+import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
 import { describe, expect, it } from "vitest";
 
 const webDir = path.resolve(__dirname, "..");
-const envExample = dotenv.parse(
-  readFileSync(path.join(webDir, ".env.example")),
-);
 const buildEnv = (): NodeJS.ProcessEnv => {
   return {
     ...process.env,
-    ...envExample,
+    ...localDevServerEnv,
+    ...localDevWebEnv,
+    LOCAL_ENV: "1",
     NODE_ENV: "development",
     PORT: "3015",
   };

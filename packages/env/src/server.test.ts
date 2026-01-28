@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { localDevServerEnv } from "./local-dev";
 
 /**
  * GUARDRAIL: Ensures every env var in the schema has a corresponding test.
@@ -16,9 +17,9 @@ describe("env var test coverage", () => {
 
     // Extract env var names from schema (matches: SOME_VAR: z.something())
     const envVarPattern = /^\s+([A-Z][A-Z0-9_]+):\s*z\./gm;
-    const schemaVars = [...schemaContent.matchAll(envVarPattern)].map(
-      (m) => m[1],
-    );
+    const schemaVars = [...schemaContent.matchAll(envVarPattern)]
+      .map((m) => m[1])
+      .filter((value): value is string => Boolean(value));
 
     // Check each schema var appears in tests
     const missingTests = schemaVars.filter(
@@ -94,6 +95,29 @@ describe("server env validation", () => {
       expect(env.BETTER_AUTH_URL).toBe("http://localhost:3000");
       expect(env.APP_URL).toBe("http://localhost:3001");
       expect(env.GOOGLE_GENERATIVE_AI_API_KEY).toBe("test-google-api-key");
+    });
+
+    it("should use local defaults in development", async () => {
+      delete process.env.DATABASE_URL;
+      delete process.env.DATABASE_URL_POOLER;
+      delete process.env.BETTER_AUTH_SECRET;
+      delete process.env.BETTER_AUTH_URL;
+      delete process.env.APP_URL;
+      delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+      process.env.LOCAL_ENV = "1";
+
+      const { env } = await import("./server.js");
+
+      expect(env.DATABASE_URL).toBe(localDevServerEnv.DATABASE_URL);
+      expect(env.DATABASE_URL_POOLER).toBe(
+        localDevServerEnv.DATABASE_URL_POOLER,
+      );
+      expect(env.BETTER_AUTH_SECRET).toBe(localDevServerEnv.BETTER_AUTH_SECRET);
+      expect(env.BETTER_AUTH_URL).toBe(localDevServerEnv.BETTER_AUTH_URL);
+      expect(env.APP_URL).toBe(localDevServerEnv.APP_URL);
+      expect(env.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
+        localDevServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
+      );
     });
 
     it("should default NODE_ENV to 'development' when not provided", async () => {
