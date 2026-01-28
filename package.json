@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "sso": "aws sso login --sso-session=gemhog",
-    "bootstrap": "rm -rf node_modules && pnpm install && pnpm exec playwright install chromium --with-deps",
+    "bootstrap": "./scripts/bootstrap.sh",
     "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter web dev",
     "dev:server": "pnpm --filter server dev",
