@@ -27,6 +27,8 @@ export const web = new sst.aws.Nextjs("Web", {
     GOOGLE_GENERATIVE_AI_API_KEY: secrets.GoogleApiKey.value,
     // Email infrastructure
     SES_FROM_EMAIL: "hello@gemhog.com",
+    // PostHog analytics
+    NEXT_PUBLIC_POSTHOG_KEY: secrets.PosthogKey.value,
     // Sentry error monitoring
     NEXT_PUBLIC_SENTRY_DSN: secrets.SentryDsn.value,
     SENTRY_DSN: secrets.SentryDsn.value,

@@ -10,4 +10,5 @@ export const localDevServerEnv = {
 export const localDevWebEnv = {
   NEXT_PUBLIC_SERVER_URL: "http://localhost:3001",
   NEXT_PUBLIC_SENTRY_DSN: "XXXXXX",
+  NEXT_PUBLIC_POSTHOG_KEY: "XXXXXX",
 } as const;
