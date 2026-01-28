@@ -17,7 +17,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Error Monitoring** - Sentry integration for frontend and backend error visibility
-- [ ] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
+- [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
 - [ ] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
@@ -53,13 +53,13 @@ Plans:
 **Plans:** 7 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Rename CORS_ORIGIN to APP_URL across codebase
-- [ ] 02-02-PLAN.md — Email domain foundation (schema, errors, token module, env vars)
-- [ ] 02-03-PLAN.md — Subscriber and email services (Effect DI, templates, mocks, tests)
-- [ ] 02-04-PLAN.md — API endpoints and status pages (subscribe, verify, unsubscribe flows)
-- [ ] 02-05-PLAN.md — SST Email infrastructure (SES, secrets, deploy)
-- [ ] 02-06-PLAN.md — Core package Effect-TS fixes (token, subscriber, email service patterns)
-- [ ] 02-07-PLAN.md — App layer refactor (tRPC subscriber router, server component pages, infra cleanup)
+- [x] 02-01-PLAN.md — Rename CORS_ORIGIN to APP_URL across codebase
+- [x] 02-02-PLAN.md — Email domain foundation (schema, errors, token module, env vars)
+- [x] 02-03-PLAN.md — Subscriber and email services (Effect DI, templates, mocks, tests)
+- [x] 02-04-PLAN.md — API endpoints and status pages (subscribe, verify, unsubscribe flows)
+- [x] 02-05-PLAN.md — SST Email infrastructure (SES, secrets, deploy)
+- [x] 02-06-PLAN.md — Core package Effect-TS fixes (token, subscriber, email service patterns)
+- [x] 02-07-PLAN.md — App layer refactor (tRPC subscriber router, server component pages, infra cleanup)
 
 ### Phase 3: Analytics
 
@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 5/7 | In progress | - |
+| 2. Email Infrastructure | 7/7 | Complete | 2026-01-28 |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
