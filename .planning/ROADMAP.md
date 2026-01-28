@@ -50,7 +50,7 @@ Plans:
   3. Unsubscribe link in email successfully changes subscriber status
   4. Test email can be sent via CLI/script to verify SES is working
   5. Email headers include List-Unsubscribe for one-click unsubscribe
-**Plans:** 7 plans
+**Plans:** 9 plans (7 complete + 2 gap closure)
 
 Plans:
 - [x] 02-01-PLAN.md — Rename CORS_ORIGIN to APP_URL across codebase
@@ -60,6 +60,8 @@ Plans:
 - [x] 02-05-PLAN.md — SST Email infrastructure (SES, secrets, deploy)
 - [x] 02-06-PLAN.md — Core package Effect-TS fixes (token, subscriber, email service patterns)
 - [x] 02-07-PLAN.md — App layer refactor (tRPC subscriber router, server component pages, infra cleanup)
+- [ ] 02-08-PLAN.md — Gap closure: tRPC subscriber router unit tests
+- [ ] 02-09-PLAN.md — Gap closure: verify/unsubscribe page logic extraction and tests
 
 ### Phase 3: Analytics
 
@@ -123,7 +125,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
-| 2. Email Infrastructure | 7/7 | Gaps found | - |
+| 2. Email Infrastructure | 7/9 | Gap closure | - |
 | 3. Analytics | 0/1 | Not started | - |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
