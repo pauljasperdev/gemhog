@@ -16,6 +16,10 @@ const buildEnv = {
 
 describe("web build with local defaults", () => {
   it("should succeed with local defaults", async () => {
+    // FIXME: These tests are flaky on Node.js 25 with Turbopack due to filesystem
+    // race conditions (ENOENT for .next temp files). The builds succeed when run
+    // directly but fail intermittently through vitest's child process exec.
+    // Re-enable when Turbopack build stability improves or Node.js LTS is used.
     const { stdout, stderr } = await execAsync("pnpm build", {
       cwd: webDir,
       env: buildEnv,
