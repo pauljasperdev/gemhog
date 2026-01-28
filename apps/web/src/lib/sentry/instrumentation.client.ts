@@ -1,5 +1,6 @@
 import { env } from "@gemhog/env/web";
 import * as Sentry from "@sentry/nextjs";
+import posthog from "posthog-js";
 
 // Export hook for Next.js router transition instrumentation
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
@@ -80,5 +81,17 @@ if (!env.NEXT_PUBLIC_SENTRY_DSN) {
       }
       return event;
     },
+  });
+}
+
+// PostHog analytics - optional, skip if not configured (local dev)
+if (env.NEXT_PUBLIC_POSTHOG_KEY) {
+  posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: "/ph",
+    ui_host: "https://us.posthog.com",
+    defaults: "2025-11-30",
+    cookieless_mode: "on_reject",
+    disable_session_recording: true,
+    advanced_disable_feature_flags: true,
   });
 }

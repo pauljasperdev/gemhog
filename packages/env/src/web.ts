@@ -14,12 +14,18 @@ const runtimeEnv = {
     (isLocalDefaultsEnabled
       ? localDevWebEnv.NEXT_PUBLIC_SENTRY_DSN
       : undefined),
+  NEXT_PUBLIC_POSTHOG_KEY:
+    process.env.NEXT_PUBLIC_POSTHOG_KEY ??
+    (isLocalDefaultsEnabled
+      ? localDevWebEnv.NEXT_PUBLIC_POSTHOG_KEY
+      : undefined),
 };
 
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_SERVER_URL: z.url(),
     NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
   },
   runtimeEnv,
   emptyStringAsUndefined: true,
