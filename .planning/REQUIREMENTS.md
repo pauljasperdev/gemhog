@@ -17,13 +17,13 @@ Requirements for launch readiness. Landing page with email capture, monitoring, 
 
 ### Email Infrastructure
 
-- [ ] **EMAIL-01**: Subscriber email is stored in Postgres with status tracking
-- [ ] **EMAIL-02**: Subscriber receives verification email after signup (double opt-in)
-- [ ] **EMAIL-03**: Subscriber can click verification link to confirm subscription
-- [ ] **EMAIL-04**: Subscriber can unsubscribe via link in any email
-- [ ] **EMAIL-05**: AWS SES is configured with DKIM/SPF for deliverability
-- [ ] **EMAIL-06**: Test email can be sent to verify setup works
-- [ ] **EMAIL-07**: Emails include List-Unsubscribe header for one-click unsubscribe
+- [x] **EMAIL-01**: Subscriber email is stored in Postgres with status tracking
+- [x] **EMAIL-02**: Subscriber receives verification email after signup (double opt-in)
+- [x] **EMAIL-03**: Subscriber can click verification link to confirm subscription
+- [x] **EMAIL-04**: Subscriber can unsubscribe via link in any email
+- [x] **EMAIL-05**: AWS SES is configured with DKIM/SPF for deliverability
+- [x] **EMAIL-06**: Test email can be sent to verify setup works
+- [x] **EMAIL-07**: Emails include List-Unsubscribe header for one-click unsubscribe
 
 ### Branding
 
@@ -47,9 +47,9 @@ Requirements for launch readiness. Landing page with email capture, monitoring, 
 
 ### Monitoring
 
-- [ ] **MNTR-01**: Sentry captures frontend errors
-- [ ] **MNTR-02**: Sentry captures backend/API errors
-- [ ] **MNTR-03**: Source maps are uploaded for readable stack traces
+- [x] **MNTR-01**: Sentry captures frontend errors
+- [x] **MNTR-02**: Sentry captures backend/API errors
+- [x] **MNTR-03**: Source maps are uploaded for readable stack traces
 
 ### Auth Changes
 
@@ -102,13 +102,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAND-03 | 4 | Pending |
 | LAND-04 | 4 | Pending |
 | LAND-05 | 4 | Pending |
-| EMAIL-01 | 2 | Pending |
-| EMAIL-02 | 2 | Pending |
-| EMAIL-03 | 2 | Pending |
-| EMAIL-04 | 2 | Pending |
-| EMAIL-05 | 2 | Pending |
-| EMAIL-06 | 2 | Pending |
-| EMAIL-07 | 2 | Pending |
+| EMAIL-01 | 2 | Complete |
+| EMAIL-02 | 2 | Complete |
+| EMAIL-03 | 2 | Complete |
+| EMAIL-04 | 2 | Complete |
+| EMAIL-05 | 2 | Complete |
+| EMAIL-06 | 2 | Complete |
+| EMAIL-07 | 2 | Complete |
 | BRAND-01 | 5 | Pending |
 | BRAND-02 | 5 | Pending |
 | BRAND-03 | 5 | Pending |
@@ -120,9 +120,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANLY-01 | 3 | Pending |
 | ANLY-02 | 3 | Pending |
 | ANLY-03 | 3 | Pending |
-| MNTR-01 | 1 | Pending |
-| MNTR-02 | 1 | Pending |
-| MNTR-03 | 1 | Pending |
+| MNTR-01 | 1 | Complete |
+| MNTR-02 | 1 | Complete |
+| MNTR-03 | 1 | Complete |
 | AUTH-01 | 5 | Pending |
 | AUTH-02 | 5 | Pending |
 
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 - Traceability completed during roadmap creation*
+*Last updated: 2026-01-28 - Phase 1 and 2 requirements marked Complete*
