@@ -1,7 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
+import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 import { trpc } from "@/trpc/client";
 
 const TITLE_TEXT = `
@@ -22,6 +24,10 @@ const TITLE_TEXT = `
 
 export default function Home() {
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
+
+  useEffect(() => {
+    trackEvent(AnalyticsEvents.LANDING_PAGE_VIEWED);
+  }, []);
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-2">
