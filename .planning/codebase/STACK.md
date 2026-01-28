@@ -56,6 +56,11 @@
 - ai 6.0.3 - Vercel AI SDK (`apps/web/`, `apps/server/`)
 - @ai-sdk/google 3.0.1 - Google Gemini integration (`apps/server/`)
 
+**Monitoring:**
+
+- @sentry/nextjs 10.36 - Error monitoring for Next.js (`apps/web/`)
+- @sentry/node - Error monitoring for Hono server (`apps/server/`)
+
 **Effect TS:** (use `/effect-ts` skill when working with these)
 
 - effect 3.19 - Functional effect system (`packages/core/`)
@@ -116,10 +121,12 @@
 **SST v3 (infra/):**
 
 - `sst.config.ts` - App config with AWS (eu-central-1) + Cloudflare providers
-- `infra/secrets.ts` - SST secrets (DatabaseUrl, BetterAuthSecret, GoogleApiKey)
+- `infra/secrets.ts` - SST secrets (DatabaseUrl, BetterAuthSecret, GoogleApiKey,
+  Sentry secrets)
 - `infra/neon.ts` - Neon database Linkable (direct + pooled URLs)
 - `infra/api.ts` - Hono Lambda function with Router for streaming support
 - `infra/web.ts` - Next.js deployment with OpenNext
+- `infra/email.ts` - AWS SES Email component with DKIM/SPF/DMARC
 
 **Lambda Adapter:**
 

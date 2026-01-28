@@ -45,8 +45,9 @@ gemhog/
 **apps/server/**
 
 - Purpose: Backend for streaming/long-running work
-- Contains: Hono routes, AI endpoint
-- Key files: `src/serve.ts` (entry point), `src/app.ts` (Hono app)
+- Contains: Hono routes, AI endpoint, Sentry integration
+- Key files: `src/serve.ts` (entry point), `src/app.ts` (Hono app),
+  `src/sentry.ts` (error monitoring)
 - Subdirectories: `src/` only
 
 **apps/web/**
@@ -56,9 +57,12 @@ gemhog/
 - Key files: `src/app/layout.tsx` (root layout)
 - Subdirectories:
   - `src/app/` - Next.js App Router pages + API routes
+  - `src/app/verify/` - Email verification page
+  - `src/app/unsubscribe/` - Email unsubscribe page
   - `src/components/` - React components
   - `src/components/ui/` - shadcn/ui primitives
   - `src/lib/` - Utility functions
+  - `src/lib/sentry/` - Sentry SDK configuration (client, server, edge)
   - `src/server/` - Next server helpers
   - `src/trpc/` - tRPC client setup
   - `tests/e2e/` - Playwright E2E tests
@@ -68,18 +72,21 @@ gemhog/
 - Purpose: tRPC API layer
 - Contains: Router definitions, procedures, context
 - Key files: `src/index.ts` (tRPC init), `src/routers/index.ts` (appRouter)
-- Subdirectories: `src/routers/`
+- Subdirectories:
+  - `src/routers/` - tRPC routers (healthCheck, privateData, subscriber)
 
 **packages/core/**
 
 - Purpose: Domain-driven core package (consolidated from db + auth)
-- Contains: Database layer, auth domain
+- Contains: Database layer, auth domain, email domain
 - Key files:
   - `src/drizzle/index.ts` - Database client and Effect layers
   - `src/auth/index.ts` - Better-Auth config and helpers
+  - `src/email/index.ts` - Email and subscriber services
 - Subdirectories:
   - `src/drizzle/` - Database connection, client
   - `src/auth/` - Auth domain (service, schema, errors, mocks)
+  - `src/email/` - Email domain (subscriber service, email service, templates)
   - `src/migrations/` - Database migration files
 
 **packages/env/**
@@ -107,11 +114,15 @@ gemhog/
 **Core Logic:**
 
 - `packages/api/src/routers/index.ts` - tRPC routes
+- `packages/api/src/routers/subscriber.ts` - tRPC subscriber router (email)
 - `apps/web/src/app/api/trpc/[trpc]/route.ts` - Next tRPC handler
 - `apps/web/src/app/api/auth/[...all]/route.ts` - Next Better Auth handler
+- `apps/web/src/app/api/unsubscribe/route.ts` - RFC 8058 one-click unsubscribe
 - `apps/web/src/trpc/client.ts` - tRPC client (TanStack Query)
 - `packages/core/src/auth/index.ts` - Auth configuration
 - `packages/core/src/auth/auth.sql.ts` - Auth database schema
+- `packages/core/src/email/index.ts` - Email and subscriber services
+- `packages/core/src/email/subscriber.sql.ts` - Subscriber database schema
 - `packages/core/src/drizzle/client.ts` - Database client
 - `packages/env/src/server.ts` - Server env validation
 
@@ -258,6 +269,14 @@ packages/core/
 │   │   ├── schema.int.test.ts # Schema CRUD integration tests
 │   │   ├── test-fixtures.ts # Test utilities (truncation, factories)
 │   │   └── index.ts         # Exports + Better-Auth config
+│   ├── email/             # Email domain (Phase 02)
+│   │   ├── subscriber.sql.ts    # Drizzle schema (subscriber table, status enum)
+│   │   ├── subscriber.service.ts # Effect service for subscriber CRUD
+│   │   ├── email.service.ts     # Effect service for email sending (SES + console)
+│   │   ├── email.templates.ts   # HTML email templates
+│   │   ├── token.ts             # HMAC token creation/verification
+│   │   ├── subscriber.int.test.ts # Integration tests
+│   │   └── index.ts             # Exports
 │   └── migrations/        # Database migrations
 │       ├── 0000_initial_schema.sql
 │       └── meta/_journal.json
@@ -298,4 +317,5 @@ packages/core/
 
 ---
 
-_Updated: 2026-01-22_
+_Updated: 2026-01-28 — Added Sentry files (Phase 01) and email domain (Phase
+02)_
