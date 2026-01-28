@@ -20,19 +20,19 @@ Progress: [██████████] 100% (Phase 2 complete + gap closure)
 
 **Velocity:**
 - Total plans completed: 10 (Phase 1: 1, Phase 2: 7 core + 2 gap closure)
-- Average duration: 22min (last 8 measured)
-- Total execution time: 168min (GSD-tracked)
+- Average duration: 23min (last 8 measured)
+- Total execution time: 181min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
-| 2 | 9/9 | 161min+ | ~20min |
+| 2 | 9/9 | 174min+ | ~22min |
 
 **Recent Trend:**
-- Last 8 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (12min)
-- Trend: Gap closure plans fast due to files pre-existing or clear specifications
+- Last 8 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min)
+- Trend: 02-08 took longer due to Node.js 25 Turbopack compatibility fix
 
 *Updated after each plan completion*
 
@@ -67,8 +67,8 @@ Recent decisions affecting current work:
 - [02-07]: Subscribe via tRPC mutation (not Next.js route handler)
 - [02-09]: Mock email-layers with Context.GenericTag services for server component logic testing
 - [02-09]: HMAC test token helper function avoids mock interference with createToken
-- [02-09]: Skip flaky web build tests with describe.skip until Turbopack/Node.js 25 compatibility improves
 - [02-08]: Module-scoped call tracking arrays for mock assertion in tRPC tests
+- [02-08]: Conditional skip for web build tests on Node.js 25+ (Turbopack incompatibility)
 
 ### Pending Todos
 
@@ -77,7 +77,7 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- Web build integration tests (startup.int.test.ts) skipped due to Turbopack/Node.js 25 filesystem race conditions -- tests work when run directly but fail through vitest exec. Re-enable when Turbopack stability improves.
+- Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
 
 ## Session Continuity
 
