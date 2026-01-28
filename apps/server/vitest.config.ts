@@ -5,5 +5,6 @@ export default defineProject({
     name: "server",
     environment: "node",
     include: ["src/**/*.test.ts"],
+    exclude: ["**/*.int.test.ts", "**/*.e2e.test.ts"],
   },
 });
