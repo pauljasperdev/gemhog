@@ -10,8 +10,5 @@ pnpm bootstrap
 
 ## Local development
 
-```bash
-cp apps/server/.env.example apps/server/.env
-cp apps/web/.env.example app/web/.env
-cp .env.example .env
-```
+`pnpm dev` sets `LOCAL_ENV=1` to load defaults from `@gemhog/env/local-dev`.
+Override any value by exporting environment variables in your shell.
