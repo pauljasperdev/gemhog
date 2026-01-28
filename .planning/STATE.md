@@ -9,30 +9,30 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 
 ## Current Position
 
-Phase: 2 of 5 (Email Infrastructure) -- GAP CLOSURE
-Plan: 02-09 complete (verify/unsubscribe status tests), 02-08 pending (subscriber router tests)
-Status: Gap closure in progress
-Last activity: 2026-01-28 - Completed 02-09 (verify/unsubscribe page logic tests)
+Phase: 2 of 5 (Email Infrastructure) -- GAP CLOSURE COMPLETE
+Plan: 02-09 and 02-08 complete (all gap closure plans)
+Status: Phase 2 complete with gap closure
+Last activity: 2026-01-28 - Completed 02-08 (subscriber router tests)
 
-Progress: [██████████] 100% (Phase 2 core) + gap closure
+Progress: [██████████] 100% (Phase 2 complete + gap closure)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9 (Phase 1: 1, Phase 2: 7 core + 1 gap closure)
-- Average duration: 24min (last 7 measured)
-- Total execution time: 156min (GSD-tracked)
+- Total plans completed: 10 (Phase 1: 1, Phase 2: 7 core + 2 gap closure)
+- Average duration: 22min (last 8 measured)
+- Total execution time: 168min (GSD-tracked)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
-| 2 | 8/9 | 149min+ | ~21min |
+| 2 | 9/9 | 161min+ | ~20min |
 
 **Recent Trend:**
-- Last 7 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min)
-- Trend: 02-09 was fast (files already existed, just needed verification and commits)
+- Last 8 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (12min)
+- Trend: Gap closure plans fast due to files pre-existing or clear specifications
 
 *Updated after each plan completion*
 
@@ -67,6 +67,7 @@ Recent decisions affecting current work:
 - [02-07]: Subscribe via tRPC mutation (not Next.js route handler)
 - [02-09]: Mock email-layers with Context.GenericTag services for server component logic testing
 - [02-09]: HMAC test token helper function avoids mock interference with createToken
+- [02-08]: Module-scoped call tracking arrays for mock assertion in tRPC tests
 
 ### Pending Todos
 
@@ -75,11 +76,10 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- Test coverage gaps: tRPC subscriber router (high) -- 02-08 will close this gap
 - Web build integration tests (startup.int.test.ts) flaky due to Next.js filesystem race conditions -- environmental, not code issue
 
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Completed 02-09. Next: execute 02-08 for subscriber router tests.
+Stopped at: Completed 02-08. Phase 2 gap closure complete. Ready for Phase 3.
 Resume file: None
