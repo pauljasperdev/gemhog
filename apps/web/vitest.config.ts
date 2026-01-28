@@ -7,5 +7,6 @@ export default defineProject({
     name: "web",
     environment: "happy-dom",
     include: ["src/**/*.test.ts", "app/**/*.test.ts"],
+    exclude: ["**/*.int.test.ts", "**/*.e2e.test.ts"],
   },
 });

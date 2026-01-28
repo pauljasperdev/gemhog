@@ -64,6 +64,7 @@ describe("dev server", () => {
       cwd: webDir,
       env: buildEnv(),
       stdio: ["pipe", "pipe", "pipe"],
+      detached: true,
     });
 
     const exitPromise = new Promise<void>((resolve) => {
@@ -73,11 +74,15 @@ describe("dev server", () => {
     try {
       await waitForReady(child);
     } finally {
-      child.kill("SIGTERM");
+      // Kill the entire process group (pnpm + next-server + webpack-loaders)
+      // to prevent orphaned processes from blocking port 3001
+      if (child.pid) {
+        process.kill(-child.pid, "SIGTERM");
+      }
       await exitPromise;
       rmSync(path.join(webDir, ".next", "dev", "lock"), { force: true });
     }
 
-    expect(child.killed).toBe(true);
+    expect(child.exitCode !== null || child.signalCode !== null).toBe(true);
   }, 45000);
 });
