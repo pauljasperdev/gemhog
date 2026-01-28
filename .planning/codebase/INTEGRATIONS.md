@@ -32,17 +32,25 @@
 
 - Not detected (no Redis or similar)
 
-### Deferred (V1)
-
-These integrations will be implemented after V0 foundation is complete.
+### Active (Email)
 
 **Email/Newsletter:**
 
 - AWS SES (Simple Email Service) - Newsletter delivery
-  - Purpose: Send blog-post style stock finding summaries to subscribers
+  - Purpose: Send verification emails and newsletters to subscribers
   - Auth: AWS credentials via SST/IAM
-  - Features: Email sending, bounce/complaint handling
-  - Rationale: Infrastructure-as-code via SST, no external service dependency
+  - Features:
+    - Double opt-in verification flow
+    - HMAC token-based verification/unsubscribe links
+    - List-Unsubscribe headers (RFC 8058 compliant)
+    - DKIM/SPF/DMARC configured via SST Email component
+  - Configuration: `SES_FROM_EMAIL` env var enables SES mode
+  - Local dev: Console logger mode (prints emails to terminal)
+  - Implementation: Effect TS services in `packages/core/src/email/`
+
+### Deferred (V1)
+
+These integrations will be implemented after V0 foundation is complete.
 
 **Stock Data ($0 budget, US stocks only):**
 
@@ -96,7 +104,18 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Error Tracking:**
 
-- Not detected (no Sentry or similar)
+- Sentry - Error monitoring and stack traces
+  - SDK/Client: `@sentry/nextjs` v10.36 (`apps/web/package.json`)
+  - SDK/Server: `@sentry/node` (`apps/server/package.json`)
+  - Auth: SENTRY_AUTH_TOKEN env var for source map upload
+  - Configuration: Optional - graceful skip if SENTRY_DSN not set
+  - Features:
+    - Client-side error capture with session ID tagging
+    - Server-side error capture (Node.js + Edge runtime)
+    - Source map upload during build for readable stack traces
+    - Error boundaries (global-error.tsx, error.tsx, section-error-boundary.tsx)
+    - Browser extension filtering (ignoreErrors, denyUrls)
+    - Tunnel route (/monitoring) to avoid ad blockers
 
 **Analytics:**
 
@@ -185,12 +204,18 @@ BETTER_AUTH_SECRET    # Auth encryption secret
 BETTER_AUTH_URL       # Auth callback URL
 CORS_ORIGIN           # Allowed CORS origins
 GOOGLE_GENERATIVE_AI_API_KEY # Google AI API key
+SENTRY_DSN            # Sentry DSN (optional - error monitoring)
+SENTRY_AUTH_TOKEN     # Sentry auth token (optional - source map upload)
+SENTRY_ORG            # Sentry organization (optional)
+SENTRY_PROJECT        # Sentry project name (optional)
+SES_FROM_EMAIL        # SES sender email (optional - enables SES mode)
 ```
 
 **Web (`packages/env/src/web.ts`):**
 
 ```
 NEXT_PUBLIC_SERVER_URL    # Backend API URL
+NEXT_PUBLIC_SENTRY_DSN    # Sentry DSN for client-side (optional)
 ```
 
 **Server-only (not in schema):**
@@ -204,5 +229,6 @@ NEXT_PUBLIC_SERVER_URL    # Backend API URL
 
 ---
 
-_Integration audit: 2026-01-15_ _Updated: 2026-01-19 — moved stock data APIs and
-newsletter to Deferred (V1)_ _Update when adding/removing external services_
+_Integration audit: 2026-01-15_ _Updated: 2026-01-28 — Added Sentry error
+monitoring (Phase 01) and AWS SES email infrastructure (Phase 02)_ _Update when
+adding/removing external services_

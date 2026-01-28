@@ -1,7 +1,7 @@
 # Architecture
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-24 — Phase 4 SST deployment
-complete
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-28 — Phase 01 (Sentry) and
+Phase 02 (Email) complete
 
 ## Pattern Overview
 
@@ -188,6 +188,12 @@ complete
 - Triggers: Session validation, sign-in/sign-out
 - Responsibilities: AuthService layer, Better-Auth configuration
 
+**Email Domain:**
+
+- Location: `packages/core/src/email/index.ts`
+- Triggers: Subscriber signup, email verification, unsubscribe
+- Responsibilities: SubscriberService, EmailService (SES + console modes)
+
 ## Error Handling
 
 **Strategy:** Throw errors, catch at boundaries (route handlers, tRPC
@@ -207,6 +213,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 - Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`,
   `UnauthorizedError`
+- Email: `InvalidTokenError`, `SubscriberNotFoundError`
 
 ## Cross-Cutting Concerns
 
@@ -300,15 +307,25 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Pattern: SST injects env vars at deploy time; `.env` files for local/test
 - Benefit: Agents can verify code without SST multiplexer running
 
+**Newsletter Subscription Flow (Implemented Phase 02):**
+
+1. User submits email via tRPC `subscriber.subscribe` mutation
+   (`packages/api/src/routers/subscriber.ts`)
+2. SubscriberService creates pending subscriber in database
+   (`packages/core/src/email/subscriber.service.ts`)
+3. HMAC tokens generated for verification and unsubscribe links
+   (`packages/core/src/email/token.ts`)
+4. EmailService sends verification email (SES in prod, console in dev)
+   (`packages/core/src/email/email.service.ts`)
+5. User clicks verification link → `/verify?token=...`
+6. Server verifies token, updates subscriber status to "active"
+7. User receives newsletters (future Phase 3+)
+8. Unsubscribe: User clicks unsubscribe link or uses one-click POST (RFC 8058)
+9. Status updated to "unsubscribed" via SubscriberService
+
 ## Deferred Data Flows (V1)
 
 These flows will be implemented after V0 foundation is complete.
-
-**Newsletter Subscription Flow:**
-
-1. User visits landing page and enters email
-2. Server validates and stores subscriber
-3. Emails sent via AWS SES
 
 **Stock Data Flow:**
 
@@ -324,5 +341,5 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-24 — Phase 4 SST
-deployment complete_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-28 — Phase 01 (Sentry) and
+Phase 02 (Email) complete_ _Update when major patterns change_
