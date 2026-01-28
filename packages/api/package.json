@@ -12,7 +12,9 @@
   "scripts": {},
   "dependencies": {
     "@gemhog/core": "workspace:*",
+    "@gemhog/env": "workspace:*",
     "@trpc/server": "catalog:",
+    "effect": "catalog:",
     "hono": "^4.11.4",
     "superjson": "^2.2.1",
     "zod": "catalog:"

@@ -21,6 +21,9 @@ catalogs:
     dotenv:
       specifier: ^17.2.2
       version: 17.2.3
+    effect:
+      specifier: ^3.19
+      version: 3.19.15
     typescript:
       specifier: ^5
       version: 5.9.3
@@ -261,9 +264,15 @@ importers:
       '@gemhog/core':
         specifier: workspace:*
         version: link:../core
+      '@gemhog/env':
+        specifier: workspace:*
+        version: link:../env
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.8.1(typescript@5.9.3)
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.15
       hono:
         specifier: ^4.11.4
         version: 4.11.6
