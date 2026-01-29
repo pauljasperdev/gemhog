@@ -93,5 +93,6 @@ if (env.NEXT_PUBLIC_POSTHOG_KEY) {
     cookieless_mode: "on_reject",
     disable_session_recording: true,
     advanced_disable_feature_flags: true,
+    person_profiles: "identified_only",
   });
 }
