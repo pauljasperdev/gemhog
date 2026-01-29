@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 3 — Analytics (complete)
+**Current focus:** Phase 3 -- Analytics (complete, gaps closed)
 
 ## Current Position
 
 Phase: 3 of 5 (Analytics) -- COMPLETE
-Plan: 1 of 1
+Plan: 2 of 2 (gap closure)
 Status: Phase complete
-Last activity: 2026-01-28 - Completed 03-01-PLAN.md
+Last activity: 2026-01-29 - Completed 03-02-PLAN.md (gap closure)
 
 Progress: [██████████] 100% (Phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1)
-- Average duration: 22min (last 9 measured)
-- Total execution time: 191min (GSD-tracked)
+- Total plans completed: 12 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 1 gap closure)
+- Average duration: 20min (last 10 measured)
+- Total execution time: 195min (GSD-tracked)
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████████] 100% (Phase 3)
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
-| 3 | 1/1 | 10min | 10min |
+| 3 | 2/2 | 14min | 7min |
 
 **Recent Trend:**
-- Last 9 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min)
-- Trend: 03-01 fast execution -- most SDK setup was pre-staged, focused on consent banner + events + tests
+- Last 10 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min)
+- Trend: 03-02 fast gap closure -- 2 targeted fixes, no new features
 
 *Updated after each plan completion*
 
@@ -75,6 +75,8 @@ Recent decisions affecting current work:
 - [03-01]: snake_case event names per PostHog convention
 - [03-01]: Anonymous-only analytics (no posthog.identify calls)
 - [03-01]: PostHog defaults: "2025-11-30" for auto SPA pageview tracking
+- [03-02]: Unconditional PostHogProvider -- PostHog handles not-yet-loaded state via internal queue
+- [03-02]: Explicit person_profiles: identified_only -- defensive best practice for anonymous-only analytics
 
 ### Pending Todos
 
@@ -88,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28
-Stopped at: Phase 3 complete. Ready for Phase 4 planning.
+Last session: 2026-01-29
+Stopped at: Phase 3 complete (all gaps closed). Ready for Phase 4 planning.
 Resume file: None
