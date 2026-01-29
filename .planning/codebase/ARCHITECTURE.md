@@ -1,7 +1,7 @@
 # Architecture
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-28 — Phase 01 (Sentry) and
-Phase 02 (Email) complete
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-29 — Phase 01 (Sentry),
+Phase 02 (Email), and Phase 03 (Analytics) complete
 
 ## Pattern Overview
 
@@ -103,6 +103,21 @@ Phase 02 (Email) complete
 4. Google Gemini model called via AI SDK
 5. Streaming response returned
 6. Streamdown component renders markdown
+
+**Analytics Consent Flow (Implemented Phase 03):**
+
+1. PostHog initializes with `cookieless_mode: "on_reject"` — zero tracking
+   before consent (`apps/web/src/lib/sentry/instrumentation.client.ts`)
+2. `PostHogProvider` conditionally wraps React tree when
+   `NEXT_PUBLIC_POSTHOG_KEY` is set (`apps/web/src/components/providers.tsx`)
+3. `CookieConsentBanner` checks `get_explicit_consent_status()` — shows banner
+   when "pending" (`apps/web/src/components/cookie-consent.tsx`)
+4. User clicks Accept → `opt_in_capturing()` enables tracking
+5. User clicks Decline → `opt_out_capturing()` prevents tracking
+6. Custom events fire via `trackEvent()` utility
+   (`apps/web/src/lib/analytics.ts`)
+7. Next.js `/ph/*` rewrites proxy PostHog API to bypass ad blockers
+   (`apps/web/next.config.ts`)
 
 **State Management:**
 
@@ -341,5 +356,6 @@ These flows will be implemented after V0 foundation is complete.
 
 ---
 
-_Architecture analysis: 2026-01-15_ _Updated: 2026-01-28 — Phase 01 (Sentry) and
-Phase 02 (Email) complete_ _Update when major patterns change_
+_Architecture analysis: 2026-01-15_ _Updated: 2026-01-29 — Phase 01 (Sentry),
+Phase 02 (Email), and Phase 03 (Analytics) complete_ _Update when major patterns
+change_

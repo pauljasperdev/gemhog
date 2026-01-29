@@ -1,6 +1,6 @@
 # Codebase Structure
 
-**Updated:** 2026-01-26
+**Updated:** 2026-01-29
 
 ## Directory Layout
 
@@ -58,10 +58,14 @@ gemhog/
 - Subdirectories:
   - `src/app/` - Next.js App Router pages + API routes
   - `src/app/verify/` - Email verification page
+  - `src/app/verify/verify-analytics.tsx` - Analytics event on verification
   - `src/app/unsubscribe/` - Email unsubscribe page
   - `src/components/` - React components
   - `src/components/ui/` - shadcn/ui primitives
+  - `src/components/cookie-consent.tsx` - Cookie consent banner (PostHog)
+  - `src/components/providers.tsx` - App providers (PostHogProvider, Toaster)
   - `src/lib/` - Utility functions
+  - `src/lib/analytics.ts` - Analytics event constants and trackEvent utility
   - `src/lib/sentry/` - Sentry SDK configuration (client, server, edge)
   - `src/server/` - Next server helpers
   - `src/trpc/` - tRPC client setup
@@ -317,5 +321,5 @@ packages/core/
 
 ---
 
-_Updated: 2026-01-28 — Added Sentry files (Phase 01) and email domain (Phase
-02)_
+_Updated: 2026-01-29 — Added Sentry files (Phase 01), email domain (Phase 02),
+and PostHog analytics files (Phase 03)_
