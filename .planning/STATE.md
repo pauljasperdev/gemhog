@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 3 -- Analytics (complete, all gaps closed with test coverage)
+**Current focus:** Phase 4 -- Landing Page (route groups and font setup complete)
 
 ## Current Position
 
-Phase: 3 of 5 (Analytics) -- COMPLETE
-Plan: 3 of 3 (gap closure -- test coverage)
-Status: Phase complete
-Last activity: 2026-01-29 - Completed 03-03-PLAN.md (test coverage gap closure)
+Phase: 4 of 5 (Landing Page)
+Plan: 1 of 2 (route group restructuring and DM Serif Display font)
+Status: In progress
+Last activity: 2026-01-29 - Completed 04-01-PLAN.md (route groups + font)
 
-Progress: [██████████] 100% (Phase 3)
+Progress: [██████████████░░] 88% (14/16 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure)
-- Average duration: 19min (last 10 measured)
-- Total execution time: 204min (GSD-tracked)
+- Total plans completed: 14 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1)
+- Average duration: 18min (last 10 measured)
+- Total execution time: 213min (GSD-tracked)
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██████████] 100% (Phase 3)
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
 | 3 | 3/3 | 23min | ~8min |
+| 4 | 1/2 | 9min | 9min |
 
 **Recent Trend:**
-- Last 10 plans: 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min)
-- Trend: 03-03 test coverage gap closure -- 15 new tests, @testing-library/react infrastructure
+- Last 10 plans: 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (9min)
+- Trend: 04-01 structural refactor -- route groups, font loading, lefthook fix
 
 *Updated after each plan completion*
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [03-02]: Explicit person_profiles: identified_only -- defensive best practice for anonymous-only analytics
 - [03-03]: Explicit cleanup() in afterEach for happy-dom -- @testing-library/react does not auto-cleanup
 - [03-03]: E2E tests skip gracefully when PostHog not configured -- prevents false failures
+- [04-01]: Route groups (landing) and (app) for layout separation -- standard Next.js pattern
+- [04-01]: DM Serif Display loaded via next/font/google with --font-dm-serif CSS variable
+- [04-01]: (app)/layout.tsx is "use client" because Header is a client component
 
 ### Pending Todos
 
@@ -87,12 +91,12 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- Pre-existing E2E auth test hydration mismatch (auth.e2e.test.ts:89) -- unrelated to analytics work
+- Pre-existing E2E auth test hydration mismatch (auth.e2e.test.ts:52) -- unrelated to landing page work
 - Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
 - Docker/Postgres not available in execution environment -- integration tests cannot run, unit tests pass (97/97)
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 3 complete (all gaps closed, test coverage added). Ready for Phase 4 planning.
+Stopped at: Completed 04-01-PLAN.md (route groups + DM Serif Display font). Ready for 04-02 (landing page UI).
 Resume file: None
