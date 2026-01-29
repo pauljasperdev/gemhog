@@ -5,14 +5,13 @@ commit-msg:
   commands:
     biome:
       glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
-      run:
-        bash -c 'if grep -qE "^docs" "$1"; then exit 0; fi; npx biome check
-        --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}'
-        bash {1}
+      run: |
+        if grep -qE "^docs" {1}; then exit 0; fi
+        npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typecheck:
-      run:
-        bash -c 'if grep -qE "^docs" "$1"; then exit 0; fi; pnpm -r check-types'
-        bash {1}
+      run: |
+        if grep -qE "^docs" {1}; then exit 0; fi
+        pnpm -r check-types
 
 # Post-checkout hook for dependency updates (optional quality of life)
 post-checkout:
