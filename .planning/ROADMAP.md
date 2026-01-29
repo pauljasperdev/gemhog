@@ -92,12 +92,11 @@ Plans:
   4. Page displays correctly on mobile devices
   5. Cookie consent banner appears and controls Posthog tracking
   6. Email signup form includes consent checkbox linked to privacy policy
-**Plans:** TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: Landing page layout and responsive design
-- [ ] 04-02: Email signup form integration
-- [ ] 04-03: Marketing copy and cookie consent banner
+- [ ] 04-01-PLAN.md — Route group restructuring and DM Serif Display font setup
+- [ ] 04-02-PLAN.md — Landing page UI, signup form, footer, and tests
 
 ### Phase 5: Launch Readiness
 
@@ -129,5 +128,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
-| 4. Landing Page | 0/3 | Not started | - |
+| 4. Landing Page | 0/2 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
