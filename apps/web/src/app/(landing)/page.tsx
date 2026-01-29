@@ -1,54 +1,29 @@
-"use client";
+import type { Metadata } from "next";
 
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { LandingFooter } from "@/components/landing-footer";
+import { SignupForm } from "@/components/signup-form";
 
-import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
-import { trpc } from "@/trpc/client";
+export const metadata: Metadata = {
+  title: "Gemhog - Investment ideas delivered to your inbox",
+  description:
+    "We listen to financial podcasts so you don't have to. Investment ideas, trends, and expert takes — delivered weekly.",
+};
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
-
-export default function Home() {
-  const healthCheck = useQuery(trpc.healthCheck.queryOptions());
-
-  useEffect(() => {
-    trackEvent(AnalyticsEvents.LANDING_PAGE_VIEWED);
-  }, []);
-
+export default function LandingPage() {
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-            />
-            <span className="text-muted-foreground text-sm">
-              {healthCheck.isLoading
-                ? "Checking..."
-                : healthCheck.data
-                  ? "Connected"
-                  : "Disconnected"}
-            </span>
-          </div>
-        </section>
-      </div>
+    <div className="dark flex min-h-svh flex-col items-center justify-center bg-gray-950 px-6">
+      <main className="w-full max-w-xl text-center">
+        <h1 className="font-bold font-display text-4xl text-white tracking-tight sm:text-5xl">
+          We listen to financial podcasts so you don&apos;t have to
+        </h1>
+        <p className="mt-4 text-gray-400 text-lg sm:text-xl">
+          Investment ideas, trends, and expert takes — delivered to your inbox.
+        </p>
+        <div className="mt-8">
+          <SignupForm />
+        </div>
+      </main>
+      <LandingFooter />
     </div>
   );
 }
