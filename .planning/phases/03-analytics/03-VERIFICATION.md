@@ -1,9 +1,11 @@
 ---
 phase: 03-analytics
 verified: 2026-01-28T21:39:37Z
+re_verified: 2026-01-29T00:00:00Z
 status: human_needed
 score: 7/7 must-haves verified (structural)
 test_status: unit_tests_passed_integration_blocked
+posthog_skill_review: completed
 ---
 
 # Phase 3: Analytics Verification Report
@@ -82,6 +84,35 @@ Per TESTING.md requirements, agents cannot skip or modify tests. Since Docker/Po
 | ANLY-02: Email signup events are tracked (started, completed) | ✓ SATISFIED | Truth #5 (signup_completed), Truth #6 (landing_page_viewed). signup_started constant exported for Phase 4 |
 | ANLY-03: Posthog respects cookie consent (no tracking until accepted) | ✓ SATISFIED | Truth #2 (cookieless_mode: "on_reject"), Truth #3 (banner shows on first visit), Truth #4 (decline prevents tracking) |
 
+### Post-Verification Issues Found
+
+#### 1. PostHogProvider race condition (RESOLVED)
+- **Severity:** Medium (functional)
+- **File:** `apps/web/src/components/providers.tsx`
+- **Issue:** `posthog.__loaded` was checked synchronously at render time. Since PostHog loads async, `PostHogProvider` could be skipped permanently on first render, causing `usePostHog()` to return `null` in the cookie consent banner.
+- **Fix applied:** Always render `PostHogProvider` unconditionally. PostHog's internal queue handles the not-yet-loaded state.
+- **Status:** Committed in 03-02 gap closure plan (fc1da56).
+
+#### 2. Missing `person_profiles: 'identified_only'` in PostHog init (RESOLVED)
+- **Severity:** Low (defensive best practice)
+- **File:** `apps/web/src/lib/sentry/instrumentation.client.ts:89-96`
+- **Issue:** PostHog init call does not explicitly set `person_profiles: 'identified_only'`. While this is the current default, PostHog docs and best practices recommend setting it explicitly for anonymous-only analytics. Being explicit prevents unexpected behavior if PostHog changes defaults and ensures anonymous events are processed at lower cost (up to 4x cheaper). Since Gemhog never calls `posthog.identify()`, this is the correct and intended mode.
+- **Source:** [PostHog anonymous vs identified events](https://posthog.com/docs/data/anonymous-vs-identified-events), [PostHog JS config](https://posthog.com/docs/libraries/js/config)
+- **Status:** Committed in 03-02 gap closure plan (fc1da56).
+
+#### 3. `signup_started` event not wired (deferred)
+- **Severity:** Informational
+- **Issue:** ANLY-02 marked complete but `signup_started` event constant is exported without being wired to any form. Deferred to Phase 4 by design.
+
+#### 4. Dashboard funnel setup (manual step)
+- **Severity:** Informational
+- **Issue:** ROADMAP success criterion #4 requires manual PostHog dashboard setup after project provisioning. Not a code gap.
+
+#### 5. Dual pageview events on home page (documentation note)
+- **Severity:** Informational
+- **Issue:** With `defaults: "2025-11-30"`, PostHog auto-captures `$pageview` via history change tracking. The custom `landing_page_viewed` event fires in addition for the home page. Both events are intentional — `$pageview` for general analytics, `landing_page_viewed` for the semantic signup funnel. Dashboard creators should be aware both fire on home page visits.
+- **Source:** [PostHog SPA pageviews](https://posthog.com/tutorials/single-page-app-pageviews)
+
 ### Anti-Patterns Found
 
 No blocking anti-patterns detected.
@@ -91,6 +122,35 @@ No blocking anti-patterns detected.
 - No empty implementations or console.log-only handlers
 - No hardcoded values where dynamic expected
 - No deprecated PostHog APIs (correctly uses get_explicit_consent_status, not has_opted_in_capturing)
+
+### PostHog Skill Review (2026-01-29)
+
+**Methodology:** Reviewed full code diff (`e818e49..8cb2ce0`) against PostHog official documentation, PostHog skill best practices, and current posthog-js API.
+
+**Sources consulted:**
+- [PostHog data collection & consent](https://posthog.com/docs/privacy/data-collection)
+- [PostHog cookieless tracking tutorial](https://posthog.com/tutorials/cookieless-tracking)
+- [PostHog Next.js cookie banner tutorial](https://posthog.com/tutorials/nextjs-cookie-banner)
+- [PostHog JS configuration](https://posthog.com/docs/libraries/js/config)
+- [PostHog SPA pageview tracking](https://posthog.com/tutorials/single-page-app-pageviews)
+- [PostHog anonymous vs identified events](https://posthog.com/docs/data/anonymous-vs-identified-events)
+- [posthog-js source (defaults handling)](https://github.com/PostHog/posthog-js/blob/main/packages/browser/src/posthog-core.ts)
+
+**Verified correct:**
+- `cookieless_mode: "on_reject"` — confirmed as current recommended consent pattern
+- `defaults: "2025-11-30"` — enables `capture_pageview: 'history_change'` for automatic SPA pageviews (no manual PostHogPageView component needed)
+- `get_explicit_consent_status()` — correct modern API for consent checks
+- `opt_in_capturing()` / `opt_out_capturing()` — correct consent action methods
+- `disable_session_recording: true` — correct per project decision (no session replays)
+- `advanced_disable_feature_flags: true` — correct (not using feature flags)
+- Next.js `/ph/*` rewrites with `skipTrailingSlashRedirect: true` — correct ad-blocker bypass pattern
+- `posthog-js/react` import path — valid subpath export, not deprecated (same code as `@posthog/react` package)
+- No `posthog.identify()` calls — correct per anonymous-only analytics requirement
+- `trackEvent` wrapper with `document.referrer` — good attribution pattern
+
+**Gaps identified:**
+1. Missing explicit `person_profiles: 'identified_only'` — low severity, defensive best practice
+2. PostHogProvider race condition fix uncommitted — medium severity, needs commit
 
 ### Human Verification Required
 
@@ -196,7 +256,13 @@ All 7 must-haves verified through structural analysis:
 2. End-to-end consent flow in browser
 3. PostHog dashboard event confirmation
 
+**Gap closure completed (03-02):**
+1. PostHogProvider race condition fix committed (fc1da56)
+2. `person_profiles: 'identified_only'` added to PostHog init (fc1da56)
+
 ---
 
 _Verified: 2026-01-28T21:39:37Z_
 _Verifier: Claude (gsd-verifier)_
+_Re-verified: 2026-01-29 (PostHog skill review)_
+_Reviewer: Claude (posthog-analytics skill)_

@@ -145,6 +145,27 @@ External service requires manual configuration:
 - **Environment variable**: `NEXT_PUBLIC_POSTHOG_KEY` from PostHog Dashboard > Settings > Project API Key
 - **SST secret**: Run `sst secret set PosthogKey <key>` for deployment
 
+## Known Issues
+
+### 1. PostHogProvider race condition (RESOLVED in 03-02)
+- **Issue:** `providers.tsx` conditionally rendered `PostHogProvider` based on `posthog.__loaded`, checked synchronously at render time. Since PostHog initializes async via `instrumentation-client.ts`, the provider could miss the loaded state on first render with no re-render trigger, causing the cookie consent banner to never appear.
+- **Fix:** Always render `PostHogProvider` unconditionally. PostHog handles the not-yet-loaded state gracefully via its internal event queue.
+- **File:** `apps/web/src/components/providers.tsx`
+- **Status:** Committed in 03-02 gap closure plan (fc1da56).
+
+### 2. Missing `person_profiles: 'identified_only'` (RESOLVED in 03-02)
+- **Issue:** PostHog init does not explicitly set `person_profiles: 'identified_only'`. While this is the current default, PostHog best practices recommend being explicit for anonymous-only analytics to prevent unexpected behavior on default changes and ensure lower-cost event processing (anonymous events up to 4x cheaper than identified).
+- **File:** `apps/web/src/lib/sentry/instrumentation.client.ts:89-96`
+- **Status:** Committed in 03-02 gap closure plan (fc1da56).
+
+### 3. `signup_started` event not wired (deferred to Phase 4)
+- **Issue:** `SIGNUP_STARTED` constant is exported from `analytics.ts` but not used anywhere. The email signup form doesn't exist yet.
+- **Impact:** ANLY-02 requirement is architecturally satisfied (constant + `trackEvent` ready) but not functionally complete until Phase 4 wires the event to the form submission handler.
+
+### 4. Dashboard funnel not created (manual step)
+- **Issue:** ROADMAP success criterion #4 ("Posthog dashboard shows conversion funnel") requires manual setup in the PostHog UI after the project is provisioned. Code only ensures events fire correctly.
+- **Impact:** Cannot be verified until PostHog project exists and dashboard is created manually.
+
 ## Next Phase Readiness
 - Analytics infrastructure complete and ready for Phase 4 landing page
 - `signup_started` event constant exported and ready for Phase 4 email signup form
