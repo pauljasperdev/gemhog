@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 Phase: 4 of 5 (Landing Page)
 Plan: 1 of 2 (route group restructuring and DM Serif Display font)
 Status: In progress
-Last activity: 2026-01-29 - Completed 04-01-PLAN.md (route groups + font)
+Last activity: 2026-01-29 - Completed 04-01-PLAN.md (route groups + font + hydration fix)
 
 Progress: [██████████████░░] 88% (14/16 plans)
 
@@ -20,8 +20,8 @@ Progress: [██████████████░░] 88% (14/16 plans)
 
 **Velocity:**
 - Total plans completed: 14 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1)
-- Average duration: 18min (last 10 measured)
-- Total execution time: 213min (GSD-tracked)
+- Average duration: 19min (last 10 measured)
+- Total execution time: 232min (GSD-tracked)
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [██████████████░░] 88% (14/16 plans)
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
 | 3 | 3/3 | 23min | ~8min |
-| 4 | 1/2 | 9min | 9min |
+| 4 | 1/2 | 28min | 28min |
 
 **Recent Trend:**
-- Last 10 plans: 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (9min)
-- Trend: 04-01 structural refactor -- route groups, font loading, lefthook fix
+- Last 10 plans: 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min)
+- Trend: 04-01 structural refactor -- route groups, font loading, lefthook fix, hydration mismatch fix
 
 *Updated after each plan completion*
 
@@ -82,7 +82,8 @@ Recent decisions affecting current work:
 - [03-03]: E2E tests skip gracefully when PostHog not configured -- prevents false failures
 - [04-01]: Route groups (landing) and (app) for layout separation -- standard Next.js pattern
 - [04-01]: DM Serif Display loaded via next/font/google with --font-dm-serif CSS variable
-- [04-01]: (app)/layout.tsx is "use client" because Header is a client component
+- [04-01]: (app)/layout.tsx is a Server Component (not "use client") -- Server Components can render Client Components
+- [04-01]: Mounted state guard in UserMenu prevents hydration mismatch from auth state resolving differently on server vs client
 
 ### Pending Todos
 
@@ -90,13 +91,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
-- Pre-existing E2E auth test hydration mismatch (auth.e2e.test.ts:52) -- unrelated to landing page work
 - Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
-- Docker/Postgres not available in execution environment -- integration tests cannot run, unit tests pass (97/97)
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Completed 04-01-PLAN.md (route groups + DM Serif Display font). Ready for 04-02 (landing page UI).
+Stopped at: Completed 04-01-PLAN.md (route groups + DM Serif Display font + hydration fix). Ready for 04-02 (landing page UI).
 Resume file: None
