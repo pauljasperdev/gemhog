@@ -6,7 +6,17 @@ export default defineProject({
   test: {
     name: "web",
     environment: "happy-dom",
-    include: ["src/**/*.test.ts", "app/**/*.test.ts"],
-    exclude: ["**/*.int.test.ts", "**/*.e2e.test.ts"],
+    include: [
+      "src/**/*.test.ts",
+      "src/**/*.test.tsx",
+      "app/**/*.test.ts",
+      "app/**/*.test.tsx",
+    ],
+    exclude: [
+      "**/*.int.test.ts",
+      "**/*.int.test.tsx",
+      "**/*.e2e.test.ts",
+      "**/*.e2e.test.tsx",
+    ],
   },
 });
