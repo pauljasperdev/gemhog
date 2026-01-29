@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 3 -- Analytics (complete, gaps closed)
+**Current focus:** Phase 3 -- Analytics (complete, all gaps closed with test coverage)
 
 ## Current Position
 
 Phase: 3 of 5 (Analytics) -- COMPLETE
-Plan: 2 of 2 (gap closure)
+Plan: 3 of 3 (gap closure -- test coverage)
 Status: Phase complete
-Last activity: 2026-01-29 - Completed 03-02-PLAN.md (gap closure)
+Last activity: 2026-01-29 - Completed 03-03-PLAN.md (test coverage gap closure)
 
 Progress: [██████████] 100% (Phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 1 gap closure)
-- Average duration: 20min (last 10 measured)
-- Total execution time: 195min (GSD-tracked)
+- Total plans completed: 13 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure)
+- Average duration: 19min (last 10 measured)
+- Total execution time: 204min (GSD-tracked)
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████████] 100% (Phase 3)
 |-------|-------|-------|----------|
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
-| 3 | 2/2 | 14min | 7min |
+| 3 | 3/3 | 23min | ~8min |
 
 **Recent Trend:**
-- Last 10 plans: 02-02 (14min), 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min)
-- Trend: 03-02 fast gap closure -- 2 targeted fixes, no new features
+- Last 10 plans: 02-03 (14min), 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min)
+- Trend: 03-03 test coverage gap closure -- 15 new tests, @testing-library/react infrastructure
 
 *Updated after each plan completion*
 
@@ -77,6 +77,8 @@ Recent decisions affecting current work:
 - [03-01]: PostHog defaults: "2025-11-30" for auto SPA pageview tracking
 - [03-02]: Unconditional PostHogProvider -- PostHog handles not-yet-loaded state via internal queue
 - [03-02]: Explicit person_profiles: identified_only -- defensive best practice for anonymous-only analytics
+- [03-03]: Explicit cleanup() in afterEach for happy-dom -- @testing-library/react does not auto-cleanup
+- [03-03]: E2E tests skip gracefully when PostHog not configured -- prevents false failures
 
 ### Pending Todos
 
@@ -85,11 +87,12 @@ None yet.
 ### Blockers/Concerns
 
 - E2E tests (Playwright) stuck during baseline verification -- pre-existing environment issue, not blocking development
+- Pre-existing E2E auth test hydration mismatch (auth.e2e.test.ts:89) -- unrelated to analytics work
 - Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
-- Docker/Postgres not available in execution environment -- integration tests cannot run, unit tests pass (85/85)
+- Docker/Postgres not available in execution environment -- integration tests cannot run, unit tests pass (97/97)
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 3 complete (all gaps closed). Ready for Phase 4 planning.
+Stopped at: Phase 3 complete (all gaps closed, test coverage added). Ready for Phase 4 planning.
 Resume file: None
