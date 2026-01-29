@@ -8,7 +8,9 @@ export default defineConfig({
       "**/node_modules/**",
       "**/dist/**",
       "**/*.int.test.ts", // Integration tests have their own config
+      "**/*.int.test.tsx",
       "**/*.e2e.test.ts", // E2E tests use Playwright, not Vitest
+      "**/*.e2e.test.tsx",
     ],
     // Disable file parallelism to prevent database race conditions
     // Integration tests share the same database and can conflict
