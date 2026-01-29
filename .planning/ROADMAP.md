@@ -95,7 +95,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Route group restructuring and DM Serif Display font setup
+- [x] 04-01-PLAN.md — Route group restructuring and DM Serif Display font setup
 - [ ] 04-02-PLAN.md — Landing page UI, signup form, footer, and tests
 
 ### Phase 5: Launch Readiness
@@ -128,5 +128,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
-| 4. Landing Page | 0/2 | Not started | - |
+| 4. Landing Page | 1/2 | In progress | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
