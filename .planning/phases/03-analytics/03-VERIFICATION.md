@@ -1,16 +1,22 @@
 ---
 phase: 03-analytics
 verified: 2026-01-29T09:29:30Z
-status: passed
+status: gaps_found
 score: 7/7 must-haves verified
-re_verification: 
+re_verification:
   previous_status: human_needed
   previous_score: 7/7 (structural)
   previous_verification: 2026-01-28T21:39:37Z
   gaps_closed:
     - "PostHogProvider race condition fix (unconditional rendering)"
     - "Explicit person_profiles: identified_only in PostHog init"
-  gaps_remaining: []
+    - "PostHog conditional rendering regression (E2E auth tests)"
+    - "Cookie consent banner showing without PostHog configured"
+    - "Playwright timeout regression from posthog-js bundle overhead"
+  gaps_remaining:
+    - "No unit tests for CookieConsentBanner component"
+    - "No E2E tests for cookie consent flow (accept/decline/persistence)"
+    - "No unit tests for PostHog conditional rendering in Providers"
   regressions: []
 ---
 
