@@ -11,8 +11,6 @@ import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const posthogReady = typeof window !== "undefined" && posthog.__loaded;
-
   return (
     <ThemeProvider
       attribute="class"
@@ -20,19 +18,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      {posthogReady ? (
-        <PostHogProvider client={posthog}>
-          <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools />
-          </QueryClientProvider>
-        </PostHogProvider>
-      ) : (
+      <PostHogProvider client={posthog}>
         <QueryClientProvider client={queryClient}>
           {children}
           <ReactQueryDevtools />
         </QueryClientProvider>
-      )}
+      </PostHogProvider>
       <Toaster richColors />
     </ThemeProvider>
   );
