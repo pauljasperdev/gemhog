@@ -11,6 +11,13 @@ import { ThemeProvider } from "./theme-provider";
 import { Toaster } from "./ui/sonner";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const content = (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools />
+    </QueryClientProvider>
+  );
+
   return (
     <ThemeProvider
       attribute="class"
@@ -18,12 +25,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <PostHogProvider client={posthog}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ReactQueryDevtools />
-        </QueryClientProvider>
-      </PostHogProvider>
+      {process.env.NEXT_PUBLIC_POSTHOG_KEY ? (
+        <PostHogProvider client={posthog}>{content}</PostHogProvider>
+      ) : (
+        content
+      )}
       <Toaster richColors />
     </ThemeProvider>
   );

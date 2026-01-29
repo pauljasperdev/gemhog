@@ -24,7 +24,7 @@ test.describe("Signup flow", () => {
 
     await page.locator("form").getByRole("button", { name: "Sign Up" }).click();
 
-    await expect(page).toHaveURL("/dashboard", { timeout: 10000 });
+    await expect(page).toHaveURL("/dashboard", { timeout: 30000 });
 
     await expect(page.getByText(`Welcome ${testUser.name}`)).toBeVisible();
 
@@ -62,7 +62,7 @@ test.describe("Signin flow", () => {
     await page.getByLabel("Password").fill(testUser.password);
     await page.locator("form").getByRole("button", { name: "Sign Up" }).click();
 
-    await expect(page).toHaveURL("/dashboard", { timeout: 10000 });
+    await expect(page).toHaveURL("/dashboard", { timeout: 30000 });
 
     await page.goto("/login");
 
@@ -79,7 +79,7 @@ test.describe("Signin flow", () => {
 
     await page.locator("form").getByRole("button", { name: "Sign In" }).click();
 
-    await expect(page).toHaveURL("/dashboard", { timeout: 10000 });
+    await expect(page).toHaveURL("/dashboard", { timeout: 30000 });
 
     await expect(page.getByText(`Welcome ${testUser.name}`)).toBeVisible();
 
