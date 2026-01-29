@@ -119,7 +119,20 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Analytics:**
 
-- Not detected
+- PostHog - Product analytics with GDPR cookie consent
+  - SDK/Client: `posthog-js` v1.336 (`apps/web/package.json`)
+  - Initialization: `apps/web/src/lib/sentry/instrumentation.client.ts`
+  - Config: `cookieless_mode: "on_reject"`, `person_profiles: "identified_only"`,
+    `defaults: "2025-11-30"` (auto SPA pageview tracking)
+  - API proxy: Next.js `/ph/*` rewrites to `us.i.posthog.com` (ad-blocker bypass)
+  - Cookie consent: `apps/web/src/components/cookie-consent.tsx` (accept/decline
+    with PostHog `opt_in_capturing`/`opt_out_capturing`)
+  - Provider: `PostHogProvider` in `apps/web/src/components/providers.tsx`
+    (conditionally wraps when `NEXT_PUBLIC_POSTHOG_KEY` is set)
+  - Custom events: `landing_page_viewed`, `signup_completed`, `signup_started`
+    (via `apps/web/src/lib/analytics.ts`)
+  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (optional — graceful skip if not set)
+  - SST secret: `PosthogKey` in `infra/secrets.ts`
 
 **Logs:**
 
@@ -216,6 +229,7 @@ SES_FROM_EMAIL        # SES sender email (optional - enables SES mode)
 ```
 NEXT_PUBLIC_SERVER_URL    # Backend API URL
 NEXT_PUBLIC_SENTRY_DSN    # Sentry DSN for client-side (optional)
+NEXT_PUBLIC_POSTHOG_KEY   # PostHog project API key (optional - analytics)
 ```
 
 **Server-only (not in schema):**
@@ -229,6 +243,7 @@ NEXT_PUBLIC_SENTRY_DSN    # Sentry DSN for client-side (optional)
 
 ---
 
-_Integration audit: 2026-01-15_ _Updated: 2026-01-28 — Added Sentry error
-monitoring (Phase 01) and AWS SES email infrastructure (Phase 02)_ _Update when
-adding/removing external services_
+_Integration audit: 2026-01-15_ _Updated: 2026-01-29 — Added Sentry error
+monitoring (Phase 01), AWS SES email infrastructure (Phase 02), and PostHog
+analytics with GDPR cookie consent (Phase 03)_ _Update when adding/removing
+external services_

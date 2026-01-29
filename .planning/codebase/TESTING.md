@@ -184,8 +184,16 @@ pnpm test
 - Config: `vitest.config.ts` (root) + per-package `vitest.config.ts` using
   `defineProject`
 - Projects: apps/server, apps/web, packages/api, packages/core, packages/env
-- Pattern: `*.test.ts` files
-- Excludes: `*.int.test.ts`, `*.e2e.test.ts` (handled at root config level)
+- Pattern: `*.test.ts` and `*.test.tsx` files
+- Excludes: `*.int.test.ts`, `*.int.test.tsx`, `*.e2e.test.ts` (handled at root
+  config level)
+
+**React Component Tests:** @testing-library/react + @testing-library/user-event
+
+- Environment: happy-dom (`apps/web/vitest.config.ts`)
+- Pattern: `*.test.tsx` co-located with components
+- Note: Requires explicit `cleanup()` in `afterEach` — happy-dom does not
+  auto-cleanup like jsdom
 
 **Effect Integration Tests:** @effect/vitest
 
@@ -283,11 +291,12 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 Tests are co-located with implementation using clear suffixes:
 
-| Suffix          | Type        | Description              |
-| --------------- | ----------- | ------------------------ |
-| `*.test.ts`     | Unit        | Fast, mocked externals   |
-| `*.int.test.ts` | Integration | Real DB, Docker required |
-| `*.e2e.test.ts` | E2E         | Playwright, full app     |
+| Suffix           | Type        | Description                        |
+| ---------------- | ----------- | ---------------------------------- |
+| `*.test.ts`      | Unit        | Fast, mocked externals             |
+| `*.test.tsx`     | Unit (React)| React component tests (happy-dom)  |
+| `*.int.test.ts`  | Integration | Real DB, Docker required           |
+| `*.e2e.test.ts`  | E2E         | Playwright, full app               |
 
 **Example structure:**
 

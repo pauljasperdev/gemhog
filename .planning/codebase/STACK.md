@@ -37,6 +37,8 @@
 
 - Vitest 4.0.17 - Unit and integration testing (`vitest.config.ts`)
 - @effect/vitest 0.27 - Effect layer testing (`packages/core`)
+- @testing-library/react 16.3 - React component unit testing (`apps/web/`)
+- @testing-library/user-event 14.6 - User interaction simulation (`apps/web/`)
 - Playwright 1.57.0 - E2E testing (`playwright.config.ts`)
 
 **Build/Dev:**
@@ -60,6 +62,10 @@
 
 - @sentry/nextjs 10.36 - Error monitoring for Next.js (`apps/web/`)
 - @sentry/node - Error monitoring for Hono server (`apps/server/`)
+
+**Analytics:**
+
+- posthog-js 1.336 - Product analytics with GDPR consent (`apps/web/`)
 
 **Effect TS:** (use `/effect-ts` skill when working with these)
 
@@ -136,4 +142,5 @@
 
 ---
 
-_Updated: 2026-01-24_
+_Updated: 2026-01-29 — Added PostHog analytics (Phase 03) and
+@testing-library/react (Phase 03)_
