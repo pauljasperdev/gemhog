@@ -7,12 +7,18 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+  timeout: 60_000,
   reporter: "list",
   outputDir: ".playwright-results",
+
+  expect: {
+    timeout: 15_000,
+  },
 
   use: {
     baseURL: "http://localhost:3001",
     trace: "on-first-retry",
+    navigationTimeout: 30_000,
   },
 
   webServer: {

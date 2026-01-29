@@ -8,7 +8,7 @@ export function CookieConsentBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!posthog) return;
+    if (!posthog || !process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
     const status = posthog.get_explicit_consent_status();
     if (status === "pending") {
       setVisible(true);
