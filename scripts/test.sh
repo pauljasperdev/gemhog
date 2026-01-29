@@ -15,6 +15,7 @@ echo "OK unit"
 echo ""
 
 echo "=== Integration Tests ==="
+rm -rf apps/web/.next
 vitest run --config vitest.integration.config.ts
 echo "OK integration"
 echo ""
