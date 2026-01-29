@@ -72,11 +72,12 @@ Plans:
   1. Posthog tracks page views after user accepts cookies
   2. Email signup events (started, completed) appear in Posthog
   3. No tracking occurs before user makes consent choice
-  4. Posthog dashboard shows conversion funnel (visit -> signup started -> completed)
-**Plans:** 1 plan
+  4. Posthog dashboard shows conversion funnel (visit -> signup started -> completed) *(requires manual PostHog dashboard setup after project is provisioned; `signup_started` event wiring deferred to Phase 4)*
+**Plans:** 2 plans
 
 Plans:
 - [x] 03-01-PLAN.md -- PostHog SDK setup, cookie consent banner, and signup funnel events
+- [x] 03-02-PLAN.md -- Gap closure: PostHogProvider race condition fix + person_profiles config
 
 ### Phase 4: Landing Page
 
@@ -126,6 +127,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
-| 3. Analytics | 1/1 | Complete | 2026-01-28 |
+| 3. Analytics | 2/2 | Complete | 2026-01-29 |
 | 4. Landing Page | 0/3 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
