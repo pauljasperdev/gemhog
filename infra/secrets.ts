@@ -4,6 +4,8 @@ export const secrets = {
   BetterAuthSecret: new sst.Secret("BetterAuthSecret"),
   GoogleApiKey: new sst.Secret("GoogleApiKey"),
   CloudflareZoneId: new sst.Secret("CloudflareZoneId"),
+  // Email sending (Resend)
+  ResendApiKey: new sst.Secret("ResendApiKey"),
   // PostHog analytics
   PosthogKey: new sst.Secret("PosthogKey"),
   // Sentry error monitoring
