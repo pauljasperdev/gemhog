@@ -23,8 +23,8 @@ export const api = new sst.aws.Function("Api", {
     BETTER_AUTH_URL: `https://${domainApi}`,
     APP_URL: $dev ? "http://localhost:3001" : `https://${domain}`,
     GOOGLE_GENERATIVE_AI_API_KEY: secrets.GoogleApiKey.value,
-    // Email infrastructure
-    SES_FROM_EMAIL: "hello@gemhog.com",
+    // Email sending (Resend)
+    RESEND_API_KEY: secrets.ResendApiKey.value,
     // Sentry error monitoring
     SENTRY_DSN: secrets.SentryDsn.value,
   },
