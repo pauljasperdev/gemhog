@@ -16,8 +16,8 @@ import { publicProcedure, router } from "../index";
 
 function getEmailLayers() {
   return Layer.mergeAll(
-    env.SES_FROM_EMAIL
-      ? makeEmailServiceLive(env.SES_FROM_EMAIL)
+    env.RESEND_API_KEY
+      ? makeEmailServiceLive(env.RESEND_API_KEY, "Gemhog <hello@gemhog.com>")
       : EmailServiceConsole,
     SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
   );

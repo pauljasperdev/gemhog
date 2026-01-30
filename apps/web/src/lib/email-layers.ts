@@ -8,8 +8,8 @@ import { env } from "@gemhog/env/server";
 import { Layer } from "effect";
 
 export const EmailLayers = Layer.mergeAll(
-  env.SES_FROM_EMAIL
-    ? makeEmailServiceLive(env.SES_FROM_EMAIL)
+  env.RESEND_API_KEY
+    ? makeEmailServiceLive(env.RESEND_API_KEY, "Gemhog <hello@gemhog.com>")
     : EmailServiceConsole,
   SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
 );

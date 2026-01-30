@@ -205,7 +205,7 @@ describe("server env validation", () => {
     });
   });
 
-  describe("optional SES_FROM_EMAIL", () => {
+  describe("optional RESEND_API_KEY", () => {
     const setRequiredEnvVars = () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
@@ -215,38 +215,38 @@ describe("server env validation", () => {
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
     };
 
-    it("should succeed without SES_FROM_EMAIL", async () => {
+    it("should succeed without RESEND_API_KEY", async () => {
       setRequiredEnvVars();
-      delete process.env.SES_FROM_EMAIL;
+      delete process.env.RESEND_API_KEY;
 
       const { env } = await import("./server.js");
 
-      expect(env.SES_FROM_EMAIL).toBeUndefined();
+      expect(env.RESEND_API_KEY).toBeUndefined();
     });
 
-    it("should succeed with a valid SES_FROM_EMAIL", async () => {
+    it("should succeed with a valid RESEND_API_KEY", async () => {
       setRequiredEnvVars();
-      process.env.SES_FROM_EMAIL = "hello@gemhog.com";
+      process.env.RESEND_API_KEY = "re_test_1234567890";
 
       const { env } = await import("./server.js");
 
-      expect(env.SES_FROM_EMAIL).toBe("hello@gemhog.com");
+      expect(env.RESEND_API_KEY).toBe("re_test_1234567890");
     });
 
-    it("should fail with an invalid SES_FROM_EMAIL", async () => {
+    it("should fail with an invalid RESEND_API_KEY", async () => {
       setRequiredEnvVars();
-      process.env.SES_FROM_EMAIL = "not-an-email";
+      process.env.RESEND_API_KEY = "not-a-resend-key";
 
       await expect(import("./server.js")).rejects.toThrow();
     });
 
-    it("should treat empty SES_FROM_EMAIL as undefined", async () => {
+    it("should treat empty RESEND_API_KEY as undefined", async () => {
       setRequiredEnvVars();
-      process.env.SES_FROM_EMAIL = "";
+      process.env.RESEND_API_KEY = "";
 
       const { env } = await import("./server.js");
 
-      expect(env.SES_FROM_EMAIL).toBeUndefined();
+      expect(env.RESEND_API_KEY).toBeUndefined();
     });
   });
 });

@@ -18,8 +18,8 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
-    // Email sending (optional for local dev - uses console logger instead of SES)
-    SES_FROM_EMAIL: z.string().email().optional(),
+    // Email sending (optional for local dev - uses console logger instead of Resend)
+    RESEND_API_KEY: z.string().startsWith("re_").optional(),
     // Sentry (optional - only needed for production error monitoring)
     SENTRY_DSN: z.string().optional(),
     SENTRY_AUTH_TOKEN: z.string().optional(),
