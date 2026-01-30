@@ -26,6 +26,10 @@ echo "OK dependencies"
 echo ""
 
 echo "=== E2E Tests ==="
+# Kill any leftover processes on port 3001 from integration tests
+# (vitest child processes can leave orphaned Next.js dev servers)
+lsof -ti:3001 2>/dev/null | xargs kill -9 2>/dev/null || true
+sleep 1
 playwright test
 echo "OK e2e"
 echo ""
