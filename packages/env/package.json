@@ -6,7 +6,9 @@
   "exports": {
     "./server": "./src/server.ts",
     "./web": "./src/web.ts",
-    "./local-dev": "./src/local-dev.ts"
+    "./local-dev": "./src/local-dev.ts",
+    "./runtime": "./src/runtime.ts",
+    "./sentry": "./src/sentry.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.10",

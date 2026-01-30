@@ -9,6 +9,7 @@ const mockOptOut = vi.fn(() => {
   mockConsentStatus = "denied";
 });
 let mockConsentStatus = "pending";
+let posthogKey: string | undefined;
 
 vi.mock("posthog-js/react", () => ({
   usePostHog: () => ({
@@ -18,6 +19,14 @@ vi.mock("posthog-js/react", () => ({
   }),
 }));
 
+vi.mock("@gemhog/env/web", () => ({
+  env: {
+    get NEXT_PUBLIC_POSTHOG_KEY() {
+      return posthogKey;
+    },
+  },
+}));
+
 // Must import after vi.mock declarations
 const { CookieConsentBanner, CookieSettingsButton } = await import(
   "./cookie-consent"
@@ -25,7 +34,7 @@ const { CookieConsentBanner, CookieSettingsButton } = await import(
 
 afterEach(() => {
   cleanup();
-  delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  posthogKey = undefined;
 });
 
 describe("CookieConsentBanner", () => {
@@ -36,13 +45,13 @@ describe("CookieConsentBanner", () => {
   });
 
   it("renders nothing when NEXT_PUBLIC_POSTHOG_KEY is not set", () => {
-    delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    posthogKey = undefined;
     const { container } = render(<CookieConsentBanner />);
     expect(container.innerHTML).toBe("");
   });
 
   it("shows banner when consent status is pending", () => {
-    process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test_key";
+    posthogKey = "phc_test_key";
     render(<CookieConsentBanner />);
 
     expect(
@@ -52,7 +61,7 @@ describe("CookieConsentBanner", () => {
   });
 
   it("calls opt_in_capturing and hides on Accept click", async () => {
-    process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test_key";
+    posthogKey = "phc_test_key";
     const user = userEvent.setup();
     render(<CookieConsentBanner />);
 
@@ -63,7 +72,7 @@ describe("CookieConsentBanner", () => {
   });
 
   it("calls opt_out_capturing and hides on Decline click", async () => {
-    process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test_key";
+    posthogKey = "phc_test_key";
     const user = userEvent.setup();
     render(<CookieConsentBanner />);
 
@@ -74,7 +83,7 @@ describe("CookieConsentBanner", () => {
   });
 
   it("re-opens when show-cookie-consent event fires", () => {
-    delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    posthogKey = undefined;
     render(<CookieConsentBanner />);
 
     // Banner not visible initially
@@ -91,7 +100,7 @@ describe("CookieConsentBanner", () => {
   });
 
   it("does not show when consent already granted", () => {
-    process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test_key";
+    posthogKey = "phc_test_key";
     mockConsentStatus = "granted";
     const { container } = render(<CookieConsentBanner />);
     expect(container.querySelector('[role="dialog"]')).toBeNull();

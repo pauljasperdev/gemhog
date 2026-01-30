@@ -1,5 +1,6 @@
 "use client";
 
+import { isDev } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
@@ -15,8 +16,6 @@ export default function AppError({
       tags: { route: "app" },
     });
   }, [error]);
-
-  const isDev = process.env.NODE_ENV === "development";
 
   return (
     <div className="flex min-h-[400px] items-center justify-center p-4">

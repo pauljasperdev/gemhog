@@ -1,3 +1,4 @@
+import { isDev, nodeEnv } from "@gemhog/env/runtime";
 import { env } from "@gemhog/env/web";
 import * as Sentry from "@sentry/nextjs";
 import posthog from "posthog-js";
@@ -18,19 +19,19 @@ const getSessionId = () => {
 
 // DSN is optional in env schema - skip Sentry if not configured (local dev)
 if (!env.NEXT_PUBLIC_SENTRY_DSN) {
-  if (process.env.NODE_ENV === "development") {
+  if (isDev) {
     console.info("Sentry DSN not configured, skipping client initialization");
   }
 } else {
   Sentry.init({
     dsn: env.NEXT_PUBLIC_SENTRY_DSN,
-    environment: process.env.NODE_ENV,
+    environment: nodeEnv,
 
     // Error sampling - capture all errors
     sampleRate: 1.0,
 
     // Performance sampling - lower in production to stay within free tier
-    tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+    tracesSampleRate: isDev ? 1.0 : 0.1,
 
     // Replay sampling (disabled for free tier)
     replaysSessionSampleRate: 0,

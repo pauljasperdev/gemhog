@@ -29,6 +29,7 @@ export const web = new sst.aws.Nextjs("Web", {
     SES_FROM_EMAIL: "hello@gemhog.com",
     // PostHog analytics
     NEXT_PUBLIC_POSTHOG_KEY: secrets.PosthogKey.value,
+    NEXT_PUBLIC_POSTHOG_HOST: "https://eu.i.posthog.com",
     // Sentry error monitoring
     NEXT_PUBLIC_SENTRY_DSN: secrets.SentryDsn.value,
     SENTRY_DSN: secrets.SentryDsn.value,

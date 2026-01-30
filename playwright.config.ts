@@ -1,12 +1,16 @@
+import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
+import { isCi } from "@gemhog/env/runtime";
 import { defineConfig, devices } from "@playwright/test";
+
+const envDefaults = { ...localDevServerEnv, ...localDevWebEnv };
 
 export default defineConfig({
   testDir: "./apps/web/tests/e2e",
   testMatch: "**/*.e2e.test.ts",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCi,
+  retries: isCi ? 2 : 0,
+  workers: isCi ? 1 : undefined,
   timeout: 60_000,
   reporter: "list",
   outputDir: ".playwright-results",
@@ -24,29 +28,26 @@ export default defineConfig({
   webServer: {
     command: "pnpm dev:web",
     url: "http://localhost:3001",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !isCi,
     timeout: 120 * 1000,
     stdout: "ignore",
     stderr: "pipe",
     env: {
       ...process.env,
-      DATABASE_URL:
-        process.env.DATABASE_URL ||
-        "postgresql://postgres:password@localhost:5432/gemhog",
+      DATABASE_URL: process.env.DATABASE_URL ?? envDefaults.DATABASE_URL,
       DATABASE_URL_POOLER:
-        process.env.DATABASE_URL_POOLER ||
-        "postgresql://postgres:password@localhost:5432/gemhog",
+        process.env.DATABASE_URL_POOLER ?? envDefaults.DATABASE_URL_POOLER,
       BETTER_AUTH_SECRET:
-        process.env.BETTER_AUTH_SECRET ||
-        "test-secret-key-for-e2e-minimum-32-chars",
-      BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
-      APP_URL: process.env.APP_URL || "http://localhost:3001",
+        process.env.BETTER_AUTH_SECRET ?? envDefaults.BETTER_AUTH_SECRET,
+      BETTER_AUTH_URL:
+        process.env.BETTER_AUTH_URL ?? envDefaults.BETTER_AUTH_URL,
+      APP_URL: process.env.APP_URL ?? envDefaults.APP_URL,
       GOOGLE_GENERATIVE_AI_API_KEY:
-        process.env.GOOGLE_GENERATIVE_AI_API_KEY || "test-google-api-key",
+        process.env.GOOGLE_GENERATIVE_AI_API_KEY ??
+        envDefaults.GOOGLE_GENERATIVE_AI_API_KEY,
       NEXT_PUBLIC_SERVER_URL:
-        process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
-      NEXT_PUBLIC_SENTRY_DSN: "",
-      SENTRY_DSN: "",
+        process.env.NEXT_PUBLIC_SERVER_URL ??
+        envDefaults.NEXT_PUBLIC_SERVER_URL,
     },
   },
 

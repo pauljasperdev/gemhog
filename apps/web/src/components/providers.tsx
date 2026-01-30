@@ -25,11 +25,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      {process.env.NEXT_PUBLIC_POSTHOG_KEY ? (
-        <PostHogProvider client={posthog}>{content}</PostHogProvider>
-      ) : (
-        content
-      )}
+      <PostHogProvider client={posthog}>{content}</PostHogProvider>
       <Toaster richColors />
     </ThemeProvider>
   );
