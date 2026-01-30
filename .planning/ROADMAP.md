@@ -18,7 +18,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 - [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
 - [x] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
-- [ ] **Phase 4.1: Resend Email Provider** - Switch email provider from AWS SES to Resend
+- [x] **Phase 4.1: Resend Email Provider** - Switch email provider from AWS SES to Resend
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
 
 ## Phase Details
@@ -110,8 +110,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04.1-01-PLAN.md — Replace SES with Resend SDK in core email service, update env schema and callsites
-- [ ] 04.1-02-PLAN.md — Remove SES infrastructure, add ResendApiKey secret to SST config
+- [x] 04.1-01-PLAN.md — Replace SES with Resend SDK in core email service, update env schema and callsites
+- [x] 04.1-02-PLAN.md — Remove SES infrastructure, add ResendApiKey secret to SST config
 
 ### Phase 5: Launch Readiness
 
@@ -144,5 +144,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
 | 4. Landing Page | 1/2 | In progress | - |
-| 4.1 Resend Email Provider | 0/0 | Not planned | - |
+| 4.1 Resend Email Provider | 2/2 | Complete | 2026-01-30 |
 | 5. Launch Readiness | 0/2 | Not started | - |
