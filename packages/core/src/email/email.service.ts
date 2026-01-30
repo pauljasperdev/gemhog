@@ -1,5 +1,5 @@
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
-import { Console, Context, Effect, Layer } from "effect";
+import { Console, Context, Effect, Layer, Schedule } from "effect";
+import { Resend } from "resend";
 import { EmailSendError } from "./email.errors";
 
 export interface SendEmailParams {
@@ -39,37 +39,53 @@ export const EmailServiceConsole = Layer.succeed(EmailServiceTag, {
     }),
 });
 
-export const makeEmailServiceLive = (senderEmail: string) =>
+const TRANSIENT_ERROR_NAMES = new Set([
+  "rate_limit_exceeded",
+  "daily_quota_exceeded",
+  "monthly_quota_exceeded",
+  "application_error",
+  "internal_server_error",
+]);
+
+function isTransientError(error: EmailSendError): boolean {
+  const cause = error.cause as Record<string, unknown> | undefined;
+  if (!cause) return false;
+  if (typeof cause.name === "string" && TRANSIENT_ERROR_NAMES.has(cause.name))
+    return true;
+  if (typeof cause.statusCode === "number" && cause.statusCode >= 500)
+    return true;
+  return false;
+}
+
+const retrySchedule = Schedule.exponential("500 millis").pipe(
+  Schedule.compose(Schedule.recurs(3)),
+);
+
+export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
   Layer.sync(EmailServiceTag, () => {
-    const client = new SESv2Client({ region: "eu-central-1" });
+    const resend = new Resend(apiKey);
 
     return {
       send: ({ to, subject, html, headers }) =>
         Effect.tryPromise({
-          try: () =>
-            client.send(
-              new SendEmailCommand({
-                FromEmailAddress: senderEmail,
-                Destination: { ToAddresses: [to] },
-                Content: {
-                  Simple: {
-                    Subject: { Data: subject },
-                    Body: { Html: { Data: html } },
-                    Headers: headers
-                      ? Object.entries(headers).map(([name, value]) => ({
-                          Name: name,
-                          Value: value,
-                        }))
-                      : undefined,
-                  },
-                },
-              }),
-            ),
+          try: async () => {
+            const { error } = await resend.emails.send({
+              from: fromEmail,
+              to: [to],
+              subject,
+              html,
+              headers,
+            });
+            if (error) throw error;
+          },
           catch: (error) =>
             new EmailSendError({
               message: `Failed to send email to ${to}`,
               cause: error,
             }),
-        }),
+        }).pipe(
+          Effect.retry({ schedule: retrySchedule, while: isTransientError }),
+          Effect.asVoid,
+        ),
     };
   });
