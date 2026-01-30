@@ -12,14 +12,13 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 
 **Phase Numbering:**
 - Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-
-Decimal phases appear between their surrounding integers in numeric order.
+- Decimal phases (4.1, etc.): Inserted phases between planned phases
 
 - [x] **Phase 1: Error Monitoring** - Sentry integration for frontend and backend error visibility
 - [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
 - [x] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
+- [ ] **Phase 4.1: Resend Email Provider** - Switch email provider from AWS SES to Resend
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
 
 ## Phase Details
@@ -98,6 +97,22 @@ Plans:
 - [x] 04-01-PLAN.md — Route group restructuring and DM Serif Display font setup
 - [ ] 04-02-PLAN.md — Landing page UI, signup form, footer, and tests
 
+### Phase 4.1: Resend Email Provider
+
+**Goal:** Replace AWS SES email sending with Resend SDK while preserving the existing Effect-based email service interface
+**Depends on:** Phase 4
+**Requirements:** EMAIL-01 (updated provider)
+**Success Criteria** (what must be TRUE):
+  1. EmailService implementation uses Resend SDK instead of AWS SES
+  2. All existing email functionality (verification, unsubscribe) works with Resend
+  3. SST infrastructure updated to use Resend API key instead of SES configuration
+  4. Existing tests pass with updated email provider
+**Plans:** 2 plans
+
+Plans:
+- [ ] 04.1-01-PLAN.md — Replace SES with Resend SDK in core email service, update env schema and callsites
+- [ ] 04.1-02-PLAN.md — Remove SES infrastructure, add ResendApiKey secret to SST config
+
 ### Phase 5: Launch Readiness
 
 **Goal:** All branding, legal, and security requirements are complete for public launch
@@ -129,4 +144,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
 | 4. Landing Page | 1/2 | In progress | - |
+| 4.1 Resend Email Provider | 0/0 | Not planned | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
