@@ -113,38 +113,43 @@ const waitForReady = (child: ReturnType<typeof spawn>) =>
   });
 
 describe("dev server", () => {
-  it("starts with repo defaults", async () => {
-    rmSync(path.join(webDir, ".next"), { recursive: true, force: true });
-    const child: ChildProcessWithoutNullStreams = spawn("pnpm", ["dev"], {
-      cwd: webDir,
-      env: buildEnv(),
-      stdio: ["pipe", "pipe", "pipe"],
-      detached: true,
-    });
+  // FIXME: Turbopack ENOENT race condition on Node.js 25 -- same issue as startup.int.test.ts
+  it.skipIf(Number.parseInt(process.versions.node.split(".")[0], 10) >= 25)(
+    "starts with repo defaults",
+    async () => {
+      rmSync(path.join(webDir, ".next"), { recursive: true, force: true });
+      const child: ChildProcessWithoutNullStreams = spawn("pnpm", ["dev"], {
+        cwd: webDir,
+        env: buildEnv(),
+        stdio: ["pipe", "pipe", "pipe"],
+        detached: true,
+      });
 
-    const exitPromise = new Promise<void>((resolve) => {
-      child.once("exit", () => resolve());
-    });
+      const exitPromise = new Promise<void>((resolve) => {
+        child.once("exit", () => resolve());
+      });
 
-    try {
-      await waitForReady(child);
-      await assertSubscribeWorks("http://localhost:3001");
-    } finally {
-      // Kill the entire process group (pnpm + next-server + webpack-loaders)
-      // to prevent orphaned processes from blocking port 3001
-      if (child.pid) {
-        try {
-          process.kill(-child.pid, "SIGTERM");
-        } catch (error) {
-          if (!(error instanceof Error && /ESRCH/.test(error.message))) {
-            console.warn("Failed to stop dev server", error);
+      try {
+        await waitForReady(child);
+        await assertSubscribeWorks("http://localhost:3001");
+      } finally {
+        // Kill the entire process group (pnpm + next-server + webpack-loaders)
+        // to prevent orphaned processes from blocking port 3001
+        if (child.pid) {
+          try {
+            process.kill(-child.pid, "SIGTERM");
+          } catch (error) {
+            if (!(error instanceof Error && /ESRCH/.test(error.message))) {
+              console.warn("Failed to stop dev server", error);
+            }
           }
         }
+        await exitPromise;
+        rmSync(path.join(webDir, ".next", "dev", "lock"), { force: true });
       }
-      await exitPromise;
-      rmSync(path.join(webDir, ".next", "dev", "lock"), { force: true });
-    }
 
-    expect(child.exitCode !== null || child.signalCode !== null).toBe(true);
-  }, 120000);
+      expect(child.exitCode !== null || child.signalCode !== null).toBe(true);
+    },
+    120000,
+  );
 });
