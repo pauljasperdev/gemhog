@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 4 -- Landing Page (route groups and font setup complete)
+**Current focus:** Phase 4.1 -- Resend Email Provider (application code migrated, SST infra next)
 
 ## Current Position
 
-Phase: 4 of 5 (Landing Page)
-Plan: 1 of 2 (route group restructuring and DM Serif Display font)
+Phase: 4.1 of 5 (Resend Email Provider)
+Plan: 1 of 2 (Resend SDK swap + env schema + callsites)
 Status: In progress
-Last activity: 2026-01-29 - Completed 04-01-PLAN.md (route groups + font + hydration fix)
+Last activity: 2026-01-30 - Completed 04.1-01-PLAN.md (Resend SDK replaces AWS SES)
 
-Progress: [██████████████░░] 88% (14/16 plans)
+Progress: [███████████████░] 94% (15/16 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1)
+- Total plans completed: 15 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 1)
 - Average duration: 19min (last 10 measured)
-- Total execution time: 232min (GSD-tracked)
+- Total execution time: 244min (GSD-tracked)
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [██████████████░░] 88% (14/16 plans)
 | 2 | 9/9 | 174min+ | ~22min |
 | 3 | 3/3 | 23min | ~8min |
 | 4 | 1/2 | 28min | 28min |
+| 4.1 | 1/2 | 12min | 12min |
 
 **Recent Trend:**
-- Last 10 plans: 02-04 (43min), 02-05 (N/A - resumed), 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min)
-- Trend: 04-01 structural refactor -- route groups, font loading, lefthook fix, hydration mismatch fix
+- Last 10 plans: 02-06 (54min), 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min), 04.1-01 (12min)
+- Trend: 04.1-01 clean dependency swap -- Resend replaces AWS SES
 
 *Updated after each plan completion*
 
@@ -47,7 +48,7 @@ Recent decisions affecting current work:
 
 - [V0]: SST-agnostic application code (app reads env vars, no SST SDK imports)
 - [V0]: Security-first development (Zod validation, auth checks, security review required)
-- [V1]: Serverless email via AWS SES (no hosted services like Resend)
+- [V1]: Email via Resend (replacing AWS SES in Phase 4.1)
 - [V1]: Free-tier monitoring (Sentry free, CloudWatch for logs)
 - [V1]: GDPR/CAN-SPAM compliance (double opt-in, unsubscribe, privacy policy)
 - [V1]: tRPC and Better Auth moved to Next.js API routes (Hono reserved for AI streaming only)
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [04-01]: DM Serif Display loaded via next/font/google with --font-dm-serif CSS variable
 - [04-01]: (app)/layout.tsx is a Server Component (not "use client") -- Server Components can render Client Components
 - [04-01]: Mounted state guard in UserMenu prevents hydration mismatch from auth state resolving differently on server vs client
+- [04.1-01]: Hardcoded "Gemhog <hello@gemhog.com>" as from address at both email callsites
+- [04.1-01]: Exponential backoff retry (500ms base, 3 retries) for transient Resend errors
+- [04.1-01]: RESEND_API_KEY validated with startsWith("re_") prefix check
 
 ### Pending Todos
 
@@ -95,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-29
-Stopped at: Completed 04-01-PLAN.md (route groups + DM Serif Display font + hydration fix). Ready for 04-02 (landing page UI).
+Last session: 2026-01-30
+Stopped at: Completed 04.1-01-PLAN.md (Resend SDK swap + env schema + callsites). Ready for 04.1-02 (SST infrastructure migration).
 Resume file: None
