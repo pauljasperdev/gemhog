@@ -89,7 +89,7 @@ if (!env.NEXT_PUBLIC_SENTRY_DSN) {
 if (env.NEXT_PUBLIC_POSTHOG_KEY) {
   posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
     api_host: "/ph",
-    ui_host: "https://us.posthog.com",
+    ui_host: "https://eu.posthog.com",
     defaults: "2025-11-30",
     cookieless_mode: "on_reject",
     disable_session_recording: true,
