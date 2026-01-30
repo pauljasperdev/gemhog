@@ -1,7 +1,7 @@
 # Architecture
 
-**Analysis Date:** 2026-01-15 **Updated:** 2026-01-29 — Phase 01 (Sentry),
-Phase 02 (Email), and Phase 03 (Analytics) complete
+**Analysis Date:** 2026-01-15 **Updated:** 2026-01-29 — Phase 01 (Sentry), Phase
+02 (Email), and Phase 03 (Analytics) complete
 
 ## Pattern Overview
 
@@ -319,7 +319,8 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 - Principle: Application code reads env vars only, no SST SDK imports
 - Rationale: Enables local development with `pnpm dev` without SST context
-- Pattern: SST injects env vars at deploy time; `.env` files for local/test
+- Pattern: SST injects env vars at deploy time; local dev uses `LOCAL_ENV=1`
+  with defaults from `@gemhog/env/local-dev` (no per-app `.env` files)
 - Benefit: Agents can verify code without SST multiplexer running
 
 **Newsletter Subscription Flow (Implemented Phase 02):**

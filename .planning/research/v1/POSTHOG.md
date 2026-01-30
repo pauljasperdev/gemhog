@@ -1,18 +1,18 @@
 # Posthog Research
 
-**Researched:** 2026-01-24
-**Overall Confidence:** HIGH (verified via official documentation and search)
+**Researched:** 2026-01-24 **Overall Confidence:** HIGH (verified via official
+documentation and search)
 
 ## Summary
 
 PostHog is the recommended analytics solution for Gemhog V1. It provides a
 generous free tier (1M events/month), native Next.js App Router support with
-automatic pageview tracking, and built-in GDPR compliance via `cookieless_mode:
-'on_reject'`. For a serverless SST deployment on AWS, PostHog Cloud is strongly
-preferred over self-hosting due to zero infrastructure burden and access to all
-features. The key integration points are: client-side provider for the landing
-page, cookie consent banner with delayed tracking, and event capture for email
-signup conversion funnel.
+automatic pageview tracking, and built-in GDPR compliance via
+`cookieless_mode: 'on_reject'`. For a serverless SST deployment on AWS, PostHog
+Cloud is strongly preferred over self-hosting due to zero infrastructure burden
+and access to all features. The key integration points are: client-side provider
+for the landing page, cookie consent banner with delayed tracking, and event
+capture for email signup conversion funnel.
 
 ## Next.js App Router Setup
 
@@ -30,7 +30,7 @@ pnpm add posthog-node
 
 ### Environment Variables
 
-Add to `.env.local` (and SST secrets):
+Provide via `@gemhog/env/local-dev` for local dev and SST secrets for deploy:
 
 ```bash
 NEXT_PUBLIC_POSTHOG_KEY=phc_XXX
@@ -41,7 +41,8 @@ Note: These values must start with `NEXT_PUBLIC_` for client-side access.
 
 ### Option A: Modern Setup (Next.js 15.3+, Recommended)
 
-Next.js 15.3+ supports `instrumentation-client.ts` for lightweight initialization:
+Next.js 15.3+ supports `instrumentation-client.ts` for lightweight
+initialization:
 
 ```typescript
 // instrumentation-client.ts (root of app)
@@ -190,20 +191,20 @@ export function CookieBanner() {
 
 ### Consent API Methods
 
-| Method                              | Purpose                          |
-| ----------------------------------- | -------------------------------- |
+| Method                                  | Purpose                                   |
+| --------------------------------------- | ----------------------------------------- |
 | `posthog.get_explicit_consent_status()` | Returns 'pending', 'granted', or 'denied' |
-| `posthog.opt_in_capturing()`        | Enable tracking, set cookies     |
-| `posthog.opt_out_capturing()`       | Disable tracking, cookieless mode |
-| `posthog.has_opted_out_capturing()` | Check if user opted out          |
-| `posthog.has_opted_in_capturing()`  | Check if user opted in           |
+| `posthog.opt_in_capturing()`            | Enable tracking, set cookies              |
+| `posthog.opt_out_capturing()`           | Disable tracking, cookieless mode         |
+| `posthog.has_opted_out_capturing()`     | Check if user opted out                   |
+| `posthog.has_opted_in_capturing()`      | Check if user opted in                    |
 
 ### How Consent Affects Tracking
 
-| Consent Status | Cookies | Events Captured | User Counting |
-| -------------- | ------- | --------------- | ------------- |
-| Pending        | No      | No              | No            |
-| Granted        | Yes     | Yes (identified) | Full tracking |
+| Consent Status | Cookies | Events Captured  | User Counting           |
+| -------------- | ------- | ---------------- | ----------------------- |
+| Pending        | No      | No               | No                      |
+| Granted        | Yes     | Yes (identified) | Full tracking           |
 | Denied         | No      | Yes (anonymous)  | Privacy-preserving hash |
 
 **Note:** With consent denied, PostHog uses a daily hash
@@ -219,14 +220,14 @@ users. This means:
 
 ### Landing Page Events for Gemhog V1
 
-| Event Name | Properties | Purpose |
-| ---------- | ---------- | ------- |
-| `$pageview` | (auto) | Landing page visits |
-| `$pageleave` | (auto) | Exit tracking |
-| `email_signup_started` | `{ source: 'hero' \| 'footer' }` | Form interaction |
-| `email_signup_completed` | `{ source: 'hero' \| 'footer' }` | Successful submission |
-| `email_signup_failed` | `{ error: string }` | Failed submission |
-| `cta_clicked` | `{ cta: string, location: string }` | CTA engagement |
+| Event Name               | Properties                          | Purpose               |
+| ------------------------ | ----------------------------------- | --------------------- |
+| `$pageview`              | (auto)                              | Landing page visits   |
+| `$pageleave`             | (auto)                              | Exit tracking         |
+| `email_signup_started`   | `{ source: 'hero' \| 'footer' }`    | Form interaction      |
+| `email_signup_completed` | `{ source: 'hero' \| 'footer' }`    | Successful submission |
+| `email_signup_failed`    | `{ error: string }`                 | Failed submission     |
+| `cta_clicked`            | `{ cta: string, location: string }` | CTA engagement        |
 
 ### Event Naming Convention
 
@@ -367,15 +368,15 @@ For Gemhog V1: Most visitors won't sign up, so this saves significant cost.
 
 For a serverless SST deployment, **PostHog Cloud** is the clear choice:
 
-| Factor | Cloud | Self-Hosted |
-| ------ | ----- | ----------- |
-| Setup time | Minutes | Days |
-| Infrastructure | None | PostgreSQL, ClickHouse, Redis, Kafka |
-| Maintenance | None | Ongoing |
-| Cost at low volume | Free | $100+/mo (compute) |
-| GDPR compliance | EU region available | Your responsibility |
-| All features | Yes | No (paid features cloud-only) |
-| Support | Yes (paid plans) | Community only |
+| Factor             | Cloud               | Self-Hosted                          |
+| ------------------ | ------------------- | ------------------------------------ |
+| Setup time         | Minutes             | Days                                 |
+| Infrastructure     | None                | PostgreSQL, ClickHouse, Redis, Kafka |
+| Maintenance        | None                | Ongoing                              |
+| Cost at low volume | Free                | $100+/mo (compute)                   |
+| GDPR compliance    | EU region available | Your responsibility                  |
+| All features       | Yes                 | No (paid features cloud-only)        |
+| Support            | Yes (paid plans)    | Community only                       |
 
 ### Why Not Self-Host
 
@@ -405,25 +406,25 @@ Data is stored in Frankfurt, Germany.
 
 ### What's Included (Free Forever)
 
-| Product | Free Allowance | After Free Tier |
-| ------- | -------------- | --------------- |
-| Product Analytics | 1M events/month | $0.00005/event |
-| Session Replay | 5,000 recordings | $0.005/recording |
-| Feature Flags | 1M requests | $0.0001/request |
-| Error Tracking | 100K errors | $0.00037/error |
-| Surveys | 1,500 responses | $0.10/response |
-| LLM Analytics | 100K events | Varies |
+| Product           | Free Allowance   | After Free Tier  |
+| ----------------- | ---------------- | ---------------- |
+| Product Analytics | 1M events/month  | $0.00005/event   |
+| Session Replay    | 5,000 recordings | $0.005/recording |
+| Feature Flags     | 1M requests      | $0.0001/request  |
+| Error Tracking    | 100K errors      | $0.00037/error   |
+| Surveys           | 1,500 responses  | $0.10/response   |
+| LLM Analytics     | 100K events      | Varies           |
 
 ### Gemhog V1 Estimation
 
 For a landing page with email signup:
 
-| Metric | Estimate | Monthly Events |
-| ------ | -------- | -------------- |
-| Page visits | 10,000/month | 10,000 pageviews |
-| Page leaves | 10,000/month | 10,000 pageleaves |
-| Email signups | 500/month | 1,500 events (started + completed) |
-| **Total** | | **~21,500 events** |
+| Metric        | Estimate     | Monthly Events                     |
+| ------------- | ------------ | ---------------------------------- |
+| Page visits   | 10,000/month | 10,000 pageviews                   |
+| Page leaves   | 10,000/month | 10,000 pageleaves                  |
+| Email signups | 500/month    | 1,500 events (started + completed) |
+| **Total**     |              | **~21,500 events**                 |
 
 This is well within the 1M free tier. Even at 50x growth, you'd stay free.
 
@@ -457,15 +458,15 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
 
 ### Privacy Options Reference
 
-| Option | Value | Effect |
-| ------ | ----- | ------ |
-| `cookieless_mode` | `'always'` | Never use cookies (limited tracking) |
-| `cookieless_mode` | `'on_reject'` | Cookies only after consent |
-| `person_profiles` | `'identified_only'` | No profiles for anonymous users |
-| `person_profiles` | `'always'` | Profiles for all users |
-| `disable_session_recording` | `true` | No session recordings |
-| `mask_all_text` | `true` | Mask all text in recordings |
-| `mask_all_element_attributes` | `true` | Mask all attributes |
+| Option                        | Value               | Effect                               |
+| ----------------------------- | ------------------- | ------------------------------------ |
+| `cookieless_mode`             | `'always'`          | Never use cookies (limited tracking) |
+| `cookieless_mode`             | `'on_reject'`       | Cookies only after consent           |
+| `person_profiles`             | `'identified_only'` | No profiles for anonymous users      |
+| `person_profiles`             | `'always'`          | Profiles for all users               |
+| `disable_session_recording`   | `true`              | No session recordings                |
+| `mask_all_text`               | `true`              | Mask all text in recordings          |
+| `mask_all_element_attributes` | `true`              | Mask all attributes                  |
 
 ### Data Retention
 
@@ -528,7 +529,7 @@ export function getPostHog(): PostHog {
 export async function trackServerEvent(
   distinctId: string,
   event: string,
-  properties?: Record<string, unknown>
+  properties?: Record<string, unknown>,
 ) {
   const posthog = getPostHog();
   posthog.capture({
@@ -565,14 +566,15 @@ Following Gemhog's SST-agnostic constraint:
 - Do NOT import PostHog from SST resources
 - Do NOT use SST SDK in application code
 - Read `NEXT_PUBLIC_POSTHOG_KEY` from environment variables
-- Same code works locally (`.env`) and deployed (SST injects)
+- Same code works locally (`LOCAL_ENV=1` + `@gemhog/env/local-dev`) and deployed
+  (SST injects)
 
 ## Recommendations
 
 ### For Gemhog V1
 
-1. **Use PostHog Cloud EU** - Free tier is sufficient, EU region for GDPR,
-   zero infrastructure burden
+1. **Use PostHog Cloud EU** - Free tier is sufficient, EU region for GDPR, zero
+   infrastructure burden
 
 2. **Initialize with these settings:**
 

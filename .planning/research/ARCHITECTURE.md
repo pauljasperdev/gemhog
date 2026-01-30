@@ -993,7 +993,8 @@ const apiKey = process.env.PODSCAN_API_KEY;
 if (!apiKey) throw new Error("PODSCAN_API_KEY not set");
 ```
 
-SST injects env vars at deploy time. Local dev uses `.env` files.
+SST injects env vars at deploy time. Local dev uses `LOCAL_ENV=1` with defaults
+from `@gemhog/env/local-dev` (no per-app `.env` files).
 
 ### Anti-Pattern 2: Scattered Effect.provide Calls
 
