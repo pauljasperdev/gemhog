@@ -70,6 +70,9 @@ describe("web env validation", () => {
 
     it("should succeed when NEXT_PUBLIC_SERVER_URL is a valid URL", async () => {
       process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
+      process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
 
       const { env } = await import("./web.js");
 
@@ -80,6 +83,7 @@ describe("web env validation", () => {
       delete process.env.NEXT_PUBLIC_SERVER_URL;
       delete process.env.NEXT_PUBLIC_SENTRY_DSN;
       delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+      delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
       process.env.LOCAL_ENV = "1";
 
       const { env } = await import("./web.js");
@@ -93,62 +97,60 @@ describe("web env validation", () => {
       expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBe(
         localDevWebEnv.NEXT_PUBLIC_POSTHOG_KEY,
       );
+      expect(env.NEXT_PUBLIC_POSTHOG_HOST).toBe(
+        localDevWebEnv.NEXT_PUBLIC_POSTHOG_HOST,
+      );
     });
   });
 
-  describe("optional vars", () => {
-    it("should succeed without NEXT_PUBLIC_SENTRY_DSN", async () => {
+  describe("validation", () => {
+    it("should fail when NEXT_PUBLIC_SENTRY_DSN is missing", async () => {
       process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
+      process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
       delete process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-      const { env } = await import("./web.js");
-
-      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBeUndefined();
+      await expect(import("./web.js")).rejects.toThrow();
     });
 
-    it("should succeed with NEXT_PUBLIC_SENTRY_DSN set", async () => {
+    it("should fail when NEXT_PUBLIC_POSTHOG_KEY is missing", async () => {
       process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
       process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
+      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should fail when NEXT_PUBLIC_POSTHOG_HOST is missing", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
+      delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
+
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should fail when NEXT_PUBLIC_POSTHOG_HOST is not a valid URL", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
+      process.env.NEXT_PUBLIC_POSTHOG_HOST = "not-a-url";
+
+      await expect(import("./web.js")).rejects.toThrow();
+    });
+
+    it("should succeed with all vars set", async () => {
+      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
+      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test123";
+      process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
 
       const { env } = await import("./web.js");
 
       expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe("https://key@sentry.io/123");
-    });
-
-    it("should treat empty NEXT_PUBLIC_SENTRY_DSN as undefined", async () => {
-      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
-      process.env.NEXT_PUBLIC_SENTRY_DSN = "";
-
-      const { env } = await import("./web.js");
-
-      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBeUndefined();
-    });
-
-    it("should succeed without NEXT_PUBLIC_POSTHOG_KEY", async () => {
-      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
-      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
-
-      const { env } = await import("./web.js");
-
-      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBeUndefined();
-    });
-
-    it("should succeed with NEXT_PUBLIC_POSTHOG_KEY set", async () => {
-      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
-      process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test123";
-
-      const { env } = await import("./web.js");
-
       expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBe("phc_test123");
-    });
-
-    it("should treat empty NEXT_PUBLIC_POSTHOG_KEY as undefined", async () => {
-      process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3000";
-      process.env.NEXT_PUBLIC_POSTHOG_KEY = "";
-
-      const { env } = await import("./web.js");
-
-      expect(env.NEXT_PUBLIC_POSTHOG_KEY).toBeUndefined();
+      expect(env.NEXT_PUBLIC_POSTHOG_HOST).toBe("https://eu.i.posthog.com");
     });
   });
 });

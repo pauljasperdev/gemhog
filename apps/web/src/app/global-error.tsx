@@ -1,5 +1,6 @@
 "use client";
 
+import { isDev } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
@@ -13,8 +14,6 @@ export default function GlobalError({
   useEffect(() => {
     Sentry.captureException(error);
   }, [error]);
-
-  const isDev = process.env.NODE_ENV === "development";
 
   return (
     <html lang="en">

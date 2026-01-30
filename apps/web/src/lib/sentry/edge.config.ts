@@ -1,19 +1,20 @@
+import { isDev, nodeEnv } from "@gemhog/env/runtime";
+import { env as sentryEnv } from "@gemhog/env/sentry";
 import * as Sentry from "@sentry/nextjs";
 
-// Edge runtime: use process.env directly (env package may have import issues in edge)
 // DSN is optional - skip Sentry if not configured (local dev)
-const dsn = process.env.SENTRY_DSN;
+const dsn = sentryEnv.SENTRY_DSN;
 
 if (!dsn) {
-  if (process.env.NODE_ENV === "development") {
+  if (isDev) {
     console.info("Sentry DSN not configured, skipping edge initialization");
   }
 } else {
   Sentry.init({
     dsn,
-    environment: process.env.NODE_ENV,
+    environment: nodeEnv,
 
     // Edge-side sampling - lower in production
-    tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+    tracesSampleRate: isDev ? 1.0 : 0.1,
   });
 }

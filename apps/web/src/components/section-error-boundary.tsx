@@ -1,5 +1,6 @@
 "use client";
 
+import { isDev } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 import type { ReactElement, ReactNode } from "react";
 
@@ -25,8 +26,6 @@ export function SectionErrorBoundary({
   section,
   fallback,
 }: SectionErrorBoundaryProps) {
-  const isDev = process.env.NODE_ENV === "development";
-
   return (
     <Sentry.ErrorBoundary
       beforeCapture={(scope) => {
