@@ -11,7 +11,7 @@ gemhog/
 │   │   ├── src/
 │   │   │   └── serve.ts    # Server entry point
 │   │   ├── tsdown.config.ts
-│   │   ├── .env            # Server environment
+│   │   ├── (no .env)       # Env defaults via @gemhog/env/local-dev
 │   │   └── package.json
 │   └── web/                # Next.js frontend application
 │       ├── src/

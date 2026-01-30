@@ -131,11 +131,13 @@ _Last synced from SECURITY-REVIEW.md: 2026-01-27_
 
 ## Missing Critical Features
 
-**Missing .env.example files:**
+**Missing deployment env documentation:**
 
-- Problem: No documentation of required environment variables
-- Current workaround: Read source code or copy from teammate
-- Blocks: Onboarding new developers
+- Problem: Deployment-only env vars are not documented in a single place
+- Current workaround: Read source/infra files or copy from teammate
+- Note: Local dev uses `LOCAL_ENV=1` with defaults from `@gemhog/env/local-dev`
+  (no per-app `.env` files)
+- Blocks: Onboarding and deployment setup
 - Implementation complexity: Low
 
 **SST Cloudflare configuration required:**

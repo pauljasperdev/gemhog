@@ -97,7 +97,8 @@ Blocked until V1 launch readiness is complete.
 ### Foundation Constraints (from V0)
 
 - **SST-agnostic application code**: App code reads env vars only; no SST SDK
-  imports. SST injects env vars at deploy time; local/test use `.env` files.
+  imports. SST injects env vars at deploy time; local dev uses `LOCAL_ENV=1`
+  with defaults from `@gemhog/env/local-dev` (no per-app `.env` files).
 - **Test stage for external resources**: AWS resources that can't run locally
   (S3, SES, etc.) use a deployed Test stage via env vars.
 - **Security-first development**: Validate all user input at boundaries (Zod

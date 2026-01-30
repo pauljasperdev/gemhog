@@ -122,16 +122,19 @@ These integrations will be implemented after V0 foundation is complete.
 - PostHog - Product analytics with GDPR cookie consent
   - SDK/Client: `posthog-js` v1.336 (`apps/web/package.json`)
   - Initialization: `apps/web/src/lib/sentry/instrumentation.client.ts`
-  - Config: `cookieless_mode: "on_reject"`, `person_profiles: "identified_only"`,
-    `defaults: "2025-11-30"` (auto SPA pageview tracking)
-  - API proxy: Next.js `/ph/*` rewrites to `us.i.posthog.com` (ad-blocker bypass)
+  - Config: `cookieless_mode: "on_reject"`,
+    `person_profiles: "identified_only"`, `defaults: "2025-11-30"` (auto SPA
+    pageview tracking)
+  - API proxy: Next.js `/ph/*` rewrites to `us.i.posthog.com` (ad-blocker
+    bypass)
   - Cookie consent: `apps/web/src/components/cookie-consent.tsx` (accept/decline
     with PostHog `opt_in_capturing`/`opt_out_capturing`)
   - Provider: `PostHogProvider` in `apps/web/src/components/providers.tsx`
     (conditionally wraps when `NEXT_PUBLIC_POSTHOG_KEY` is set)
   - Custom events: `landing_page_viewed`, `signup_completed`, `signup_started`
     (via `apps/web/src/lib/analytics.ts`)
-  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (optional — graceful skip if not set)
+  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (optional — graceful skip if not
+    set)
   - SST secret: `PosthogKey` in `infra/secrets.ts`
 
 **Logs:**
@@ -149,7 +152,7 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Deployment Stages:**
 
-- Local: Apps run with `.env` files, no SST dependency
+- Local: Apps run with `LOCAL_ENV=1` and defaults from `@gemhog/env/local-dev`
 - Test: Deployed AWS resources (S3, etc.) for integration testing via env vars
 - Production: Full SST v3 deployment on AWS
 
@@ -162,13 +165,14 @@ These integrations will be implemented after V0 foundation is complete.
 
 **Development:**
 
-- Required env vars:
+- Required env vars (validated by `@gemhog/env`):
   - `DATABASE_URL` - PostgreSQL connection
   - `BETTER_AUTH_SECRET` - Auth encryption
   - `CORS_ORIGIN` - Allowed origins
   - `GOOGLE_GENERATIVE_AI_API_KEY` - AI features
   - `NEXT_PUBLIC_SERVER_URL` - API base URL
-- Secrets location: `apps/web/.env` (Next auth/tRPC), `apps/server/.env` (Hono)
+- Local defaults: `@gemhog/env/local-dev` (no per-app `.env` files)
+- Deployment-only vars: root `.env` for infrastructure/deploy contexts
 - Local database: Docker Compose (`infra/docker-compose.yml`)
 
 **Staging:**

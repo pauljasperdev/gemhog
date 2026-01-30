@@ -316,22 +316,20 @@ const app = new Hono();
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-// Works locally with .env, works on Lambda with SST-injected env vars
+// Works locally with LOCAL_ENV defaults, works on Lambda with SST-injected env vars
 export const handler = handle(app);
 export default app;
 ```
 
-### Local Development (.env files)
+### Local Development (LOCAL_ENV)
 
 ```bash
-# .env.local (git-ignored, for local development)
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/gemhog
-ANTHROPIC_API_KEY=sk-ant-...
-PODSCAN_API_KEY=...
+# LOCAL_ENV=1 loads defaults from @gemhog/env/local-dev
+# Override any value by exporting env vars in your shell
 ```
 
 ```bash
-# Development: uses .env.local
+# Development: uses LOCAL_ENV defaults
 pnpm dev
 
 # Deployment: SST injects env vars
