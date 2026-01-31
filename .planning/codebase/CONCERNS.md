@@ -49,6 +49,15 @@
 - Fix approach: Add test env vars to webServer config or create .env.test
 - Status: **Must fix for Phase 1 completion** (tracked in 01-04-PLAN.md)
 
+## Design Decisions
+
+**Dark-mode-only (2026-01-31):**
+
+- ModeToggle component removed — it caused hydration mismatches (server/client
+  `id` divergence in Base UI dropdown)
+- ThemeProvider locked to `forcedTheme="dark"` in `providers.tsx`
+- `next-themes` kept as dependency because `sonner.tsx` uses `useTheme()`
+
 ## Known Bugs
 
 **None detected** - Codebase appears to be in early development without reported
