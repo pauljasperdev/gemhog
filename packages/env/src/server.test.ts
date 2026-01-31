@@ -50,32 +50,48 @@ describe("server env validation", () => {
   });
 
   describe("missing required vars", () => {
+    const setRequiredEnvVars = () => {
+      process.env.DATABASE_URL = "postgresql://localhost:5432/test";
+      process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
+      process.env.BETTER_AUTH_SECRET = "super-secret-key-at-least-32-chars";
+      process.env.BETTER_AUTH_URL = "http://localhost:3000";
+      process.env.APP_URL = "http://localhost:3001";
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
+    };
+
     it("should fail when DATABASE_URL is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.DATABASE_URL;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when BETTER_AUTH_SECRET is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.BETTER_AUTH_SECRET;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when BETTER_AUTH_URL is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.BETTER_AUTH_URL;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when APP_URL is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.APP_URL;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when GOOGLE_GENERATIVE_AI_API_KEY is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
       await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when DATABASE_URL_POOLER is missing", async () => {
+      setRequiredEnvVars();
       delete process.env.DATABASE_URL_POOLER;
       await expect(import("./server.js")).rejects.toThrow();
     });
@@ -89,6 +105,7 @@ describe("server env validation", () => {
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
 
       const { env } = await import("./server.js");
 
@@ -118,6 +135,7 @@ describe("server env validation", () => {
       expect(env.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
         localDevServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
       );
+      expect(env.RESEND_API_KEY).toBe(localDevServerEnv.RESEND_API_KEY);
     });
 
     it("should default NODE_ENV to 'development' when not provided", async () => {
@@ -127,6 +145,7 @@ describe("server env validation", () => {
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
       delete process.env.NODE_ENV;
 
       const { env } = await import("./server.js");
@@ -141,6 +160,7 @@ describe("server env validation", () => {
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
       process.env.NODE_ENV = "production";
 
       const { env } = await import("./server.js");
@@ -157,6 +177,7 @@ describe("server env validation", () => {
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
     };
 
     it("should succeed without any Sentry vars", async () => {
@@ -205,7 +226,7 @@ describe("server env validation", () => {
     });
   });
 
-  describe("optional RESEND_API_KEY", () => {
+  describe("required RESEND_API_KEY", () => {
     const setRequiredEnvVars = () => {
       process.env.DATABASE_URL = "postgresql://localhost:5432/test";
       process.env.DATABASE_URL_POOLER = "postgresql://localhost:5432/test";
@@ -213,15 +234,14 @@ describe("server env validation", () => {
       process.env.BETTER_AUTH_URL = "http://localhost:3000";
       process.env.APP_URL = "http://localhost:3001";
       process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+      process.env.RESEND_API_KEY = "re_test_key";
     };
 
-    it("should succeed without RESEND_API_KEY", async () => {
+    it("should fail when RESEND_API_KEY is missing", async () => {
       setRequiredEnvVars();
       delete process.env.RESEND_API_KEY;
 
-      const { env } = await import("./server.js");
-
-      expect(env.RESEND_API_KEY).toBeUndefined();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should succeed with a valid RESEND_API_KEY", async () => {
@@ -238,15 +258,6 @@ describe("server env validation", () => {
       process.env.RESEND_API_KEY = "not-a-resend-key";
 
       await expect(import("./server.js")).rejects.toThrow();
-    });
-
-    it("should treat empty RESEND_API_KEY as undefined", async () => {
-      setRequiredEnvVars();
-      process.env.RESEND_API_KEY = "";
-
-      const { env } = await import("./server.js");
-
-      expect(env.RESEND_API_KEY).toBeUndefined();
     });
   });
 });
