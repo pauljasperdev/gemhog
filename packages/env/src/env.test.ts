@@ -15,7 +15,7 @@ describe("server env var test coverage", () => {
     const schemaContent = fs.readFileSync(schemaPath, "utf-8");
     const testContent = fs.readFileSync(testPath, "utf-8");
 
-    const envVarPattern = /([A-Z][A-Z0-9_]+):\s*Schema\.NonEmptyString/gm;
+    const envVarPattern = /([A-Z][A-Z0-9_]+):\s*Config\.nonEmptyString/gm;
     const schemaVars = [
       ...new Set(
         [...schemaContent.matchAll(envVarPattern)]
@@ -51,7 +51,7 @@ describe("client env var test coverage", () => {
     const schemaContent = fs.readFileSync(schemaPath, "utf-8");
     const testContent = fs.readFileSync(testPath, "utf-8");
 
-    const envVarPattern = /(NEXT_PUBLIC_\w+):\s*Schema\./gm;
+    const envVarPattern = /(NEXT_PUBLIC_\w+):\s*Config\./gm;
     const schemaVars = [...schemaContent.matchAll(envVarPattern)]
       .map((m) => m[1])
       .filter((value): value is string => Boolean(value));
