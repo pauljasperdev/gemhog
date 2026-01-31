@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 4.2 -- Code Review Fixes (Plan 01 complete, Plan 02 pending)
+**Current focus:** Phase 5 -- Launch Readiness (Phase 4.2 Code Review Fixes complete)
 
 ## Current Position
 
 Phase: 4.2 of 5 (Code Review Fixes)
-Plan: 1 of 2
-Status: In progress
-Last activity: 2026-01-31 - Completed 04.2-01-PLAN.md (email infrastructure cleanup)
+Plan: 2 of 2
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 04.2-02-PLAN.md (remove Node.js 25+ test skips)
 
-Progress: [█████████████████░] 94% (17/18 plans)
+Progress: [██████████████████] 100% (18/18 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 2, Phase 4.2: 1)
+- Total plans completed: 18 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 2, Phase 4.2: 2)
 - Average duration: 18min (last 10 measured)
-- Total execution time: 293min (GSD-tracked)
+- Total execution time: 320min (GSD-tracked)
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [█████████████████░] 94% (17/18 pl
 | 3 | 3/3 | 23min | ~8min |
 | 4 | 1/2 | 28min | 28min |
 | 4.1 | 2/2 | 38min | ~19min |
-| 4.2 | 1/2 | 11min | 11min |
+| 4.2 | 2/2 | 38min | ~19min |
 
 **Recent Trend:**
-- Last 10 plans: 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min), 04.1-01 (38min), 04.1-02 (parallel), 04.2-01 (11min)
-- Trend: Consistent execution, gap closure plans tend to be faster
+- Last 10 plans: 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min), 04.1-01 (38min), 04.1-02 (parallel), 04.2-01 (11min), 04.2-02 (27min)
+- Trend: Consistent execution, 04.2-02 longer due to parallel plan interference requiring retries
 
 *Updated after each plan completion*
 
@@ -72,7 +72,6 @@ Recent decisions affecting current work:
 - [02-09]: Mock email-layers with Context.GenericTag services for server component logic testing
 - [02-09]: HMAC test token helper function avoids mock interference with createToken
 - [02-08]: Module-scoped call tracking arrays for mock assertion in tRPC tests
-- [02-08]: Conditional skip for web build tests on Node.js 25+ (Turbopack incompatibility)
 - [03-01]: cookieless_mode: "on_reject" for PostHog consent management (not deprecated opt_out_capturing_by_default)
 - [03-01]: Custom DOM event pattern for CookieSettingsButton re-open trigger
 - [03-01]: snake_case event names per PostHog convention
@@ -94,6 +93,7 @@ Recent decisions affecting current work:
 - [04.2-01]: SendEmailParams uses content: { html, text? } instead of flat html field
 - [04.2-01]: Local dev uses re_local_dev_placeholder for RESEND_API_KEY validation
 - [04.2-01]: makeEmailLayers detects placeholder key and uses EmailServiceConsole (centralized fallback)
+- [04.2-02]: All Node.js 25+ test skips removed -- tests run unconditionally on current runtime
 
 ### Pending Todos
 
@@ -101,10 +101,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- Web build integration tests (startup.int.test.ts) conditionally skipped on Node.js 25+ due to Turbopack filesystem race conditions -- tests will run on Node 18-24 as specified in .node-version
+None. All integration and E2E tests pass on Node.js 25.5.0 without conditional skips.
 
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 04.2-01-PLAN.md (email infrastructure cleanup). Phase 4.2 Plan 02 pending.
+Stopped at: Phase 4.2 complete (Code Review Fixes). All code review issues addressed. Ready for Phase 5 (Launch Readiness).
 Resume file: None
