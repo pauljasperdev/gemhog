@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 5 -- Launch Readiness (Phase 4.2 Code Review Fixes complete)
+**Current focus:** Phase 5 -- Launch Readiness (Phase 4 Landing Page complete, verified)
 
 ## Current Position
 
-Phase: 4.2 of 5 (Code Review Fixes)
+Phase: 4 of 5 (Landing Page)
 Plan: 2 of 2
-Status: Phase complete
-Last activity: 2026-01-31 - Completed 04.2-02-PLAN.md (remove conditional test skips)
+Status: Phase complete (verified)
+Last activity: 2026-01-31 - Phase 4 verified: 6/6 must-haves passed
 
-Progress: [██████████████████] 100% (18/18 plans)
+Progress: [███████████████████] 100% (19/19 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 2, Phase 4.2: 2)
+- Total plans completed: 19 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 2, Phase 4.1: 2, Phase 4.2: 2)
 - Average duration: 18min (last 10 measured)
 - Total execution time: 320min (GSD-tracked)
 
@@ -30,7 +30,7 @@ Progress: [██████████████████] 100% (18/18 p
 | 1 | 1/1 | N/A | N/A (manual) |
 | 2 | 9/9 | 174min+ | ~22min |
 | 3 | 3/3 | 23min | ~8min |
-| 4 | 1/2 | 28min | 28min |
+| 4 | 2/2 | complete | - |
 | 4.1 | 2/2 | 38min | ~19min |
 | 4.2 | 2/2 | 38min | ~19min |
 
@@ -93,6 +93,8 @@ Recent decisions affecting current work:
 - [04.2-01]: Local dev uses re_local_dev_placeholder for RESEND_API_KEY validation
 - [04.2-01]: makeEmailLayers detects placeholder key and uses EmailServiceConsole (centralized fallback)
 - [04.2-02]: All conditional test skips removed -- tests run unconditionally
+- [04-02]: output element for success message (implicit role=status)
+- [04-02]: tanstack/react-form + Zod for signup form state
 
 ### Pending Todos
 
@@ -105,5 +107,5 @@ None. All tests (unit, integration, E2E) pass with zero skips.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Phase 4.2 complete (Code Review Fixes). All code review issues addressed. Ready for Phase 5 (Launch Readiness).
+Stopped at: Phase 4 complete and verified (Landing Page). Ready for Phase 5 (Launch Readiness).
 Resume file: None

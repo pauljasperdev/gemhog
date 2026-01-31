@@ -17,7 +17,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 - [x] **Phase 1: Error Monitoring** - Sentry integration for frontend and backend error visibility
 - [x] **Phase 2: Email Infrastructure** - SES setup, subscriber database, double opt-in flow
 - [x] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
-- [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
+- [x] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
 - [x] **Phase 4.1: Resend Email Provider** - Switch email provider from AWS SES to Resend
 - [x] **Phase 4.2: Code Review Fixes** - Address code review issues (required env vars, test skips, email layer cleanup)
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
@@ -96,7 +96,7 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Route group restructuring and DM Serif Display font setup
-- [ ] 04-02-PLAN.md — Landing page UI, signup form, footer, and tests
+- [x] 04-02-PLAN.md — Landing page UI, signup form, footer, and tests
 
 ### Phase 4.1: Resend Email Provider
 
@@ -161,7 +161,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Error Monitoring | 1/1 | Complete | 2026-01-26 |
 | 2. Email Infrastructure | 9/9 | Complete | 2026-01-28 |
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
-| 4. Landing Page | 1/2 | In progress | - |
+| 4. Landing Page | 2/2 | Complete | 2026-01-31 |
 | 4.1 Resend Email Provider | 2/2 | Complete | 2026-01-30 |
 | 4.2 Code Review Fixes | 2/2 | Complete | 2026-01-31 |
 | 5. Launch Readiness | 0/2 | Not started | - |

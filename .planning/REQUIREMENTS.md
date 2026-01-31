@@ -9,11 +9,11 @@ Requirements for launch readiness. Landing page with email capture, monitoring, 
 
 ### Landing Page
 
-- [ ] **LAND-01**: Visitor sees marketing page explaining Gemhog value proposition
-- [ ] **LAND-02**: Visitor can enter email address to subscribe to newsletter
-- [ ] **LAND-03**: Visitor receives confirmation that signup was successful
-- [ ] **LAND-04**: Page is mobile-responsive
-- [ ] **LAND-05**: Landing page has compelling copy (headline, value prop, CTA)
+- [x] **LAND-01**: Visitor sees marketing page explaining Gemhog value proposition
+- [x] **LAND-02**: Visitor can enter email address to subscribe to newsletter
+- [x] **LAND-03**: Visitor receives confirmation that signup was successful
+- [x] **LAND-04**: Page is mobile-responsive
+- [x] **LAND-05**: Landing page has compelling copy (headline, value prop, CTA)
 
 ### Email Infrastructure
 
@@ -35,8 +35,8 @@ Requirements for launch readiness. Landing page with email capture, monitoring, 
 ### Legal/Compliance
 
 - [ ] **LEGAL-01**: Privacy policy page exists and is linked from signup form
-- [ ] **LEGAL-02**: Cookie consent is handled (via Posthog or custom banner)
-- [ ] **LEGAL-03**: Email signup includes consent checkbox
+- [x] **LEGAL-02**: Cookie consent is handled (via Posthog or custom banner)
+- [x] **LEGAL-03**: Email signup includes consent checkbox
 - [ ] **LEGAL-04**: robots.txt is configured
 
 ### Analytics
@@ -97,11 +97,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAND-01 | 4 | Pending |
-| LAND-02 | 4 | Pending |
-| LAND-03 | 4 | Pending |
-| LAND-04 | 4 | Pending |
-| LAND-05 | 4 | Pending |
+| LAND-01 | 4 | Complete |
+| LAND-02 | 4 | Complete |
+| LAND-03 | 4 | Complete |
+| LAND-04 | 4 | Complete |
+| LAND-05 | 4 | Complete |
 | EMAIL-01 | 2 | Complete |
 | EMAIL-02 | 2 | Complete |
 | EMAIL-03 | 2 | Complete |
@@ -114,8 +114,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRAND-03 | 5 | Pending |
 | BRAND-04 | 5 | Pending |
 | LEGAL-01 | 5 | Pending |
-| LEGAL-02 | 4 | Pending |
-| LEGAL-03 | 4 | Pending |
+| LEGAL-02 | 4 | Complete |
+| LEGAL-03 | 4 | Complete |
 | LEGAL-04 | 5 | Pending |
 | ANLY-01 | 3 | Complete |
 | ANLY-02 | 3 | Complete |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-29 - Phase 3 requirements marked Complete*
+*Last updated: 2026-01-31 - Phase 4 requirements marked Complete*
