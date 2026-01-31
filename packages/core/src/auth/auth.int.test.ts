@@ -26,8 +26,8 @@ const TEST_ENV = {
   SENTRY_DSN: "https://key@sentry.io/123",
 };
 
-vi.mock("@gemhog/env", () => ({
-  env: { server: TEST_ENV },
+vi.mock("@gemhog/env/server", () => ({
+  serverEnv: TEST_ENV,
 }));
 describe("auth integration", () => {
   let pool: Pool;

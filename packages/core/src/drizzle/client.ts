@@ -1,8 +1,8 @@
 import { PgClient } from "@effect/sql-pg";
-import { env } from "@gemhog/env";
+import { serverEnv } from "@gemhog/env/server";
 import { Redacted } from "effect";
 
 // PostgreSQL connection layer - reads DATABASE_URL at construction time
 export const PgLive = PgClient.layer({
-  url: Redacted.make(env.server.DATABASE_URL),
+  url: Redacted.make(serverEnv.DATABASE_URL),
 });

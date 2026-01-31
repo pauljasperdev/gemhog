@@ -1,4 +1,4 @@
-import { env } from "@gemhog/env";
+import { serverEnv } from "@gemhog/env/server";
 import * as Sentry from "@sentry/node";
 import type { Context } from "hono";
 
@@ -8,7 +8,7 @@ import type { Context } from "hono";
  */
 export function initSentry() {
   Sentry.init({
-    dsn: env.server.SENTRY_DSN,
+    dsn: serverEnv.SENTRY_DSN,
     environment: process.env.NODE_ENV,
     tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
   });

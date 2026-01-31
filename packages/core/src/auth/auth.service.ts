@@ -1,10 +1,10 @@
-import { env } from "@gemhog/env";
+import { serverEnv } from "@gemhog/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./auth.sql";
 import { db } from "./drizzle.db";
 
-const trustedOrigins = [env.server.APP_URL, env.server.BETTER_AUTH_URL].filter(
+const trustedOrigins = [serverEnv.APP_URL, serverEnv.BETTER_AUTH_URL].filter(
   (origin): origin is string => Boolean(origin),
 );
 
@@ -17,7 +17,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  secret: env.server.BETTER_AUTH_SECRET,
+  secret: serverEnv.BETTER_AUTH_SECRET,
 });
 
 export type Session = typeof auth.$Infer.Session;

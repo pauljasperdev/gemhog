@@ -1,5 +1,5 @@
 import { SubscriberServiceTag, verifyToken } from "@gemhog/core/email";
-import { env } from "@gemhog/env";
+import { serverEnv } from "@gemhog/env/server";
 import { Effect } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
   const program = Effect.gen(function* () {
     const subscriberService = yield* SubscriberServiceTag;
-    const payload = yield* verifyToken(token, env.server.BETTER_AUTH_SECRET);
+    const payload = yield* verifyToken(token, serverEnv.BETTER_AUTH_SECRET);
     yield* subscriberService.unsubscribe(payload.email);
     return "success" as UnsubscribeResult;
   }).pipe(

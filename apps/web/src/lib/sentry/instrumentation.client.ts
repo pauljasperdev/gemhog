@@ -1,4 +1,4 @@
-import { env } from "@gemhog/env";
+import { clientEnv } from "@gemhog/env/client";
 import * as Sentry from "@sentry/nextjs";
 import posthog from "posthog-js";
 
@@ -17,7 +17,7 @@ const getSessionId = () => {
 };
 
 Sentry.init({
-  dsn: env.client.NEXT_PUBLIC_SENTRY_DSN,
+  dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN,
   environment: process.env.NODE_ENV,
 
   // Error sampling - capture all errors
@@ -78,8 +78,8 @@ Sentry.init({
 });
 
 // PostHog analytics
-if (env.client.NEXT_PUBLIC_POSTHOG_KEY) {
-  posthog.init(env.client.NEXT_PUBLIC_POSTHOG_KEY, {
+if (clientEnv.NEXT_PUBLIC_POSTHOG_KEY) {
+  posthog.init(clientEnv.NEXT_PUBLIC_POSTHOG_KEY, {
     api_host: "/ph",
     ui_host: "https://eu.posthog.com",
     defaults: "2025-11-30",

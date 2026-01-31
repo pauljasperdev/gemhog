@@ -115,7 +115,7 @@ describe("SignupForm", () => {
     render(<SignupForm />);
     expect(screen.getByLabelText("Email address")).toBeDefined();
     expect(
-      screen.getByRole("button", { name: /get the free newsletter/i }),
+      screen.getByRole("button", { name: /join waitlist/i }),
     ).toBeDefined();
   });
 
@@ -146,7 +146,7 @@ describe("SignupForm", () => {
     };
     mockFormSubscribeState = { canSubmit: false, isSubmitting: true };
     render(<SignupForm />);
-    const button = screen.getByRole("button", { name: /subscribing/i });
+    const button = screen.getByRole("button", { name: /joining/i });
     expect(button).toBeDefined();
     expect(button.hasAttribute("disabled")).toBe(true);
   });
