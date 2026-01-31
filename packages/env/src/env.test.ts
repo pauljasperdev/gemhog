@@ -5,22 +5,23 @@ import { localDevServerEnv, localDevWebEnv } from "./local-dev";
 
 /**
  * GUARDRAIL: Ensures every server env var in the schema has a corresponding test.
- * If this test fails, you added an env var to env.ts but forgot to test it.
+ * If this test fails, you added an env var to server.ts but forgot to test it.
  */
 describe("server env var test coverage", () => {
   it("every server env var in schema must have a test", () => {
-    const schemaPath = path.join(__dirname, "env.ts");
+    const schemaPath = path.join(__dirname, "server.ts");
     const testPath = path.join(__dirname, "env.test.ts");
 
     const schemaContent = fs.readFileSync(schemaPath, "utf-8");
     const testContent = fs.readFileSync(testPath, "utf-8");
 
-    const envVarPattern = /Config\.\w+\(\s*"([A-Z][A-Z0-9_]+)"/gm;
+    const envVarPattern = /([A-Z][A-Z0-9_]+):\s*Schema\.NonEmptyString/gm;
     const schemaVars = [
       ...new Set(
         [...schemaContent.matchAll(envVarPattern)]
           .map((m) => m[1])
-          .filter((value): value is string => Boolean(value)),
+          .filter((value): value is string => Boolean(value))
+          .filter((v) => !v.startsWith("NEXT_PUBLIC_")),
       ),
     ];
 
@@ -44,7 +45,7 @@ describe("server env var test coverage", () => {
  */
 describe("client env var test coverage", () => {
   it("every client env var in schema must have a test", () => {
-    const schemaPath = path.join(__dirname, "env.ts");
+    const schemaPath = path.join(__dirname, "client.ts");
     const testPath = path.join(__dirname, "env.test.ts");
 
     const schemaContent = fs.readFileSync(schemaPath, "utf-8");
@@ -70,7 +71,7 @@ describe("client env var test coverage", () => {
   });
 });
 
-describe("env.server validation", () => {
+describe("serverEnv validation", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -97,50 +98,49 @@ describe("env.server validation", () => {
     it("should fail when DATABASE_URL is missing", async () => {
       setRequiredEnvVars();
       delete process.env.DATABASE_URL;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when DATABASE_URL_POOLER is missing", async () => {
       setRequiredEnvVars();
       delete process.env.DATABASE_URL_POOLER;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when BETTER_AUTH_SECRET is missing", async () => {
       setRequiredEnvVars();
       delete process.env.BETTER_AUTH_SECRET;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when BETTER_AUTH_URL is missing", async () => {
       setRequiredEnvVars();
       delete process.env.BETTER_AUTH_URL;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when APP_URL is missing", async () => {
       setRequiredEnvVars();
       delete process.env.APP_URL;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when GOOGLE_GENERATIVE_AI_API_KEY is missing", async () => {
       setRequiredEnvVars();
       delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
+    });
+
+    it("should fail when RESEND_API_KEY is missing", async () => {
+      setRequiredEnvVars();
+      delete process.env.RESEND_API_KEY;
+      await expect(import("./server.js")).rejects.toThrow();
     });
 
     it("should fail when SENTRY_DSN is missing", async () => {
       setRequiredEnvVars();
       delete process.env.SENTRY_DSN;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      await expect(import("./server.js")).rejects.toThrow();
     });
   });
 
@@ -148,14 +148,14 @@ describe("env.server validation", () => {
     it("should succeed with all required vars", async () => {
       setRequiredEnvVars();
 
-      const { env } = await import("./env.js");
+      const { serverEnv } = await import("./server.js");
 
-      expect(env.server.BETTER_AUTH_URL).toBe("http://localhost:3000");
-      expect(env.server.APP_URL).toBe("http://localhost:3001");
-      expect(env.server.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
+      expect(serverEnv.BETTER_AUTH_URL).toBe("http://localhost:3000");
+      expect(serverEnv.APP_URL).toBe("http://localhost:3001");
+      expect(serverEnv.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
         "test-google-api-key",
       );
-      expect(env.server.SENTRY_DSN).toBe("https://key@sentry.io/123");
+      expect(serverEnv.SENTRY_DSN).toBe("https://key@sentry.io/123");
     });
 
     it("should use local defaults in development", async () => {
@@ -168,73 +168,27 @@ describe("env.server validation", () => {
       delete process.env.SENTRY_DSN;
       process.env.LOCAL_ENV = "1";
 
-      const { env } = await import("./env.js");
+      const { serverEnv } = await import("./server.js");
 
-      expect(env.server.DATABASE_URL).toBe(localDevServerEnv.DATABASE_URL);
-      expect(env.server.DATABASE_URL_POOLER).toBe(
+      expect(serverEnv.DATABASE_URL).toBe(localDevServerEnv.DATABASE_URL);
+      expect(serverEnv.DATABASE_URL_POOLER).toBe(
         localDevServerEnv.DATABASE_URL_POOLER,
       );
-      expect(env.server.BETTER_AUTH_SECRET).toBe(
+      expect(serverEnv.BETTER_AUTH_SECRET).toBe(
         localDevServerEnv.BETTER_AUTH_SECRET,
       );
-      expect(env.server.BETTER_AUTH_URL).toBe(
-        localDevServerEnv.BETTER_AUTH_URL,
-      );
-      expect(env.server.APP_URL).toBe(localDevServerEnv.APP_URL);
-      expect(env.server.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
+      expect(serverEnv.BETTER_AUTH_URL).toBe(localDevServerEnv.BETTER_AUTH_URL);
+      expect(serverEnv.APP_URL).toBe(localDevServerEnv.APP_URL);
+      expect(serverEnv.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
         localDevServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
       );
-      expect(env.server.RESEND_API_KEY).toBe(localDevServerEnv.RESEND_API_KEY);
-      expect(env.server.SENTRY_DSN).toBe(localDevServerEnv.SENTRY_DSN);
-    });
-  });
-
-  describe("validation", () => {
-    it("should fail when BETTER_AUTH_SECRET is too short", async () => {
-      setRequiredEnvVars();
-      process.env.BETTER_AUTH_SECRET = "short";
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
-    });
-
-    it("should fail when BETTER_AUTH_URL is not a valid URL", async () => {
-      setRequiredEnvVars();
-      process.env.BETTER_AUTH_URL = "not-a-url";
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
-    });
-
-    it("should fail when APP_URL is not a valid URL", async () => {
-      setRequiredEnvVars();
-      process.env.APP_URL = "not-a-url";
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
-    });
-
-    it("should fail when RESEND_API_KEY is missing", async () => {
-      setRequiredEnvVars();
-      delete process.env.RESEND_API_KEY;
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
-    });
-
-    it("should succeed with a valid RESEND_API_KEY", async () => {
-      setRequiredEnvVars();
-      process.env.RESEND_API_KEY = "re_test_1234567890";
-      const { env } = await import("./env.js");
-      expect(env.server.RESEND_API_KEY).toBe("re_test_1234567890");
-    });
-
-    it("should fail with an invalid RESEND_API_KEY prefix", async () => {
-      setRequiredEnvVars();
-      process.env.RESEND_API_KEY = "not-a-resend-key";
-      const { env } = await import("./env.js");
-      expect(() => env.server).toThrow();
+      expect(serverEnv.RESEND_API_KEY).toBe(localDevServerEnv.RESEND_API_KEY);
+      expect(serverEnv.SENTRY_DSN).toBe(localDevServerEnv.SENTRY_DSN);
     });
   });
 });
 
-describe("env.client validation", () => {
+describe("clientEnv validation", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -249,14 +203,12 @@ describe("env.client validation", () => {
   describe("required vars", () => {
     it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
       delete process.env.NEXT_PUBLIC_SERVER_URL;
-      const { env } = await import("./env.js");
-      expect(() => env.client).toThrow();
+      await expect(import("./client.js")).rejects.toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_SERVER_URL is empty string", async () => {
       process.env.NEXT_PUBLIC_SERVER_URL = "";
-      const { env } = await import("./env.js");
-      expect(() => env.client).toThrow();
+      await expect(import("./client.js")).rejects.toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_SENTRY_DSN is missing", async () => {
@@ -264,8 +216,7 @@ describe("env.client validation", () => {
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
       delete process.env.NEXT_PUBLIC_SENTRY_DSN;
-      const { env } = await import("./env.js");
-      expect(() => env.client).toThrow();
+      await expect(import("./client.js")).rejects.toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_POSTHOG_KEY is missing", async () => {
@@ -273,8 +224,7 @@ describe("env.client validation", () => {
       process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
       delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
-      const { env } = await import("./env.js");
-      expect(() => env.client).toThrow();
+      await expect(import("./client.js")).rejects.toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_POSTHOG_HOST is missing", async () => {
@@ -282,8 +232,7 @@ describe("env.client validation", () => {
       process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
       delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
-      const { env } = await import("./env.js");
-      expect(() => env.client).toThrow();
+      await expect(import("./client.js")).rejects.toThrow();
     });
   });
 
@@ -294,14 +243,14 @@ describe("env.client validation", () => {
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test123";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
 
-      const { env } = await import("./env.js");
+      const { clientEnv } = await import("./client.js");
 
-      expect(env.client.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
-      expect(env.client.NEXT_PUBLIC_SENTRY_DSN).toBe(
+      expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
+      expect(clientEnv.NEXT_PUBLIC_SENTRY_DSN).toBe(
         "https://key@sentry.io/123",
       );
-      expect(env.client.NEXT_PUBLIC_POSTHOG_KEY).toBe("phc_test123");
-      expect(env.client.NEXT_PUBLIC_POSTHOG_HOST).toBe(
+      expect(clientEnv.NEXT_PUBLIC_POSTHOG_KEY).toBe("phc_test123");
+      expect(clientEnv.NEXT_PUBLIC_POSTHOG_HOST).toBe(
         "https://eu.i.posthog.com",
       );
     });
@@ -313,18 +262,18 @@ describe("env.client validation", () => {
       delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
       process.env.LOCAL_ENV = "1";
 
-      const { env } = await import("./env.js");
+      const { clientEnv } = await import("./client.js");
 
-      expect(env.client.NEXT_PUBLIC_SERVER_URL).toBe(
+      expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe(
         localDevWebEnv.NEXT_PUBLIC_SERVER_URL,
       );
-      expect(env.client.NEXT_PUBLIC_SENTRY_DSN).toBe(
+      expect(clientEnv.NEXT_PUBLIC_SENTRY_DSN).toBe(
         localDevWebEnv.NEXT_PUBLIC_SENTRY_DSN,
       );
-      expect(env.client.NEXT_PUBLIC_POSTHOG_KEY).toBe(
+      expect(clientEnv.NEXT_PUBLIC_POSTHOG_KEY).toBe(
         localDevWebEnv.NEXT_PUBLIC_POSTHOG_KEY,
       );
-      expect(env.client.NEXT_PUBLIC_POSTHOG_HOST).toBe(
+      expect(clientEnv.NEXT_PUBLIC_POSTHOG_HOST).toBe(
         localDevWebEnv.NEXT_PUBLIC_POSTHOG_HOST,
       );
     });

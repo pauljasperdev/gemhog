@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
 
-import { DM_Serif_Display, Geist, Geist_Mono } from "next/font/google";
+import { DM_Serif_Display, Inter } from "next/font/google";
 
 import "../index.css";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import Providers from "@/components/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const dmSerif = DM_Serif_Display({
@@ -35,9 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${dmSerif.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${dmSerif.variable} antialiased`}>
         <Providers>
           {children}
           <CookieConsentBanner />

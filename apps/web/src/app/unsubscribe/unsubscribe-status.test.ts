@@ -2,17 +2,15 @@ import { createHmac } from "node:crypto";
 import { Context, Effect, Layer } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@gemhog/env", () => ({
-  env: {
-    server: {
-      BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-      APP_URL: "http://localhost:3001",
-      DATABASE_URL: "postgresql://localhost/test",
-      DATABASE_URL_POOLER: "postgresql://localhost/test",
-      BETTER_AUTH_URL: "http://localhost:3001",
-      GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-      SENTRY_DSN: "https://key@sentry.io/123",
-    },
+vi.mock("@gemhog/env/server", () => ({
+  serverEnv: {
+    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+    APP_URL: "http://localhost:3001",
+    DATABASE_URL: "postgresql://localhost/test",
+    DATABASE_URL_POOLER: "postgresql://localhost/test",
+    BETTER_AUTH_URL: "http://localhost:3001",
+    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+    SENTRY_DSN: "https://key@sentry.io/123",
   },
 }));
 

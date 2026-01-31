@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/env.ts",
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts",
     "./local-dev": "./src/local-dev.ts"
   },
   "dependencies": {

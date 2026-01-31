@@ -1,5 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import "@gemhog/env";
+import "@gemhog/env/server";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {

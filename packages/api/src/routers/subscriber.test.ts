@@ -5,18 +5,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const sendCalls: unknown[] = [];
 const subscribeCalls: string[] = [];
 
-vi.mock("@gemhog/env", () => ({
-  env: {
-    server: {
-      BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-      APP_URL: "http://localhost:3001",
-      DATABASE_URL: "postgresql://localhost/test",
-      DATABASE_URL_POOLER: "postgresql://localhost/test",
-      BETTER_AUTH_URL: "http://localhost:3001",
-      GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-      RESEND_API_KEY: "re_test_key",
-      SENTRY_DSN: "https://key@sentry.io/123",
-    },
+vi.mock("@gemhog/env/server", () => ({
+  serverEnv: {
+    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+    APP_URL: "http://localhost:3001",
+    DATABASE_URL: "postgresql://localhost/test",
+    DATABASE_URL_POOLER: "postgresql://localhost/test",
+    BETTER_AUTH_URL: "http://localhost:3001",
+    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+    RESEND_API_KEY: "re_test_key",
+    SENTRY_DSN: "https://key@sentry.io/123",
   },
 }));
 

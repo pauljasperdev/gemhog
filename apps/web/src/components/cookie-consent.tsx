@@ -1,6 +1,6 @@
 "use client";
 
-import { env } from "@gemhog/env";
+import { clientEnv } from "@gemhog/env/client";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
 
@@ -9,7 +9,7 @@ export function CookieConsentBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!posthog || !env.client.NEXT_PUBLIC_POSTHOG_KEY) return;
+    if (!posthog || !clientEnv.NEXT_PUBLIC_POSTHOG_KEY) return;
     const status = posthog.get_explicit_consent_status();
     if (status === "pending") {
       setVisible(true);

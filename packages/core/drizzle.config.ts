@@ -1,4 +1,4 @@
-import { env } from "@gemhog/env";
+import { serverEnv } from "@gemhog/env/server";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -6,6 +6,6 @@ export default defineConfig({
   out: "./src/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: env.server.DATABASE_URL,
+    url: serverEnv.DATABASE_URL,
   },
 });

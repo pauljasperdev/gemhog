@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { env } from "@gemhog/env";
+import { clientEnv } from "@gemhog/env/client";
 import { DefaultChatTransport } from "ai";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -14,7 +14,7 @@ export default function AIPage() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: `${env.client.NEXT_PUBLIC_SERVER_URL}/ai`,
+      api: `${clientEnv.NEXT_PUBLIC_SERVER_URL}/ai`,
     }),
   });
 
