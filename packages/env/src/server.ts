@@ -1,38 +1,28 @@
-import { Context, Effect, Layer, Schema } from "effect";
+import { Config, ConfigProvider, Effect } from "effect";
 import { localDevServerEnv } from "./local-dev";
 
-const ServerSchema = Schema.Struct({
-  DATABASE_URL: Schema.NonEmptyString,
-  DATABASE_URL_POOLER: Schema.NonEmptyString,
-  BETTER_AUTH_SECRET: Schema.NonEmptyString,
-  BETTER_AUTH_URL: Schema.NonEmptyString,
-  APP_URL: Schema.NonEmptyString,
-  GOOGLE_GENERATIVE_AI_API_KEY: Schema.NonEmptyString,
-  RESEND_API_KEY: Schema.NonEmptyString,
-  SENTRY_DSN: Schema.NonEmptyString,
+const ServerConfig = Config.all({
+  DATABASE_URL: Config.nonEmptyString("DATABASE_URL"),
+  DATABASE_URL_POOLER: Config.nonEmptyString("DATABASE_URL_POOLER"),
+  BETTER_AUTH_SECRET: Config.nonEmptyString("BETTER_AUTH_SECRET"),
+  BETTER_AUTH_URL: Config.nonEmptyString("BETTER_AUTH_URL"),
+  APP_URL: Config.nonEmptyString("APP_URL"),
+  GOOGLE_GENERATIVE_AI_API_KEY: Config.nonEmptyString(
+    "GOOGLE_GENERATIVE_AI_API_KEY",
+  ),
+  RESEND_API_KEY: Config.nonEmptyString("RESEND_API_KEY"),
+  SENTRY_DSN: Config.nonEmptyString("SENTRY_DSN"),
 });
 
-type ServerEnv = Schema.Schema.Type<typeof ServerSchema>;
-
-export class ServerEnvTag extends Context.Tag("ServerEnv")<
-  ServerEnvTag,
-  ServerEnv
->() {}
-
-const ServerEnvLive = Layer.effect(
-  ServerEnvTag,
-  Effect.sync(() => Schema.decodeUnknownSync(ServerSchema)(process.env)),
-);
-
-const ServerEnvLocalDev = Layer.succeed(
-  ServerEnvTag,
-  Schema.decodeUnknownSync(ServerSchema)(localDevServerEnv),
-);
+export type ServerEnv = Config.Config.Success<typeof ServerConfig>;
 
 const isLocal = process.env.LOCAL_ENV === "1";
 
-export const ServerEnvLayer = isLocal ? ServerEnvLocalDev : ServerEnvLive;
+const provider = isLocal
+  ? ConfigProvider.fromJson(localDevServerEnv)
+  : ConfigProvider.fromEnv();
 
-export const serverEnv: ServerEnv = Effect.runSync(
-  Effect.provide(ServerEnvTag, ServerEnvLayer),
-);
+export const ServerEnvEffect =
+  Effect.withConfigProvider(provider)(ServerConfig);
+
+export const serverEnv: ServerEnv = Effect.runSync(ServerEnvEffect);
