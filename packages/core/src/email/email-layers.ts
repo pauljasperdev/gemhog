@@ -1,6 +1,8 @@
 import { Layer } from "effect";
-import { makeEmailServiceLive } from "./email.service";
+import { EmailServiceConsole, makeEmailServiceLive } from "./email.service";
 import { SubscriberServiceLive } from "./subscriber.service";
+
+const DEV_PLACEHOLDER_KEY = "re_local_dev_placeholder";
 
 export function makeEmailLayers(
   apiKey: string,
@@ -8,8 +10,13 @@ export function makeEmailLayers(
   // biome-ignore lint/suspicious/noExplicitAny: DatabaseLive type varies by caller context
   databaseLive: Layer.Layer<any, any>,
 ) {
+  const emailLayer =
+    apiKey === DEV_PLACEHOLDER_KEY
+      ? EmailServiceConsole
+      : makeEmailServiceLive(apiKey, fromEmail);
+
   return Layer.mergeAll(
-    makeEmailServiceLive(apiKey, fromEmail),
+    emailLayer,
     SubscriberServiceLive.pipe(Layer.provide(databaseLive)),
   );
 }
