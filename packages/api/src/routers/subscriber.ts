@@ -12,6 +12,12 @@ import { z } from "zod";
 
 import { publicProcedure, router } from "../index";
 
+const EmailLayers = makeEmailLayers(
+  env.RESEND_API_KEY,
+  "Gemhog <hello@gemhog.com>",
+  DatabaseLive,
+);
+
 export const subscriberRouter = router({
   subscribe: publicProcedure
     .input(z.object({ email: z.string().email() }))
@@ -19,11 +25,6 @@ export const subscriberRouter = router({
       const { email } = input;
       const secret = env.BETTER_AUTH_SECRET;
       const appUrl = env.APP_URL;
-      const EmailLayers = makeEmailLayers(
-        env.RESEND_API_KEY,
-        "Gemhog <hello@gemhog.com>",
-        DatabaseLive,
-      );
 
       const program = Effect.gen(function* () {
         const subscriberService = yield* SubscriberServiceTag;

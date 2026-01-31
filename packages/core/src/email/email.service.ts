@@ -56,7 +56,7 @@ function isTransientError(error: EmailSendError): boolean {
 }
 
 const retrySchedule = Schedule.exponential("500 millis").pipe(
-  Schedule.compose(Schedule.recurs(3)),
+  Schedule.intersect(Schedule.recurs(3)),
 );
 
 export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
@@ -83,7 +83,6 @@ export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
             }),
         }).pipe(
           Effect.retry({ schedule: retrySchedule, while: isTransientError }),
-          Effect.asVoid,
         ),
     };
   });
