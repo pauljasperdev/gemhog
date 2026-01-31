@@ -19,6 +19,7 @@ V1 transforms Gemhog from a development scaffold into a shareable landing page w
 - [x] **Phase 3: Analytics** - Posthog integration with consent-aware tracking
 - [ ] **Phase 4: Landing Page** - Marketing page with email signup, copy, and cookie consent
 - [x] **Phase 4.1: Resend Email Provider** - Switch email provider from AWS SES to Resend
+- [ ] **Phase 4.2: Code Review Fixes** - Address code review issues (required env vars, test skips, email layer cleanup)
 - [ ] **Phase 5: Launch Readiness** - Branding, legal pages, SEO, and auth lockdown
 
 ## Phase Details
@@ -113,6 +114,23 @@ Plans:
 - [x] 04.1-01-PLAN.md — Replace SES with Resend SDK in core email service, update env schema and callsites
 - [x] 04.1-02-PLAN.md — Remove SES infrastructure, add ResendApiKey secret to SST config
 
+### Phase 4.2: Code Review Fixes
+
+**Goal:** Address all code review issues from CODE_REVIEW.md: make RESEND_API_KEY required, remove test skips, consolidate email layer construction, and refactor SendEmailParams
+**Depends on:** Phase 4.1
+**Requirements:** Code review Issues 8, 9, 10, 11, 12, 13, 14
+**Success Criteria** (what must be TRUE):
+  1. RESEND_API_KEY is required in env schema (not optional)
+  2. No conditional test skips based on Node.js version in any test file
+  3. Email layer construction exists in exactly one shared factory
+  4. SendEmailParams uses content: { html, text? } for dual-format support
+  5. All tests (unit, integration, E2E) run and pass on Node.js 25
+**Plans:** 2 plans
+
+Plans:
+- [ ] 04.2-01-PLAN.md -- Email infrastructure cleanup (required API key, layer consolidation, SendEmailParams refactor)
+- [ ] 04.2-02-PLAN.md -- Remove all Node.js 25+ test skips (integration + E2E)
+
 ### Phase 5: Launch Readiness
 
 **Goal:** All branding, legal, and security requirements are complete for public launch
@@ -145,4 +163,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Analytics | 3/3 | Complete | 2026-01-29 |
 | 4. Landing Page | 1/2 | In progress | - |
 | 4.1 Resend Email Provider | 2/2 | Complete | 2026-01-30 |
+| 4.2 Code Review Fixes | 0/2 | Not started | - |
 | 5. Launch Readiness | 0/2 | Not started | - |
