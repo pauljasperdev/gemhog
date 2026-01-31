@@ -59,7 +59,7 @@ export function SignupForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 className={cn(
-                  "h-12 border-zinc-800 bg-zinc-900/50 text-white placeholder:text-zinc-500 focus-visible:ring-emerald-500/50",
+                  "h-12 rounded-full border-zinc-800 bg-zinc-900/50 px-6 text-white placeholder:text-zinc-500 focus-visible:ring-emerald-500/50",
                   field.state.meta.errors.length > 0 &&
                     "border-red-500/50 focus-visible:ring-red-500/50",
                 )}
@@ -82,9 +82,9 @@ export function SignupForm() {
               type="submit"
               size="lg"
               disabled={!state.canSubmit || state.isSubmitting}
-              className="h-12 border border-emerald-500/20 bg-emerald-600 px-8 font-medium text-white shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-500 hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)]"
+              className="h-12 rounded-full border border-emerald-500/20 bg-emerald-600 px-8 font-medium text-white shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-500 hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)]"
             >
-              {state.isSubmitting ? "Joining..." : "Join Waitlist"}
+              {state.isSubmitting ? "Joining..." : "Get the free newsletter"}
             </Button>
           )}
         </form.Subscribe>
