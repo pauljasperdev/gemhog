@@ -133,8 +133,7 @@ These integrations will be implemented after V0 foundation is complete.
     (conditionally wraps when `NEXT_PUBLIC_POSTHOG_KEY` is set)
   - Custom events: `landing_page_viewed`, `signup_completed`, `signup_started`
     (via `apps/web/src/lib/analytics.ts`)
-  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (optional — graceful skip if not
-    set)
+  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (required — set via playwright.config.ts defaults for E2E)
   - SST secret: `PosthogKey` in `infra/secrets.ts`
 
 **Logs:**
