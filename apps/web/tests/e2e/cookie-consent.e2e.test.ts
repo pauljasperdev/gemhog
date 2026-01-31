@@ -6,15 +6,8 @@ test.describe("Cookie consent banner", () => {
   }) => {
     await page.goto("/");
 
-    // Check if banner appears (depends on NEXT_PUBLIC_POSTHOG_KEY being set)
     const banner = page.getByRole("dialog", { name: "Cookie consent" });
-
-    // If PostHog is not configured, banner won't appear -- this is expected
-    const bannerVisible = await banner.isVisible().catch(() => false);
-    if (!bannerVisible) {
-      test.skip();
-      return;
-    }
+    await expect(banner).toBeVisible();
 
     // Banner content
     await expect(page.getByText("Would you like a cookie?")).toBeVisible();
@@ -25,11 +18,7 @@ test.describe("Cookie consent banner", () => {
   test("accept dismisses banner", async ({ page }) => {
     await page.goto("/");
     const banner = page.getByRole("dialog", { name: "Cookie consent" });
-    const bannerVisible = await banner.isVisible().catch(() => false);
-    if (!bannerVisible) {
-      test.skip();
-      return;
-    }
+    await expect(banner).toBeVisible();
 
     await page.getByRole("button", { name: "Accept" }).click();
     await expect(banner).not.toBeVisible();
@@ -38,11 +27,7 @@ test.describe("Cookie consent banner", () => {
   test("decline dismisses banner", async ({ page }) => {
     await page.goto("/");
     const banner = page.getByRole("dialog", { name: "Cookie consent" });
-    const bannerVisible = await banner.isVisible().catch(() => false);
-    if (!bannerVisible) {
-      test.skip();
-      return;
-    }
+    await expect(banner).toBeVisible();
 
     await page.getByRole("button", { name: "Decline" }).click();
     await expect(banner).not.toBeVisible();

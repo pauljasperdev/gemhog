@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 Phase: 4.2 of 5 (Code Review Fixes)
 Plan: 2 of 2
 Status: Phase complete
-Last activity: 2026-01-31 - Completed 04.2-02-PLAN.md (remove Node.js 25+ test skips)
+Last activity: 2026-01-31 - Completed 04.2-02-PLAN.md (remove conditional test skips)
 
 Progress: [██████████████████] 100% (18/18 plans)
 
@@ -80,7 +80,6 @@ Recent decisions affecting current work:
 - [03-02]: Unconditional PostHogProvider -- PostHog handles not-yet-loaded state via internal queue
 - [03-02]: Explicit person_profiles: identified_only -- defensive best practice for anonymous-only analytics
 - [03-03]: Explicit cleanup() in afterEach for happy-dom -- @testing-library/react does not auto-cleanup
-- [03-03]: E2E tests skip gracefully when PostHog not configured -- prevents false failures
 - [04-01]: Route groups (landing) and (app) for layout separation -- standard Next.js pattern
 - [04-01]: DM Serif Display loaded via next/font/google with --font-dm-serif CSS variable
 - [04-01]: (app)/layout.tsx is a Server Component (not "use client") -- Server Components can render Client Components
@@ -93,7 +92,7 @@ Recent decisions affecting current work:
 - [04.2-01]: SendEmailParams uses content: { html, text? } instead of flat html field
 - [04.2-01]: Local dev uses re_local_dev_placeholder for RESEND_API_KEY validation
 - [04.2-01]: makeEmailLayers detects placeholder key and uses EmailServiceConsole (centralized fallback)
-- [04.2-02]: All Node.js 25+ test skips removed -- tests run unconditionally on current runtime
+- [04.2-02]: All conditional test skips removed -- tests run unconditionally
 
 ### Pending Todos
 
@@ -101,7 +100,7 @@ None yet.
 
 ### Blockers/Concerns
 
-None. All integration and E2E tests pass on Node.js 25.5.0 without conditional skips.
+None. All tests (unit, integration, E2E) pass with zero skips.
 
 ## Session Continuity
 
