@@ -46,6 +46,8 @@ sst-env.d.ts
 # Testing
 coverage
 .nyc_output
+test-output.txt
+ 
 
 # Misc
 *.tgz
