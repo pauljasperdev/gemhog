@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Find expert ideas you'd miss. Access the data to evaluate them yourself. Skip the consultant.
-**Current focus:** Phase 5 -- Launch Readiness (Phase 4.1 Resend migration complete)
+**Current focus:** Phase 4.2 -- Code Review Fixes (Plan 01 complete, Plan 02 pending)
 
 ## Current Position
 
-Phase: 4.1 of 5 (Resend Email Provider)
-Plan: 2 of 2
-Status: Phase complete
-Last activity: 2026-01-30 - Completed Phase 4.1 (SES-to-Resend migration verified)
+Phase: 4.2 of 5 (Code Review Fixes)
+Plan: 1 of 2
+Status: In progress
+Last activity: 2026-01-31 - Completed 04.2-01-PLAN.md (email infrastructure cleanup)
 
-Progress: [████████████████] 100% (16/16 plans)
+Progress: [█████████████████░] 94% (17/18 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 2)
-- Average duration: 19min (last 10 measured)
-- Total execution time: 282min (GSD-tracked)
+- Total plans completed: 17 (Phase 1: 1, Phase 2: 7 core + 2 gap closure, Phase 3: 1 core + 2 gap closure, Phase 4: 1, Phase 4.1: 2, Phase 4.2: 1)
+- Average duration: 18min (last 10 measured)
+- Total execution time: 293min (GSD-tracked)
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [████████████████] 100% (16/16 plans)
 | 3 | 3/3 | 23min | ~8min |
 | 4 | 1/2 | 28min | 28min |
 | 4.1 | 2/2 | 38min | ~19min |
+| 4.2 | 1/2 | 11min | 11min |
 
 **Recent Trend:**
-- Last 10 plans: 02-07 (13min), 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min), 04.1-01 (38min), 04.1-02 (parallel)
-- Trend: 04.1 parallel execution -- both plans ran simultaneously
+- Last 10 plans: 02-09 (4min), 02-08 (25min), 03-01 (10min), 03-02 (4min), 03-03 (9min), 04-01 (28min), 04.1-01 (38min), 04.1-02 (parallel), 04.2-01 (11min)
+- Trend: Consistent execution, gap closure plans tend to be faster
 
 *Updated after each plan completion*
 
@@ -88,6 +89,10 @@ Recent decisions affecting current work:
 - [04.1-01]: Hardcoded "Gemhog <hello@gemhog.com>" as from address at both email callsites
 - [04.1-01]: Exponential backoff retry (500ms base, 3 retries) for transient Resend errors
 - [04.1-01]: RESEND_API_KEY validated with startsWith("re_") prefix check
+- [04.2-01]: RESEND_API_KEY required (not optional) with re_ prefix validation
+- [04.2-01]: makeEmailLayers factory in @gemhog/core/email consolidates layer construction
+- [04.2-01]: SendEmailParams uses content: { html, text? } instead of flat html field
+- [04.2-01]: Local dev uses re_local_dev_placeholder for RESEND_API_KEY validation
 
 ### Pending Todos
 
@@ -99,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-30
-Stopped at: Phase 4.1 complete (Resend Email Provider). Both plans executed in parallel, verified. Ready for Phase 5 (Launch Readiness).
+Last session: 2026-01-31
+Stopped at: Completed 04.2-01-PLAN.md (email infrastructure cleanup). Phase 4.2 Plan 02 pending.
 Resume file: None
