@@ -59,8 +59,7 @@ export const subscriberRouter = router({
 
           yield* emailService.send({
             to: email,
-            subject,
-            content: { html, text },
+            email: { subject, html, text },
             headers: {
               "List-Unsubscribe": `<${unsubscribeUrl}>`,
               "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",

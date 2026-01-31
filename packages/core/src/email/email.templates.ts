@@ -1,7 +1,7 @@
-interface EmailContent {
+export interface EmailContent {
   subject: string;
   html: string;
-  text?: string;
+  text: string;
 }
 
 export function verificationEmail(params: { verifyUrl: string }): EmailContent {

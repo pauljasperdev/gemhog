@@ -104,7 +104,7 @@ describe("subscriberRouter", () => {
       expect(sendCalls.length).toBeGreaterThan(0);
       expect(sendCalls[0]).toMatchObject({
         to: "new@example.com",
-        subject: "Verify",
+        email: expect.objectContaining({ subject: "Verify" }),
       });
     });
 
