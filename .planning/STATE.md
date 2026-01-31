@@ -93,6 +93,7 @@ Recent decisions affecting current work:
 - [04.2-01]: makeEmailLayers factory in @gemhog/core/email consolidates layer construction
 - [04.2-01]: SendEmailParams uses content: { html, text? } instead of flat html field
 - [04.2-01]: Local dev uses re_local_dev_placeholder for RESEND_API_KEY validation
+- [04.2-01]: makeEmailLayers detects placeholder key and uses EmailServiceConsole (centralized fallback)
 
 ### Pending Todos
 
