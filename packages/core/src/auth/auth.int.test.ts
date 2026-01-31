@@ -23,11 +23,11 @@ const TEST_ENV = {
   BETTER_AUTH_URL: "http://localhost:3000",
   APP_URL: "http://localhost:3001",
   GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
-  NODE_ENV: "test" as const,
+  SENTRY_DSN: "https://key@sentry.io/123",
 };
 
-vi.mock("@gemhog/env/server", () => ({
-  env: TEST_ENV,
+vi.mock("@gemhog/env", () => ({
+  env: { server: TEST_ENV },
 }));
 describe("auth integration", () => {
   let pool: Pool;

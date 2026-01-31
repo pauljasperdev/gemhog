@@ -1,7 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import "@gemhog/env/web";
-import { isCi } from "@gemhog/env/runtime";
-import { env as sentryEnv } from "@gemhog/env/sentry";
+import "@gemhog/env";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -24,13 +22,13 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-  org: sentryEnv.SENTRY_ORG,
-  project: sentryEnv.SENTRY_PROJECT,
-  authToken: sentryEnv.SENTRY_AUTH_TOKEN,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
   tunnelRoute: "/monitoring",
 
-  silent: !isCi,
+  silent: !process.env.CI,
 
   sourcemaps: {
     deleteSourcemapsAfterUpload: true,

@@ -9,12 +9,6 @@ vi.mock("@gemhog/api/routers/index", () => ({
   appRouter: {},
 }));
 
-vi.mock("@gemhog/env/server", () => ({
-  env: {
-    NODE_ENV: "test",
-  },
-}));
-
 import { GET, POST } from "./route";
 
 describe("/api/trpc handler", () => {

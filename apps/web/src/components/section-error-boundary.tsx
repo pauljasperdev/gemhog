@@ -1,6 +1,5 @@
 "use client";
 
-import { isDev } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 import type { ReactElement, ReactNode } from "react";
 
@@ -50,7 +49,7 @@ export function SectionErrorBoundary({
             >
               Try again
             </button>
-            {isDev && (
+            {process.env.NODE_ENV === "development" && (
               <pre className="mt-4 max-h-48 overflow-auto rounded bg-destructive/10 p-2 text-left text-destructive text-xs">
                 {err.message}
                 {"\n\n"}
