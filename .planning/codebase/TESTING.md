@@ -2,6 +2,10 @@
 
 ## MANDATORY: For executing Plans
 
+THERE IS NO CONCEPT OF A PRE-EXISTING ERROR! Every item is closed with NO
+errors. If somewhere 'pre-existing' erros are mentioned, these are introduced
+errors and MUST be fixed.
+
 ### Before starting execution of plans
 
 1. Install deps and start integration test infrastructure
@@ -291,12 +295,12 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 Tests are co-located with implementation using clear suffixes:
 
-| Suffix           | Type        | Description                        |
-| ---------------- | ----------- | ---------------------------------- |
-| `*.test.ts`      | Unit        | Fast, mocked externals             |
-| `*.test.tsx`     | Unit (React)| React component tests (happy-dom)  |
-| `*.int.test.ts`  | Integration | Real DB, Docker required           |
-| `*.e2e.test.ts`  | E2E         | Playwright, full app               |
+| Suffix          | Type         | Description                       |
+| --------------- | ------------ | --------------------------------- |
+| `*.test.ts`     | Unit         | Fast, mocked externals            |
+| `*.test.tsx`    | Unit (React) | React component tests (happy-dom) |
+| `*.int.test.ts` | Integration  | Real DB, Docker required          |
+| `*.e2e.test.ts` | E2E          | Playwright, full app              |
 
 **Example structure:**
 
