@@ -20,7 +20,7 @@ describe("EmailServiceConsole", () => {
           service.send({
             to: "user@example.com",
             subject: "Test Subject",
-            html: "<p>Hello</p>",
+            content: { html: "<p>Hello</p>" },
           }),
         ),
         Effect.provide(EmailServiceConsole),
@@ -43,7 +43,7 @@ describe("EmailServiceConsole", () => {
             service.send({
               to: "user@example.com",
               subject: "Test",
-              html: "<p>Test</p>",
+              content: { html: "<p>Test</p>" },
             }),
           ),
           Effect.provide(EmailServiceConsole),
@@ -59,7 +59,7 @@ describe("EmailServiceConsole", () => {
           service.send({
             to: "user@example.com",
             subject: "Test",
-            html: "<p>Test</p>",
+            content: { html: "<p>Test</p>" },
             headers: {
               "List-Unsubscribe": "<https://gemhog.com/unsubscribe?token=abc>",
             },
@@ -83,18 +83,44 @@ describe("EmailServiceConsole", () => {
           service.send({
             to: "user@example.com",
             subject: "Test",
-            html: longHtml,
+            content: { html: longHtml },
           }),
         ),
         Effect.provide(EmailServiceConsole),
       ),
     );
 
-    const htmlLogCall = consoleSpy.mock.calls.find(
+    const contentLogCall = consoleSpy.mock.calls.find(
       (call: unknown[]) =>
-        typeof call[0] === "string" && call[0].includes("[EMAIL] HTML:"),
+        typeof call[0] === "string" && call[0].includes("[EMAIL] Content:"),
     );
-    expect(htmlLogCall).toBeDefined();
-    expect(htmlLogCall?.[0]).toContain("...");
+    expect(contentLogCall).toBeDefined();
+    expect(contentLogCall?.[0]).toContain("...");
+  });
+
+  it("prefers text over html for console preview", async () => {
+    await Effect.runPromise(
+      EmailServiceTag.pipe(
+        Effect.flatMap((service) =>
+          service.send({
+            to: "user@example.com",
+            subject: "Test",
+            content: {
+              html: "<p>HTML version</p>",
+              text: "Plain text version",
+            },
+          }),
+        ),
+        Effect.provide(EmailServiceConsole),
+      ),
+    );
+
+    const contentLogCall = consoleSpy.mock.calls.find(
+      (call: unknown[]) =>
+        typeof call[0] === "string" && call[0].includes("[EMAIL] Content:"),
+    );
+    expect(contentLogCall).toBeDefined();
+    expect(contentLogCall?.[0]).toContain("Plain text version");
+    expect(contentLogCall?.[0]).not.toContain("HTML version");
   });
 });

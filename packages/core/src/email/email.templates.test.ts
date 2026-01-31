@@ -33,6 +33,15 @@ describe("email templates", () => {
     it("HTML contains CAN-SPAM footer placeholder", () => {
       expect(result.html).toContain("CAN-SPAM footer placeholder");
     });
+
+    it("returns plain text version containing the verifyUrl", () => {
+      expect(result.text).toBeDefined();
+      expect(result.text).toContain(verifyUrl);
+    });
+
+    it("plain text version mentions 7-day expiry", () => {
+      expect(result.text).toContain("7 days");
+    });
   });
 
   describe("unsubscribeConfirmationEmail", () => {
@@ -54,6 +63,15 @@ describe("email templates", () => {
 
     it("HTML contains link back to site", () => {
       expect(result.html).toContain("gemhog.com");
+    });
+
+    it("returns plain text version with unsubscribe confirmation", () => {
+      expect(result.text).toBeDefined();
+      expect(result.text).toContain("unsubscribed");
+    });
+
+    it("plain text version contains resubscribe info", () => {
+      expect(result.text).toContain("gemhog.com");
     });
   });
 });

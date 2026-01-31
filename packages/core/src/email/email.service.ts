@@ -5,7 +5,7 @@ import { EmailSendError } from "./email.errors";
 export interface SendEmailParams {
   to: string;
   subject: string;
-  html: string;
+  content: { html: string; text?: string };
   headers?: Record<string, string>;
 }
 
@@ -23,14 +23,15 @@ export class EmailServiceTag extends Context.Tag("EmailService")<
 export const EmailServiceConsole = Layer.succeed(EmailServiceTag, {
   send: (params) =>
     Effect.gen(function* () {
-      const preview =
-        params.html.length > 200
-          ? `${params.html.slice(0, 200)}...`
-          : params.html;
+      const preview = params.content.text
+        ? params.content.text.slice(0, 200)
+        : params.content.html.length > 200
+          ? `${params.content.html.slice(0, 200)}...`
+          : params.content.html;
       yield* Console.log(
         `[EMAIL] To: ${params.to} | Subject: ${params.subject}`,
       );
-      yield* Console.log(`[EMAIL] HTML: ${preview}`);
+      yield* Console.log(`[EMAIL] Content: ${preview}`);
       if (params.headers) {
         yield* Console.log(
           `[EMAIL] Headers: ${JSON.stringify(params.headers)}`,
@@ -66,14 +67,14 @@ export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
     const resend = new Resend(apiKey);
 
     return {
-      send: ({ to, subject, html, headers }) =>
+      send: ({ to, subject, content, headers }) =>
         Effect.tryPromise({
           try: async () => {
             const { error } = await resend.emails.send({
               from: fromEmail,
               to: [to],
               subject,
-              html,
+              html: content.html,
               headers,
             });
             if (error) throw error;
