@@ -1,6 +1,5 @@
 "use client";
 
-import { isDev } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
@@ -33,7 +32,7 @@ export default function AppError({
         >
           Try again
         </button>
-        {isDev && (
+        {process.env.NODE_ENV === "development" && (
           <pre className="mt-6 max-h-64 overflow-auto rounded bg-destructive/10 p-4 text-left text-destructive text-xs">
             {error.message}
             {"\n\n"}

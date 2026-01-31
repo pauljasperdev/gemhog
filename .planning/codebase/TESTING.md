@@ -499,7 +499,7 @@ vitest run -- packages/env/src/server.test.ts
 
 # 3. Add NEW_VAR to schema
 # packages/env/src/server.ts
-NEW_VAR: z.string().min(1),
+NEW_VAR: Config.nonEmptyString("NEW_VAR"),
 
 # 4. Run test - MUST PASS
 vitest run -- packages/env/src/server.test.ts
@@ -592,8 +592,8 @@ export function createTestUser() {
 
 - External API calls (Google AI)
 - Time/dates for deterministic tests
-- Environment variables (use `vi.mock('@gemhog/env/server')` for t3-env
-  isolation)
+- Environment variables (use `vi.resetModules()` + dynamic `import()` for env
+  isolation, or `vi.mock('@gemhog/env/server')` for consumer tests)
 
 **DON'T mock:**
 

@@ -1,6 +1,6 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { google } from "@ai-sdk/google";
-import { env } from "@gemhog/env/server";
+import { env } from "@gemhog/env";
 import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -15,7 +15,7 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: env.APP_URL,
+    origin: env.server.APP_URL,
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,

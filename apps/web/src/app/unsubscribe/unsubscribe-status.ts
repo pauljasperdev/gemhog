@@ -1,5 +1,5 @@
 import { SubscriberServiceTag, verifyToken } from "@gemhog/core/email";
-import { env } from "@gemhog/env/server";
+import { env } from "@gemhog/env";
 import { Effect } from "effect";
 
 import { EmailLayers } from "@/lib/email-layers";
@@ -11,7 +11,7 @@ export async function getUnsubscribeStatus(
 ): Promise<UnsubscribeStatus> {
   const program = Effect.gen(function* () {
     const subscriberService = yield* SubscriberServiceTag;
-    const payload = yield* verifyToken(token, env.BETTER_AUTH_SECRET);
+    const payload = yield* verifyToken(token, env.server.BETTER_AUTH_SECRET);
     yield* subscriberService.unsubscribe(payload.email);
     return "success" as UnsubscribeStatus;
   }).pipe(

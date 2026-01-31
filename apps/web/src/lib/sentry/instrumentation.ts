@@ -1,12 +1,11 @@
-import { nextRuntime } from "@gemhog/env/runtime";
 import * as Sentry from "@sentry/nextjs";
 
 export async function register() {
-  if (nextRuntime === "nodejs") {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("./server.config");
   }
 
-  if (nextRuntime === "edge") {
+  if (process.env.NEXT_RUNTIME === "edge") {
     await import("./edge.config");
   }
 }

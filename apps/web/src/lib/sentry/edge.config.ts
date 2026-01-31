@@ -1,20 +1,10 @@
-import { isDev, nodeEnv } from "@gemhog/env/runtime";
-import { env as sentryEnv } from "@gemhog/env/sentry";
+import { env } from "@gemhog/env";
 import * as Sentry from "@sentry/nextjs";
 
-// DSN is optional - skip Sentry if not configured (local dev)
-const dsn = sentryEnv.SENTRY_DSN;
+Sentry.init({
+  dsn: env.server.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
 
-if (!dsn) {
-  if (isDev) {
-    console.info("Sentry DSN not configured, skipping edge initialization");
-  }
-} else {
-  Sentry.init({
-    dsn,
-    environment: nodeEnv,
-
-    // Edge-side sampling - lower in production
-    tracesSampleRate: isDev ? 1.0 : 0.1,
-  });
-}
+  // Edge-side sampling - lower in production
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+});

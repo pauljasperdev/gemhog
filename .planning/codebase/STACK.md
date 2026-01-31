@@ -91,10 +91,10 @@
 
 **Environment:**
 
-- @t3-oss/env-core 0.13.10 - Server env validation (`packages/env/`)
-- @t3-oss/env-nextjs 0.13.10 - Web env validation with Next.js support
-  (`packages/env/`)
-- Zod schemas for type-safe env vars
+- Effect `Config` module - Server env validation (`packages/env/` — server,
+  sentry, runtime)
+- Effect `Schema` module - Web env validation with static `process.env` reads
+  for Next.js inlining (`packages/env/` — web)
 - Server: `DATABASE_URL`, `DATABASE_URL_POOLER`, `BETTER_AUTH_SECRET`,
   `BETTER_AUTH_URL`, `CORS_ORIGIN`, `GOOGLE_GENERATIVE_AI_API_KEY`, `NODE_ENV`
 - Client: `NEXT_PUBLIC_SERVER_URL`

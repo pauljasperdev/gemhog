@@ -1,5 +1,4 @@
-import { isDev, nodeEnv } from "@gemhog/env/runtime";
-import { env } from "@gemhog/env/web";
+import { env } from "@gemhog/env";
 import * as Sentry from "@sentry/nextjs";
 import posthog from "posthog-js";
 
@@ -17,77 +16,70 @@ const getSessionId = () => {
   return sessionId;
 };
 
-// DSN is optional in env schema - skip Sentry if not configured (local dev)
-if (!env.NEXT_PUBLIC_SENTRY_DSN) {
-  if (isDev) {
-    console.info("Sentry DSN not configured, skipping client initialization");
-  }
-} else {
-  Sentry.init({
-    dsn: env.NEXT_PUBLIC_SENTRY_DSN,
-    environment: nodeEnv,
+Sentry.init({
+  dsn: env.client.NEXT_PUBLIC_SENTRY_DSN,
+  environment: process.env.NODE_ENV,
 
-    // Error sampling - capture all errors
-    sampleRate: 1.0,
+  // Error sampling - capture all errors
+  sampleRate: 1.0,
 
-    // Performance sampling - lower in production to stay within free tier
-    tracesSampleRate: isDev ? 1.0 : 0.1,
+  // Performance sampling - lower in production to stay within free tier
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
 
-    // Replay sampling (disabled for free tier)
-    replaysSessionSampleRate: 0,
-    replaysOnErrorSampleRate: 0,
+  // Replay sampling (disabled for free tier)
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
 
-    // Filter out known noisy errors from browser extensions and third parties
-    ignoreErrors: [
-      // Browser resize observer noise
-      "ResizeObserver loop limit exceeded",
-      "ResizeObserver loop completed with undelivered notifications",
-      // Non-error captures (usually browser extension issues)
-      /^Non-Error exception captured/,
-      /^Non-Error promise rejection captured/,
-      // Network errors that are expected
-      "Failed to fetch",
-      "Load failed",
-      "NetworkError",
-      // Code splitting chunk loading failures (usually network issues)
-      /Loading chunk \d+ failed/,
-      /ChunkLoadError/,
-    ],
+  // Filter out known noisy errors from browser extensions and third parties
+  ignoreErrors: [
+    // Browser resize observer noise
+    "ResizeObserver loop limit exceeded",
+    "ResizeObserver loop completed with undelivered notifications",
+    // Non-error captures (usually browser extension issues)
+    /^Non-Error exception captured/,
+    /^Non-Error promise rejection captured/,
+    // Network errors that are expected
+    "Failed to fetch",
+    "Load failed",
+    "NetworkError",
+    // Code splitting chunk loading failures (usually network issues)
+    /Loading chunk \d+ failed/,
+    /ChunkLoadError/,
+  ],
 
-    // Block errors from browser extensions
-    denyUrls: [
-      /extensions\//i,
-      /^chrome:\/\//i,
-      /^chrome-extension:\/\//i,
-      /^moz-extension:\/\//i,
-      /^safari-extension:\/\//i,
-      /^safari-web-extension:\/\//i,
-    ],
+  // Block errors from browser extensions
+  denyUrls: [
+    /extensions\//i,
+    /^chrome:\/\//i,
+    /^chrome-extension:\/\//i,
+    /^moz-extension:\/\//i,
+    /^safari-extension:\/\//i,
+    /^safari-web-extension:\/\//i,
+  ],
 
-    // Enable breadcrumbs for debugging context
-    integrations: [
-      Sentry.breadcrumbsIntegration({
-        console: true,
-        dom: true,
-        fetch: true,
-        history: true,
-      }),
-    ],
+  // Enable breadcrumbs for debugging context
+  integrations: [
+    Sentry.breadcrumbsIntegration({
+      console: true,
+      dom: true,
+      fetch: true,
+      history: true,
+    }),
+  ],
 
-    // Add session ID as tag for correlation
-    beforeSend(event) {
-      const sessionId = getSessionId();
-      if (sessionId) {
-        event.tags = { ...event.tags, session_id: sessionId };
-      }
-      return event;
-    },
-  });
-}
+  // Add session ID as tag for correlation
+  beforeSend(event) {
+    const sessionId = getSessionId();
+    if (sessionId) {
+      event.tags = { ...event.tags, session_id: sessionId };
+    }
+    return event;
+  },
+});
 
-// PostHog analytics - optional, skip if not configured (local dev)
-if (env.NEXT_PUBLIC_POSTHOG_KEY) {
-  posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+// PostHog analytics
+if (env.client.NEXT_PUBLIC_POSTHOG_KEY) {
+  posthog.init(env.client.NEXT_PUBLIC_POSTHOG_KEY, {
     api_host: "/ph",
     ui_host: "https://eu.posthog.com",
     defaults: "2025-11-30",

@@ -1,14 +1,17 @@
 import { TRPCError } from "@trpc/server";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@gemhog/env/server", () => ({
+vi.mock("@gemhog/env", () => ({
   env: {
-    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-    APP_URL: "http://localhost:3001",
-    DATABASE_URL: "postgresql://localhost/test",
-    DATABASE_URL_POOLER: "postgresql://localhost/test",
-    BETTER_AUTH_URL: "http://localhost:3001",
-    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+    server: {
+      BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+      APP_URL: "http://localhost:3001",
+      DATABASE_URL: "postgresql://localhost/test",
+      DATABASE_URL_POOLER: "postgresql://localhost/test",
+      BETTER_AUTH_URL: "http://localhost:3001",
+      GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+      SENTRY_DSN: "https://key@sentry.io/123",
+    },
   },
 }));
 

@@ -6,24 +6,25 @@ import {
   SubscriberServiceTag,
   verificationEmail,
 } from "@gemhog/core/email";
-import { env } from "@gemhog/env/server";
+import { env } from "@gemhog/env";
 import { Effect } from "effect";
 import { z } from "zod";
 
 import { publicProcedure, router } from "../index";
+
+const EmailLayers = makeEmailLayers(
+  env.server.RESEND_API_KEY,
+  "Gemhog <hello@gemhog.com>",
+  DatabaseLive,
+);
 
 export const subscriberRouter = router({
   subscribe: publicProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       const { email } = input;
-      const secret = env.BETTER_AUTH_SECRET;
-      const appUrl = env.APP_URL;
-      const EmailLayers = makeEmailLayers(
-        env.RESEND_API_KEY,
-        "Gemhog <hello@gemhog.com>",
-        DatabaseLive,
-      );
+      const secret = env.server.BETTER_AUTH_SECRET;
+      const appUrl = env.server.APP_URL;
 
       const program = Effect.gen(function* () {
         const subscriberService = yield* SubscriberServiceTag;

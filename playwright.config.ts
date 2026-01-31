@@ -1,6 +1,7 @@
 import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
-import { isCi } from "@gemhog/env/runtime";
 import { defineConfig, devices } from "@playwright/test";
+
+const isCi = !!process.env.CI;
 
 const envDefaults = { ...localDevServerEnv, ...localDevWebEnv };
 
@@ -46,6 +47,7 @@ export default defineConfig({
         process.env.GOOGLE_GENERATIVE_AI_API_KEY ??
         envDefaults.GOOGLE_GENERATIVE_AI_API_KEY,
       RESEND_API_KEY: process.env.RESEND_API_KEY ?? envDefaults.RESEND_API_KEY,
+      SENTRY_DSN: process.env.SENTRY_DSN ?? envDefaults.SENTRY_DSN,
       NEXT_PUBLIC_SERVER_URL:
         process.env.NEXT_PUBLIC_SERVER_URL ??
         envDefaults.NEXT_PUBLIC_SERVER_URL,

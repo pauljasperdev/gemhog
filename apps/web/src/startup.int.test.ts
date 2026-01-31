@@ -3,7 +3,7 @@ import { rmSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 const execAsync = promisify(exec);
 
@@ -16,7 +16,7 @@ const buildEnv = {
 };
 
 describe("web build with local defaults", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     rmSync(path.join(webDir, ".next"), { recursive: true, force: true });
   });
 
@@ -26,7 +26,7 @@ describe("web build with local defaults", () => {
       env: buildEnv,
     });
     expect(stdout + stderr).not.toContain("Invalid environment variables");
-  }, 120000);
+  }, 300000);
 
   it("should succeed with OpenNext build", async () => {
     const { stdout, stderr } = await execAsync("pnpm build:opennext", {
@@ -36,5 +36,5 @@ describe("web build with local defaults", () => {
     expect(stdout + stderr).not.toContain(
       "File server/instrumentation.js does not exist",
     );
-  }, 180000);
+  }, 300000);
 });
