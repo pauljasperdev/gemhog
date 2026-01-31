@@ -1,6 +1,7 @@
 interface EmailContent {
   subject: string;
   html: string;
+  text?: string;
 }
 
 export function verificationEmail(params: { verifyUrl: string }): EmailContent {
@@ -33,6 +34,7 @@ export function verificationEmail(params: { verifyUrl: string }): EmailContent {
   </table>
 </body>
 </html>`,
+    text: `Welcome to Gemhog\n\nThanks for signing up! Confirm your email: ${params.verifyUrl}\n\nThis link expires in 7 days.`,
   };
 }
 
@@ -60,5 +62,6 @@ export function unsubscribeConfirmationEmail(): EmailContent {
   </table>
 </body>
 </html>`,
+    text: "Unsubscribed\n\nYou've been successfully unsubscribed from Gemhog emails.\n\nChanged your mind? Resubscribe at gemhog.com",
   };
 }

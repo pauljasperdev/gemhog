@@ -10,6 +10,7 @@ export {
   unsubscribeConfirmationEmail,
   verificationEmail,
 } from "./email.templates";
+export { makeEmailLayers } from "./email-layers";
 export type { Subscriber, SubscriberService } from "./subscriber.service";
 export {
   SubscriberServiceLive,

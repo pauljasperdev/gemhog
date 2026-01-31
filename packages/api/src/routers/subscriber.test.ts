@@ -13,6 +13,7 @@ vi.mock("@gemhog/env/server", () => ({
     DATABASE_URL_POOLER: "postgresql://localhost/test",
     BETTER_AUTH_URL: "http://localhost:3001",
     GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+    RESEND_API_KEY: "re_test_key",
   },
 }));
 
@@ -52,12 +53,17 @@ vi.mock("@gemhog/core/email", () => {
 
   return {
     EmailServiceTag,
-    SubscriberServiceTag,
     EmailServiceConsole: MockEmailLayer,
+    SubscriberServiceTag,
+    makeEmailLayers: () => Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
     makeEmailServiceLive: () => MockEmailLayer,
     SubscriberServiceLive: MockSubscriberLayer,
     createToken: () => Effect.succeed("mock-token"),
-    verificationEmail: () => ({ subject: "Verify", html: "<p>Verify</p>" }),
+    verificationEmail: () => ({
+      subject: "Verify",
+      html: "<p>Verify</p>",
+      text: "Verify",
+    }),
   };
 });
 

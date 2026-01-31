@@ -1,27 +1,16 @@
 import { DatabaseLive } from "@gemhog/core/drizzle";
 import {
   createToken,
-  EmailServiceConsole,
   EmailServiceTag,
-  makeEmailServiceLive,
-  SubscriberServiceLive,
+  makeEmailLayers,
   SubscriberServiceTag,
   verificationEmail,
 } from "@gemhog/core/email";
 import { env } from "@gemhog/env/server";
-import { Effect, Layer } from "effect";
+import { Effect } from "effect";
 import { z } from "zod";
 
 import { publicProcedure, router } from "../index";
-
-function getEmailLayers() {
-  return Layer.mergeAll(
-    env.RESEND_API_KEY
-      ? makeEmailServiceLive(env.RESEND_API_KEY, "Gemhog <hello@gemhog.com>")
-      : EmailServiceConsole,
-    SubscriberServiceLive.pipe(Layer.provide(DatabaseLive)),
-  );
-}
 
 export const subscriberRouter = router({
   subscribe: publicProcedure
@@ -30,7 +19,11 @@ export const subscriberRouter = router({
       const { email } = input;
       const secret = env.BETTER_AUTH_SECRET;
       const appUrl = env.APP_URL;
-      const EmailLayers = getEmailLayers();
+      const EmailLayers = makeEmailLayers(
+        env.RESEND_API_KEY,
+        "Gemhog <hello@gemhog.com>",
+        DatabaseLive,
+      );
 
       const program = Effect.gen(function* () {
         const subscriberService = yield* SubscriberServiceTag;
@@ -62,12 +55,12 @@ export const subscriberRouter = router({
 
           const verifyUrl = `${appUrl}/verify?token=${token}`;
           const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
-          const { subject, html } = verificationEmail({ verifyUrl });
+          const { subject, html, text } = verificationEmail({ verifyUrl });
 
           yield* emailService.send({
             to: email,
             subject,
-            html,
+            content: { html, text },
             headers: {
               "List-Unsubscribe": `<${unsubscribeUrl}>`,
               "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
