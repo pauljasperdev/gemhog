@@ -10,21 +10,21 @@ export function verificationEmail(params: { verifyUrl: string }): EmailContent {
     html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#000000;color:#fafafa;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#000000;padding:40px 0;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#ffffff;color:#18181b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;padding:40px 0;">
     <tr><td align="center">
-      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#18181b;border-radius:12px;padding:40px;border:1px solid #27272a;">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="padding:40px;">
         <tr><td>
-          <h1 style="margin:0 0 16px;font-size:24px;color:#fafafa;">Welcome to Gemhog</h1>
-          <p style="margin:0 0 24px;font-size:16px;line-height:1.5;color:#d4d4d8;">
+          <h1 style="margin:0 0 16px;font-size:24px;color:#18181b;">Welcome to Gemhog</h1>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.5;color:#52525b;">
             Thanks for signing up! Please confirm your email address to start receiving expert investment insights.
           </p>
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
-            <tr><td align="center" style="background-color:#10b981;border-radius:9999px;">
+            <tr><td align="center" style="background-color:#18181b;border-radius:9999px;">
               <a href="${params.verifyUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 32px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;">Confirm subscription</a>
             </td></tr>
           </table>
-          <p style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#a1a1aa;">
+          <p style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#71717a;">
             This link expires in 7 days. If you didn't sign up for Gemhog, you can safely ignore this email.
           </p>
           <!-- CAN-SPAM footer placeholder -->
@@ -44,16 +44,16 @@ export function unsubscribeConfirmationEmail(): EmailContent {
     html: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
-<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#000000;color:#fafafa;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#000000;padding:40px 0;">
+<body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#ffffff;color:#18181b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;padding:40px 0;">
     <tr><td align="center">
-      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#18181b;border-radius:12px;padding:40px;border:1px solid #27272a;">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="padding:40px;">
         <tr><td>
-          <h1 style="margin:0 0 16px;font-size:24px;color:#fafafa;">Unsubscribed</h1>
-          <p style="margin:0 0 24px;font-size:16px;line-height:1.5;color:#d4d4d8;">
+          <h1 style="margin:0 0 16px;font-size:24px;color:#18181b;">Unsubscribed</h1>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.5;color:#52525b;">
             You've been successfully unsubscribed from Gemhog emails. We're sorry to see you go.
           </p>
-          <p style="margin:0;font-size:14px;line-height:1.5;color:#a1a1aa;">
+          <p style="margin:0;font-size:14px;line-height:1.5;color:#71717a;">
             Changed your mind? You can always resubscribe at <a href="https://gemhog.com" style="color:#10b981;text-decoration:underline;">gemhog.com</a>.
           </p>
         </td></tr>
