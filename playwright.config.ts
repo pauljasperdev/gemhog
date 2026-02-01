@@ -60,6 +60,7 @@ export default defineConfig({
       NEXT_PUBLIC_POSTHOG_HOST:
         process.env.NEXT_PUBLIC_POSTHOG_HOST ??
         envDefaults.NEXT_PUBLIC_POSTHOG_HOST,
+      NEXT_PUBLIC_DISABLE_ANALYTICS: "1",
     },
   },
 
