@@ -107,8 +107,8 @@ export function LandingPageContent() {
                 }}
               >
                 <CarouselContent>
-                  {THESES.map((thesis, index) => (
-                    <CarouselItem key={index}>
+                  {THESES.map((thesis) => (
+                    <CarouselItem key={thesis.title}>
                       <div className="p-1">
                         <div className="flex w-full flex-col rounded-2xl border border-white/10 bg-zinc-950/80 p-6 shadow-2xl backdrop-blur-md sm:p-6">
                           <div className="mb-6 flex items-center justify-between border-white/5 border-b pb-4">
