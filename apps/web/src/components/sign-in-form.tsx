@@ -108,6 +108,7 @@ export default function SignInForm({
           {(state) => (
             <Button
               type="submit"
+              variant="accent"
               className="w-full"
               disabled={!state.canSubmit || state.isSubmitting}
             >
@@ -118,11 +119,7 @@ export default function SignInForm({
       </form>
 
       <div className="mt-4 text-center">
-        <Button
-          variant="link"
-          onClick={onSwitchToSignUp}
-          className="text-accent hover:text-accent/80"
-        >
+        <Button variant="link" onClick={onSwitchToSignUp}>
           Need an account? Sign Up
         </Button>
       </div>

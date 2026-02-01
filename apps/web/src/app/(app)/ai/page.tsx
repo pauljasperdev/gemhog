@@ -89,11 +89,7 @@ export default function AIPage() {
           autoComplete="off"
           autoFocus
         />
-        <Button
-          type="submit"
-          size="icon"
-          className="bg-accent text-white hover:bg-accent/90"
-        >
+        <Button type="submit" variant="accent" size="icon">
           <Send size={18} />
         </Button>
       </form>

@@ -33,10 +33,7 @@ export default async function SuccessPage({
 
         <Link
           href="/dashboard"
-          className={cn(
-            buttonVariants(),
-            "w-full bg-accent text-white hover:bg-accent/90",
-          )}
+          className={cn(buttonVariants({ variant: "accent" }), "w-full")}
         >
           Go to Dashboard
         </Link>
