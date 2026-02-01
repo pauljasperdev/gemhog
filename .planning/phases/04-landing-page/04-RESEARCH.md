@@ -1,8 +1,7 @@
 # Phase 4: Landing Page - Research
 
-**Researched:** 2026-01-29
-**Domain:** Marketing landing page with email signup (Next.js / React / TailwindCSS)
-**Confidence:** HIGH
+**Researched:** 2026-01-29 **Domain:** Marketing landing page with email signup
+(Next.js / React / TailwindCSS) **Confidence:** HIGH
 
 ## Summary
 
@@ -33,26 +32,26 @@ The established libraries/tools for this domain:
 
 ### Core (Already Installed)
 
-| Library                  | Version | Purpose                          | Why Standard                                          |
-| ------------------------ | ------- | -------------------------------- | ----------------------------------------------------- |
-| Next.js                  | 16.1.1  | Page routing, SSR/RSC            | Already the framework                                 |
-| React                    | 19.2.3  | UI rendering                     | Already installed                                     |
-| TailwindCSS              | 4.1.10  | Styling                          | Already configured with shadcn/ui                     |
-| shadcn/ui                | 3.6.2   | Button, Input components         | Already installed and customized                      |
-| @tanstack/react-form     | 1.27.3  | Form state management            | Already used in sign-in-form.tsx                      |
-| @tanstack/react-query    | 5.90.12 | Data fetching / mutations        | Already integrated with tRPC                          |
-| @trpc/tanstack-react-query | 11.7.2 | tRPC + React Query bridge       | Already set up with createTRPCOptionsProxy            |
-| posthog-js               | 1.336   | Analytics events                 | Already configured with consent                       |
-| Zod                      | 4.1.13  | Form/input validation            | Already used server-side in subscriber router         |
-| next/font/google         | (Next)  | Font loading                     | Already used for Geist; add DM Serif Display          |
+| Library                    | Version | Purpose                   | Why Standard                                  |
+| -------------------------- | ------- | ------------------------- | --------------------------------------------- |
+| Next.js                    | 16.1.1  | Page routing, SSR/RSC     | Already the framework                         |
+| React                      | 19.2.3  | UI rendering              | Already installed                             |
+| TailwindCSS                | 4.1.10  | Styling                   | Already configured with shadcn/ui             |
+| shadcn/ui                  | 3.6.2   | Button, Input components  | Already installed and customized              |
+| @tanstack/react-form       | 1.27.3  | Form state management     | Already used in sign-in-form.tsx              |
+| @tanstack/react-query      | 5.90.12 | Data fetching / mutations | Already integrated with tRPC                  |
+| @trpc/tanstack-react-query | 11.7.2  | tRPC + React Query bridge | Already set up with createTRPCOptionsProxy    |
+| posthog-js                 | 1.336   | Analytics events          | Already configured with consent               |
+| Zod                        | 4.1.13  | Form/input validation     | Already used server-side in subscriber router |
+| next/font/google           | (Next)  | Font loading              | Already used for Geist; add DM Serif Display  |
 
 ### Supporting (Already Installed)
 
-| Library        | Version | Purpose                  | When to Use                              |
-| -------------- | ------- | ------------------------ | ---------------------------------------- |
-| Lucide React   | 0.546.0 | Icons (loading spinner)  | Loading state on submit button           |
-| Sonner         | 2.0.5   | Toast notifications      | Only if needed for unexpected errors     |
-| next-themes    | 0.4.6   | Theme management         | Already in Providers; landing overrides  |
+| Library      | Version | Purpose                 | When to Use                             |
+| ------------ | ------- | ----------------------- | --------------------------------------- |
+| Lucide React | 0.546.0 | Icons (loading spinner) | Loading state on submit button          |
+| Sonner       | 2.0.5   | Toast notifications     | Only if needed for unexpected errors    |
+| next-themes  | 0.4.6   | Theme management        | Already in Providers; landing overrides |
 
 ### Nothing New to Install
 
@@ -60,11 +59,11 @@ No new dependencies are required. Everything needed is already in the project.
 
 ### Alternatives Considered
 
-| Instead of           | Could Use             | Tradeoff                                             |
-| -------------------- | --------------------- | ---------------------------------------------------- |
-| @tanstack/react-form | React 19 `useFormStatus` | Would diverge from existing form pattern (sign-in) |
-| @tanstack/react-form | react-hook-form       | Different library; project already uses TanStack Form |
-| Geist + DM Serif     | Inter + Playfair      | Geist already loaded; switching adds no value        |
+| Instead of           | Could Use                | Tradeoff                                              |
+| -------------------- | ------------------------ | ----------------------------------------------------- |
+| @tanstack/react-form | React 19 `useFormStatus` | Would diverge from existing form pattern (sign-in)    |
+| @tanstack/react-form | react-hook-form          | Different library; project already uses TanStack Form |
+| Geist + DM Serif     | Inter + Playfair         | Geist already loaded; switching adds no value         |
 
 ## Architecture Patterns
 
@@ -91,9 +90,9 @@ apps/web/src/
 ### Pattern 1: Landing Page as Server Component Shell
 
 **What:** The page.tsx is a React Server Component that renders static content
-(H1, subheadline) and embeds a client component for the interactive form.
-**When to use:** When the page has both static marketing content and interactive
-form elements.
+(H1, subheadline) and embeds a client component for the interactive form. **When
+to use:** When the page has both static marketing content and interactive form
+elements.
 
 ```typescript
 // apps/web/src/app/page.tsx (Server Component)
@@ -123,9 +122,8 @@ export default function LandingPage() {
 ### Pattern 2: tRPC Mutation with @tanstack/react-form
 
 **What:** Use `useMutation(trpc.subscriber.subscribe.mutationOptions())` and
-wire it into `useForm`'s `onSubmit` via `mutateAsync`.
-**When to use:** Forms that submit to tRPC mutations. This matches the existing
-sign-in form pattern.
+wire it into `useForm`'s `onSubmit` via `mutateAsync`. **When to use:** Forms
+that submit to tRPC mutations. This matches the existing sign-in form pattern.
 
 ```typescript
 // apps/web/src/components/signup-form.tsx
@@ -172,9 +170,9 @@ export function SignupForm() {
 
 **What:** The landing page uses a permanent dark background regardless of the
 user's system/theme preference. Use `className="dark"` on a wrapping div to
-scope Tailwind's dark: variants, plus explicit bg/text colors.
-**When to use:** When a specific route needs to always be dark, while other
-routes respect user theme.
+scope Tailwind's dark: variants, plus explicit bg/text colors. **When to use:**
+When a specific route needs to always be dark, while other routes respect user
+theme.
 
 There are two approaches:
 
@@ -183,9 +181,8 @@ There are two approaches:
    shadcn/ui CSS variables for `.dark` will apply within this scope. This is
    simpler and avoids layout.tsx changes.
 
-2. **Approach B: Use a route group layout** -- Create
-   `app/(landing)/layout.tsx` that forces dark class on `<html>`. More complex,
-   may fight with next-themes.
+2. **Approach B: Use a route group layout** -- Create `app/(landing)/layout.tsx`
+   that forces dark class on `<html>`. More complex, may fight with next-themes.
 
 **Recommendation:** Approach A. Add `className="dark"` on the landing page's
 outermost div. Use explicit dark-mode colors (bg-gray-950, text-white,
@@ -195,15 +192,16 @@ with next-themes and keeps the change self-contained.
 ### Pattern 4: Conditional Header Removal
 
 **What:** The landing page should not show the Header component. The layout.tsx
-currently always renders `<Header />`.
-**When to use:** When specific routes need different chrome.
+currently always renders `<Header />`. **When to use:** When specific routes
+need different chrome.
 
 Two approaches:
 
 1. **Route groups:** Move landing page to `app/(landing)/page.tsx` with its own
    layout that omits Header. Other pages stay in `app/(app)/` with Header.
 
-2. **Conditional rendering:** Check the route in layout and conditionally render.
+2. **Conditional rendering:** Check the route in layout and conditionally
+   render.
 
 **Recommendation:** Route groups `(landing)` and `(app)`. This is the standard
 Next.js pattern for different layouts per route segment. It avoids client-side
@@ -239,21 +237,22 @@ app/
   installed and used.
 - **Adding new tRPC endpoints:** The `subscriber.subscribe` mutation already
   exists and handles all edge cases (duplicate emails, re-sends for pending).
-- **Custom email validation:** Use Zod's built-in `z.email()`. Don't write regex.
+- **Custom email validation:** Use Zod's built-in `z.email()`. Don't write
+  regex.
 
 ## Don't Hand-Roll
 
 Problems that look simple but have existing solutions:
 
-| Problem                    | Don't Build              | Use Instead                                    | Why                                             |
-| -------------------------- | ------------------------ | ---------------------------------------------- | ------------------------------------------------ |
-| Email validation           | Custom regex             | Zod `z.email()`                                | Edge cases (internationalized emails, etc.)      |
-| Form state management      | useState for each field  | @tanstack/react-form `useForm`                 | Already used; handles validation, submission     |
-| Mutation state tracking    | Custom loading/error state | tRPC `mutationOptions()` + `useMutation`     | isPending, isSuccess, error built in             |
-| Analytics tracking         | Direct posthog.capture   | `trackEvent()` from `@/lib/analytics`          | Centralized, typed event constants               |
-| Cookie consent re-open     | Custom state management  | `CookieSettingsButton` component               | Already built with custom DOM event pattern      |
-| Font loading               | Manual `<link>` tags     | `next/font/google`                             | Automatic optimization, zero layout shift        |
-| Dark mode scoping          | CSS-in-JS / custom logic | Tailwind `dark:` variant with `.dark` class    | Already configured in index.css                  |
+| Problem                 | Don't Build                | Use Instead                                 | Why                                          |
+| ----------------------- | -------------------------- | ------------------------------------------- | -------------------------------------------- |
+| Email validation        | Custom regex               | Zod `z.email()`                             | Edge cases (internationalized emails, etc.)  |
+| Form state management   | useState for each field    | @tanstack/react-form `useForm`              | Already used; handles validation, submission |
+| Mutation state tracking | Custom loading/error state | tRPC `mutationOptions()` + `useMutation`    | isPending, isSuccess, error built in         |
+| Analytics tracking      | Direct posthog.capture     | `trackEvent()` from `@/lib/analytics`       | Centralized, typed event constants           |
+| Cookie consent re-open  | Custom state management    | `CookieSettingsButton` component            | Already built with custom DOM event pattern  |
+| Font loading            | Manual `<link>` tags       | `next/font/google`                          | Automatic optimization, zero layout shift    |
+| Dark mode scoping       | CSS-in-JS / custom logic   | Tailwind `dark:` variant with `.dark` class | Already configured in index.css              |
 
 **Key insight:** This phase is almost entirely UI/UX work. The backend, API, and
 analytics infrastructure are already complete. Do not add backend code.
@@ -264,45 +263,44 @@ analytics infrastructure are already complete. Do not add backend code.
 
 **What goes wrong:** Using next-themes to force dark on a specific route causes
 hydration mismatches because the server renders one theme while the client may
-render another.
-**Why it happens:** next-themes uses `localStorage` and system preference, which
-aren't available server-side.
-**How to avoid:** Use explicit Tailwind classes (`bg-gray-950 text-white`) on the
-landing page rather than relying on theme CSS variables. Wrap content in a
-`<div className="dark">` for any `dark:` prefixed utilities.
-**Warning signs:** Console errors about hydration mismatch, flash of wrong
-background color.
+render another. **Why it happens:** next-themes uses `localStorage` and system
+preference, which aren't available server-side. **How to avoid:** Use explicit
+Tailwind classes (`bg-gray-950 text-white`) on the landing page rather than
+relying on theme CSS variables. Wrap content in a `<div className="dark">` for
+any `dark:` prefixed utilities. **Warning signs:** Console errors about
+hydration mismatch, flash of wrong background color.
 
 ### Pitfall 2: Form Not Preventing Default Submission
 
 **What goes wrong:** The form submits via browser default, causing a full page
-reload instead of calling the tRPC mutation.
-**Why it happens:** Missing `e.preventDefault()` in the form's `onSubmit`.
-**How to avoid:** Follow the exact pattern from sign-in-form.tsx:
+reload instead of calling the tRPC mutation. **Why it happens:** Missing
+`e.preventDefault()` in the form's `onSubmit`. **How to avoid:** Follow the
+exact pattern from sign-in-form.tsx:
+
 ```typescript
 <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit(); }}>
 ```
+
 **Warning signs:** Page reloads on form submit, URL gets query params appended.
 
 ### Pitfall 3: Analytics Events Firing Before Consent
 
 **What goes wrong:** `trackEvent(SIGNUP_STARTED)` fires before PostHog has
-consent, leading to dropped events or GDPR violations.
-**Why it happens:** PostHog with `cookieless_mode: "on_reject"` will silently
-drop events if user hasn't given consent, which is correct behavior.
-**How to avoid:** This is actually fine -- PostHog handles it. The events fire,
-and if the user hasn't consented, PostHog drops them. No special handling needed.
-**Warning signs:** None -- this is expected behavior.
+consent, leading to dropped events or GDPR violations. **Why it happens:**
+PostHog with `cookieless_mode: "on_reject"` will silently drop events if user
+hasn't given consent, which is correct behavior. **How to avoid:** This is
+actually fine -- PostHog handles it. The events fire, and if the user hasn't
+consented, PostHog drops them. No special handling needed. **Warning signs:**
+None -- this is expected behavior.
 
 ### Pitfall 4: Layout Shift from Font Loading
 
-**What goes wrong:** Visible text reflow when web fonts load after initial render.
-**Why it happens:** Font not preloaded or `display: swap` causes layout shift.
-**How to avoid:** Use `next/font/google` which automatically handles preloading,
-subsetting, and `font-display: swap`. The Geist font is already configured this
-way.
-**Warning signs:** CLS (Cumulative Layout Shift) in Lighthouse, visible text
-jump.
+**What goes wrong:** Visible text reflow when web fonts load after initial
+render. **Why it happens:** Font not preloaded or `display: swap` causes layout
+shift. **How to avoid:** Use `next/font/google` which automatically handles
+preloading, subsetting, and `font-display: swap`. The Geist font is already
+configured this way. **Warning signs:** CLS (Cumulative Layout Shift) in
+Lighthouse, visible text jump.
 
 ### Pitfall 5: Cookie Consent Banner Styling on Dark Background
 
@@ -310,32 +308,30 @@ jump.
 colors (white bg, gray text) that will look correct on the dark landing page
 because it uses its own explicit colors. However, the banner's `dark:` variants
 (dark:bg-gray-900, dark:border-gray-700) will activate inside the `dark` scoped
-wrapper.
-**Why it happens:** The banner is rendered inside the root layout's Providers, so
-if the landing page wraps content in `dark` class, the banner may or may not be
-inside that scope.
-**How to avoid:** The CookieConsentBanner is rendered in the root layout.tsx
-(not inside the page content), so it sits outside the landing page's `dark`
-wrapper. It will use its own styling based on the system/theme preference. If
-route groups are used, ensure the banner stays in the root layout.
-**Warning signs:** Banner looks wrong (wrong bg color) on the landing page.
+wrapper. **Why it happens:** The banner is rendered inside the root layout's
+Providers, so if the landing page wraps content in `dark` class, the banner may
+or may not be inside that scope. **How to avoid:** The CookieConsentBanner is
+rendered in the root layout.tsx (not inside the page content), so it sits
+outside the landing page's `dark` wrapper. It will use its own styling based on
+the system/theme preference. If route groups are used, ensure the banner stays
+in the root layout. **Warning signs:** Banner looks wrong (wrong bg color) on
+the landing page.
 
 ### Pitfall 6: E2E Test Fixtures Breaking
 
 **What goes wrong:** Existing E2E tests in `home.e2e.test.ts` check for page
-content that will change completely.
-**Why it happens:** Tests reference the old scaffold page content (ASCII art).
-**How to avoid:** Update existing E2E tests to check for landing page elements
-(H1 text, signup form, footer).
-**Warning signs:** E2E test failures after deploying.
+content that will change completely. **Why it happens:** Tests reference the old
+scaffold page content (ASCII art). **How to avoid:** Update existing E2E tests
+to check for landing page elements (H1 text, signup form, footer). **Warning
+signs:** E2E test failures after deploying.
 
 ### Pitfall 7: happy-dom Cleanup in Component Tests
 
-**What goes wrong:** Component tests leak state between tests.
-**Why it happens:** happy-dom does not auto-cleanup like jsdom.
-**How to avoid:** Always add `afterEach(() => { cleanup(); })` in component
-tests. This is documented in TESTING.md and enforced in cookie-consent.test.tsx.
-**Warning signs:** Tests pass individually but fail when run together.
+**What goes wrong:** Component tests leak state between tests. **Why it
+happens:** happy-dom does not auto-cleanup like jsdom. **How to avoid:** Always
+add `afterEach(() => { cleanup(); })` in component tests. This is documented in
+TESTING.md and enforced in cookie-consent.test.tsx. **Warning signs:** Tests
+pass individually but fail when run together.
 
 ## Code Examples
 
@@ -358,10 +354,10 @@ subscribe.mutate({ email: "user@example.com" });
 await subscribe.mutateAsync({ email: "user@example.com" });
 
 // Check states
-subscribe.isPending;   // loading
-subscribe.isSuccess;   // success
-subscribe.isError;     // error
-subscribe.error;       // TRPCClientError
+subscribe.isPending; // loading
+subscribe.isSuccess; // success
+subscribe.isError; // error
+subscribe.error; // TRPCClientError
 ```
 
 ### Form with @tanstack/react-form (Existing Project Pattern)
@@ -486,13 +482,13 @@ describe("SignupForm", () => {
 
 ### Font Selection
 
-| Role     | Font               | Weight | Size (mobile/desktop) | Rationale                                    |
-| -------- | ------------------ | ------ | --------------------- | -------------------------------------------- |
-| H1       | DM Serif Display   | 400    | text-3xl / text-5xl   | Personality, warmth, not sterile              |
-| Subtitle | Geist Sans         | 400    | text-lg / text-xl     | Clean readability on dark backgrounds         |
-| Body     | Geist Sans         | 400    | text-sm / text-base   | Already loaded, excellent screen readability  |
-| Button   | Geist Sans         | 500    | text-sm               | Consistent with existing shadcn/ui buttons    |
-| Footer   | Geist Sans         | 400    | text-xs               | Subtle, unobtrusive                          |
+| Role     | Font             | Weight | Size (mobile/desktop) | Rationale                                    |
+| -------- | ---------------- | ------ | --------------------- | -------------------------------------------- |
+| H1       | DM Serif Display | 400    | text-3xl / text-5xl   | Personality, warmth, not sterile             |
+| Subtitle | Geist Sans       | 400    | text-lg / text-xl     | Clean readability on dark backgrounds        |
+| Body     | Geist Sans       | 400    | text-sm / text-base   | Already loaded, excellent screen readability |
+| Button   | Geist Sans       | 500    | text-sm               | Consistent with existing shadcn/ui buttons   |
+| Footer   | Geist Sans       | 400    | text-xs               | Subtle, unobtrusive                          |
 
 ### Why DM Serif Display for H1
 
@@ -515,27 +511,27 @@ describe("SignupForm", () => {
 
 ### Dark Background
 
-Use Tailwind's `gray-950` (`oklch(0.145 0 0)`) as the primary background.
-This matches the existing shadcn/ui dark theme variable for `--background` in
-the `.dark` selector. For a slightly warmer feel (matching polar.sh), consider
-a very dark neutral with a hint of blue:
+Use Tailwind's `gray-950` (`oklch(0.145 0 0)`) as the primary background. This
+matches the existing shadcn/ui dark theme variable for `--background` in the
+`.dark` selector. For a slightly warmer feel (matching polar.sh), consider a
+very dark neutral with a hint of blue:
 
-| Element             | Color              | Tailwind Class              |
-| ------------------- | ------------------ | --------------------------- |
-| Page background     | Near-black         | bg-gray-950                 |
-| Primary text        | White              | text-white                  |
-| Secondary text      | Medium gray        | text-gray-400               |
-| Muted text          | Dim gray           | text-gray-500               |
-| CTA button bg       | Emerald 500        | bg-emerald-500              |
-| CTA button hover    | Emerald 400        | hover:bg-emerald-400        |
-| CTA button text     | White              | text-white                  |
-| Input bg            | Transparent/dark   | bg-white/5                  |
-| Input border        | Subtle gray        | border-gray-700             |
-| Input focus border  | Emerald            | focus:border-emerald-500    |
-| Error text          | Red                | text-red-400                |
-| Success text        | Emerald 400        | text-emerald-400            |
-| Footer text         | Dim gray           | text-gray-500               |
-| Footer link hover   | Light gray         | hover:text-gray-300         |
+| Element            | Color            | Tailwind Class           |
+| ------------------ | ---------------- | ------------------------ |
+| Page background    | Near-black       | bg-gray-950              |
+| Primary text       | White            | text-white               |
+| Secondary text     | Medium gray      | text-gray-400            |
+| Muted text         | Dim gray         | text-gray-500            |
+| CTA button bg      | Emerald 500      | bg-emerald-500           |
+| CTA button hover   | Emerald 400      | hover:bg-emerald-400     |
+| CTA button text    | White            | text-white               |
+| Input bg           | Transparent/dark | bg-white/5               |
+| Input border       | Subtle gray      | border-gray-700          |
+| Input focus border | Emerald          | focus:border-emerald-500 |
+| Error text         | Red              | text-red-400             |
+| Success text       | Emerald 400      | text-emerald-400         |
+| Footer text        | Dim gray         | text-gray-500            |
+| Footer link hover  | Light gray       | hover:text-gray-300      |
 
 ### Emerald Accent
 
@@ -550,14 +546,14 @@ variables. Key shades:
 
 ### Responsive Breakpoints
 
-| Element        | Mobile (<640px)         | Desktop (>=640px)             |
-| -------------- | ----------------------- | ----------------------------- |
-| Max width      | Full width - padding    | max-w-xl (36rem / 576px)     |
-| H1 size        | text-3xl (1.875rem)     | text-5xl (3rem)              |
-| Subtitle size  | text-base               | text-lg                       |
-| Content padding | px-6                   | px-4 (max-w constrains)       |
-| Form layout    | Stack (input over btn)  | Inline (input + btn side by side) |
-| Vertical center | min-h-svh + flex       | Same                          |
+| Element         | Mobile (<640px)        | Desktop (>=640px)                 |
+| --------------- | ---------------------- | --------------------------------- |
+| Max width       | Full width - padding   | max-w-xl (36rem / 576px)          |
+| H1 size         | text-3xl (1.875rem)    | text-5xl (3rem)                   |
+| Subtitle size   | text-base              | text-lg                           |
+| Content padding | px-6                   | px-4 (max-w constrains)           |
+| Form layout     | Stack (input over btn) | Inline (input + btn side by side) |
+| Vertical center | min-h-svh + flex       | Same                              |
 
 ### Form Layout Detail
 
@@ -572,19 +568,20 @@ Mobile:  [    email@example.com    ]
 
 ## State of the Art
 
-| Old Approach                       | Current Approach                          | When Changed  | Impact                                  |
-| ---------------------------------- | ----------------------------------------- | ------------- | --------------------------------------- |
-| tRPC `trpc.x.useMutation()`       | `useMutation(trpc.x.mutationOptions())`   | tRPC v11      | More React Query native, compiler-safe  |
-| Manual `fetch` for mutations       | tRPC typed mutations                      | Project setup | Type safety, DRY                        |
-| CSS variables for all colors       | Direct Tailwind utility classes           | Tailwind v4   | Simpler for static pages                |
-| `darkMode: 'class'` in config      | `@custom-variant dark` in CSS             | Tailwind v4   | Already configured in index.css         |
+| Old Approach                  | Current Approach                        | When Changed  | Impact                                 |
+| ----------------------------- | --------------------------------------- | ------------- | -------------------------------------- |
+| tRPC `trpc.x.useMutation()`   | `useMutation(trpc.x.mutationOptions())` | tRPC v11      | More React Query native, compiler-safe |
+| Manual `fetch` for mutations  | tRPC typed mutations                    | Project setup | Type safety, DRY                       |
+| CSS variables for all colors  | Direct Tailwind utility classes         | Tailwind v4   | Simpler for static pages               |
+| `darkMode: 'class'` in config | `@custom-variant dark` in CSS           | Tailwind v4   | Already configured in index.css        |
 
 **Deprecated/outdated:**
+
 - The old `trpc.x.useMutation()` hook-based pattern still works but is not
   recommended for new code. Use `useMutation(trpc.x.mutationOptions())`.
-- The current page.tsx uses `useQuery(trpc.healthCheck.queryOptions())` which
-  is the correct v11 pattern and should be replaced (not the query, but the
-  whole page content).
+- The current page.tsx uses `useQuery(trpc.healthCheck.queryOptions())` which is
+  the correct v11 pattern and should be replaced (not the query, but the whole
+  page content).
 
 ## Open Questions
 
@@ -616,12 +613,12 @@ Things that couldn't be fully resolved:
 3. **Existing Header/Layout for Other Routes**
    - What we know: The landing page removes the header, but other routes
      (dashboard, AI chat) still need it.
-   - What's unclear: Whether route groups will require moving existing pages
-     or just restructuring layouts.
+   - What's unclear: Whether route groups will require moving existing pages or
+     just restructuring layouts.
    - Recommendation: Use Next.js route groups. The landing page goes in
      `(landing)/` with a minimal layout. Other routes go in `(app)/` with the
-     existing header layout. Root layout keeps shared concerns (fonts, Providers,
-     CookieConsentBanner).
+     existing header layout. Root layout keeps shared concerns (fonts,
+     Providers, CookieConsentBanner).
 
 ## Sources
 
@@ -638,10 +635,12 @@ Things that couldn't be fully resolved:
   - `apps/web/src/index.css` (Tailwind/shadcn CSS variables)
   - `apps/web/src/components/ui/button.tsx` and `input.tsx` (shadcn primitives)
 
-- **tRPC v11 Official Docs** -- [useMutation docs](https://trpc.io/docs/client/react/useMutation),
+- **tRPC v11 Official Docs** --
+  [useMutation docs](https://trpc.io/docs/client/react/useMutation),
   [TanStack React Query integration](https://trpc.io/docs/client/tanstack-react-query/setup)
 
-- **Tailwind CSS v4 Colors** -- [Official color docs](https://tailwindcss.com/docs/colors),
+- **Tailwind CSS v4 Colors** --
+  [Official color docs](https://tailwindcss.com/docs/colors),
   [Emerald OKLCH palette](https://tailwindcolor.com/emerald)
 
 ### Secondary (MEDIUM confidence)
@@ -661,6 +660,7 @@ Things that couldn't be fully resolved:
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: HIGH -- everything already installed and verified in codebase
 - Architecture: HIGH -- route groups and component patterns are standard Next.js
 - Pitfalls: HIGH -- verified against actual codebase code
@@ -668,5 +668,5 @@ Things that couldn't be fully resolved:
   design research and polar.sh reference
 - Color strategy: HIGH -- Tailwind's built-in emerald palette verified
 
-**Research date:** 2026-01-29
-**Valid until:** 2026-03-01 (stable; no fast-moving dependencies)
+**Research date:** 2026-01-29 **Valid until:** 2026-03-01 (stable; no
+fast-moving dependencies)
