@@ -61,16 +61,16 @@ const THESES = [
 
 export function LandingPageContent() {
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden bg-black selection:bg-emerald-500/30">
+    <div className="relative flex min-h-svh flex-col overflow-hidden bg-background selection:bg-accent/30">
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-6">
         {/* Main Hero Card */}
-        <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 lg:grid-cols-2">
+        <div className="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-3xl border border-muted bg-card lg:grid-cols-2">
           {/* Left Pane: Content */}
           <div className="flex flex-col justify-center px-8 py-12 sm:px-12 lg:px-16 lg:py-20">
-            <h1 className="font-sans font-semibold text-4xl text-white tracking-tight sm:text-5xl lg:text-5xl">
+            <h1 className="font-sans font-semibold text-4xl text-foreground tracking-tight sm:text-5xl lg:text-5xl">
               We listen to financial podcasts so you don&apos;t have to
             </h1>
-            <p className="mt-6 text-lg text-zinc-400">
+            <p className="mt-6 text-lg text-muted-foreground">
               Investment ideas, trends, and expert takes — delivered to your
               inbox.
             </p>
@@ -81,12 +81,12 @@ export function LandingPageContent() {
           </div>
 
           {/* Right Pane: Visual */}
-          <div className="relative flex min-h-[500px] flex-col items-center justify-center bg-zinc-900 p-12 lg:min-h-full lg:p-24">
+          <div className="relative flex min-h-[500px] flex-col items-center justify-center bg-secondary p-12 lg:min-h-full lg:p-24">
             {/* Background Effects Wrapper (Clipped) */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               {/* Gradient Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-emerald-500/20" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/40 via-transparent to-transparent opacity-70" />
+              <div className="absolute inset-0 bg-gradient-to-br from-chart-3/20 via-chart-5/20 to-chart-1/20" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/40 via-transparent to-transparent opacity-70" />
 
               {/* Texture/Noise Overlay */}
               <div
@@ -110,58 +110,58 @@ export function LandingPageContent() {
                   {THESES.map((thesis) => (
                     <CarouselItem key={thesis.title}>
                       <div className="p-1">
-                        <div className="flex w-full flex-col rounded-2xl border border-white/10 bg-zinc-950/80 p-6 shadow-2xl backdrop-blur-md sm:p-6">
-                          <div className="mb-6 flex items-center justify-between border-white/5 border-b pb-4">
-                            <span className="font-medium text-sm text-zinc-400">
+                        <div className="flex w-full flex-col rounded-2xl border border-border bg-card/80 p-6 shadow-2xl backdrop-blur-md sm:p-6">
+                          <div className="mb-6 flex items-center justify-between border-border/50 border-b pb-4">
+                            <span className="font-medium text-muted-foreground text-sm">
                               Latest Report
                             </span>
-                            <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 font-medium text-emerald-400 text-xs">
+                            <span className="rounded-full bg-accent/10 px-2.5 py-0.5 font-medium text-chart-4 text-xs">
                               {thesis.tag}
                             </span>
                           </div>
 
                           <div className="space-y-6">
                             <div>
-                              <h3 className="font-semibold text-white text-xl">
+                              <h3 className="font-semibold text-foreground text-xl">
                                 {thesis.title}
                               </h3>
-                              <div className="mt-2 flex items-center gap-2 text-indigo-400 text-sm">
+                              <div className="mt-2 flex items-center gap-2 text-chart-3 text-sm">
                                 <span className="font-medium">Source:</span>
-                                <span className="text-zinc-400">
+                                <span className="text-muted-foreground">
                                   {thesis.source}
                                 </span>
                               </div>
                             </div>
 
                             <div className="flex flex-col gap-4">
-                              <div className="rounded-lg bg-zinc-900/50 p-4">
+                              <div className="rounded-lg bg-secondary/50 p-4">
                                 <span
                                   className={cn(
                                     "mb-1 block font-bold text-xs uppercase tracking-wider",
                                     thesis.summary.color === "emerald"
-                                      ? "text-emerald-500"
+                                      ? "text-accent"
                                       : "text-blue-500",
                                   )}
                                 >
                                   {thesis.summary.label}
                                 </span>
-                                <p className="text-sm text-zinc-300 leading-relaxed">
+                                <p className="text-secondary-foreground text-sm leading-relaxed">
                                   {thesis.summary.text}
                                 </p>
                               </div>
 
-                              <div className="rounded-lg bg-zinc-900/50 p-4">
+                              <div className="rounded-lg bg-secondary/50 p-4">
                                 <span
                                   className={cn(
                                     "mb-1 block font-bold text-xs uppercase tracking-wider",
                                     thesis.insight.color === "purple"
-                                      ? "text-purple-400"
+                                      ? "text-chart-2"
                                       : "text-orange-400",
                                   )}
                                 >
                                   {thesis.insight.label}
                                 </span>
-                                <p className="text-sm text-zinc-300 leading-relaxed">
+                                <p className="text-secondary-foreground text-sm leading-relaxed">
                                   {thesis.insight.text}
                                 </p>
                               </div>
@@ -174,11 +174,11 @@ export function LandingPageContent() {
                 </CarouselContent>
                 <CarouselPrevious
                   variant="ghost"
-                  className="pointer-events-auto -left-12 border-none bg-transparent text-white/50 opacity-0 transition-all hover:bg-transparent hover:text-white group-hover:opacity-100"
+                  className="pointer-events-auto -left-12 border-none bg-transparent text-foreground/50 opacity-0 transition-all hover:bg-transparent hover:text-foreground group-hover:opacity-100"
                 />
                 <CarouselNext
                   variant="ghost"
-                  className="pointer-events-auto -right-12 border-none bg-transparent text-white/50 opacity-0 transition-all hover:bg-transparent hover:text-white group-hover:opacity-100"
+                  className="pointer-events-auto -right-12 border-none bg-transparent text-foreground/50 opacity-0 transition-all hover:bg-transparent hover:text-foreground group-hover:opacity-100"
                 />
               </Carousel>
             </div>
