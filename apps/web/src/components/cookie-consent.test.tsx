@@ -13,6 +13,7 @@ let posthogKey: string | undefined;
 
 vi.mock("posthog-js/react", () => ({
   usePostHog: () => ({
+    __loaded: true,
     get_explicit_consent_status: () => mockConsentStatus,
     opt_in_capturing: mockOptIn,
     opt_out_capturing: mockOptOut,
