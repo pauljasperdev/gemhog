@@ -91,13 +91,14 @@
 
 **Environment:**
 
-- Effect `Config` module - Server env validation (`packages/env/` — server,
-  sentry, runtime)
-- Effect `Schema` module - Web env validation with static `process.env` reads
-  for Next.js inlining (`packages/env/` — web)
+- Effect `Config` module - Environment validation (`packages/env/` — server,
+  client, runtime)
 - Server: `DATABASE_URL`, `DATABASE_URL_POOLER`, `BETTER_AUTH_SECRET`,
-  `BETTER_AUTH_URL`, `CORS_ORIGIN`, `GOOGLE_GENERATIVE_AI_API_KEY`, `NODE_ENV`
-- Client: `NEXT_PUBLIC_SERVER_URL`
+  `BETTER_AUTH_URL`, `APP_URL`, `GOOGLE_GENERATIVE_AI_API_KEY`, `RESEND_API_KEY`,
+  `SENTRY_DSN`
+- Client: `NEXT_PUBLIC_SERVER_URL`, `NEXT_PUBLIC_SENTRY_DSN`,
+  `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
+- Runtime: `DATABASE_URL` (lightweight, for migrations and scripts)
 
 **Build:**
 

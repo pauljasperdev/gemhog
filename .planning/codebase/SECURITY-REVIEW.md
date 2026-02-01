@@ -274,7 +274,7 @@ No known vulnerabilities found
   (intentional for cross-origin API)
 - **CORS configured:** Uses specific origin from env, not "\*"
 - **No debug logging:** Dashboard cleaned up
-- **Env validation:** t3-oss/env validates at import time
+- **Env validation:** Effect Config validates at import time
 
 ### Summary
 
@@ -299,8 +299,8 @@ No known vulnerabilities found
 **Reviewer:** Claude (agent) **Commit:** Phase 3.1 complete (03.1-01 through
 03.1-05) **Scope:**
 
-- packages/env/src/server.ts (secrets handling with t3-oss/env)
-- packages/env/src/web.ts (web env config)
+- packages/env/src/server.ts (secrets handling with Effect Config)
+- packages/env/src/client.ts (client env config)
 - packages/core/src/auth/auth.service.ts (authentication)
 - packages/core/drizzle.config.ts (database config)
 - packages/core/src/payment/\* (deleted - dead code removal)
@@ -357,7 +357,7 @@ No known vulnerabilities found
 - **No secrets in git:** .env files properly gitignored, none tracked
 - **Parameterized queries:** Drizzle ORM used throughout
 - **CORS configured:** Uses specific origin from env, not "\*"
-- **Env validation:** t3-oss/env validates at import time, fails fast
+- **Env validation:** Effect Config validates at import time, fails fast
 
 ### Summary
 
@@ -552,9 +552,8 @@ Copy this template when adding a new review session:
 
 ## Review: 2026-01-31 - Phase 4 Landing Page
 
-**Reviewer:** Claude (agent)
-**Commit:** Phase 4 Plans 04-01 and 04-02 (landing page UI)
-**Scope:**
+**Reviewer:** Claude (agent) **Commit:** Phase 4 Plans 04-01 and 04-02 (landing
+page UI) **Scope:**
 
 - apps/web/src/app/(landing)/page.tsx (new landing page)
 - apps/web/src/components/signup-form.tsx (email signup form)
@@ -565,8 +564,10 @@ Copy this template when adding a new review session:
 - apps/web/tests/e2e/home.e2e.test.ts (E2E tests)
 
 **Dependencies:**
+
 - Imports: @tanstack/react-form, @tanstack/react-query, next/link, zod
-- Callees: packages/api/src/routers/subscriber.ts (tRPC router), apps/web/src/lib/analytics.ts, apps/web/src/components/cookie-consent.tsx
+- Callees: packages/api/src/routers/subscriber.ts (tRPC router),
+  apps/web/src/lib/analytics.ts, apps/web/src/components/cookie-consent.tsx
 
 ### Dependency Audit
 
@@ -577,26 +578,31 @@ No new vulnerabilities were ignored
 
 ### Files Reviewed
 
-| File | Categories Checked | Result |
-|------|-------------------|--------|
-| apps/web/src/app/(landing)/page.tsx | XSS Prevention, Secrets | PASS |
-| apps/web/src/components/signup-form.tsx | Input Validation, XSS Prevention, API Security | PASS |
-| apps/web/src/components/landing-footer.tsx | XSS Prevention | PASS |
-| apps/web/src/app/privacy/page.tsx | XSS Prevention | PASS |
-| packages/api/src/routers/subscriber.ts | Input Validation, SQL/Database | PASS (pre-existing, Phase 2) |
+| File                                       | Categories Checked                             | Result                       |
+| ------------------------------------------ | ---------------------------------------------- | ---------------------------- |
+| apps/web/src/app/(landing)/page.tsx        | XSS Prevention, Secrets                        | PASS                         |
+| apps/web/src/components/signup-form.tsx    | Input Validation, XSS Prevention, API Security | PASS                         |
+| apps/web/src/components/landing-footer.tsx | XSS Prevention                                 | PASS                         |
+| apps/web/src/app/privacy/page.tsx          | XSS Prevention                                 | PASS                         |
+| packages/api/src/routers/subscriber.ts     | Input Validation, SQL/Database                 | PASS (pre-existing, Phase 2) |
 
 ### Security Checklist Review
 
 #### 1. Input Validation - PASS
 
 **signup-form.tsx:**
-- ✓ Email input validated with Zod: `z.email("Please enter a valid email address")`
+
+- ✓ Email input validated with Zod:
+  `z.email("Please enter a valid email address")`
 - ✓ Validation happens on client before submission (user experience)
-- ✓ tRPC mutation re-validates server-side: `subscriber.subscribe` has `.input(z.object({ email: z.string().email() }))`
-- ✓ No raw user input passed to database (goes through tRPC validation → Effect service → Drizzle ORM)
+- ✓ tRPC mutation re-validates server-side: `subscriber.subscribe` has
+  `.input(z.object({ email: z.string().email() }))`
+- ✓ No raw user input passed to database (goes through tRPC validation → Effect
+  service → Drizzle ORM)
 - ✓ Form uses @tanstack/react-form validators pattern
 
 **privacy/page.tsx:**
+
 - ✓ No user input (static page)
 
 #### 2. Authentication - N/A
@@ -624,6 +630,7 @@ Public endpoints only (newsletter signup is open to all).
 #### 6. XSS Prevention - PASS
 
 **signup-form.tsx:**
+
 - ✓ React's default escaping used throughout
 - ✓ No dangerouslySetInnerHTML
 - ✓ Email input value comes from form state, not dangerously rendered
@@ -631,16 +638,19 @@ Public endpoints only (newsletter signup is open to all).
 - ✓ Privacy policy link href="/privacy" is static, not user-controlled
 
 **landing-footer.tsx:**
+
 - ✓ All content is static text or component imports
 - ✓ Links use static hrefs ("/privacy")
 - ✓ Dynamic year from `new Date().getFullYear()` is a number (safe)
 
 **page.tsx:**
+
 - ✓ All content is static JSX
 - ✓ No user-generated content
 - ✓ Metadata title/description are static strings
 
 **privacy/page.tsx:**
+
 - ✓ Static text only
 
 #### 7. CSRF Protection - PASS
@@ -665,7 +675,8 @@ Public endpoints only (newsletter signup is open to all).
 #### 10. Logging & Monitoring - PASS
 
 - ✓ No console.log statements with sensitive data
-- ✓ Analytics trackEvent calls pass only event names (SIGNUP_STARTED, SIGNUP_COMPLETED)
+- ✓ Analytics trackEvent calls pass only event names (SIGNUP_STARTED,
+  SIGNUP_COMPLETED)
 - ✓ No PII logged
 - ✓ Error messages shown to user are generic ("Something went wrong" fallback)
 
@@ -686,18 +697,20 @@ None.
 
 ### Positive Findings
 
-- **Proper input validation**: Zod schemas at both client (UX) and server (security)
+- **Proper input validation**: Zod schemas at both client (UX) and server
+  (security)
 - **React XSS protections**: No dangerouslySetInnerHTML or unsafe patterns
 - **Clean separation of concerns**: UI → tRPC → Effect services → Drizzle ORM
 - **No secrets in code**: All env vars properly validated
 - **Accessibility**: ARIA labels, role attributes (role="alert", role="status")
 - **Type safety**: Full TypeScript with tRPC end-to-end typing
-- **Test coverage**: Unit tests (8 tests) + E2E tests (4 tests) for new components
+- **Test coverage**: Unit tests (8 tests) + E2E tests (4 tests) for new
+  components
 
 ### Summary
 
 | Severity | Count | Status |
-|----------|-------|--------|
+| -------- | ----- | ------ |
 | Critical | 0     | -      |
 | High     | 0     | -      |
 | Medium   | 0     | -      |
@@ -705,9 +718,9 @@ None.
 
 ### Sign-off
 
-- [x] Checked for pre-existing open findings (4 exist from SST dependencies, unrelated to this change)
+- [x] Checked for pre-existing open findings (4 exist from SST dependencies,
+      unrelated to this change)
 - [x] Dependency audit passed (no new vulnerabilities)
 - [x] All Critical/High/Medium resolved (none found)
 - [x] Low findings documented (none found)
 - [x] Ready for completion (pending test fixes)
-
