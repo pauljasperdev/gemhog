@@ -2,7 +2,7 @@ import { exec } from "node:child_process";
 import { rmSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
-import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
+import { localClientEnv, localServerEnv } from "@gemhog/env/local-dev";
 import { beforeEach, describe, expect, it } from "vitest";
 
 const execAsync = promisify(exec);
@@ -10,8 +10,8 @@ const execAsync = promisify(exec);
 const webDir = path.resolve(__dirname, "..");
 const buildEnv = {
   ...process.env,
-  ...localDevServerEnv,
-  ...localDevWebEnv,
+  ...localServerEnv,
+  ...localClientEnv,
   LOCAL_ENV: "1",
 };
 

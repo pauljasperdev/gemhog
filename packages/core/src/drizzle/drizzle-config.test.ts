@@ -1,4 +1,4 @@
-import { localDevServerEnv } from "@gemhog/env/local-dev";
+import { localServerEnv } from "@gemhog/env/local-dev";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const originalEnv = { ...process.env };
@@ -21,7 +21,7 @@ describe("drizzle.config", () => {
       dbCredentials: { url: string };
     };
 
-    expect(config.dbCredentials.url).toBe(localDevServerEnv.DATABASE_URL);
+    expect(config.dbCredentials.url).toBe(localServerEnv.DATABASE_URL);
   });
 
   it("throws when DATABASE_URL is missing without LOCAL_ENV", async () => {

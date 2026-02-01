@@ -1,5 +1,5 @@
 import { Config, ConfigProvider, Effect } from "effect";
-import { localDevServerEnv } from "./local-dev";
+import { localServerEnv } from "./local-dev";
 
 const ServerConfig = Config.all({
   DATABASE_URL: Config.nonEmptyString("DATABASE_URL"),
@@ -19,7 +19,7 @@ export type ServerEnv = Config.Config.Success<typeof ServerConfig>;
 const isLocal = process.env.LOCAL_ENV === "1";
 
 const provider = isLocal
-  ? ConfigProvider.fromJson(localDevServerEnv)
+  ? ConfigProvider.fromJson(localServerEnv)
   : ConfigProvider.fromEnv();
 
 export const ServerEnvEffect =
