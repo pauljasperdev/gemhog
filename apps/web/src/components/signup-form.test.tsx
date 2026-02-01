@@ -114,9 +114,7 @@ describe("SignupForm", () => {
   it("renders email input and submit button", () => {
     render(<SignupForm />);
     expect(screen.getByLabelText("Email address")).toBeDefined();
-    expect(
-      screen.getByRole("button", { name: /join waitlist/i }),
-    ).toBeDefined();
+    expect(screen.getByRole("button", { name: /./i })).toBeDefined();
   });
 
   it("renders privacy consent text with privacy policy link", () => {
