@@ -17,9 +17,9 @@
     "db:watch": "docker compose -f ./infra/docker-compose.yml up",
     "db:stop": "docker compose -f ./infra/docker-compose.yml stop",
     "db:down": "docker compose -f ./infra/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @gemhog/core db:migrate",
     "format:md": "prettier --write \"**/*.md\"",
     "prepare": "lefthook install",
-
     "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter web dev",
     "dev:server": "pnpm --filter server dev",
@@ -27,7 +27,6 @@
     "dev:db:studio": "LOCAL_ENV=1 pnpm --filter @gemhog/core db:studio",
     "dev:db:generate": "LOCAL_ENV=1 pnpm --filter @gemhog/core db:generate",
     "dev:db:migrate": "LOCAL_ENV=1 pnpm --filter @gemhog/core db:migrate",
-
     "sst:dev": "pnpm sst dev",
     "sst:db:push": "sst shell -- pnpm --filter @gemhog/core db:push",
     "sst:db:studio": "sst shell -- pnpm --filter @gemhog/core db:studio",
