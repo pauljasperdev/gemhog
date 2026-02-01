@@ -141,7 +141,7 @@ No secrets should be exposed in code or logs.
 
 - [ ] No hardcoded API keys, passwords, or secrets in code
 - [ ] All secrets loaded from environment variables
-- [ ] Environment variables validated at startup (Zod schema in `packages/env/`)
+- [ ] Environment variables validated at startup (Effect Config in `packages/env/`)
 - [ ] `.env` files in `.gitignore`
 - [ ] No secrets logged (check console.log, error messages)
 - [ ] Error messages don't expose internal details

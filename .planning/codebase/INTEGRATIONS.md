@@ -133,7 +133,8 @@ These integrations will be implemented after V0 foundation is complete.
     (conditionally wraps when `NEXT_PUBLIC_POSTHOG_KEY` is set)
   - Custom events: `landing_page_viewed`, `signup_completed`, `signup_started`
     (via `apps/web/src/lib/analytics.ts`)
-  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (required — set via playwright.config.ts defaults for E2E)
+  - Auth: `NEXT_PUBLIC_POSTHOG_KEY` env var (required — set via
+    playwright.config.ts defaults for E2E)
   - SST secret: `PosthogKey` in `infra/secrets.ts`
 
 **Logs:**
@@ -167,9 +168,14 @@ These integrations will be implemented after V0 foundation is complete.
 - Required env vars (validated by `@gemhog/env`):
   - `DATABASE_URL` - PostgreSQL connection
   - `BETTER_AUTH_SECRET` - Auth encryption
-  - `CORS_ORIGIN` - Allowed origins
+  - `APP_URL` - Application URL
   - `GOOGLE_GENERATIVE_AI_API_KEY` - AI features
+  - `RESEND_API_KEY` - Email sending
+  - `SENTRY_DSN` - Error monitoring
   - `NEXT_PUBLIC_SERVER_URL` - API base URL
+  - `NEXT_PUBLIC_SENTRY_DSN` - Client error monitoring
+  - `NEXT_PUBLIC_POSTHOG_KEY` - Analytics
+  - `NEXT_PUBLIC_POSTHOG_HOST` - Analytics host
 - Local defaults: `@gemhog/env/local-dev` (no per-app `.env` files)
 - Deployment-only vars: root `.env` for infrastructure/deploy contexts
 - Local database: Docker Compose (`infra/docker-compose.yml`)
@@ -214,30 +220,36 @@ These integrations will be implemented after V0 foundation is complete.
 **Server (`packages/env/src/server.ts`):**
 
 ```
-DATABASE_URL          # PostgreSQL connection string
-DATABASE_URL_POOLER   # Pooled PostgreSQL connection string
-BETTER_AUTH_SECRET    # Auth encryption secret
-BETTER_AUTH_URL       # Auth callback URL
-CORS_ORIGIN           # Allowed CORS origins
-GOOGLE_GENERATIVE_AI_API_KEY # Google AI API key
-SENTRY_DSN            # Sentry DSN (optional - error monitoring)
-SENTRY_AUTH_TOKEN     # Sentry auth token (optional - source map upload)
-SENTRY_ORG            # Sentry organization (optional)
-SENTRY_PROJECT        # Sentry project name (optional)
-SES_FROM_EMAIL        # SES sender email (optional - enables SES mode)
+DATABASE_URL                    # PostgreSQL connection string
+DATABASE_URL_POOLER             # Pooled PostgreSQL connection string
+BETTER_AUTH_SECRET              # Auth encryption secret
+BETTER_AUTH_URL                 # Auth callback URL
+APP_URL                         # Application URL (frontend origin)
+GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
+RESEND_API_KEY                  # Resend email API key
+SENTRY_DSN                      # Sentry DSN for error monitoring
 ```
 
-**Web (`packages/env/src/web.ts`):**
+**Client (`packages/env/src/client.ts`):**
 
 ```
 NEXT_PUBLIC_SERVER_URL    # Backend API URL
-NEXT_PUBLIC_SENTRY_DSN    # Sentry DSN for client-side (optional)
-NEXT_PUBLIC_POSTHOG_KEY   # PostHog project API key (optional - analytics)
+NEXT_PUBLIC_SENTRY_DSN    # Sentry DSN for client-side
+NEXT_PUBLIC_POSTHOG_KEY   # PostHog project API key
+NEXT_PUBLIC_POSTHOG_HOST  # PostHog API host
 ```
 
-**Server-only (not in schema):**
+**Runtime (`packages/env/src/runtime.ts`):**
 
-- None
+```
+DATABASE_URL              # PostgreSQL connection (for migrations/scripts)
+```
+
+**Build/infra-only (not in env schema):**
+
+- `SENTRY_AUTH_TOKEN` — Sentry source map upload (build-time)
+- `SENTRY_ORG` / `SENTRY_PROJECT` — Sentry build config
+- `SES_FROM_EMAIL` — SES sender email (SST infra)
 
 **Newsletter (AWS SES) — Deferred V1:**
 

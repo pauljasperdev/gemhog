@@ -96,8 +96,8 @@ gemhog/
 **packages/env/**
 
 - Purpose: Environment configuration
-- Contains: t3-env validated env schemas for server and web
-- Key files: `src/server.ts`, `src/web.ts`
+- Contains: Effect Config validated env schemas for server, client, and runtime
+- Key files: `src/server.ts`, `src/client.ts`, `src/runtime.ts`, `src/local-dev.ts`
 - Subdirectories: None
 
 ## Key File Locations

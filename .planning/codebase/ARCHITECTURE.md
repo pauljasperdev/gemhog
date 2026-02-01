@@ -65,7 +65,7 @@
 **Configuration Layer:**
 
 - Purpose: Environment validation and type-safe config
-- Contains: t3-env validated env schemas for server and web
+- Contains: Effect Config validated env schemas for server, client, and runtime
 - Location: `packages/env/src/`
 - Depends on: None
 - Used by: All layers
@@ -249,7 +249,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 **Validation:**
 
-- Zod schemas for environment variables (`packages/env/src/`)
+- Effect Config for environment variables (`packages/env/src/`)
 - tRPC input validation via Zod (when defined)
 - All user input validated server-side
 

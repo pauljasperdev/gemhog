@@ -202,7 +202,7 @@ preferred. Use JSDoc only for:
 **Barrel Files:**
 
 - `packages/*/src/index.ts` for package exports
-- `packages/db/src/schema/index.ts` for schema re-exports
+- `packages/core/src/[domain]/index.ts` for domain re-exports
 
 **React Components:**
 
