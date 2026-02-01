@@ -9,6 +9,7 @@ import { Streamdown } from "streamdown";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export default function AIPage() {
   const [input, setInput] = useState("");
@@ -44,13 +45,14 @@ export default function AIPage() {
           messages.map((message) => (
             <div
               key={message.id}
-              className={`rounded-lg p-3 ${
+              className={cn(
+                "rounded-lg border p-4 text-sm leading-relaxed",
                 message.role === "user"
-                  ? "ml-8 bg-primary/10"
-                  : "mr-8 bg-secondary/20"
-              }`}
+                  ? "ml-12 border-accent/20 bg-accent/10 text-foreground"
+                  : "mr-12 border-border bg-secondary/50 text-secondary-foreground",
+              )}
             >
-              <p className="mb-1 font-semibold text-sm">
+              <p className="mb-2 font-semibold text-xs uppercase tracking-wider opacity-70">
                 {message.role === "user" ? "You" : "AI Assistant"}
               </p>
               {message.parts?.map((part, index) => {
@@ -76,18 +78,22 @@ export default function AIPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="flex w-full items-center space-x-2 border-t pt-2"
+        className="flex w-full items-center space-x-2 border-muted border-t bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       >
         <Input
           name="prompt"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
-          className="flex-1"
+          className="flex-1 border-muted bg-secondary/50 focus-visible:ring-accent/50"
           autoComplete="off"
           autoFocus
         />
-        <Button type="submit" size="icon">
+        <Button
+          type="submit"
+          size="icon"
+          className="bg-accent text-white hover:bg-accent/90"
+        >
           <Send size={18} />
         </Button>
       </form>
