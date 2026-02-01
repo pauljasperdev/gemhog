@@ -4,7 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -55,11 +55,12 @@ export function SignupForm() {
                 type="email"
                 placeholder="your@email.com"
                 aria-label="Email address"
+                size="pill"
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 className={cn(
-                  "h-12 rounded-full border-muted bg-secondary/50 px-6 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50",
+                  "border-muted bg-secondary/50 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50",
                   field.state.meta.errors.length > 0 &&
                     "border-destructive/50 focus-visible:ring-destructive/50",
                 )}
@@ -80,9 +81,9 @@ export function SignupForm() {
           {(state) => (
             <Button
               type="submit"
-              size="lg"
+              variant="accent"
+              size="pill"
               disabled={!state.canSubmit || state.isSubmitting}
-              className="h-12 rounded-full border border-accent/20 bg-accent px-8 font-medium text-accent-foreground shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all hover:bg-accent/85 hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)]"
             >
               {state.isSubmitting ? "Joining..." : "Get the free newsletter"}
             </Button>
@@ -100,10 +101,7 @@ export function SignupForm() {
       <p className="mt-6 text-muted-foreground text-xs">
         By subscribing, you agree to receive our newsletter. Unsubscribe
         anytime.{" "}
-        <Link
-          href="/privacy"
-          className="underline transition-colors hover:text-secondary-foreground"
-        >
+        <Link href="/privacy" className={buttonVariants({ variant: "link" })}>
           Privacy Policy
         </Link>
       </p>

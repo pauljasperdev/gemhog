@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import type { ReactElement, ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 interface SectionErrorBoundaryProps {
   children: ReactNode;
@@ -42,13 +43,9 @@ export function SectionErrorBoundary({
             <h3 className="font-medium text-foreground">
               This section encountered an error
             </h3>
-            <button
-              type="button"
-              onClick={resetError}
-              className="mt-2 rounded bg-primary px-3 py-1.5 text-primary-foreground text-sm hover:bg-primary/90"
-            >
+            <Button onClick={resetError} size="sm" className="mt-2">
               Try again
-            </button>
+            </Button>
             {process.env.NODE_ENV === "development" && (
               <pre className="mt-4 max-h-48 overflow-auto rounded bg-destructive/10 p-2 text-left text-destructive text-xs">
                 {err.message}

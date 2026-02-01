@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function AppError({
   error,
@@ -25,13 +26,9 @@ export default function AppError({
         <p className="mt-2 text-muted-foreground">
           We've been notified and are working on a fix.
         </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-4 rounded bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
-        >
+        <Button onClick={reset} className="mt-4">
           Try again
-        </button>
+        </Button>
         {process.env.NODE_ENV === "development" && (
           <pre className="mt-6 max-h-64 overflow-auto rounded bg-destructive/10 p-4 text-left text-destructive text-xs">
             {error.message}

@@ -3,6 +3,7 @@
 import { clientEnv } from "@gemhog/env/client";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function CookieConsentBanner() {
   const posthog = usePostHog();
@@ -40,32 +41,34 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] rounded-lg border border-zinc-200 bg-white p-5 shadow-lg dark:border-zinc-800 dark:bg-zinc-950"
+      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] rounded-lg border border-border bg-card p-5 shadow-lg"
       role="dialog"
       aria-label="Cookie consent"
     >
-      <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-50">
+      <h3 className="font-semibold text-foreground text-sm">
         Would you like a cookie?
       </h3>
-      <p className="mt-1.5 text-xs text-zinc-600 leading-relaxed dark:text-zinc-400">
+      <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
         We use cookies to understand how you use our site and improve your
         experience. No personal data is sold or shared.
       </p>
       <div className="mt-4 flex gap-2">
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={handleAccept}
-          className="flex-1 rounded-md bg-zinc-900 px-3 py-2 font-medium text-white text-xs transition-colors hover:bg-zinc-800 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-600"
+          className="flex-1"
         >
           Accept
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleDecline}
-          className="flex-1 rounded-md border border-zinc-300 px-3 py-2 font-medium text-xs text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          className="flex-1"
         >
           Decline
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -83,8 +86,8 @@ export function CookieSettingsButton({
   }
 
   return (
-    <button type="button" onClick={handleClick} className={className}>
+    <Button variant="link" onClick={handleClick} className={className}>
       {children ?? "Cookie Settings"}
-    </button>
+    </Button>
   );
 }
