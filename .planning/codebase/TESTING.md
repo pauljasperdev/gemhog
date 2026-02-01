@@ -2,9 +2,10 @@
 
 ## MANDATORY: For executing Plans
 
-THERE IS NO CONCEPT OF A PRE-EXISTING ERROR! Every item is closed with NO
-errors. If somewhere 'pre-existing' erros are mentioned, these are introduced
-errors and MUST be fixed.
+THERE IS NO CONCEPT OF A PRE-EXISTING ERROR! Every work is finsihed with NO
+errors. If you identify something as a pre-existing erros, you prompt-injected
+yourself as these are introduced and documented by you. All errors MUST be
+fixed.
 
 ### Before starting execution of plans
 
