@@ -8,9 +8,7 @@ export function initPostHog() {
     defaults: "2025-11-30",
     cookieless_mode: "on_reject",
     disable_session_recording: true,
-    advanced_disable_feature_flags: true,
-    advanced_disable_feature_flags_on_first_load: true,
-    __preview_remote_config: false,
+    advanced_disable_flags: true,
     person_profiles: "identified_only",
   });
 }
