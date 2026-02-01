@@ -1,7 +1,6 @@
 # Phase 4: Landing Page - Context
 
-**Gathered:** 2026-01-29
-**Status:** Ready for planning
+**Gathered:** 2026-01-29 **Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
@@ -17,6 +16,7 @@ already exist from Phases 2-3.
 ## Implementation Decisions
 
 ### Page structure
+
 - Hero-only page — no sections below the hero, ultra minimal
 - No header/nav bar — content only
 - Centered column layout (max ~600px), vertically centered on screen
@@ -26,6 +26,7 @@ already exist from Phases 2-3.
 - Replaces current `/` route (home page)
 
 ### Signup form
+
 - Inline layout — email input + submit button on one line
 - On success: form replaced with "Check your inbox" confirmation message in
   place
@@ -35,6 +36,7 @@ already exist from Phases 2-3.
 - Form uses existing tRPC `subscriber.subscribe` mutation from Phase 2
 
 ### Visual tone
+
 - Between premium-minimal and warm-approachable — Linear's clarity but with more
   personality, avoiding sterile AI-generated aesthetic
 - Dark background, emerald/green accent color for buttons and interactive
@@ -42,6 +44,7 @@ already exist from Phases 2-3.
 - Reference site: polar.sh
 
 ### Copy
+
 - H1: "We listen to financial podcasts so you don't have to"
 - Subheadline: "Investment ideas, trends, and expert takes — delivered to your
   inbox."
@@ -50,6 +53,7 @@ already exist from Phases 2-3.
 - Tone: casual & direct, conversational, no jargon
 
 ### Claude's Discretion
+
 - Typography selection (use `/web-design-guidelines` and `/frontend-design`
   skills)
 - Exact font pairing and sizing
@@ -83,5 +87,4 @@ None — discussion stayed within phase scope
 
 ---
 
-*Phase: 04-landing-page*
-*Context gathered: 2026-01-29*
+_Phase: 04-landing-page_ _Context gathered: 2026-01-29_
