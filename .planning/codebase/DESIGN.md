@@ -169,8 +169,9 @@ Base radius is `0.625rem` (10px), scaled via `calc()` for shadcn components:
 - `radius-lg`: 10px — cards, buttons
 - `radius-xl` through `radius-4xl`: 14px–26px — large containers
 
-The hero card uses `rounded-3xl` and thesis cards use `rounded-2xl` for a
-softer, modern feel. CTA button and input use `rounded-full` for pill shapes.
+The base Card component uses `rounded-2xl` (18px via `--radius-2xl`) by default
+for a softer, modern feel. The hero wrapper div uses `rounded-3xl` for extra
+softness. CTA button and input use `rounded-full` for pill shapes.
 
 ## Interaction States
 

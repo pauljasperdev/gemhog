@@ -25,7 +25,7 @@ export function ThesisCard({
 }: ThesisCardProps) {
   return (
     <div className="p-1">
-      <Card className="gap-0 rounded-2xl border-border bg-card/80 p-0 shadow-2xl ring-0 backdrop-blur-md">
+      <Card className="gap-0 border-border bg-card/80 p-0 shadow-2xl ring-0 backdrop-blur-md">
         <CardHeader className="border-border/50 border-b px-6 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <span className="font-medium text-muted-foreground text-sm">
