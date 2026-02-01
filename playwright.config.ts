@@ -1,9 +1,9 @@
-import { localDevServerEnv, localDevWebEnv } from "@gemhog/env/local-dev";
+import { localClientEnv, localServerEnv } from "@gemhog/env/local-dev";
 import { defineConfig, devices } from "@playwright/test";
 
 const isCi = !!process.env.CI;
 
-const envDefaults = { ...localDevServerEnv, ...localDevWebEnv };
+const envDefaults = { ...localServerEnv, ...localClientEnv };
 
 export default defineConfig({
   testDir: "./apps/web/tests/e2e",

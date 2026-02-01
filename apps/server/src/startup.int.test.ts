@@ -1,7 +1,7 @@
 import { exec } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
-import { localDevServerEnv } from "@gemhog/env/local-dev";
+import { localServerEnv } from "@gemhog/env/local-dev";
 import { describe, expect, it } from "vitest";
 
 const execAsync = promisify(exec);
@@ -14,7 +14,7 @@ describe("server build with local defaults", () => {
       cwd: serverDir,
       env: {
         ...process.env,
-        ...localDevServerEnv,
+        ...localServerEnv,
         LOCAL_ENV: "1",
         NODE_ENV: "production",
       },

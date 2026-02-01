@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { localDevServerEnv, localDevWebEnv } from "./local-dev";
+import { localClientEnv, localServerEnv } from "./local-dev";
 
 /**
  * GUARDRAIL: Ensures every server env var in the schema has a corresponding test.
@@ -170,20 +170,20 @@ describe("serverEnv validation", () => {
 
       const { serverEnv } = await import("./server.js");
 
-      expect(serverEnv.DATABASE_URL).toBe(localDevServerEnv.DATABASE_URL);
+      expect(serverEnv.DATABASE_URL).toBe(localServerEnv.DATABASE_URL);
       expect(serverEnv.DATABASE_URL_POOLER).toBe(
-        localDevServerEnv.DATABASE_URL_POOLER,
+        localServerEnv.DATABASE_URL_POOLER,
       );
       expect(serverEnv.BETTER_AUTH_SECRET).toBe(
-        localDevServerEnv.BETTER_AUTH_SECRET,
+        localServerEnv.BETTER_AUTH_SECRET,
       );
-      expect(serverEnv.BETTER_AUTH_URL).toBe(localDevServerEnv.BETTER_AUTH_URL);
-      expect(serverEnv.APP_URL).toBe(localDevServerEnv.APP_URL);
+      expect(serverEnv.BETTER_AUTH_URL).toBe(localServerEnv.BETTER_AUTH_URL);
+      expect(serverEnv.APP_URL).toBe(localServerEnv.APP_URL);
       expect(serverEnv.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
-        localDevServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
+        localServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
       );
-      expect(serverEnv.RESEND_API_KEY).toBe(localDevServerEnv.RESEND_API_KEY);
-      expect(serverEnv.SENTRY_DSN).toBe(localDevServerEnv.SENTRY_DSN);
+      expect(serverEnv.RESEND_API_KEY).toBe(localServerEnv.RESEND_API_KEY);
+      expect(serverEnv.SENTRY_DSN).toBe(localServerEnv.SENTRY_DSN);
     });
   });
 });
@@ -265,16 +265,16 @@ describe("clientEnv validation", () => {
       const { clientEnv } = await import("./client.js");
 
       expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe(
-        localDevWebEnv.NEXT_PUBLIC_SERVER_URL,
+        localClientEnv.NEXT_PUBLIC_SERVER_URL,
       );
       expect(clientEnv.NEXT_PUBLIC_SENTRY_DSN).toBe(
-        localDevWebEnv.NEXT_PUBLIC_SENTRY_DSN,
+        localClientEnv.NEXT_PUBLIC_SENTRY_DSN,
       );
       expect(clientEnv.NEXT_PUBLIC_POSTHOG_KEY).toBe(
-        localDevWebEnv.NEXT_PUBLIC_POSTHOG_KEY,
+        localClientEnv.NEXT_PUBLIC_POSTHOG_KEY,
       );
       expect(clientEnv.NEXT_PUBLIC_POSTHOG_HOST).toBe(
-        localDevWebEnv.NEXT_PUBLIC_POSTHOG_HOST,
+        localClientEnv.NEXT_PUBLIC_POSTHOG_HOST,
       );
     });
   });
