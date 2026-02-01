@@ -29,7 +29,7 @@ export function SignupForm() {
 
   if (subscribe.isSuccess) {
     return (
-      <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400">
+      <div className="rounded-lg border border-accent/20 bg-accent/10 p-4 text-chart-4">
         <p className="font-medium">Success!</p>
         <p className="text-sm opacity-90">
           Check your inbox to confirm your subscription.
@@ -59,15 +59,15 @@ export function SignupForm() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 className={cn(
-                  "h-12 rounded-full border-zinc-800 bg-zinc-900/50 px-6 text-white placeholder:text-zinc-500 focus-visible:ring-emerald-500/50",
+                  "h-12 rounded-full border-muted bg-secondary/50 px-6 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50",
                   field.state.meta.errors.length > 0 &&
-                    "border-red-500/50 focus-visible:ring-red-500/50",
+                    "border-destructive/50 focus-visible:ring-destructive/50",
                 )}
               />
               {field.state.meta.errors.map((error) => (
                 <p
                   key={error?.message}
-                  className="mt-2 pl-1 text-red-400 text-sm"
+                  className="mt-2 pl-1 text-destructive text-sm"
                 >
                   {error?.message}
                 </p>
@@ -82,7 +82,7 @@ export function SignupForm() {
               type="submit"
               size="lg"
               disabled={!state.canSubmit || state.isSubmitting}
-              className="h-12 rounded-full border border-emerald-500/20 bg-emerald-600 px-8 font-medium text-white shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-500 hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)]"
+              className="h-12 rounded-full border border-accent/20 bg-accent px-8 font-medium text-accent-foreground shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] transition-all hover:bg-accent/85 hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.5)]"
             >
               {state.isSubmitting ? "Joining..." : "Get the free newsletter"}
             </Button>
@@ -91,18 +91,18 @@ export function SignupForm() {
       </form>
 
       {subscribe.isError && (
-        <p role="alert" className="mt-4 text-red-400 text-sm">
+        <p role="alert" className="mt-4 text-destructive text-sm">
           {subscribe.error?.message ??
             "Something went wrong. Please try again."}
         </p>
       )}
 
-      <p className="mt-6 text-xs text-zinc-500">
+      <p className="mt-6 text-muted-foreground text-xs">
         By subscribing, you agree to receive our newsletter. Unsubscribe
         anytime.{" "}
         <Link
           href="/privacy"
-          className="underline transition-colors hover:text-zinc-300"
+          className="underline transition-colors hover:text-secondary-foreground"
         >
           Privacy Policy
         </Link>
