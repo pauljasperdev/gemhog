@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createContext } from "./context";
+import { createContext } from "../context";
 
 const { getSession } = vi.hoisted(() => {
   return {

@@ -12,7 +12,7 @@ vi.mock("@gemhog/env/server", () => ({
   },
 }));
 
-import { auth, getSession } from "./auth.service";
+import { auth, getSession } from "../auth.service";
 
 describe("auth", () => {
   describe("auth", () => {

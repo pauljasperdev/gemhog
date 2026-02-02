@@ -68,8 +68,8 @@ vi.mock("@gemhog/core/email", () => {
   };
 });
 
-import { t } from "../index";
-import { appRouter } from "./index";
+import { t } from "../../index";
+import { appRouter } from "../index";
 
 const createCaller = t.createCallerFactory(appRouter);
 

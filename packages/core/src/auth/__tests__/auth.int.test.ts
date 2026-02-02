@@ -38,7 +38,7 @@ describe("auth integration", () => {
   beforeAll(async () => {
     pool = new Pool({ connectionString: TEST_ENV.DATABASE_URL });
     db = drizzle(pool);
-    const { auth: authInstance } = await import("./auth.service");
+    const { auth: authInstance } = await import("../auth.service");
     auth = authInstance;
   });
 

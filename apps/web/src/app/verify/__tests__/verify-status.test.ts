@@ -47,7 +47,7 @@ vi.mock("@/lib/email-layers", () => {
   };
 });
 
-import { getUnsubscribeStatus } from "./unsubscribe-status";
+import { getVerifyStatus } from "../verify-status";
 
 function makeTestToken(
   payload: { email: string; action: string; expiresAt: number },
@@ -58,37 +58,37 @@ function makeTestToken(
   return Buffer.from(`${data}.${signature}`).toString("base64url");
 }
 
-describe("getUnsubscribeStatus", () => {
-  it("should return 'success' for valid unsubscribe token", async () => {
+describe("getVerifyStatus", () => {
+  it("should return 'success' for valid token", async () => {
     const token = makeTestToken(
       {
         email: "test@example.com",
-        action: "unsubscribe",
+        action: "verify",
         expiresAt: Date.now() + 60000,
       },
       TEST_SECRET,
     );
 
-    const status = await getUnsubscribeStatus(token);
+    const status = await getVerifyStatus(token);
     expect(status).toBe("success");
   });
 
-  it("should return 'invalid' for expired token", async () => {
+  it("should return 'expired' for expired token", async () => {
     const token = makeTestToken(
       {
         email: "test@example.com",
-        action: "unsubscribe",
+        action: "verify",
         expiresAt: Date.now() - 60000,
       },
       TEST_SECRET,
     );
 
-    const status = await getUnsubscribeStatus(token);
-    expect(status).toBe("invalid");
+    const status = await getVerifyStatus(token);
+    expect(status).toBe("expired");
   });
 
   it("should return 'invalid' for malformed token", async () => {
-    const status = await getUnsubscribeStatus("garbage-token");
+    const status = await getVerifyStatus("not-a-valid-token");
     expect(status).toBe("invalid");
   });
 
@@ -96,13 +96,13 @@ describe("getUnsubscribeStatus", () => {
     const token = makeTestToken(
       {
         email: "test@example.com",
-        action: "unsubscribe",
+        action: "verify",
         expiresAt: Date.now() + 60000,
       },
       "completely-different-secret-key-here",
     );
 
-    const status = await getUnsubscribeStatus(token);
+    const status = await getVerifyStatus(token);
     expect(status).toBe("invalid");
   });
 });

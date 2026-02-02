@@ -36,7 +36,7 @@ vi.mock("@gemhog/env/server", () => ({
   },
 }));
 
-import { POST } from "./route";
+import { POST } from "../route";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
 

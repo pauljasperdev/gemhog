@@ -275,6 +275,105 @@ pattern lives, not here.
 
 ---
 
+## TanStack Query + tRPC
+
+### Integration Pattern
+
+The app uses `createTRPCOptionsProxy` to bridge tRPC with TanStack Query v5.
+This gives type-safe access to `queryOptions()`, `mutationOptions()`,
+`queryKey()`, and `mutationKey()` without custom hooks:
+
+```typescript
+import { trpc } from "@/trpc/client";
+
+// Queries — pass to useSuspenseQuery / useQuery
+const opts = trpc.items.list.queryOptions();
+
+// Mutations — spread into useMutation
+const mutation = useMutation(trpc.items.create.mutationOptions());
+
+// Keys — for invalidation and mutation state filters
+trpc.items.list.queryKey();
+trpc.items.create.mutationKey();
+```
+
+### Mutation Pattern
+
+Every mutation that changes server state visible in a query should invalidate
+related queries in `onSettled` (runs on both success and error):
+
+```tsx
+const addItem = useMutation({
+  ...trpc.items.create.mutationOptions(),
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: trpc.items.list.queryKey() });
+  },
+});
+```
+
+### Optimistic Updates
+
+Choose the right approach based on the mutation type:
+
+| Approach                  | When to use                                                           |
+| ------------------------- | --------------------------------------------------------------------- |
+| UI-based (via `variables`) | Adding items to lists, simple toggles — show pending items at reduced opacity |
+| Cache-based (via `onMutate`) | Editing existing items inline, reordering — need immediate cache update with rollback |
+| None (loading state only) | Fire-and-forget actions (signup, send email, logout)                  |
+
+**UI-based (recommended for new items)** — no cache manipulation, pending items
+rendered from mutation state:
+
+```tsx
+const addTodo = useMutation({
+  ...trpc.todos.create.mutationOptions(),
+  onSettled: () =>
+    queryClient.invalidateQueries({ queryKey: trpc.todos.list.queryKey() }),
+});
+
+// In component: render pending items alongside query data
+const pendingTodos = useMutationState({
+  filters: {
+    mutationKey: trpc.todos.create.mutationKey(),
+    status: "pending",
+  },
+  select: (m) => m.state.variables as CreateTodoInput,
+});
+```
+
+**Cache-based (for in-place edits)** — update cache immediately, rollback on
+error:
+
+```tsx
+const updateTodo = useMutation({
+  ...trpc.todos.update.mutationOptions(),
+  onMutate: async (newTodo) => {
+    await queryClient.cancelQueries({ queryKey: trpc.todos.list.queryKey() });
+    const previous = queryClient.getQueryData(trpc.todos.list.queryKey());
+    queryClient.setQueryData(trpc.todos.list.queryKey(), (old) =>
+      old?.map((t) => (t.id === newTodo.id ? { ...t, ...newTodo } : t)),
+    );
+    return { previous };
+  },
+  onError: (_err, _vars, context) => {
+    queryClient.setQueryData(trpc.todos.list.queryKey(), context?.previous);
+  },
+  onSettled: () =>
+    queryClient.invalidateQueries({ queryKey: trpc.todos.list.queryKey() }),
+});
+```
+
+### When to Extract to a Hook
+
+Extract mutation logic into a custom hook when:
+
+- The mutation + optimistic update exceeds ~15 lines
+- The same mutation is reused across multiple components
+
+Place hooks in `apps/web/src/hooks/use-<name>.ts`.
+
+---
+
 ## Deferred Improvements
 
 Items identified during code review that are deferred to future phases:
@@ -290,19 +389,12 @@ as a dedicated schema migration phase when there are more tables and the pattern
 is established project-wide. **When to implement:** Before public beta launch,
 as part of a dedicated database schema hardening phase.
 
-### Test File Organization (Code Review Item 19)
+### Test File Organization (Code Review Item 19) — IMPLEMENTED
 
-**Current:** Test files co-located with implementation (`email.service.ts` +
-`email.service.test.ts` in same directory). **Proposed:** Move test files into a
-`tests/` subfolder per domain (e.g.,
-`packages/core/src/email/tests/email.service.test.ts`). **Why deferred:** The
-current co-location pattern is already documented in TESTING.md and used
-project-wide. Changing now would require updating vitest configs, glob patterns
-in `vitest.config.ts` and `vitest.integration.config.ts`, and all import paths
-in test files. The benefit is organizational clarity, but the cost is
-significant churn across all domains. **When to implement:** When a domain grows
-beyond ~8 files and the flat structure becomes hard to navigate. Can be done
-incrementally per domain.
+Test files now live in `__tests__/` subfolders within each directory, preserving
+colocation while visually separating test code from implementation. All test and
+fixture files use the `__tests__/` convention project-wide. Vitest glob patterns
+already match `__tests__/` subdirectories via `**`.
 
 ---
 

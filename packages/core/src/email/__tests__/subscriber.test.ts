@@ -1,8 +1,8 @@
 import { Effect, Layer } from "effect";
 import { describe, expect, it } from "vitest";
-import { SubscriberNotFoundError } from "./email.errors";
-import type { Subscriber, SubscriberService } from "./subscriber.service";
-import { SubscriberServiceTag } from "./subscriber.service";
+import { SubscriberNotFoundError } from "../email.errors";
+import type { Subscriber, SubscriberService } from "../subscriber.service";
+import { SubscriberServiceTag } from "../subscriber.service";
 
 function makeTestSubscriber(overrides?: Partial<Subscriber>): Subscriber {
   return {

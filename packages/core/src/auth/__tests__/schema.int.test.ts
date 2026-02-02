@@ -16,7 +16,7 @@ import { expect, layer } from "@effect/vitest";
 import { eq } from "drizzle-orm";
 import { Effect, Layer, Redacted } from "effect";
 import { describe } from "vitest";
-import { account, session, user, verification } from "./auth.sql";
+import { account, session, user, verification } from "../auth.sql";
 
 // Test layer with explicit URL (bypasses Config.redacted)
 const TestPgLive = PgClient.layer({

@@ -2,12 +2,12 @@ import * as PgDrizzle from "@effect/sql-drizzle/Pg";
 import { PgClient } from "@effect/sql-pg";
 import { Effect, Layer, Redacted } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
-import { SubscriberNotFoundError } from "./email.errors";
+import { SubscriberNotFoundError } from "../email.errors";
 import {
   SubscriberServiceLive,
   SubscriberServiceTag,
-} from "./subscriber.service";
-import { subscriber } from "./subscriber.sql";
+} from "../subscriber.service";
+import { subscriber } from "../subscriber.sql";
 
 const DATABASE_URL =
   process.env.DATABASE_URL ??

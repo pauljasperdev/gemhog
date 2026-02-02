@@ -35,7 +35,7 @@ vi.mock("@/trpc/client", () => ({
   queryClient: {},
 }));
 
-vi.mock("./theme-provider", () => ({
+vi.mock("../theme-provider", () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
@@ -43,7 +43,7 @@ vi.mock("./theme-provider", () => ({
 
 let toasterRendered = false;
 
-vi.mock("./ui/sonner", () => ({
+vi.mock("../ui/sonner", () => ({
   Toaster: () => {
     toasterRendered = true;
     return <div data-testid="toaster" />;
@@ -51,7 +51,7 @@ vi.mock("./ui/sonner", () => ({
 }));
 
 // Must import after vi.mock declarations
-const { default: Providers } = await import("./providers");
+const { default: Providers } = await import("../providers");
 
 describe("Providers", () => {
   afterEach(() => {

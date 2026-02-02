@@ -31,7 +31,7 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-const { LandingFooter } = await import("./landing-footer");
+const { LandingFooter } = await import("../landing-footer");
 
 afterEach(() => {
   cleanup();

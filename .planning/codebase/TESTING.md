@@ -105,8 +105,8 @@ These tests fail CI if you forget to add tests:
 
 | Guardrail                 | Location                         | What it catches             |
 | ------------------------- | -------------------------------- | --------------------------- |
-| Env var test coverage     | `packages/env/src/*.test.ts`     | Schema var without test     |
-| Build with local defaults | `apps/*/src/startup.int.test.ts` | Missing local default entry |
+| Env var test coverage     | `packages/env/src/__tests__/*.test.ts` | Schema var without test     |
+| Build with local defaults | `apps/*/src/__tests__/startup.int.test.ts` | Missing local default entry |
 
 **If a guardrail test fails, you MUST add the missing test. Do not disable the
 guardrail.**
@@ -308,18 +308,20 @@ Tests are co-located with implementation using clear suffixes:
 ```
 src/
   users.ts
-  users.test.ts       # Unit test (mocked DB)
-  users.int.test.ts   # Integration test (real DB)
+  __tests__/
+    users.test.ts       # Unit test (mocked DB)
+    users.int.test.ts   # Integration test (real DB)
   auth/
     login.ts
-    login.test.ts     # Unit test
+    __tests__/
+      login.test.ts     # Unit test
 ```
 
 ## Adding Integration Tests
 
 Any package can have integration tests. Simply:
 
-1. Create `src/something.int.test.ts` (co-located with implementation)
+1. Create `src/__tests__/something.int.test.ts` (in the `__tests__/` subfolder)
 2. Run `pnpm db:start` to start the infra
 3. Run `pnpm test` - tests are automatically discovered and run
 
@@ -555,20 +557,21 @@ a test, write the test first.
 
 ## Test Fixtures
 
-Test fixtures live with their domain (co-located):
+Test fixtures live with their domain tests in `__tests__/` subfolders:
 
 ```
 packages/core/src/auth/
 ├── auth.sql.ts         # Schema
 ├── auth.service.ts     # Service
-├── auth.int.test.ts    # Integration tests
-└── test-fixtures.ts    # Test utilities (truncation, factories)
+└── __tests__/
+    ├── auth.int.test.ts    # Integration tests
+    └── test-fixtures.ts    # Test utilities (truncation, factories)
 ```
 
 **Example test fixture:**
 
 ```typescript
-// packages/core/src/auth/test-fixtures.ts
+// packages/core/src/auth/__tests__/test-fixtures.ts
 import { sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
