@@ -6,4 +6,5 @@ export const EmailLayers = makeEmailLayers(
   serverEnv.RESEND_API_KEY,
   "Gemhog <hello@gemhog.com>",
   DatabaseLive,
+  { secret: serverEnv.BETTER_AUTH_SECRET, appUrl: serverEnv.APP_URL },
 );

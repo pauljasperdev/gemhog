@@ -1,14 +1,29 @@
 import { Effect, Layer } from "effect";
-import { EmailServiceTag } from "./email.service";
-import { SubscriberServiceTag } from "./subscriber.service";
+import { EmailService } from "./email.service";
+import { SubscriberService } from "./subscriber.service";
+import type { Subscriber } from "./subscriber.sql";
 
-export const MockEmailService = Layer.succeed(EmailServiceTag, {
+const mockSubscriber: Subscriber = {
+  id: "mock-id",
+  email: "mock@example.com",
+  status: "pending",
+  subscribedAt: new Date(),
+  verifiedAt: null,
+  unsubscribedAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+export const MockEmailService = Layer.succeed(EmailService, {
   send: (_params) => Effect.void,
 });
 
-export const MockSubscriberService = Layer.succeed(SubscriberServiceTag, {
-  subscribe: (_email) => Effect.succeed({ id: "mock-id", isNew: true }),
-  verify: (_email) => Effect.void,
-  unsubscribe: (_email) => Effect.void,
-  findByEmail: (_email) => Effect.succeed(null),
+export const MockSubscriberService = Layer.succeed(SubscriberService, {
+  createSubscriber: (_email) => Effect.succeed({ id: "mock-id", isNew: true }),
+  readSubscriberById: (_id) => Effect.succeed(mockSubscriber),
+  readSubscriberByEmail: (_email) => Effect.succeed(null),
+  updateSubscriberById: (_id, _updates) => Effect.void,
+  subscribe: (_email) => Effect.succeed(mockSubscriber),
+  verify: (_subscriberId) => Effect.void,
+  unsubscribe: (_subscriberId) => Effect.void,
 });

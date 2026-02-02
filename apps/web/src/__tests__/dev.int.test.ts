@@ -53,11 +53,11 @@ const assertSubscribeWorks = async (baseUrl: string) => {
         throw new Error(`HTTP ${response.status}: ${text}`);
       }
       const payload = (await response.json()) as {
-        0?: { result?: { data?: { json?: { message?: string } } } };
+        0?: { result?: { data?: { json?: { id?: string } } } };
       };
       const result = payload?.[0]?.result?.data;
-      const message = result?.json?.message;
-      if (!message) {
+      const id = result?.json?.id;
+      if (!id) {
         throw new Error(
           `Missing tRPC response data: ${JSON.stringify(payload)}`,
         );

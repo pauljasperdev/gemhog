@@ -3,22 +3,40 @@
 import type { TokenPayload } from "@gemhog/core/email";
 import {
   createToken,
-  EmailServiceTag,
-  SubscriberServiceTag,
+  EmailService,
+  SubscriberService,
 } from "@gemhog/core/email";
 import { Effect, Layer } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/email-layers", () => ({
   EmailLayers: Layer.mergeAll(
-    Layer.succeed(EmailServiceTag, {
+    Layer.succeed(EmailService, {
       send: () => Effect.void,
     }),
-    Layer.succeed(SubscriberServiceTag, {
-      subscribe: () => Effect.succeed({ id: "test-id", isNew: true }),
+    Layer.succeed(SubscriberService, {
+      createSubscriber: () => Effect.succeed({ id: "test-id", isNew: true }),
+      readSubscriberById: () => Effect.succeed(null),
+      readSubscriberByEmail: () =>
+        Effect.succeed({
+          id: "test-id",
+          email: "test@example.com",
+          status: "active",
+        }),
+      updateSubscriberById: () => Effect.void,
+      subscribe: () =>
+        Effect.succeed({
+          id: "test-id",
+          email: "test@example.com",
+          status: "pending",
+          subscribedAt: new Date(),
+          verifiedAt: null,
+          unsubscribedAt: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }),
       verify: () => Effect.void,
       unsubscribe: () => Effect.void,
-      findByEmail: () => Effect.succeed(null),
     }),
   ),
 }));

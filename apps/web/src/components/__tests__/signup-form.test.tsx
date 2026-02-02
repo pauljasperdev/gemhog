@@ -157,14 +157,10 @@ describe("SignupForm", () => {
   });
 
   it("shows error message on mutation failure", () => {
-    mockMutationState = {
-      ...mockMutationState,
-      error: { message: "Email already subscribed" },
-    };
     render(<SignupForm />);
     act(() => capturedOnError?.());
     const errorEl = screen.getByRole("alert");
     expect(errorEl).toBeDefined();
-    expect(errorEl.textContent).toContain("Email already subscribed");
+    expect(errorEl.textContent).toContain("Something went wrong");
   });
 });
