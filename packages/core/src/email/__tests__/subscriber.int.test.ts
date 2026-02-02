@@ -1,12 +1,28 @@
 import * as PgDrizzle from "@effect/sql-drizzle/Pg";
 import { PgClient } from "@effect/sql-pg";
-import { Effect, Layer, Redacted } from "effect";
-import { afterEach, describe, expect, it } from "vitest";
+import { Context, Effect, Layer, Redacted } from "effect";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@gemhog/env/server", () => {
+  const ServerEnvService = Context.GenericTag<{
+    BETTER_AUTH_SECRET: string;
+    DATABASE_URL: string;
+    DATABASE_URL_POOLER: string;
+    BETTER_AUTH_URL: string;
+    APP_URL: string;
+    GOOGLE_GENERATIVE_AI_API_KEY: string;
+    RESEND_API_KEY: string;
+    SENTRY_DSN: string;
+  }>("ServerEnvService");
+  return { ServerEnvService, ServerEnvLive: Layer.empty };
+});
+
+import { ServerEnvService } from "@gemhog/env/server";
 import { SubscriberNotFoundError } from "../email.errors";
 import { EmailServiceConsole } from "../email.service";
 import {
-  makeSubscriberServiceLive,
   SubscriberService,
+  SubscriberServiceLive,
 } from "../subscriber.service";
 import { subscriber } from "../subscriber.sql";
 
@@ -16,21 +32,34 @@ const DATABASE_URL =
 
 const TestPgLive = PgClient.layer({ url: Redacted.make(DATABASE_URL) });
 const TestDrizzleLive = PgDrizzle.layer.pipe(Layer.provide(TestPgLive));
-const TestSubscriberLive = makeSubscriberServiceLive({
-  secret: "test-secret-at-least-32-characters-long",
-  appUrl: "http://localhost:3001",
-}).pipe(Layer.provide(TestDrizzleLive), Layer.provide(EmailServiceConsole));
+const TestServerEnvLive = Layer.succeed(ServerEnvService, {
+  BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+  DATABASE_URL,
+  DATABASE_URL_POOLER: DATABASE_URL,
+  BETTER_AUTH_URL: "http://localhost:3001",
+  APP_URL: "http://localhost:3001",
+  GOOGLE_GENERATIVE_AI_API_KEY: "",
+  RESEND_API_KEY: "",
+  SENTRY_DSN: "",
+});
+const TestSubscriberLive = SubscriberServiceLive.pipe(
+  Layer.provide(TestDrizzleLive),
+  Layer.provide(EmailServiceConsole),
+);
 
 const truncate = Effect.gen(function* () {
   const db = yield* PgDrizzle.PgDrizzle;
   yield* db.delete(subscriber).pipe(Effect.catchAll(() => Effect.void));
 });
 
-const runWithService = <A, E>(effect: Effect.Effect<A, E, SubscriberService>) =>
+const runWithService = <A, E>(
+  effect: Effect.Effect<A, E, SubscriberService | ServerEnvService>,
+) =>
   Effect.runPromise(
     effect.pipe(
       Effect.provide(TestSubscriberLive),
       Effect.provide(TestDrizzleLive),
+      Effect.provide(TestServerEnvLive),
     ),
   );
 

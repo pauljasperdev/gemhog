@@ -15,6 +15,8 @@ vi.mock("@gemhog/env/server", () => ({
     RESEND_API_KEY: "re_test_key",
     SENTRY_DSN: "https://key@sentry.io/123",
   },
+  ServerEnvService: Context.GenericTag("ServerEnvService"),
+  ServerEnvLive: Layer.empty,
 }));
 
 vi.mock("@gemhog/core/drizzle", () => ({
@@ -81,10 +83,10 @@ vi.mock("@gemhog/core/email", () => {
   return {
     EmailService,
     EmailServiceConsole: MockEmailLayer,
+    EmailServiceLive: MockEmailLayer,
     SubscriberService,
-    makeEmailLayers: () => Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
-    makeEmailServiceLive: () => MockEmailLayer,
-    makeSubscriberServiceLive: () => MockSubscriberLayer,
+    EmailLayers: Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
+    SubscriberServiceLive: MockSubscriberLayer,
     createToken: () => Effect.succeed("mock-token"),
     verificationEmail: () => ({
       subject: "Verify",

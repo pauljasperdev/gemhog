@@ -1,5 +1,21 @@
-import { Effect, Layer } from "effect";
-import { describe, expect, it } from "vitest";
+import { Context, Effect, Layer } from "effect";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@gemhog/env/server", () => {
+  const ServerEnvService = Context.GenericTag<{
+    BETTER_AUTH_SECRET: string;
+    DATABASE_URL: string;
+    DATABASE_URL_POOLER: string;
+    BETTER_AUTH_URL: string;
+    APP_URL: string;
+    GOOGLE_GENERATIVE_AI_API_KEY: string;
+    RESEND_API_KEY: string;
+    SENTRY_DSN: string;
+  }>("ServerEnvService");
+  return { ServerEnvService, ServerEnvLive: Layer.empty };
+});
+
+import { ServerEnvService } from "@gemhog/env/server";
 import { SubscriberNotFoundError } from "../email.errors";
 import { SubscriberService } from "../subscriber.service";
 import type { Subscriber } from "../subscriber.sql";
@@ -16,6 +32,17 @@ function makeTestSubscriber(overrides?: Partial<Subscriber>): Subscriber {
     updatedAt: overrides?.updatedAt ?? new Date(),
   };
 }
+
+const TestServerEnv = Layer.succeed(ServerEnvService, {
+  BETTER_AUTH_SECRET: "test-secret",
+  DATABASE_URL: "",
+  DATABASE_URL_POOLER: "",
+  BETTER_AUTH_URL: "",
+  APP_URL: "",
+  GOOGLE_GENERATIVE_AI_API_KEY: "",
+  RESEND_API_KEY: "",
+  SENTRY_DSN: "",
+});
 
 const crudStubs = {
   createSubscriber: (_email: string) =>
@@ -43,6 +70,7 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("new@example.com")),
           Effect.provide(TestLayer),
+          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -66,6 +94,7 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("pending@example.com")),
           Effect.provide(TestLayer),
+          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -86,6 +115,7 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("active@example.com")),
           Effect.provide(TestLayer),
+          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -106,6 +136,7 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("unsub@example.com")),
           Effect.provide(TestLayer),
+          Effect.provide(TestServerEnv),
         ),
       );
 

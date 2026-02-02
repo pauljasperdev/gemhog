@@ -1,3 +1,4 @@
+import { ServerEnvService } from "@gemhog/env/server";
 import { Console, Context, Effect, Layer, Schedule } from "effect";
 import { Resend } from "resend";
 import { EmailSendError } from "./email.errors";
@@ -57,16 +58,20 @@ const retrySchedule = Schedule.exponential("500 millis").pipe(
   Schedule.compose(Schedule.recurs(3)),
 );
 
-export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
-  Layer.sync(EmailService, () => {
-    const resend = new Resend(apiKey);
+const FROM_EMAIL = "Gemhog <hello@gemhog.com>";
+
+export const EmailServiceLive = Layer.effect(
+  EmailService,
+  Effect.gen(function* () {
+    const { RESEND_API_KEY } = yield* ServerEnvService;
+    const resend = new Resend(RESEND_API_KEY);
 
     return {
       send: ({ to, email, headers }) =>
         Effect.tryPromise({
           try: async () => {
             const { error } = await resend.emails.send({
-              from: fromEmail,
+              from: FROM_EMAIL,
               to: [to],
               subject: email.subject,
               html: email.html,
@@ -84,4 +89,5 @@ export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
           Effect.asVoid,
         ),
     };
-  });
+  }),
+);
