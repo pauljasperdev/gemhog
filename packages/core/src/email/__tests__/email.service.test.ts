@@ -1,5 +1,11 @@
-import { Effect } from "effect";
+import { Context, Effect, Layer } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@gemhog/env/server", () => {
+  const ServerEnvService = Context.GenericTag("ServerEnvService");
+  return { ServerEnvService, ServerEnvLive: Layer.empty };
+});
+
 import { EmailService, EmailServiceConsole } from "../email.service";
 
 describe("EmailServiceConsole", () => {

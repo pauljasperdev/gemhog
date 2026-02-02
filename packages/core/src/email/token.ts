@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { ServerEnvService } from "@gemhog/env/server";
 import { Effect } from "effect";
 import { InvalidTokenError } from "./email.errors";
 
@@ -10,19 +11,21 @@ export interface TokenPayload {
 
 export const createToken = (
   payload: TokenPayload,
-  secret: string,
-): Effect.Effect<string> =>
-  Effect.sync(() => {
+): Effect.Effect<string, never, ServerEnvService> =>
+  Effect.gen(function* () {
+    const { BETTER_AUTH_SECRET } = yield* ServerEnvService;
     const data = JSON.stringify(payload);
-    const signature = createHmac("sha256", secret).update(data).digest("hex");
+    const signature = createHmac("sha256", BETTER_AUTH_SECRET)
+      .update(data)
+      .digest("hex");
     return Buffer.from(`${data}.${signature}`).toString("base64url");
   });
 
 export const verifyToken = (
   token: string,
-  secret: string,
-): Effect.Effect<TokenPayload, InvalidTokenError> =>
+): Effect.Effect<TokenPayload, InvalidTokenError, ServerEnvService> =>
   Effect.gen(function* () {
+    const { BETTER_AUTH_SECRET } = yield* ServerEnvService;
     const decoded = Buffer.from(token, "base64url").toString();
     const lastDot = decoded.lastIndexOf(".");
     if (lastDot === -1) {
@@ -32,7 +35,9 @@ export const verifyToken = (
     const data = decoded.slice(0, lastDot);
     const signature = decoded.slice(lastDot + 1);
 
-    const expected = createHmac("sha256", secret).update(data).digest("hex");
+    const expected = createHmac("sha256", BETTER_AUTH_SECRET)
+      .update(data)
+      .digest("hex");
 
     if (
       signature.length !== expected.length ||

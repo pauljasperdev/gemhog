@@ -1,4 +1,4 @@
-import { Config, ConfigProvider, Effect } from "effect";
+import { Config, ConfigProvider, Context, Effect, Layer } from "effect";
 import { localServerEnv } from "./local-dev";
 
 const ServerConfig = Config.all({
@@ -26,3 +26,10 @@ export const ServerEnvEffect =
   Effect.withConfigProvider(provider)(ServerConfig);
 
 export const serverEnv: ServerEnv = Effect.runSync(ServerEnvEffect);
+
+export class ServerEnvService extends Context.Tag("ServerEnvService")<
+  ServerEnvService,
+  ServerEnv
+>() {}
+
+export const ServerEnvLive = Layer.effect(ServerEnvService, ServerEnvEffect);

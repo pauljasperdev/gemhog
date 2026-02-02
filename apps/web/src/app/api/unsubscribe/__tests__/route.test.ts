@@ -1,45 +1,10 @@
 // @vitest-environment node
 
-import type { TokenPayload } from "@gemhog/core/email";
-import {
-  createToken,
-  EmailService,
-  SubscriberService,
-} from "@gemhog/core/email";
-import { Effect, Layer } from "effect";
+import { createHmac } from "node:crypto";
+import { Context, Effect, Layer } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/email-layers", () => ({
-  EmailLayers: Layer.mergeAll(
-    Layer.succeed(EmailService, {
-      send: () => Effect.void,
-    }),
-    Layer.succeed(SubscriberService, {
-      createSubscriber: () => Effect.succeed({ id: "test-id", isNew: true }),
-      readSubscriberById: () => Effect.succeed(null),
-      readSubscriberByEmail: () =>
-        Effect.succeed({
-          id: "test-id",
-          email: "test@example.com",
-          status: "active",
-        }),
-      updateSubscriberById: () => Effect.void,
-      subscribe: () =>
-        Effect.succeed({
-          id: "test-id",
-          email: "test@example.com",
-          status: "pending",
-          subscribedAt: new Date(),
-          verifiedAt: null,
-          unsubscribedAt: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-      verify: () => Effect.void,
-      unsubscribe: () => Effect.void,
-    }),
-  ),
-}));
+const TEST_SECRET = "test-secret-at-least-32-characters-long";
 
 vi.mock("@gemhog/env/server", () => ({
   serverEnv: {
@@ -52,17 +17,70 @@ vi.mock("@gemhog/env/server", () => ({
     RESEND_API_KEY: "re_test_key",
     SENTRY_DSN: "https://key@sentry.io/123",
   },
+  ServerEnvService: Context.GenericTag("ServerEnvService"),
+  ServerEnvLive: Layer.empty,
 }));
+
+vi.mock("@/lib/email-layers", () => {
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const SubscriberService = Context.GenericTag<any>("SubscriberService");
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const EmailService = Context.GenericTag<any>("EmailService");
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const ServerEnvService = Context.GenericTag<any>("ServerEnvService");
+
+  return {
+    EmailLayers: Layer.mergeAll(
+      Layer.succeed(EmailService, {
+        send: () => Effect.void,
+      }),
+      Layer.succeed(SubscriberService, {
+        createSubscriber: () => Effect.succeed({ id: "test-id", isNew: true }),
+        readSubscriberById: () => Effect.succeed(null),
+        readSubscriberByEmail: () =>
+          Effect.succeed({
+            id: "test-id",
+            email: "test@example.com",
+            status: "active",
+          }),
+        updateSubscriberById: () => Effect.void,
+        subscribe: () =>
+          Effect.succeed({
+            id: "test-id",
+            email: "test@example.com",
+            status: "pending",
+            subscribedAt: new Date(),
+            verifiedAt: null,
+            unsubscribedAt: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }),
+        verify: () => Effect.void,
+        unsubscribe: () => Effect.void,
+      }),
+      Layer.succeed(ServerEnvService, {
+        BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+        APP_URL: "http://localhost:3001",
+        DATABASE_URL: "postgresql://localhost/test",
+        DATABASE_URL_POOLER: "postgresql://localhost/test",
+        BETTER_AUTH_URL: "http://localhost:3001",
+        GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+        RESEND_API_KEY: "re_test_key",
+        SENTRY_DSN: "https://key@sentry.io/123",
+      }),
+    ),
+  };
+});
 
 import { POST } from "../route";
 
-const TEST_SECRET = "test-secret-at-least-32-characters-long";
-
-async function makeToken(
-  payload: TokenPayload,
-  secret = TEST_SECRET,
-): Promise<string> {
-  return Effect.runPromise(createToken(payload, secret));
+function makeTestToken(
+  payload: { email: string; action: string; expiresAt: number },
+  secret: string,
+): string {
+  const data = JSON.stringify(payload);
+  const signature = createHmac("sha256", secret).update(data).digest("hex");
+  return Buffer.from(`${data}.${signature}`).toString("base64url");
 }
 
 describe("POST /api/unsubscribe", () => {
@@ -71,11 +89,14 @@ describe("POST /api/unsubscribe", () => {
   });
 
   it("returns 200 for valid unsubscribe token", async () => {
-    const token = await makeToken({
-      email: "test@example.com",
-      action: "unsubscribe",
-      expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
-    });
+    const token = makeTestToken(
+      {
+        email: "test@example.com",
+        action: "unsubscribe",
+        expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
+      },
+      TEST_SECRET,
+    );
 
     const { NextRequest } = await import("next/server");
     const response = await POST(
@@ -117,11 +138,14 @@ describe("POST /api/unsubscribe", () => {
   });
 
   it("returns 400 for expired token", async () => {
-    const token = await makeToken({
-      email: "test@example.com",
-      action: "unsubscribe",
-      expiresAt: Date.now() - 1000,
-    });
+    const token = makeTestToken(
+      {
+        email: "test@example.com",
+        action: "unsubscribe",
+        expiresAt: Date.now() - 1000,
+      },
+      TEST_SECRET,
+    );
 
     const { NextRequest } = await import("next/server");
     const response = await POST(

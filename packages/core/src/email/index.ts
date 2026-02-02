@@ -4,16 +4,16 @@ export type { SendEmailParams } from "./email.service";
 export {
   EmailService,
   EmailServiceConsole,
-  makeEmailServiceLive,
+  EmailServiceLive,
 } from "./email.service";
 export {
   unsubscribeConfirmationEmail,
   verificationEmail,
 } from "./email.templates";
-export { makeEmailLayers } from "./email-layers";
+export { EmailLayers } from "./email-layers";
 export {
-  makeSubscriberServiceLive,
   SubscriberService,
+  SubscriberServiceLive,
 } from "./subscriber.service";
 export type { Subscriber } from "./subscriber.sql";
 export * as subscriberSchema from "./subscriber.sql";

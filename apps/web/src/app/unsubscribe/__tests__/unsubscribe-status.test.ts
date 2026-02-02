@@ -2,6 +2,8 @@ import { createHmac } from "node:crypto";
 import { Context, Effect, Layer } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
+const TEST_SECRET = "test-secret-at-least-32-characters-long";
+
 vi.mock("@gemhog/env/server", () => ({
   serverEnv: {
     BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
@@ -12,33 +14,21 @@ vi.mock("@gemhog/env/server", () => ({
     GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
     SENTRY_DSN: "https://key@sentry.io/123",
   },
+  ServerEnvService: Context.GenericTag("ServerEnvService"),
+  ServerEnvLive: Layer.empty,
 }));
-
-const TEST_SECRET = "test-secret-at-least-32-characters-long";
 
 vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
 }));
 
 vi.mock("@/lib/email-layers", () => {
-  const SubscriberService = Context.GenericTag<{
-    createSubscriber: (
-      email: string,
-    ) => Effect.Effect<{ id: string; isNew: boolean }>;
-    readSubscriberById: (subscriberId: string) => Effect.Effect<unknown>;
-    readSubscriberByEmail: (email: string) => Effect.Effect<unknown>;
-    updateSubscriberById: (
-      subscriberId: string,
-      updates: unknown,
-    ) => Effect.Effect<void>;
-    subscribe: (email: string) => Effect.Effect<unknown>;
-    verify: (subscriberId: string) => Effect.Effect<void>;
-    unsubscribe: (subscriberId: string) => Effect.Effect<void>;
-  }>("SubscriberService");
-
-  const EmailService = Context.GenericTag<{
-    send: (params: unknown) => Effect.Effect<void>;
-  }>("EmailService");
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const SubscriberService = Context.GenericTag<any>("SubscriberService");
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const EmailService = Context.GenericTag<any>("EmailService");
+  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
+  const ServerEnvService = Context.GenericTag<any>("ServerEnvService");
 
   return {
     EmailLayers: Layer.mergeAll(
@@ -58,6 +48,16 @@ vi.mock("@/lib/email-layers", () => {
       }),
       Layer.succeed(EmailService, {
         send: () => Effect.void,
+      }),
+      Layer.succeed(ServerEnvService, {
+        BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+        APP_URL: "http://localhost:3001",
+        DATABASE_URL: "postgresql://localhost/test",
+        DATABASE_URL_POOLER: "postgresql://localhost/test",
+        BETTER_AUTH_URL: "http://localhost:3001",
+        GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
+        RESEND_API_KEY: "re_test_key",
+        SENTRY_DSN: "https://key@sentry.io/123",
       }),
     ),
   };

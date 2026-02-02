@@ -1,26 +1,25 @@
-import { Layer } from "effect";
-import { EmailServiceConsole, makeEmailServiceLive } from "./email.service";
-import { makeSubscriberServiceLive } from "./subscriber.service";
+import { ServerEnvLive, ServerEnvService } from "@gemhog/env/server";
+import { Effect, Layer } from "effect";
+import { DatabaseLive } from "../drizzle/index";
+import { EmailServiceConsole, EmailServiceLive } from "./email.service";
+import { SubscriberServiceLive } from "./subscriber.service";
 
 const DEV_PLACEHOLDER_KEY = "re_local_dev_placeholder";
 
-export function makeEmailLayers(
-  apiKey: string,
-  fromEmail: string,
-  // biome-ignore lint/suspicious/noExplicitAny: DatabaseLive type varies by caller context
-  databaseLive: Layer.Layer<any, any>,
-  config: { secret: string; appUrl: string },
-) {
-  const emailLayer =
-    apiKey === DEV_PLACEHOLDER_KEY
+const EmailServiceResolved = Layer.unwrapEffect(
+  Effect.gen(function* () {
+    const { RESEND_API_KEY } = yield* ServerEnvService;
+    return RESEND_API_KEY === DEV_PLACEHOLDER_KEY
       ? EmailServiceConsole
-      : makeEmailServiceLive(apiKey, fromEmail);
+      : EmailServiceLive;
+  }),
+);
 
-  return Layer.mergeAll(
-    emailLayer,
-    makeSubscriberServiceLive(config).pipe(
-      Layer.provide(databaseLive),
-      Layer.provide(emailLayer),
-    ),
-  );
-}
+export const EmailLayers = Layer.mergeAll(
+  EmailServiceResolved,
+  SubscriberServiceLive.pipe(
+    Layer.provide(DatabaseLive),
+    Layer.provide(EmailServiceResolved),
+  ),
+  ServerEnvLive,
+).pipe(Layer.provide(ServerEnvLive));
