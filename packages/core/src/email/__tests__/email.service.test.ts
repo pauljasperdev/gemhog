@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmailServiceConsole, EmailServiceTag } from "./email.service";
+import { EmailServiceConsole, EmailServiceTag } from "../email.service";
 
 describe("EmailServiceConsole", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;

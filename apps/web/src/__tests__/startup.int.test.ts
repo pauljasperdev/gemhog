@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 const execAsync = promisify(exec);
 
-const webDir = path.resolve(__dirname, "..");
+const webDir = path.resolve(__dirname, "../..");
 const buildEnv = {
   ...process.env,
   ...localServerEnv,

@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mockMutateAsync = vi.fn();
@@ -12,8 +12,18 @@ let mockMutationState = {
 
 let mockFormSubscribeState = { canSubmit: true, isSubmitting: false };
 
+let capturedOnMutate: ((vars: unknown) => void) | undefined;
+let capturedOnError: (() => void) | undefined;
+
 vi.mock("@tanstack/react-query", () => ({
-  useMutation: () => mockMutationState,
+  useMutation: (opts: {
+    onMutate?: (vars: unknown) => void;
+    onError?: () => void;
+  }) => {
+    capturedOnMutate = opts?.onMutate;
+    capturedOnError = opts?.onError;
+    return mockMutationState;
+  },
 }));
 
 vi.mock("@tanstack/react-form", () => {
@@ -96,7 +106,7 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-const { SignupForm } = await import("./signup-form");
+const { SignupForm } = await import("../signup-form");
 
 afterEach(() => {
   cleanup();
@@ -108,6 +118,8 @@ afterEach(() => {
     mutateAsync: mockMutateAsync,
   };
   mockFormSubscribeState = { canSubmit: true, isSubmitting: false };
+  capturedOnMutate = undefined;
+  capturedOnError = undefined;
 });
 
 describe("SignupForm", () => {
@@ -126,11 +138,8 @@ describe("SignupForm", () => {
   });
 
   it("shows confirmation message on successful subscription", () => {
-    mockMutationState = {
-      ...mockMutationState,
-      isSuccess: true,
-    };
     render(<SignupForm />);
+    act(() => capturedOnMutate?.({ email: "a@b.com" }));
     const statusEl = screen.getByText(
       /check your inbox to confirm your subscription/i,
     );
@@ -138,13 +147,11 @@ describe("SignupForm", () => {
   });
 
   it("disables submit button while submitting", () => {
-    mockMutationState = {
-      ...mockMutationState,
-      isPending: true,
-    };
     mockFormSubscribeState = { canSubmit: false, isSubmitting: true };
     render(<SignupForm />);
-    const button = screen.getByRole("button", { name: /joining/i });
+    const button = screen.getByRole("button", {
+      name: /get the free newsletter/i,
+    });
     expect(button).toBeDefined();
     expect(button.hasAttribute("disabled")).toBe(true);
   });
@@ -152,10 +159,10 @@ describe("SignupForm", () => {
   it("shows error message on mutation failure", () => {
     mockMutationState = {
       ...mockMutationState,
-      isError: true,
       error: { message: "Email already subscribed" },
     };
     render(<SignupForm />);
+    act(() => capturedOnError?.());
     const errorEl = screen.getByRole("alert");
     expect(errorEl).toBeDefined();
     expect(errorEl.textContent).toContain("Email already subscribed");

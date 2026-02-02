@@ -132,8 +132,8 @@ gemhog/
 
 **Testing:**
 
-- Co-located tests: `*.test.ts` alongside source files
-- Integration tests: `*.int.test.ts` (requires Docker Postgres)
+- Tests in `__tests__/` subfolders: `__tests__/*.test.ts` alongside source
+- Integration tests: `__tests__/*.int.test.ts` (requires Docker Postgres)
 - E2E tests: `apps/web/tests/e2e/*.e2e.test.ts`
 
 **Documentation:**
@@ -268,10 +268,11 @@ packages/core/
 │   │   ├── auth.service.ts  # Better Auth config
 │   │   ├── auth.errors.ts   # Domain errors (TaggedError)
 │   │   ├── auth.mock.ts     # Mock layer for testing
-│   │   ├── auth.test.ts     # Unit tests
-│   │   ├── auth.int.test.ts # Integration tests (better-auth API)
-│   │   ├── schema.int.test.ts # Schema CRUD integration tests
-│   │   ├── test-fixtures.ts # Test utilities (truncation, factories)
+│   │   ├── __tests__/       # Tests and fixtures
+│   │   │   ├── auth.test.ts     # Unit tests
+│   │   │   ├── auth.int.test.ts # Integration tests (better-auth API)
+│   │   │   ├── schema.int.test.ts # Schema CRUD integration tests
+│   │   │   └── test-fixtures.ts # Test utilities (truncation, factories)
 │   │   └── index.ts         # Exports + Better-Auth config
 │   ├── email/             # Email domain (Phase 02)
 │   │   ├── subscriber.sql.ts    # Drizzle schema (subscriber table, status enum)
@@ -279,7 +280,9 @@ packages/core/
 │   │   ├── email.service.ts     # Effect service for email sending (SES + console)
 │   │   ├── email.templates.ts   # HTML email templates
 │   │   ├── token.ts             # HMAC token creation/verification
-│   │   ├── subscriber.int.test.ts # Integration tests
+│   │   ├── __tests__/           # Tests and fixtures
+│   │   │   ├── subscriber.int.test.ts # Integration tests
+│   │   │   └── test-fixtures.ts # Test utilities
 │   │   └── index.ts             # Exports
 │   └── migrations/        # Database migrations
 │       ├── 0000_initial_schema.sql
@@ -293,7 +296,7 @@ packages/core/
 - `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
 - Domain folders directly under `src/` (drizzle/, auth/)
 - Direct Better Auth instance in core
-- Co-located tests with `.test.ts` suffix
+- Tests in `__tests__/` subfolders with `.test.ts` suffix
 
 **Export Paths:**
 
@@ -311,7 +314,7 @@ packages/core/
 3. Add service: `[domain].service.ts` (Effect service + layer)
 4. Add errors: `[domain].errors.ts` (TaggedErrors)
 5. Add mock: `[domain].mock.ts` (test layer)
-6. Add fixtures: `test-fixtures.ts` (truncation, factories for tests)
+6. Add test folder: `__tests__/` with `test-fixtures.ts` (truncation, factories)
 7. Add index: `index.ts` (exports)
 8. Register export in `package.json` exports field
 

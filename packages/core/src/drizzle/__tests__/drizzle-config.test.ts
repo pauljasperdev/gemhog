@@ -5,7 +5,7 @@ const originalEnv = { ...process.env };
 
 const importConfig = async () => {
   vi.resetModules();
-  return import("../../drizzle.config");
+  return import("../../../drizzle.config");
 };
 
 describe("drizzle.config", () => {

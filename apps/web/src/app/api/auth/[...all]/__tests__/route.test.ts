@@ -13,7 +13,7 @@ vi.mock("@gemhog/core/auth", () => ({
   },
 }));
 
-import { GET, POST } from "./route";
+import { GET, POST } from "../route";
 
 describe("/api/auth handler", () => {
   it("exports GET and POST handlers", () => {

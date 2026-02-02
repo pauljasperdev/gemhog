@@ -9,7 +9,7 @@ vi.mock("@gemhog/api/routers/index", () => ({
   appRouter: {},
 }));
 
-import { GET, POST } from "./route";
+import { GET, POST } from "../route";
 
 describe("/api/trpc handler", () => {
   it("exports GET and POST handlers", () => {

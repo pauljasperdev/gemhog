@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 const execAsync = promisify(exec);
 
-const serverDir = path.resolve(__dirname, "..");
+const serverDir = path.resolve(__dirname, "../..");
 
 describe("server build with local defaults", () => {
   it("should succeed with local defaults", async () => {

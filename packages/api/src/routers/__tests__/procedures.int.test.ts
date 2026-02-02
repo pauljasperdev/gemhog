@@ -13,8 +13,8 @@ vi.mock("@gemhog/env/server", () => ({
   },
 }));
 
-import { t } from "../index";
-import { appRouter } from "./index";
+import { t } from "../../index";
+import { appRouter } from "../index";
 
 // Create caller factory (modern tRPC v11 pattern)
 const createCaller = t.createCallerFactory(appRouter);

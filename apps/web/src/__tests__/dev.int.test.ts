@@ -3,7 +3,7 @@ import { rmSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-const webDir = path.resolve(__dirname, "..");
+const webDir = path.resolve(__dirname, "../..");
 const buildEnv = (): NodeJS.ProcessEnv => {
   return {
     ...process.env,

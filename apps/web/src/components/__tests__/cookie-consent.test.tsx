@@ -30,7 +30,7 @@ vi.mock("@gemhog/env/client", () => ({
 
 // Must import after vi.mock declarations
 const { CookieConsentBanner, CookieSettingsButton } = await import(
-  "./cookie-consent"
+  "../cookie-consent"
 );
 
 afterEach(() => {
