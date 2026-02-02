@@ -3,6 +3,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
 import { z } from "zod";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +11,46 @@ import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 
+type SubscribeStatus = "idle" | "subscribed" | "error";
+
+function StatusCard({
+  variant,
+  title,
+  children,
+}: {
+  variant: "success" | "error";
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      role={variant === "error" ? "alert" : undefined}
+      className={cn(
+        "rounded-lg border p-4",
+        variant === "success"
+          ? "border-accent/20 bg-accent/10 text-chart-4"
+          : "border-destructive/20 bg-destructive/10 text-destructive",
+      )}
+    >
+      <p className="font-medium">{title}</p>
+      <p className="text-sm opacity-90">{children}</p>
+    </div>
+  );
+}
+
 export function SignupForm() {
-  const subscribe = useMutation(trpc.subscriber.subscribe.mutationOptions());
+  const [status, setStatus] = useState<SubscribeStatus>("idle");
+
+  const subscribe = useMutation({
+    ...trpc.subscriber.subscribe.mutationOptions(),
+    retry: 3,
+    onMutate: () => {
+      setStatus("subscribed");
+    },
+    onError: () => {
+      setStatus("error");
+    },
+  });
 
   const form = useForm({
     defaultValues: { email: "" },
@@ -27,18 +66,7 @@ export function SignupForm() {
     },
   });
 
-  if (subscribe.isSuccess) {
-    return (
-      <div className="rounded-lg border border-accent/20 bg-accent/10 p-4 text-chart-4">
-        <p className="font-medium">Success!</p>
-        <p className="text-sm opacity-90">
-          Check your inbox to confirm your subscription.
-        </p>
-      </div>
-    );
-  }
-
-  return (
+  return status === "idle" ? (
     <div className="mx-auto w-full max-w-md">
       <form
         onSubmit={(e) => {
@@ -85,18 +113,11 @@ export function SignupForm() {
               size="pill"
               disabled={!state.canSubmit || state.isSubmitting}
             >
-              {state.isSubmitting ? "Joining..." : "Get the free newsletter"}
+              Get the free newsletter
             </Button>
           )}
         </form.Subscribe>
       </form>
-
-      {subscribe.isError && (
-        <p role="alert" className="mt-4 text-destructive text-sm">
-          {subscribe.error?.message ??
-            "Something went wrong. Please try again."}
-        </p>
-      )}
 
       <p className="mt-6 text-muted-foreground text-xs">
         By subscribing, you agree to receive our newsletter. Unsubscribe
@@ -106,5 +127,13 @@ export function SignupForm() {
         </Link>
       </p>
     </div>
+  ) : status === "subscribed" ? (
+    <StatusCard variant="success" title="Success!">
+      {subscribe.data?.message ?? "Check your inbox to confirm your subscription."}
+    </StatusCard>
+  ) : (
+    <StatusCard variant="error" title="Something went wrong">
+      {subscribe.error?.message ?? "Please try again."}
+    </StatusCard>
   );
 }
