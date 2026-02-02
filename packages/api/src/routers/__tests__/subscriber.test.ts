@@ -2,7 +2,6 @@ import { Context, Effect, Layer } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Track calls for assertions
-const sendCalls: unknown[] = [];
 const subscribeCalls: string[] = [];
 
 vi.mock("@gemhog/env/server", () => ({
@@ -23,42 +22,69 @@ vi.mock("@gemhog/core/drizzle", () => ({
 }));
 
 vi.mock("@gemhog/core/email", () => {
-  const EmailServiceTag = Context.GenericTag<{
+  const EmailService = Context.GenericTag<{
     send: (params: unknown) => Effect.Effect<void>;
   }>("EmailService");
 
-  const SubscriberServiceTag = Context.GenericTag<{
-    subscribe: (email: string) => Effect.Effect<{ id: string; isNew: boolean }>;
-    verify: (email: string) => Effect.Effect<void>;
-    unsubscribe: (email: string) => Effect.Effect<void>;
-    findByEmail: (email: string) => Effect.Effect<unknown>;
+  const SubscriberService = Context.GenericTag<{
+    createSubscriber: (
+      email: string,
+    ) => Effect.Effect<{ id: string; isNew: boolean }>;
+    readSubscriberById: (subscriberId: string) => Effect.Effect<unknown>;
+    readSubscriberByEmail: (email: string) => Effect.Effect<unknown>;
+    updateSubscriberById: (
+      subscriberId: string,
+      updates: unknown,
+    ) => Effect.Effect<void>;
+    subscribe: (email: string) => Effect.Effect<{
+      id: string;
+      email: string;
+      status: string;
+      subscribedAt: Date;
+      verifiedAt: Date | null;
+      unsubscribedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
+    verify: (subscriberId: string) => Effect.Effect<void>;
+    unsubscribe: (subscriberId: string) => Effect.Effect<void>;
   }>("SubscriberService");
 
-  const MockEmailLayer = Layer.succeed(EmailServiceTag, {
-    send: (params: unknown) => {
-      sendCalls.push(params);
-      return Effect.void;
-    },
+  const MockEmailLayer = Layer.succeed(EmailService, {
+    send: () => Effect.void,
   });
 
-  const MockSubscriberLayer = Layer.succeed(SubscriberServiceTag, {
+  const MockSubscriberLayer = Layer.succeed(SubscriberService, {
+    createSubscriber: (_email: string) =>
+      Effect.succeed({ id: "mock-id", isNew: true }),
+    readSubscriberById: (_id: string) => Effect.succeed(null),
+    readSubscriberByEmail: (email: string) =>
+      Effect.succeed({ id: "mock-id", email, status: "pending" }),
+    updateSubscriberById: (_id: string, _updates: unknown) => Effect.void,
     subscribe: (email: string) => {
       subscribeCalls.push(email);
-      return Effect.succeed({ id: "mock-id", isNew: true });
+      return Effect.succeed({
+        id: "mock-id",
+        email,
+        status: "pending" as const,
+        subscribedAt: new Date(),
+        verifiedAt: null,
+        unsubscribedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     },
     verify: () => Effect.void,
     unsubscribe: () => Effect.void,
-    findByEmail: (email: string) =>
-      Effect.succeed({ id: "mock-id", email, status: "pending" }),
   });
 
   return {
-    EmailServiceTag,
+    EmailService,
     EmailServiceConsole: MockEmailLayer,
-    SubscriberServiceTag,
+    SubscriberService,
     makeEmailLayers: () => Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
     makeEmailServiceLive: () => MockEmailLayer,
-    SubscriberServiceLive: MockSubscriberLayer,
+    makeSubscriberServiceLive: () => MockSubscriberLayer,
     createToken: () => Effect.succeed("mock-token"),
     verificationEmail: () => ({
       subject: "Verify",
@@ -76,18 +102,19 @@ const createCaller = t.createCallerFactory(appRouter);
 describe("subscriberRouter", () => {
   describe("subscribe mutation", () => {
     beforeEach(() => {
-      sendCalls.length = 0;
       subscribeCalls.length = 0;
     });
 
-    it("should return success message for valid email", async () => {
+    it("should return subscriber object for valid email", async () => {
       const caller = createCaller({ session: null });
       const result = await caller.subscriber.subscribe({
         email: "test@example.com",
       });
 
-      expect(result).toEqual({
-        message: "Check your email to confirm your subscription",
+      expect(result).toMatchObject({
+        id: "mock-id",
+        email: "test@example.com",
+        status: "pending",
       });
     });
 
@@ -96,17 +123,6 @@ describe("subscriberRouter", () => {
       await caller.subscriber.subscribe({ email: "user@example.com" });
 
       expect(subscribeCalls).toContain("user@example.com");
-    });
-
-    it("should send verification email for new subscriber", async () => {
-      const caller = createCaller({ session: null });
-      await caller.subscriber.subscribe({ email: "new@example.com" });
-
-      expect(sendCalls.length).toBeGreaterThan(0);
-      expect(sendCalls[0]).toMatchObject({
-        to: "new@example.com",
-        email: expect.objectContaining({ subject: "Verify" }),
-      });
     });
 
     it("should reject invalid email", async () => {

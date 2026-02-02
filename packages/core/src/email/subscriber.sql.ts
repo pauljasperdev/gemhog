@@ -28,3 +28,5 @@ export const subscriber = pgTable(
     index("subscriber_status_idx").on(table.status),
   ],
 );
+
+export type Subscriber = typeof subscriber.$inferSelect;

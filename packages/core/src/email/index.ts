@@ -1,9 +1,9 @@
 export * from "./email.errors";
 export { MockEmailService, MockSubscriberService } from "./email.mock";
-export type { EmailService, SendEmailParams } from "./email.service";
+export type { SendEmailParams } from "./email.service";
 export {
+  EmailService,
   EmailServiceConsole,
-  EmailServiceTag,
   makeEmailServiceLive,
 } from "./email.service";
 export {
@@ -11,11 +11,11 @@ export {
   verificationEmail,
 } from "./email.templates";
 export { makeEmailLayers } from "./email-layers";
-export type { Subscriber, SubscriberService } from "./subscriber.service";
 export {
-  SubscriberServiceLive,
-  SubscriberServiceTag,
+  makeSubscriberServiceLive,
+  SubscriberService,
 } from "./subscriber.service";
+export type { Subscriber } from "./subscriber.sql";
 export * as subscriberSchema from "./subscriber.sql";
 export type { TokenPayload } from "./token";
 export { createToken, verifyToken } from "./token";

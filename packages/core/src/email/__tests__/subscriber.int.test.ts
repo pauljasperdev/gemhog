@@ -3,9 +3,10 @@ import { PgClient } from "@effect/sql-pg";
 import { Effect, Layer, Redacted } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
 import { SubscriberNotFoundError } from "../email.errors";
+import { EmailServiceConsole } from "../email.service";
 import {
-  SubscriberServiceLive,
-  SubscriberServiceTag,
+  makeSubscriberServiceLive,
+  SubscriberService,
 } from "../subscriber.service";
 import { subscriber } from "../subscriber.sql";
 
@@ -15,18 +16,17 @@ const DATABASE_URL =
 
 const TestPgLive = PgClient.layer({ url: Redacted.make(DATABASE_URL) });
 const TestDrizzleLive = PgDrizzle.layer.pipe(Layer.provide(TestPgLive));
-const TestSubscriberLive = SubscriberServiceLive.pipe(
-  Layer.provide(TestDrizzleLive),
-);
+const TestSubscriberLive = makeSubscriberServiceLive({
+  secret: "test-secret-at-least-32-characters-long",
+  appUrl: "http://localhost:3001",
+}).pipe(Layer.provide(TestDrizzleLive), Layer.provide(EmailServiceConsole));
 
 const truncate = Effect.gen(function* () {
   const db = yield* PgDrizzle.PgDrizzle;
   yield* db.delete(subscriber).pipe(Effect.catchAll(() => Effect.void));
 });
 
-const runWithService = <A, E>(
-  effect: Effect.Effect<A, E, SubscriberServiceTag>,
-) =>
+const runWithService = <A, E>(effect: Effect.Effect<A, E, SubscriberService>) =>
   Effect.runPromise(
     effect.pipe(
       Effect.provide(TestSubscriberLive),
@@ -45,80 +45,70 @@ describe("subscriber service integration", () => {
   describe("subscribe", () => {
     it("creates a new subscriber with pending status", async () => {
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("new@example.com")),
         ),
       );
 
-      expect(result.isNew).toBe(true);
       expect(result.id).toBeTruthy();
-
-      // Verify in DB
-      const found = await runWithService(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) => service.findByEmail("new@example.com")),
-        ),
-      );
-      expect(found).not.toBeNull();
-      expect(found?.status).toBe("pending");
-      expect(found?.email).toBe("new@example.com");
+      expect(result.status).toBe("pending");
+      expect(result.email).toBe("new@example.com");
     });
 
-    it("returns isNew: false for duplicate pending email", async () => {
-      await runWithService(
-        SubscriberServiceTag.pipe(
+    it("returns existing subscriber for duplicate pending email", async () => {
+      const first = await runWithService(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("dup@example.com")),
         ),
       );
 
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("dup@example.com")),
         ),
       );
 
-      expect(result.isNew).toBe(false);
+      expect(result.id).toBe(first.id);
+      expect(result.status).toBe("pending");
     });
 
-    it("returns isNew: false for duplicate active email (silent success)", async () => {
+    it("returns existing subscriber for duplicate active email (silent success)", async () => {
       await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
             service
               .subscribe("active@example.com")
-              .pipe(Effect.flatMap(() => service.verify("active@example.com"))),
+              .pipe(Effect.flatMap((sub) => service.verify(sub.id))),
           ),
         ),
       );
 
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("active@example.com")),
         ),
       );
 
-      expect(result.isNew).toBe(false);
+      expect(result.status).toBe("active");
     });
   });
 
   describe("full subscribe -> verify lifecycle", () => {
     it("transitions from pending to active", async () => {
       await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
             service
               .subscribe("lifecycle@example.com")
-              .pipe(
-                Effect.flatMap(() => service.verify("lifecycle@example.com")),
-              ),
+              .pipe(Effect.flatMap((sub) => service.verify(sub.id))),
           ),
         ),
       );
 
       const found = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
-            service.findByEmail("lifecycle@example.com"),
+            service.readSubscriberByEmail("lifecycle@example.com"),
           ),
         ),
       );
@@ -132,19 +122,26 @@ describe("subscriber service integration", () => {
   describe("full subscribe -> verify -> unsubscribe lifecycle", () => {
     it("transitions through all states", async () => {
       await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
-            service.subscribe("full@example.com").pipe(
-              Effect.flatMap(() => service.verify("full@example.com")),
-              Effect.flatMap(() => service.unsubscribe("full@example.com")),
-            ),
+            service
+              .subscribe("full@example.com")
+              .pipe(
+                Effect.flatMap((sub) =>
+                  service
+                    .verify(sub.id)
+                    .pipe(Effect.flatMap(() => service.unsubscribe(sub.id))),
+                ),
+              ),
           ),
         ),
       );
 
       const found = await runWithService(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) => service.findByEmail("full@example.com")),
+        SubscriberService.pipe(
+          Effect.flatMap((service) =>
+            service.readSubscriberByEmail("full@example.com"),
+          ),
         ),
       );
 
@@ -156,31 +153,38 @@ describe("subscriber service integration", () => {
   });
 
   describe("re-subscribe after unsubscribe", () => {
-    it("resets to pending with isNew: true", async () => {
+    it("resets to pending", async () => {
       // Subscribe -> verify -> unsubscribe
       await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
-            service.subscribe("resub@example.com").pipe(
-              Effect.flatMap(() => service.verify("resub@example.com")),
-              Effect.flatMap(() => service.unsubscribe("resub@example.com")),
-            ),
+            service
+              .subscribe("resub@example.com")
+              .pipe(
+                Effect.flatMap((sub) =>
+                  service
+                    .verify(sub.id)
+                    .pipe(Effect.flatMap(() => service.unsubscribe(sub.id))),
+                ),
+              ),
           ),
         ),
       );
 
       // Re-subscribe
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("resub@example.com")),
         ),
       );
 
-      expect(result.isNew).toBe(true);
+      expect(result.status).toBe("pending");
 
       const found = await runWithService(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) => service.findByEmail("resub@example.com")),
+        SubscriberService.pipe(
+          Effect.flatMap((service) =>
+            service.readSubscriberByEmail("resub@example.com"),
+          ),
         ),
       );
 
@@ -190,12 +194,10 @@ describe("subscriber service integration", () => {
   });
 
   describe("verify", () => {
-    it("fails with SubscriberNotFoundError for nonexistent email", async () => {
+    it("fails with SubscriberNotFoundError for nonexistent id", async () => {
       const result = await Effect.runPromise(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) =>
-            service.verify("nonexistent@example.com"),
-          ),
+        SubscriberService.pipe(
+          Effect.flatMap((service) => service.verify("nonexistent-id")),
           Effect.provide(TestSubscriberLive),
           Effect.provide(TestDrizzleLive),
           Effect.either,
@@ -210,12 +212,10 @@ describe("subscriber service integration", () => {
   });
 
   describe("unsubscribe", () => {
-    it("fails with SubscriberNotFoundError for nonexistent email", async () => {
+    it("fails with SubscriberNotFoundError for nonexistent id", async () => {
       const result = await Effect.runPromise(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) =>
-            service.unsubscribe("nonexistent@example.com"),
-          ),
+        SubscriberService.pipe(
+          Effect.flatMap((service) => service.unsubscribe("nonexistent-id")),
           Effect.provide(TestSubscriberLive),
           Effect.provide(TestDrizzleLive),
           Effect.either,
@@ -229,12 +229,12 @@ describe("subscriber service integration", () => {
     });
   });
 
-  describe("findByEmail", () => {
+  describe("readSubscriberByEmail", () => {
     it("returns null for nonexistent email", async () => {
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) =>
-            service.findByEmail("nobody@example.com"),
+            service.readSubscriberByEmail("nobody@example.com"),
           ),
         ),
       );
@@ -244,14 +244,16 @@ describe("subscriber service integration", () => {
 
     it("returns subscriber when found", async () => {
       await runWithService(
-        SubscriberServiceTag.pipe(
+        SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("find@example.com")),
         ),
       );
 
       const result = await runWithService(
-        SubscriberServiceTag.pipe(
-          Effect.flatMap((service) => service.findByEmail("find@example.com")),
+        SubscriberService.pipe(
+          Effect.flatMap((service) =>
+            service.readSubscriberByEmail("find@example.com"),
+          ),
         ),
       );
 

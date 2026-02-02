@@ -1,4 +1,4 @@
-import { SubscriberServiceTag, verifyToken } from "@gemhog/core/email";
+import { SubscriberService, verifyToken } from "@gemhog/core/email";
 import { serverEnv } from "@gemhog/env/server";
 import { Effect } from "effect";
 
@@ -8,9 +8,11 @@ export type VerifyStatus = "success" | "expired" | "invalid" | "error";
 
 export async function getVerifyStatus(token: string): Promise<VerifyStatus> {
   const program = Effect.gen(function* () {
-    const subscriberService = yield* SubscriberServiceTag;
+    const subscriberService = yield* SubscriberService;
     const payload = yield* verifyToken(token, serverEnv.BETTER_AUTH_SECRET);
-    yield* subscriberService.verify(payload.email);
+    const sub = yield* subscriberService.readSubscriberByEmail(payload.email);
+    if (!sub) return "error" as VerifyStatus;
+    yield* subscriberService.verify(sub.id);
     return "success" as VerifyStatus;
   }).pipe(
     Effect.catchTag("InvalidTokenError", (error) =>

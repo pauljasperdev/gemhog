@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EmailServiceConsole, EmailServiceTag } from "../email.service";
+import { EmailService, EmailServiceConsole } from "../email.service";
 
 describe("EmailServiceConsole", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
@@ -15,7 +15,7 @@ describe("EmailServiceConsole", () => {
 
   it("logs email to console", async () => {
     await Effect.runPromise(
-      EmailServiceTag.pipe(
+      EmailService.pipe(
         Effect.flatMap((service) =>
           service.send({
             to: "user@example.com",
@@ -41,7 +41,7 @@ describe("EmailServiceConsole", () => {
   it("resolves successfully without throwing", async () => {
     await expect(
       Effect.runPromise(
-        EmailServiceTag.pipe(
+        EmailService.pipe(
           Effect.flatMap((service) =>
             service.send({
               to: "user@example.com",
@@ -56,7 +56,7 @@ describe("EmailServiceConsole", () => {
 
   it("logs headers when provided", async () => {
     await Effect.runPromise(
-      EmailServiceTag.pipe(
+      EmailService.pipe(
         Effect.flatMap((service) =>
           service.send({
             to: "user@example.com",

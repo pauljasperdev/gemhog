@@ -47,6 +47,7 @@ export function SignupForm() {
     retry: 3,
     onMutate: () => {
       setStatus("subscribed");
+      return undefined;
     },
     onError: () => {
       setStatus("error");

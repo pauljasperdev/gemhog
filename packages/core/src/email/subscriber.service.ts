@@ -1,69 +1,62 @@
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { eq } from "drizzle-orm";
 import { Context, Effect, Layer } from "effect";
-import { SubscriberError, SubscriberNotFoundError } from "./email.errors";
-import { subscriber } from "./subscriber.sql";
+import {
+  type EmailSendError,
+  SubscriberError,
+  SubscriberNotFoundError,
+} from "./email.errors";
+import { EmailService } from "./email.service";
+import { verificationEmail } from "./email.templates";
+import { type Subscriber, subscriber } from "./subscriber.sql";
+import { createToken } from "./token";
 
-export type Subscriber = typeof subscriber.$inferSelect;
+export class SubscriberService extends Context.Tag("SubscriberService")<
+  SubscriberService,
+  {
+    // CRUD
+    readonly createSubscriber: (
+      email: string,
+    ) => Effect.Effect<{ id: string; isNew: boolean }, SubscriberError>;
+    readonly readSubscriberById: (
+      subscriberId: string,
+    ) => Effect.Effect<Subscriber | null, SubscriberError>;
+    readonly readSubscriberByEmail: (
+      email: string,
+    ) => Effect.Effect<Subscriber | null, SubscriberError>;
+    readonly updateSubscriberById: (
+      subscriberId: string,
+      updates: Partial<Subscriber>,
+    ) => Effect.Effect<void, SubscriberError>;
 
-export interface SubscriberService {
-  readonly subscribe: (
-    email: string,
-  ) => Effect.Effect<{ id: string; isNew: boolean }, SubscriberError>;
-  readonly verify: (
-    email: string,
-  ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
-  readonly unsubscribe: (
-    email: string,
-  ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
-  readonly findByEmail: (
-    email: string,
-  ) => Effect.Effect<Subscriber | null, SubscriberError>;
-}
-
-export class SubscriberServiceTag extends Context.Tag("SubscriberService")<
-  SubscriberServiceTag,
-  SubscriberService
+    // High-level
+    readonly subscribe: (
+      email: string,
+    ) => Effect.Effect<Subscriber, SubscriberError | EmailSendError>;
+    readonly verify: (
+      subscriberId: string,
+    ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
+    readonly unsubscribe: (
+      subscriberId: string,
+    ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
+  }
 >() {}
 
-export const SubscriberServiceLive = Layer.effect(
-  SubscriberServiceTag,
-  Effect.gen(function* () {
-    const db = yield* PgDrizzle;
+export const makeSubscriberServiceLive = (config: {
+  secret: string;
+  appUrl: string;
+}) =>
+  Layer.effect(
+    SubscriberService,
+    Effect.gen(function* () {
+      const db = yield* PgDrizzle;
+      const emailService = yield* EmailService;
 
-    const findByEmailQuery = (
-      email: string,
-    ): Effect.Effect<Subscriber | null, SubscriberError> =>
-      db
-        .select()
-        .from(subscriber)
-        .where(eq(subscriber.email, email))
-        .pipe(
-          Effect.map((rows: Subscriber[]) => rows[0] ?? null),
-          Effect.mapError(
-            (error) =>
-              new SubscriberError({
-                message: `Failed to find subscriber: ${email}`,
-                cause: error,
-              }),
-          ),
-        );
-
-    const requireByEmail = (
-      email: string,
-    ): Effect.Effect<Subscriber, SubscriberNotFoundError | SubscriberError> =>
-      findByEmailQuery(email).pipe(
-        Effect.flatMap((sub) =>
-          sub
-            ? Effect.succeed(sub)
-            : Effect.fail(new SubscriberNotFoundError({ email })),
-        ),
-      );
-
-    return {
-      subscribe: (email) =>
+      const createSubscriber = (
+        email: string,
+      ): Effect.Effect<{ id: string; isNew: boolean }, SubscriberError> =>
         Effect.gen(function* () {
-          const existing = yield* findByEmailQuery(email);
+          const existing = yield* readSubscriberByEmail(email);
 
           if (existing && existing.status === "unsubscribed") {
             yield* db
@@ -113,53 +106,159 @@ export const SubscriberServiceLive = Layer.effect(
             );
           }
           return { id: inserted.id, isNew: true };
-        }),
+        });
 
-      verify: (email) =>
-        requireByEmail(email).pipe(
-          Effect.flatMap(() =>
-            db
-              .update(subscriber)
-              .set({
-                status: "active",
-                verifiedAt: new Date(),
-              })
-              .where(eq(subscriber.email, email)),
-          ),
-          Effect.mapError((error) =>
-            error._tag === "SubscriberNotFoundError"
-              ? error
-              : new SubscriberError({
-                  message: `Failed to verify subscriber: ${email}`,
+      const readSubscriberByEmail = (
+        email: string,
+      ): Effect.Effect<Subscriber | null, SubscriberError> =>
+        db
+          .select()
+          .from(subscriber)
+          .where(eq(subscriber.email, email))
+          .pipe(
+            Effect.map((rows: Subscriber[]) => rows[0] ?? null),
+            Effect.mapError(
+              (error) =>
+                new SubscriberError({
+                  message: `Failed to find subscriber: ${email}`,
                   cause: error,
                 }),
-          ),
-          Effect.asVoid,
-        ),
+            ),
+          );
 
-      unsubscribe: (email) =>
-        requireByEmail(email).pipe(
-          Effect.flatMap(() =>
-            db
-              .update(subscriber)
-              .set({
-                status: "unsubscribed",
-                unsubscribedAt: new Date(),
-              })
-              .where(eq(subscriber.email, email)),
-          ),
-          Effect.mapError((error) =>
-            error._tag === "SubscriberNotFoundError"
-              ? error
-              : new SubscriberError({
-                  message: `Failed to unsubscribe: ${email}`,
+      const readSubscriberById = (
+        id: string,
+      ): Effect.Effect<Subscriber | null, SubscriberError> =>
+        db
+          .select()
+          .from(subscriber)
+          .where(eq(subscriber.id, id))
+          .pipe(
+            Effect.map((rows: Subscriber[]) => rows[0] ?? null),
+            Effect.mapError(
+              (error) =>
+                new SubscriberError({
+                  message: `Failed to find subscriber by id: ${id}`,
                   cause: error,
                 }),
-          ),
-          Effect.asVoid,
-        ),
+            ),
+          );
 
-      findByEmail: findByEmailQuery,
-    };
-  }),
-);
+      const updateSubscriberById = (
+        subscriberId: string,
+        updates: Partial<Subscriber>,
+      ): Effect.Effect<void, SubscriberError> =>
+        db
+          .update(subscriber)
+          .set(updates)
+          .where(eq(subscriber.id, subscriberId))
+          .pipe(
+            Effect.mapError(
+              (error) =>
+                new SubscriberError({
+                  message: `Failed to update subscriber: ${subscriberId}`,
+                  cause: error,
+                }),
+            ),
+            Effect.asVoid,
+          );
+
+      const requireById = (
+        id: string,
+      ): Effect.Effect<Subscriber, SubscriberNotFoundError | SubscriberError> =>
+        readSubscriberById(id).pipe(
+          Effect.flatMap((sub) =>
+            sub
+              ? Effect.succeed(sub)
+              : Effect.fail(new SubscriberNotFoundError({ email: `id:${id}` })),
+          ),
+        );
+
+      const subscribe = (
+        email: string,
+      ): Effect.Effect<Subscriber, SubscriberError | EmailSendError> =>
+        Effect.gen(function* () {
+          const result = yield* createSubscriber(email);
+
+          const sub = yield* readSubscriberByEmail(email);
+          const shouldSendEmail = result.isNew || sub?.status === "pending";
+
+          if (shouldSendEmail) {
+            const token = yield* createToken(
+              {
+                email,
+                action: "verify",
+                expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+              },
+              config.secret,
+            );
+
+            const unsubscribeToken = yield* createToken(
+              {
+                email,
+                action: "unsubscribe",
+                expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
+              },
+              config.secret,
+            );
+
+            const verifyUrl = `${config.appUrl}/verify?token=${token}`;
+            const unsubscribeUrl = `${config.appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
+            const { subject, html, text } = verificationEmail({ verifyUrl });
+
+            yield* emailService.send({
+              to: email,
+              email: { subject, html, text },
+              headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+              },
+            });
+          }
+
+          const fresh = yield* readSubscriberByEmail(email);
+          if (!fresh) {
+            return yield* Effect.fail(
+              new SubscriberError({
+                message: `Subscriber disappeared after creation: ${email}`,
+              }),
+            );
+          }
+          return fresh;
+        });
+
+      const verify = (
+        subscriberId: string,
+      ): Effect.Effect<void, SubscriberNotFoundError | SubscriberError> =>
+        requireById(subscriberId).pipe(
+          Effect.flatMap(() =>
+            updateSubscriberById(subscriberId, {
+              status: "active",
+              verifiedAt: new Date(),
+            }),
+          ),
+        );
+
+      const unsubscribe = (
+        subscriberId: string,
+      ): Effect.Effect<void, SubscriberNotFoundError | SubscriberError> =>
+        requireById(subscriberId).pipe(
+          Effect.flatMap(() =>
+            updateSubscriberById(subscriberId, {
+              status: "unsubscribed",
+              unsubscribedAt: new Date(),
+            }),
+          ),
+        );
+
+      return {
+        createSubscriber,
+        readSubscriberById,
+        readSubscriberByEmail,
+        updateSubscriberById,
+        subscribe,
+        verify,
+        unsubscribe,
+      };
+    }),
+  );

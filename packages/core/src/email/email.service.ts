@@ -9,18 +9,16 @@ export interface SendEmailParams {
   headers?: Record<string, string>;
 }
 
-export interface EmailService {
-  readonly send: (
-    params: SendEmailParams,
-  ) => Effect.Effect<void, EmailSendError>;
-}
-
-export class EmailServiceTag extends Context.Tag("EmailService")<
-  EmailServiceTag,
-  EmailService
+export class EmailService extends Context.Tag("EmailService")<
+  EmailService,
+  {
+    readonly send: (
+      params: SendEmailParams,
+    ) => Effect.Effect<void, EmailSendError>;
+  }
 >() {}
 
-export const EmailServiceConsole = Layer.succeed(EmailServiceTag, {
+export const EmailServiceConsole = Layer.succeed(EmailService, {
   send: (params) =>
     Effect.gen(function* () {
       const preview = params.email.text;
@@ -60,7 +58,7 @@ const retrySchedule = Schedule.exponential("500 millis").pipe(
 );
 
 export const makeEmailServiceLive = (apiKey: string, fromEmail: string) =>
-  Layer.sync(EmailServiceTag, () => {
+  Layer.sync(EmailService, () => {
     const resend = new Resend(apiKey);
 
     return {
