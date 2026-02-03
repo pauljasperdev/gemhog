@@ -20,7 +20,7 @@ vi.mock("posthog-js/react", () => ({
   }),
 }));
 
-vi.mock("@gemhog/env/client", () => ({
+vi.mock("@gemhog/env/client-runtime", () => ({
   clientEnv: {
     get NEXT_PUBLIC_POSTHOG_KEY() {
       return posthogKey;

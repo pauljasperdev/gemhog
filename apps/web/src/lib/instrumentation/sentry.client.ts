@@ -1,4 +1,4 @@
-import { clientEnv } from "@gemhog/env/client";
+import { clientEnv } from "@gemhog/env/client-runtime";
 import * as Sentry from "@sentry/nextjs";
 
 const getSessionId = () => {
@@ -12,8 +12,13 @@ const getSessionId = () => {
 };
 
 export function initSentryClient() {
+  const dsn = clientEnv.NEXT_PUBLIC_SENTRY_DSN;
+  if (!/^https?:\/\/.+@.+/.test(dsn)) {
+    return;
+  }
+
   Sentry.init({
-    dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN,
+    dsn,
     environment: process.env.NODE_ENV,
 
     // Error sampling - capture all errors

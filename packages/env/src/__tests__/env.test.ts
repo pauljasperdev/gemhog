@@ -157,12 +157,16 @@ describe("clientEnv validation", () => {
   describe("required vars", () => {
     it("should fail when NEXT_PUBLIC_SERVER_URL is missing", async () => {
       delete process.env.NEXT_PUBLIC_SERVER_URL;
-      await expect(import("../client.js")).rejects.toThrow();
+      const { loadClientEnv } = await import("../client.js");
+
+      expect(() => loadClientEnv()).toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_SERVER_URL is empty string", async () => {
       process.env.NEXT_PUBLIC_SERVER_URL = "";
-      await expect(import("../client.js")).rejects.toThrow();
+      const { loadClientEnv } = await import("../client.js");
+
+      expect(() => loadClientEnv()).toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_SENTRY_DSN is missing", async () => {
@@ -170,7 +174,9 @@ describe("clientEnv validation", () => {
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
       delete process.env.NEXT_PUBLIC_SENTRY_DSN;
-      await expect(import("../client.js")).rejects.toThrow();
+      const { loadClientEnv } = await import("../client.js");
+
+      expect(() => loadClientEnv()).toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_POSTHOG_KEY is missing", async () => {
@@ -178,7 +184,9 @@ describe("clientEnv validation", () => {
       process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
       delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
-      await expect(import("../client.js")).rejects.toThrow();
+      const { loadClientEnv } = await import("../client.js");
+
+      expect(() => loadClientEnv()).toThrow();
     });
 
     it("should fail when NEXT_PUBLIC_POSTHOG_HOST is missing", async () => {
@@ -186,7 +194,9 @@ describe("clientEnv validation", () => {
       process.env.NEXT_PUBLIC_SENTRY_DSN = "https://key@sentry.io/123";
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test";
       delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
-      await expect(import("../client.js")).rejects.toThrow();
+      const { loadClientEnv } = await import("../client.js");
+
+      expect(() => loadClientEnv()).toThrow();
     });
   });
 
@@ -197,7 +207,8 @@ describe("clientEnv validation", () => {
       process.env.NEXT_PUBLIC_POSTHOG_KEY = "phc_test123";
       process.env.NEXT_PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com";
 
-      const { clientEnv } = await import("../client.js");
+      const { loadClientEnv } = await import("../client.js");
+      const clientEnv = loadClientEnv();
 
       expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3000");
       expect(clientEnv.NEXT_PUBLIC_SENTRY_DSN).toBe(
@@ -216,7 +227,8 @@ describe("clientEnv validation", () => {
       delete process.env.NEXT_PUBLIC_POSTHOG_HOST;
       process.env.LOCAL_ENV = "1";
 
-      const { clientEnv } = await import("../client.js");
+      const { loadClientEnv } = await import("../client.js");
+      const clientEnv = loadClientEnv();
 
       expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe(
         localClientEnv.NEXT_PUBLIC_SERVER_URL,
@@ -231,5 +243,32 @@ describe("clientEnv validation", () => {
         localClientEnv.NEXT_PUBLIC_POSTHOG_HOST,
       );
     });
+  });
+});
+
+describe("client runtime env", () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = { ...originalEnv };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
+  it("reads NEXT_PUBLIC vars without validation", async () => {
+    process.env.NEXT_PUBLIC_SERVER_URL = "http://localhost:3001";
+    process.env.NEXT_PUBLIC_SENTRY_DSN = "";
+    process.env.NEXT_PUBLIC_POSTHOG_KEY = "";
+    process.env.NEXT_PUBLIC_POSTHOG_HOST = "";
+
+    const { clientEnv } = await import("../client-runtime.js");
+
+    expect(clientEnv.NEXT_PUBLIC_SERVER_URL).toBe("http://localhost:3001");
+    expect(clientEnv.NEXT_PUBLIC_SENTRY_DSN).toBe("");
+    expect(clientEnv.NEXT_PUBLIC_POSTHOG_KEY).toBe("");
+    expect(clientEnv.NEXT_PUBLIC_POSTHOG_HOST).toBe("");
   });
 });
