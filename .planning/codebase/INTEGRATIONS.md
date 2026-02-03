@@ -12,7 +12,7 @@
   - SDK/Client: `@ai-sdk/google` v3.0.8 (`apps/server/package.json`)
   - Model: `gemini-2.5-flash` (`apps/server/src/app.ts`)
   - Auth: API key in `GOOGLE_GENERATIVE_AI_API_KEY` env var
-  - Endpoint: `POST /ai` (`apps/server/src/index.ts`)
+  - Endpoint: `POST /ai` (`apps/server/src/app.ts`)
 
 ## Data Storage
 
@@ -45,8 +45,10 @@
     - List-Unsubscribe headers (RFC 8058 compliant)
     - DKIM/SPF/DMARC configured via SST Email component
   - Configuration: `SES_FROM_EMAIL` env var enables SES mode
-  - Local dev: Console logger mode (prints emails to terminal)
-  - Implementation: Effect TS services in `packages/core/src/email/`
+- Local dev: Console logger mode (prints emails to terminal)
+- Implementation: Effect TS services in `packages/core/src/email/`
+- Layer composition: `EmailLayers` in `packages/core/src/email/email-layers.ts`
+  (exports via `@gemhog/core/email`)
 
 ### Deferred (V1)
 
@@ -116,12 +118,19 @@ These integrations will be implemented after V0 foundation is complete.
     - Error boundaries (global-error.tsx, error.tsx, section-error-boundary.tsx)
     - Browser extension filtering (ignoreErrors, denyUrls)
     - Tunnel route (/monitoring) to avoid ad blockers
+  - Paths:
+    - `apps/web/src/instrumentation.ts`
+    - `apps/web/src/instrumentation-client.ts`
+    - `apps/web/src/lib/instrumentation/sentry.client.ts`
+    - `apps/web/src/lib/instrumentation/sentry.server.ts`
+    - `apps/web/src/lib/instrumentation/sentry.edge.ts`
 
 **Analytics:**
 
 - PostHog - Product analytics with GDPR cookie consent
   - SDK/Client: `posthog-js` v1.336 (`apps/web/package.json`)
-  - Initialization: `apps/web/src/lib/sentry/instrumentation.client.ts`
+  - Initialization: `apps/web/src/lib/instrumentation/posthog.ts` (via
+    `apps/web/src/instrumentation-client.ts`)
   - Config: `cookieless_mode: "on_reject"`,
     `person_profiles: "identified_only"`, `defaults: "2025-11-30"` (auto SPA
     pageview tracking)
@@ -177,6 +186,9 @@ These integrations will be implemented after V0 foundation is complete.
   - `NEXT_PUBLIC_POSTHOG_KEY` - Analytics
   - `NEXT_PUBLIC_POSTHOG_HOST` - Analytics host
 - Local defaults: `@gemhog/env/local-dev` (no per-app `.env` files)
+- Access pattern: Effect services call `Config.string()`; local defaults hydrate
+  `process.env` when `LOCAL_ENV=1` (`packages/env/src/server.ts`,
+  `packages/env/src/client.ts`)
 - Deployment-only vars: root `.env` for infrastructure/deploy contexts
 - Local database: Docker Compose (`infra/docker-compose.yml`)
 

@@ -71,6 +71,55 @@
 - `@/` → `apps/web/src/`
 - `@gemhog/*` → workspace packages
 
+## Environment Access
+
+- Use `Config.string()` inside Effect services and utilities instead of
+  importing `serverEnv` directly.
+- Local defaults are hydrated into `process.env` when `LOCAL_ENV=1` in
+  `packages/env/src/server.ts` and `packages/env/src/client.ts`, so
+  `Config.string()` works consistently across runtime and tests.
+
+## Effect Service Abstraction
+
+Use a consistent service + layer pattern when refactoring to Effect:
+
+```typescript
+import { Context, Effect, Layer } from "effect";
+
+class Service extends Context.Tag("Service")<
+  Service,
+  {
+    readonly run: () => Effect.Effect<void>;
+  }
+>() {}
+
+const ServiceLive = Layer.effect(
+  Service,
+  Effect.gen(function* () {
+    return { run: () => Effect.void };
+  }),
+);
+
+const AppLive = ServiceLive;
+
+const program = Effect.gen(function* () {
+  const service = yield* Service;
+  yield* service.run();
+});
+
+Effect.runPromise(program.pipe(Effect.provide(AppLive)));
+```
+
+**Patterns to follow:**
+
+- Define service interfaces with `Context.Tag`.
+- Implement live layers with `Layer.effect` and `Effect.gen` (pull dependencies
+  via `yield*`).
+- Compose multi-service layers with `Layer.mergeAll` and `Layer.provide`.
+- Provide the composed layer stack at call sites (see
+  `packages/api/src/routers/subscriber.ts` +
+  `packages/core/src/email/email-layers.ts`).
+
 ## Error Handling
 
 **Patterns:**
@@ -98,7 +147,7 @@
 
 **Patterns:**
 
-- Server startup logging (`apps/server/src/index.ts`)
+- Server startup logging (`apps/server/src/serve.ts`)
 - Debug logging in development (to be removed for production)
 
 **Where:**
@@ -315,11 +364,11 @@ const addItem = useMutation({
 
 Choose the right approach based on the mutation type:
 
-| Approach                  | When to use                                                           |
-| ------------------------- | --------------------------------------------------------------------- |
-| UI-based (via `variables`) | Adding items to lists, simple toggles — show pending items at reduced opacity |
+| Approach                     | When to use                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------- |
+| UI-based (via `variables`)   | Adding items to lists, simple toggles — show pending items at reduced opacity         |
 | Cache-based (via `onMutate`) | Editing existing items inline, reordering — need immediate cache update with rollback |
-| None (loading state only) | Fire-and-forget actions (signup, send email, logout)                  |
+| None (loading state only)    | Fire-and-forget actions (signup, send email, logout)                                  |
 
 **UI-based (recommended for new items)** — no cache manipulation, pending items
 rendered from mutation state:

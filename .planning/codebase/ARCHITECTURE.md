@@ -64,11 +64,13 @@
 
 **Configuration Layer:**
 
-- Purpose: Environment validation and type-safe config
-- Contains: Effect Config validated env schemas for server, client, and runtime
+- Purpose: Environment validation and type-safe config access
+- Contains: Effect Config helpers and local defaults
 - Location: `packages/env/src/`
 - Depends on: None
-- Used by: All layers
+- Used by: All layers (via `Config.string()` in Effect services)
+- Local defaults: `packages/env/src/server.ts` and `packages/env/src/client.ts`
+  hydrate `process.env` when `LOCAL_ENV=1` so `Config.string()` works anywhere
 
 ## Data Flow
 
@@ -95,19 +97,17 @@
 6. HTTP-only cookie set
 7. Client redirects to dashboard
 
-**AI Chat Request:**
+**AI Endpoint (Hono):**
 
-1. User sends message (`apps/web/src/app/ai/page.tsx`)
-2. useChat() hook triggers request
-3. HTTP POST to `/ai` endpoint (`apps/server/src/app.ts`)
-4. Google Gemini model called via AI SDK
-5. Streaming response returned
-6. Streamdown component renders markdown
+1. Client sends HTTP POST to `/ai` endpoint (`apps/server/src/app.ts`)
+2. Google Gemini model called via AI SDK
+3. Streaming response returned
 
 **Analytics Consent Flow (Implemented Phase 03):**
 
 1. PostHog initializes with `cookieless_mode: "on_reject"` — zero tracking
-   before consent (`apps/web/src/lib/sentry/instrumentation.client.ts`)
+   before consent (`apps/web/src/lib/instrumentation/posthog.ts` via
+   `apps/web/src/instrumentation-client.ts`)
 2. `PostHogProvider` conditionally wraps React tree when
    `NEXT_PUBLIC_POSTHOG_KEY` is set (`apps/web/src/components/providers.tsx`)
 3. `CookieConsentBanner` checks `get_explicit_consent_status()` — shows banner
@@ -327,17 +327,20 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 1. User submits email via tRPC `subscriber.subscribe` mutation
    (`packages/api/src/routers/subscriber.ts`)
-2. SubscriberService creates pending subscriber in database
+2. SubscriberService creates or reactivates subscriber in database
    (`packages/core/src/email/subscriber.service.ts`)
 3. HMAC tokens generated for verification and unsubscribe links
-   (`packages/core/src/email/token.ts`)
+   (`packages/core/src/email/token.ts` — reads `BETTER_AUTH_SECRET` via
+   `Config.string()`)
 4. EmailService sends verification email (SES in prod, console in dev)
    (`packages/core/src/email/email.service.ts`)
 5. User clicks verification link → `/verify?token=...`
-6. Server verifies token, updates subscriber status to "active"
+6. Verify handler reads subscriber by email and verifies by id
+   (`apps/web/src/app/verify/verify-status.ts`)
 7. User receives newsletters (future Phase 3+)
 8. Unsubscribe: User clicks unsubscribe link or uses one-click POST (RFC 8058)
-9. Status updated to "unsubscribed" via SubscriberService
+9. Unsubscribe handler reads subscriber by email and unsubscribes by id
+   (`apps/web/src/app/api/unsubscribe/route.ts`)
 
 ## Deferred Data Flows (V1)
 
