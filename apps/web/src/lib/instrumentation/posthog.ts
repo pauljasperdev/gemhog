@@ -1,4 +1,4 @@
-import { clientEnv } from "@gemhog/env/client";
+import { clientEnv } from "@gemhog/env/client-runtime";
 import posthog from "posthog-js";
 
 export function initPostHog() {

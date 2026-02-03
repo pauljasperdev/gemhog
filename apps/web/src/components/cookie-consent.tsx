@@ -1,6 +1,6 @@
 "use client";
 
-import { clientEnv } from "@gemhog/env/client";
+import { clientEnv } from "@gemhog/env/client-runtime";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";

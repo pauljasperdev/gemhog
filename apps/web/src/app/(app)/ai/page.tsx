@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { clientEnv } from "@gemhog/env/client";
+import { clientEnv } from "@gemhog/env/client-runtime";
 import { DefaultChatTransport } from "ai";
 import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

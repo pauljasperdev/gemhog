@@ -1,10 +1,10 @@
-import { clientEnv } from "@gemhog/env/client";
+import { loadClientEnv } from "@gemhog/env/client";
 import { withSentryConfig } from "@sentry/nextjs";
 import "@gemhog/env/server";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  env: clientEnv,
+  env: loadClientEnv(),
   typedRoutes: true,
   reactCompiler: true,
   transpilePackages: ["@gemhog/api", "@gemhog/core", "@gemhog/env", "shiki"],
