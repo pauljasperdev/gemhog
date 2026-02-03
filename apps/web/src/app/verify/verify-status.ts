@@ -1,7 +1,9 @@
-import { SubscriberService, verifyToken } from "@gemhog/core/email";
+import {
+  EmailLayers,
+  SubscriberService,
+  verifyToken,
+} from "@gemhog/core/email";
 import { Effect } from "effect";
-
-import { EmailLayers } from "@/lib/email-layers";
 
 export type VerifyStatus = "success" | "expired" | "invalid" | "error";
 

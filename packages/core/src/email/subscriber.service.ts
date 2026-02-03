@@ -1,7 +1,7 @@
 import type { SqlError } from "@effect/sql/SqlError";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { eq } from "drizzle-orm";
-import { Config, Context, Effect, Layer } from "effect";
+import { Config, Console, Context, Effect, Layer } from "effect";
 import type { ConfigError } from "effect/ConfigError";
 import { type EmailSendError, SubscriberNotFoundError } from "./email.errors";
 import { EmailService } from "./email.service";
@@ -64,18 +64,20 @@ export const SubscriberServiceLive = Layer.effect(
         }
 
         return existing;
-      }).pipe(
-        Effect.catchTag("SubscriberNotFoundError", () =>
-          Effect.gen(function* () {
-            return yield* db
-              .insert(subscriber)
-              .values({ email })
-              .returning()
-              // biome-ignore lint/style/noNonNullAssertion: Database insert returns at least one row.
-              .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
-          }),
-        ),
-      );
+      })
+        .pipe(
+          Effect.catchTag("SubscriberNotFoundError", () =>
+            Effect.gen(function* () {
+              return yield* db
+                .insert(subscriber)
+                .values({ email })
+                .returning()
+                // biome-ignore lint/style/noNonNullAssertion: Database insert returns at least one row.
+                .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
+            }),
+          ),
+        )
+        .pipe(Effect.withSpan("subscriber.create"));
 
     const readSubscriberByEmail = (
       email: string,
@@ -141,9 +143,21 @@ export const SubscriberServiceLive = Layer.effect(
       email: string,
     ): Effect.Effect<Subscriber, EmailSendError | SqlError | ConfigError> =>
       Effect.gen(function* () {
-        const APP_URL = yield* Config.string("APP_URL");
+        const APP_URL = yield* Config.string("APP_URL").pipe(
+          Effect.tapErrorCause((cause) =>
+            Console.error(
+              `[SubscriberService] APP_URL config failed for ${email}: ${String(cause)}`,
+            ),
+          ),
+        );
 
-        const sub = yield* createSubscriber(email);
+        const sub = yield* createSubscriber(email).pipe(
+          Effect.tapErrorCause((cause) =>
+            Console.error(
+              `[SubscriberService] createSubscriber failed for ${email}: ${String(cause)}`,
+            ),
+          ),
+        );
         const shouldSendEmail = sub.status === "pending";
 
         if (shouldSendEmail) {
@@ -151,30 +165,57 @@ export const SubscriberServiceLive = Layer.effect(
             email,
             action: "verify",
             expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
-          });
+          }).pipe(
+            Effect.tapErrorCause((cause) =>
+              Console.error(
+                `[SubscriberService] verify token failed for ${email}: ${String(cause)}`,
+              ),
+            ),
+          );
 
           const unsubscribeToken = yield* createToken({
             email,
             action: "unsubscribe",
             expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
-          });
+          }).pipe(
+            Effect.tapErrorCause((cause) =>
+              Console.error(
+                `[SubscriberService] unsubscribe token failed for ${email}: ${String(cause)}`,
+              ),
+            ),
+          );
 
           const verifyUrl = `${APP_URL}/verify?token=${token}`;
           const unsubscribeUrl = `${APP_URL}/api/unsubscribe?token=${unsubscribeToken}`;
           const { subject, html, text } = verificationEmail({ verifyUrl });
 
-          yield* emailService.send({
-            to: email,
-            email: { subject, html, text },
-            headers: {
-              "List-Unsubscribe": `<${unsubscribeUrl}>`,
-              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-            },
-          });
+          yield* emailService
+            .send({
+              to: email,
+              email: { subject, html, text },
+              headers: {
+                "List-Unsubscribe": `<${unsubscribeUrl}>`,
+                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+              },
+            })
+            .pipe(
+              Effect.tapErrorCause((cause) =>
+                Console.error(
+                  `[SubscriberService] email send failed for ${email}: ${String(cause)}`,
+                ),
+              ),
+            );
         }
 
         return sub;
-      });
+      }).pipe(
+        Effect.tapErrorCause((cause) =>
+          Console.error(
+            `[SubscriberService] subscribe failed for ${email}: ${String(cause)}`,
+          ),
+        ),
+        Effect.withSpan("subscriber.subscribe"),
+      );
 
     const verify = (
       subscriberId: string,
@@ -186,6 +227,7 @@ export const SubscriberServiceLive = Layer.effect(
             verifiedAt: new Date(),
           }),
         ),
+        Effect.withSpan("subscriber.verify"),
       );
 
     const unsubscribe = (
@@ -198,6 +240,7 @@ export const SubscriberServiceLive = Layer.effect(
             unsubscribedAt: new Date(),
           }),
         ),
+        Effect.withSpan("subscriber.unsubscribe"),
       );
 
     return {

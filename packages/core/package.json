@@ -17,6 +17,9 @@
     "./email": {
       "default": "./src/email/index.ts"
     },
+    "./telemetry": {
+      "default": "./src/telemetry.ts"
+    },
     "./email/subscriber.sql": {
       "default": "./src/email/subscriber.sql.ts"
     }
@@ -32,7 +35,15 @@
     "@effect/sql": "^0.49",
     "@effect/sql-drizzle": "^0.48",
     "@effect/sql-pg": "^0.50",
+    "@effect/opentelemetry": "^0.61.0",
     "@gemhog/env": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/core": "^2.2.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
+    "@opentelemetry/resources": "^2.2.0",
+    "@opentelemetry/sdk-trace-base": "^2.2.0",
+    "@opentelemetry/sdk-trace-node": "^2.2.0",
+    "@opentelemetry/semantic-conventions": "^1.38.0",
     "better-auth": "catalog:",
     "drizzle-orm": "^0.45.1",
     "effect": "^3.19",

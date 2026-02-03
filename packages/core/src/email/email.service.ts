@@ -32,7 +32,7 @@ export const EmailServiceConsole = Layer.succeed(EmailService, {
           `[EMAIL] Headers: ${JSON.stringify(params.headers)}`,
         );
       }
-    }),
+    }).pipe(Effect.withSpan("email.send")),
 });
 
 const TRANSIENT_ERROR_NAMES = new Set([
@@ -84,8 +84,14 @@ export const EmailServiceLive = Layer.effect(
               cause: error,
             }),
         }).pipe(
+          Effect.tapErrorCause((cause) =>
+            Console.error(
+              `[EmailService] send failed for ${to}: ${String(cause)}`,
+            ),
+          ),
           Effect.retry({ schedule: retrySchedule, while: isTransientError }),
           Effect.asVoid,
+          Effect.withSpan("email.send"),
         ),
     };
   }),
