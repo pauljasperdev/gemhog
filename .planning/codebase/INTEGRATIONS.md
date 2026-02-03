@@ -125,6 +125,14 @@ These integrations will be implemented after V0 foundation is complete.
     - `apps/web/src/lib/instrumentation/sentry.server.ts`
     - `apps/web/src/lib/instrumentation/sentry.edge.ts`
 
+**Tracing:**
+
+- Sentry OTLP - Effect span export
+  - SDK/Client: `@effect/opentelemetry` (core)
+  - Exporter: `@opentelemetry/exporter-trace-otlp-http`
+  - Configuration: `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` + `SENTRY_DSN`
+  - Implementation: `packages/core/src/telemetry.ts`
+
 **Analytics:**
 
 - PostHog - Product analytics with GDPR cookie consent
@@ -240,6 +248,7 @@ APP_URL                         # Application URL (frontend origin)
 GOOGLE_GENERATIVE_AI_API_KEY    # Google AI API key
 RESEND_API_KEY                  # Resend email API key
 SENTRY_DSN                      # Sentry DSN for error monitoring
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # OTLP endpoint for tracing
 ```
 
 **Client (`packages/env/src/client.ts`):**

@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { createHmac } from "node:crypto";
-import { Context, Effect, Layer } from "effect";
+import { Effect, Layer } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
@@ -9,39 +9,35 @@ const TEST_SECRET = "test-secret-at-least-32-characters-long";
 process.env.BETTER_AUTH_SECRET = TEST_SECRET;
 process.env.APP_URL = "http://localhost:3001";
 
-vi.mock("@/lib/email-layers", () => {
-  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
-  const SubscriberService = Context.GenericTag<any>("SubscriberService");
-  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
-  const EmailService = Context.GenericTag<any>("EmailService");
+vi.mock("@gemhog/core/email", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@gemhog/core/email")>();
+  const now = new Date();
+  const mockSubscriber = {
+    id: "test-id",
+    email: "test@example.com",
+    status: "active" as const,
+    subscribedAt: now,
+    verifiedAt: null,
+    unsubscribedAt: null,
+    createdAt: now,
+    updatedAt: now,
+  };
   return {
+    ...actual,
     EmailLayers: Layer.mergeAll(
-      Layer.succeed(EmailService, {
+      Layer.succeed(actual.EmailService, {
         send: () => Effect.void,
       }),
-      Layer.succeed(SubscriberService, {
-        createSubscriber: () => Effect.succeed({ id: "test-id", isNew: true }),
-        readSubscriberById: () => Effect.succeed(null),
-        readSubscriberByEmail: () =>
-          Effect.succeed({
-            id: "test-id",
-            email: "test@example.com",
-            status: "active",
-          }),
-        updateSubscriberById: () => Effect.void,
+      Layer.succeed(actual.SubscriberService, {
+        createSubscriber: () =>
+          Effect.succeed({ ...mockSubscriber, status: "pending" }),
+        readSubscriberById: () => Effect.succeed(mockSubscriber),
+        readSubscriberByEmail: () => Effect.succeed(mockSubscriber),
+        updateSubscriberById: () => Effect.succeed(mockSubscriber),
         subscribe: () =>
-          Effect.succeed({
-            id: "test-id",
-            email: "test@example.com",
-            status: "pending",
-            subscribedAt: new Date(),
-            verifiedAt: null,
-            unsubscribedAt: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }),
-        verify: () => Effect.void,
-        unsubscribe: () => Effect.void,
+          Effect.succeed({ ...mockSubscriber, status: "pending" }),
+        verify: () => Effect.succeed(mockSubscriber),
+        unsubscribe: () => Effect.succeed(mockSubscriber),
       }),
     ),
   };

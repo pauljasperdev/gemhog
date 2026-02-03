@@ -1,8 +1,10 @@
-import { SubscriberService, verifyToken } from "@gemhog/core/email";
+import {
+  EmailLayers,
+  SubscriberService,
+  verifyToken,
+} from "@gemhog/core/email";
 import { Effect } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
-
-import { EmailLayers } from "@/lib/email-layers";
 
 type UnsubscribeResult = "success" | "invalid" | "error";
 

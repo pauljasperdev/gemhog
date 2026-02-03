@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { Context, Effect, Layer } from "effect";
+import { Effect, Layer } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
@@ -11,28 +11,32 @@ vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
 }));
 
-vi.mock("@/lib/email-layers", () => {
-  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
-  const SubscriberService = Context.GenericTag<any>("SubscriberService");
-  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
-  const EmailService = Context.GenericTag<any>("EmailService");
+vi.mock("@gemhog/core/email", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@gemhog/core/email")>();
+  const now = new Date();
+  const mockSubscriber = {
+    id: "mock-id",
+    email: "test@example.com",
+    status: "pending" as const,
+    subscribedAt: now,
+    verifiedAt: null,
+    unsubscribedAt: null,
+    createdAt: now,
+    updatedAt: now,
+  };
   return {
+    ...actual,
     EmailLayers: Layer.mergeAll(
-      Layer.succeed(SubscriberService, {
-        createSubscriber: () => Effect.succeed({ id: "mock-id", isNew: true }),
-        readSubscriberById: () => Effect.succeed(null),
-        readSubscriberByEmail: () =>
-          Effect.succeed({
-            id: "mock-id",
-            email: "test@example.com",
-            status: "pending",
-          }),
-        updateSubscriberById: () => Effect.void,
-        subscribe: () => Effect.succeed({ id: "mock-id" }),
-        verify: () => Effect.void,
-        unsubscribe: () => Effect.void,
+      Layer.succeed(actual.SubscriberService, {
+        createSubscriber: () => Effect.succeed(mockSubscriber),
+        readSubscriberById: () => Effect.succeed(mockSubscriber),
+        readSubscriberByEmail: () => Effect.succeed(mockSubscriber),
+        updateSubscriberById: () => Effect.succeed(mockSubscriber),
+        subscribe: () => Effect.succeed(mockSubscriber),
+        verify: () => Effect.succeed(mockSubscriber),
+        unsubscribe: () => Effect.succeed(mockSubscriber),
       }),
-      Layer.succeed(EmailService, {
+      Layer.succeed(actual.EmailService, {
         send: () => Effect.void,
       }),
     ),
