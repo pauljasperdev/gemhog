@@ -1,5 +1,4 @@
-import { ServerEnvService } from "@gemhog/env/server";
-import { Console, Context, Effect, Layer, Schedule } from "effect";
+import { Config, Console, Context, Effect, Layer, Schedule } from "effect";
 import { Resend } from "resend";
 import { EmailSendError } from "./email.errors";
 import type { EmailContent } from "./email.templates";
@@ -63,7 +62,7 @@ const FROM_EMAIL = "Gemhog <hello@gemhog.com>";
 export const EmailServiceLive = Layer.effect(
   EmailService,
   Effect.gen(function* () {
-    const { RESEND_API_KEY } = yield* ServerEnvService;
+    const RESEND_API_KEY = yield* Config.string("RESEND_API_KEY");
     const resend = new Resend(RESEND_API_KEY);
 
     return {

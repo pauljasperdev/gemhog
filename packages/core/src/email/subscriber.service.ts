@@ -1,12 +1,9 @@
+import type { SqlError } from "@effect/sql/SqlError";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
-import { ServerEnvService } from "@gemhog/env/server";
 import { eq } from "drizzle-orm";
-import { Context, Effect, Layer } from "effect";
-import {
-  type EmailSendError,
-  SubscriberError,
-  SubscriberNotFoundError,
-} from "./email.errors";
+import { Config, Context, Effect, Layer } from "effect";
+import type { ConfigError } from "effect/ConfigError";
+import { type EmailSendError, SubscriberNotFoundError } from "./email.errors";
 import { EmailService } from "./email.service";
 import { verificationEmail } from "./email.templates";
 import { type Subscriber, subscriber } from "./subscriber.sql";
@@ -17,30 +14,26 @@ export class SubscriberService extends Context.Tag("SubscriberService")<
   {
     readonly createSubscriber: (
       email: string,
-    ) => Effect.Effect<{ id: string; isNew: boolean }, SubscriberError>;
+    ) => Effect.Effect<Subscriber, SqlError>;
     readonly readSubscriberById: (
       subscriberId: string,
-    ) => Effect.Effect<Subscriber | null, SubscriberError>;
+    ) => Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError>;
     readonly readSubscriberByEmail: (
       email: string,
-    ) => Effect.Effect<Subscriber | null, SubscriberError>;
+    ) => Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError>;
     readonly updateSubscriberById: (
       subscriberId: string,
       updates: Partial<Subscriber>,
-    ) => Effect.Effect<void, SubscriberError>;
+    ) => Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError>;
     readonly subscribe: (
       email: string,
-    ) => Effect.Effect<
-      Subscriber,
-      SubscriberError | EmailSendError,
-      ServerEnvService
-    >;
+    ) => Effect.Effect<Subscriber, EmailSendError | SqlError | ConfigError>;
     readonly verify: (
       subscriberId: string,
-    ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
+    ) => Effect.Effect<void, SqlError | SubscriberNotFoundError>;
     readonly unsubscribe: (
       subscriberId: string,
-    ) => Effect.Effect<void, SubscriberNotFoundError | SubscriberError>;
+    ) => Effect.Effect<void, SqlError | SubscriberNotFoundError>;
   }
 >() {}
 
@@ -52,12 +45,12 @@ export const SubscriberServiceLive = Layer.effect(
 
     const createSubscriber = (
       email: string,
-    ): Effect.Effect<{ id: string; isNew: boolean }, SubscriberError> =>
+    ): Effect.Effect<Subscriber, SqlError> =>
       Effect.gen(function* () {
         const existing = yield* readSubscriberByEmail(email);
 
-        if (existing && existing.status === "unsubscribed") {
-          yield* db
+        if (existing.status === "unsubscribed") {
+          return yield* db
             .update(subscriber)
             .set({
               status: "pending",
@@ -65,128 +58,90 @@ export const SubscriberServiceLive = Layer.effect(
               unsubscribedAt: null,
             })
             .where(eq(subscriber.email, email))
-            .pipe(
-              Effect.mapError(
-                (error) =>
-                  new SubscriberError({
-                    message: `Failed to re-subscribe: ${email}`,
-                    cause: error,
-                  }),
-              ),
-            );
-          return { id: existing.id, isNew: true };
+            .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
         }
 
-        if (existing) {
-          return { id: existing.id, isNew: false };
-        }
-
-        const rows: { id: string }[] = yield* db
-          .insert(subscriber)
-          .values({ email })
-          .returning({ id: subscriber.id })
-          .pipe(
-            Effect.mapError(
-              (error) =>
-                new SubscriberError({
-                  message: `Failed to create subscriber: ${email}`,
-                  cause: error,
-                }),
-            ),
-          );
-
-        const inserted = rows[0];
-        if (!inserted) {
-          return yield* Effect.fail(
-            new SubscriberError({
-              message: `Insert returned no rows for: ${email}`,
-            }),
-          );
-        }
-        return { id: inserted.id, isNew: true };
-      });
+        return existing;
+      }).pipe(
+        Effect.catchTag("SubscriberNotFoundError", () =>
+          Effect.gen(function* () {
+            return yield* db
+              .insert(subscriber)
+              .values({ email })
+              .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
+          }),
+        ),
+      );
 
     const readSubscriberByEmail = (
       email: string,
-    ): Effect.Effect<Subscriber | null, SubscriberError> =>
+    ): Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError> =>
       db
         .select()
         .from(subscriber)
         .where(eq(subscriber.email, email))
         .pipe(
-          Effect.map((rows: Subscriber[]) => rows[0] ?? null),
-          Effect.mapError(
-            (error) =>
-              new SubscriberError({
-                message: `Failed to find subscriber: ${email}`,
-                cause: error,
-              }),
+          Effect.map((rows: Subscriber[]) => rows[0]),
+          Effect.flatMap((row) =>
+            row
+              ? Effect.succeed(row)
+              : Effect.fail(
+                  new SubscriberNotFoundError({ identifier: `email:${email}` }),
+                ),
           ),
         );
 
     const readSubscriberById = (
-      id: string,
-    ): Effect.Effect<Subscriber | null, SubscriberError> =>
+      subscriberId: string,
+    ): Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError> =>
       db
         .select()
         .from(subscriber)
-        .where(eq(subscriber.id, id))
+        .where(eq(subscriber.id, subscriberId))
         .pipe(
-          Effect.map((rows: Subscriber[]) => rows[0] ?? null),
-          Effect.mapError(
-            (error) =>
-              new SubscriberError({
-                message: `Failed to find subscriber by id: ${id}`,
-                cause: error,
-              }),
+          Effect.map((rows: Subscriber[]) => rows[0]),
+          Effect.flatMap((row) =>
+            row
+              ? Effect.succeed(row)
+              : Effect.fail(
+                  new SubscriberNotFoundError({
+                    identifier: `subscriberId:${subscriberId}`,
+                  }),
+                ),
           ),
         );
 
     const updateSubscriberById = (
       subscriberId: string,
       updates: Partial<Subscriber>,
-    ): Effect.Effect<void, SubscriberError> =>
+    ): Effect.Effect<Subscriber, SqlError | SubscriberNotFoundError> =>
       db
         .update(subscriber)
         .set(updates)
         .where(eq(subscriber.id, subscriberId))
         .pipe(
-          Effect.mapError(
-            (error) =>
-              new SubscriberError({
-                message: `Failed to update subscriber: ${subscriberId}`,
-                cause: error,
-              }),
+          Effect.map((rows: Subscriber[]) => rows[0]),
+          Effect.flatMap((row) =>
+            row
+              ? Effect.succeed(row)
+              : Effect.fail(
+                  new SubscriberNotFoundError({
+                    identifier: `subscriberId:${subscriberId}`,
+                  }),
+                ),
           ),
-          Effect.asVoid,
         );
-
-    const requireById = (
-      id: string,
-    ): Effect.Effect<Subscriber, SubscriberNotFoundError | SubscriberError> =>
-      readSubscriberById(id).pipe(
-        Effect.flatMap((sub) =>
-          sub
-            ? Effect.succeed(sub)
-            : Effect.fail(new SubscriberNotFoundError({ email: `id:${id}` })),
-        ),
-      );
 
     const subscribe = (
       email: string,
-    ): Effect.Effect<
-      Subscriber,
-      SubscriberError | EmailSendError,
-      ServerEnvService
-    > =>
+    ): Effect.Effect<Subscriber, EmailSendError | SqlError | ConfigError> =>
       Effect.gen(function* () {
-        const result = yield* createSubscriber(email);
+        const APP_URL = yield* Config.string("APP_URL");
 
-        const sub = yield* readSubscriberByEmail(email);
-        const shouldSendEmail = result.isNew || sub?.status === "pending";
+        const sub = yield* createSubscriber(email);
+        const shouldSendEmail = sub.status === "pending";
 
         if (shouldSendEmail) {
-          const { APP_URL } = yield* ServerEnvService;
           const token = yield* createToken({
             email,
             action: "verify",
@@ -213,21 +168,13 @@ export const SubscriberServiceLive = Layer.effect(
           });
         }
 
-        const fresh = yield* readSubscriberByEmail(email);
-        if (!fresh) {
-          return yield* Effect.fail(
-            new SubscriberError({
-              message: `Subscriber disappeared after creation: ${email}`,
-            }),
-          );
-        }
-        return fresh;
+        return sub;
       });
 
     const verify = (
       subscriberId: string,
-    ): Effect.Effect<void, SubscriberNotFoundError | SubscriberError> =>
-      requireById(subscriberId).pipe(
+    ): Effect.Effect<void, SqlError | SubscriberNotFoundError> =>
+      readSubscriberById(subscriberId).pipe(
         Effect.flatMap(() =>
           updateSubscriberById(subscriberId, {
             status: "active",
@@ -238,8 +185,8 @@ export const SubscriberServiceLive = Layer.effect(
 
     const unsubscribe = (
       subscriberId: string,
-    ): Effect.Effect<void, SubscriberNotFoundError | SubscriberError> =>
-      requireById(subscriberId).pipe(
+    ): Effect.Effect<void, SqlError | SubscriberNotFoundError> =>
+      readSubscriberById(subscriberId).pipe(
         Effect.flatMap(() =>
           updateSubscriberById(subscriberId, {
             status: "unsubscribed",

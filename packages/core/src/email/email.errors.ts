@@ -13,7 +13,7 @@ export class SubscriberError extends Data.TaggedError("SubscriberError")<{
 export class SubscriberNotFoundError extends Data.TaggedError(
   "SubscriberNotFoundError",
 )<{
-  email: string;
+  identifier: string;
 }> {}
 
 export class InvalidTokenError extends Data.TaggedError("InvalidTokenError")<{
