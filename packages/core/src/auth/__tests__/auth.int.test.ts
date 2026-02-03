@@ -1,14 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createTestUser, truncateAuthTables } from "./test-fixtures";
 
 const TEST_ENV = {
@@ -26,9 +18,7 @@ const TEST_ENV = {
   SENTRY_DSN: "https://key@sentry.io/123",
 };
 
-vi.mock("@gemhog/env/server", () => ({
-  serverEnv: TEST_ENV,
-}));
+Object.assign(process.env, TEST_ENV);
 describe("auth integration", () => {
   let pool: Pool;
   let db: ReturnType<typeof drizzle>;

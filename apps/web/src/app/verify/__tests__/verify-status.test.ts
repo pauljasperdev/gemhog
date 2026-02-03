@@ -4,19 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
 
-vi.mock("@gemhog/env/server", () => ({
-  serverEnv: {
-    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-    APP_URL: "http://localhost:3001",
-    DATABASE_URL: "postgresql://localhost/test",
-    DATABASE_URL_POOLER: "postgresql://localhost/test",
-    BETTER_AUTH_URL: "http://localhost:3001",
-    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-    SENTRY_DSN: "https://key@sentry.io/123",
-  },
-  ServerEnvService: Context.GenericTag("ServerEnvService"),
-  ServerEnvLive: Layer.empty,
-}));
+process.env.BETTER_AUTH_SECRET = TEST_SECRET;
+process.env.APP_URL = "http://localhost:3001";
 
 vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
@@ -27,9 +16,6 @@ vi.mock("@/lib/email-layers", () => {
   const SubscriberService = Context.GenericTag<any>("SubscriberService");
   // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
   const EmailService = Context.GenericTag<any>("EmailService");
-  // biome-ignore lint/suspicious/noExplicitAny: vi.mock factory cannot reference real types
-  const ServerEnvService = Context.GenericTag<any>("ServerEnvService");
-
   return {
     EmailLayers: Layer.mergeAll(
       Layer.succeed(SubscriberService, {
@@ -48,16 +34,6 @@ vi.mock("@/lib/email-layers", () => {
       }),
       Layer.succeed(EmailService, {
         send: () => Effect.void,
-      }),
-      Layer.succeed(ServerEnvService, {
-        BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-        APP_URL: "http://localhost:3001",
-        DATABASE_URL: "postgresql://localhost/test",
-        DATABASE_URL_POOLER: "postgresql://localhost/test",
-        BETTER_AUTH_URL: "http://localhost:3001",
-        GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-        RESEND_API_KEY: "re_test_key",
-        SENTRY_DSN: "https://key@sentry.io/123",
       }),
     ),
   };

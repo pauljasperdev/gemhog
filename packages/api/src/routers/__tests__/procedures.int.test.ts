@@ -1,23 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-vi.mock("@gemhog/env/server", async () => {
-  const { Context, Layer } = await import("effect");
-  const ServerEnvService = Context.GenericTag("ServerEnvService");
-  return {
-    serverEnv: {
-      BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-      APP_URL: "http://localhost:3001",
-      DATABASE_URL: "postgresql://localhost/test",
-      DATABASE_URL_POOLER: "postgresql://localhost/test",
-      BETTER_AUTH_URL: "http://localhost:3001",
-      GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-      SENTRY_DSN: "https://key@sentry.io/123",
-    },
-    ServerEnvService,
-    ServerEnvLive: Layer.empty,
-  };
-});
+process.env.BETTER_AUTH_SECRET =
+  process.env.BETTER_AUTH_SECRET ?? "test-secret-at-least-32-characters-long";
+process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
 
 import { t } from "../../index";
 import { appRouter } from "../index";
@@ -50,7 +36,7 @@ const mockSession = {
 
 describe("healthCheck (public)", () => {
   it("should return OK without session", async () => {
-    const caller = createCaller({ session: null });
+    const caller = createCaller({ session: null, headers: new Headers() });
 
     const result = await caller.healthCheck();
 
@@ -60,7 +46,10 @@ describe("healthCheck (public)", () => {
 
 describe("privateData (protected)", () => {
   it("should return data with valid session", async () => {
-    const caller = createCaller({ session: mockSession });
+    const caller = createCaller({
+      session: mockSession,
+      headers: new Headers(),
+    });
 
     const result = await caller.privateData();
 
@@ -71,7 +60,7 @@ describe("privateData (protected)", () => {
   });
 
   it("should throw UNAUTHORIZED without session", async () => {
-    const caller = createCaller({ session: null });
+    const caller = createCaller({ session: null, headers: new Headers() });
 
     await expect(caller.privateData()).rejects.toThrow(TRPCError);
     await expect(caller.privateData()).rejects.toMatchObject({

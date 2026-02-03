@@ -1,23 +1,7 @@
 import * as PgDrizzle from "@effect/sql-drizzle/Pg";
 import { PgClient } from "@effect/sql-pg";
-import { Context, Effect, Layer, Redacted } from "effect";
-import { afterEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("@gemhog/env/server", () => {
-  const ServerEnvService = Context.GenericTag<{
-    BETTER_AUTH_SECRET: string;
-    DATABASE_URL: string;
-    DATABASE_URL_POOLER: string;
-    BETTER_AUTH_URL: string;
-    APP_URL: string;
-    GOOGLE_GENERATIVE_AI_API_KEY: string;
-    RESEND_API_KEY: string;
-    SENTRY_DSN: string;
-  }>("ServerEnvService");
-  return { ServerEnvService, ServerEnvLive: Layer.empty };
-});
-
-import { ServerEnvService } from "@gemhog/env/server";
+import { Effect, Layer, Redacted } from "effect";
+import { afterEach, describe, expect, it } from "vitest";
 import { SubscriberNotFoundError } from "../email.errors";
 import { EmailServiceConsole } from "../email.service";
 import {
@@ -30,18 +14,12 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://postgres:password@localhost:5432/gemhog";
 
+process.env.BETTER_AUTH_SECRET =
+  process.env.BETTER_AUTH_SECRET ?? "test-secret-at-least-32-characters-long";
+process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
+
 const TestPgLive = PgClient.layer({ url: Redacted.make(DATABASE_URL) });
 const TestDrizzleLive = PgDrizzle.layer.pipe(Layer.provide(TestPgLive));
-const TestServerEnvLive = Layer.succeed(ServerEnvService, {
-  BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-  DATABASE_URL,
-  DATABASE_URL_POOLER: DATABASE_URL,
-  BETTER_AUTH_URL: "http://localhost:3001",
-  APP_URL: "http://localhost:3001",
-  GOOGLE_GENERATIVE_AI_API_KEY: "",
-  RESEND_API_KEY: "",
-  SENTRY_DSN: "",
-});
 const TestSubscriberLive = SubscriberServiceLive.pipe(
   Layer.provide(TestDrizzleLive),
   Layer.provide(EmailServiceConsole),
@@ -52,14 +30,11 @@ const truncate = Effect.gen(function* () {
   yield* db.delete(subscriber).pipe(Effect.catchAll(() => Effect.void));
 });
 
-const runWithService = <A, E>(
-  effect: Effect.Effect<A, E, SubscriberService | ServerEnvService>,
-) =>
+const runWithService = <A, E>(effect: Effect.Effect<A, E, SubscriberService>) =>
   Effect.runPromise(
     effect.pipe(
       Effect.provide(TestSubscriberLive),
       Effect.provide(TestDrizzleLive),
-      Effect.provide(TestServerEnvLive),
     ),
   );
 
@@ -259,16 +234,20 @@ describe("subscriber service integration", () => {
   });
 
   describe("readSubscriberByEmail", () => {
-    it("returns null for nonexistent email", async () => {
+    it("fails with SubscriberNotFoundError for nonexistent email", async () => {
       const result = await runWithService(
         SubscriberService.pipe(
           Effect.flatMap((service) =>
             service.readSubscriberByEmail("nobody@example.com"),
           ),
+          Effect.either,
         ),
       );
 
-      expect(result).toBeNull();
+      expect(result._tag).toBe("Left");
+      if (result._tag === "Left") {
+        expect(result.left).toBeInstanceOf(SubscriberNotFoundError);
+      }
     });
 
     it("returns subscriber when found", async () => {

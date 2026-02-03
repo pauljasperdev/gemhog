@@ -58,6 +58,8 @@ export const SubscriberServiceLive = Layer.effect(
               unsubscribedAt: null,
             })
             .where(eq(subscriber.email, email))
+            .returning()
+            // biome-ignore lint/style/noNonNullAssertion: Database update returns at least one row.
             .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
         }
 
@@ -68,6 +70,8 @@ export const SubscriberServiceLive = Layer.effect(
             return yield* db
               .insert(subscriber)
               .values({ email })
+              .returning()
+              // biome-ignore lint/style/noNonNullAssertion: Database insert returns at least one row.
               .pipe(Effect.map((rows: Subscriber[]) => rows[0]!));
           }),
         ),
@@ -119,6 +123,7 @@ export const SubscriberServiceLive = Layer.effect(
         .update(subscriber)
         .set(updates)
         .where(eq(subscriber.id, subscriberId))
+        .returning()
         .pipe(
           Effect.map((rows: Subscriber[]) => rows[0]),
           Effect.flatMap((row) =>
