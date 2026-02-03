@@ -103,9 +103,9 @@ configuration MUST have corresponding tests. No exceptions.
 
 These tests fail CI if you forget to add tests:
 
-| Guardrail                 | Location                         | What it catches             |
-| ------------------------- | -------------------------------- | --------------------------- |
-| Env var test coverage     | `packages/env/src/__tests__/*.test.ts` | Schema var without test     |
+| Guardrail                 | Location                                   | What it catches             |
+| ------------------------- | ------------------------------------------ | --------------------------- |
+| Env var test coverage     | `packages/env/src/__tests__/*.test.ts`     | Schema var without test     |
 | Build with local defaults | `apps/*/src/__tests__/startup.int.test.ts` | Missing local default entry |
 
 **If a guardrail test fails, you MUST add the missing test. Do not disable the
@@ -211,8 +211,8 @@ pnpm test
 - Config: `vitest.integration.config.ts` (root)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
-- Includes dev server smoke test: `apps/web/src/dev.int.test.ts` (ensures
-  `pnpm dev:web` starts with repo defaults)
+- Includes dev server smoke test: `apps/web/src/__tests__/dev.int.test.ts`
+  (ensures `pnpm dev:web` starts with repo defaults)
 
 **E2E:** Playwright
 

@@ -16,8 +16,11 @@ gemhog/
 │   └── web/                # Next.js frontend application
 │       ├── src/
 │       │   ├── app/        # Next.js App Router pages
+│       │   ├── __tests__/  # App-level unit/integration tests
 │       │   ├── components/ # React components
 │       │   ├── lib/        # Utility functions
+│       │   ├── instrumentation.ts        # Next.js server/edge instrumentation
+│       │   ├── instrumentation-client.ts # Next.js client instrumentation
 │       │   ├── server/     # Next server helpers (auth wrappers)
 │       │   └── trpc/       # tRPC client setup (TanStack Query)
 │       ├── tests/e2e/      # Playwright E2E tests
@@ -66,7 +69,9 @@ gemhog/
   - `src/components/providers.tsx` - App providers (PostHogProvider, Toaster)
   - `src/lib/` - Utility functions
   - `src/lib/analytics.ts` - Analytics event constants and trackEvent utility
-  - `src/lib/sentry/` - Sentry SDK configuration (client, server, edge)
+  - `src/lib/instrumentation/` - Sentry + PostHog instrumentation helpers
+  - `src/instrumentation.ts` - Next.js server/edge instrumentation entry
+  - `src/instrumentation-client.ts` - Next.js client instrumentation entry
   - `src/server/` - Next server helpers
   - `src/trpc/` - tRPC client setup
   - `tests/e2e/` - Playwright E2E tests
@@ -97,7 +102,8 @@ gemhog/
 
 - Purpose: Environment configuration
 - Contains: Effect Config validated env schemas for server, client, and runtime
-- Key files: `src/server.ts`, `src/client.ts`, `src/runtime.ts`, `src/local-dev.ts`
+- Key files: `src/server.ts`, `src/client.ts`, `src/runtime.ts`,
+  `src/local-dev.ts`
 - Subdirectories: None
 
 ## Key File Locations
@@ -106,6 +112,8 @@ gemhog/
 
 - `apps/server/src/serve.ts` - Backend server entry
 - `apps/web/src/app/layout.tsx` - Frontend root layout
+- `apps/web/src/instrumentation.ts` - Next.js server/edge instrumentation
+- `apps/web/src/instrumentation-client.ts` - Next.js client instrumentation
 
 **Configuration:**
 
