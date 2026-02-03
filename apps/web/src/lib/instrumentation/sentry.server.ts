@@ -1,8 +1,8 @@
-import { serverEnv } from "@gemhog/env/server";
+import "@gemhog/env/server";
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: serverEnv.SENTRY_DSN,
+  dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
 
   // Server-side sampling - lower in production

@@ -1,3 +1,4 @@
+import { localClientEnv } from "@gemhog/env/local-dev";
 import { test as base, expect } from "@playwright/test";
 
 /**
@@ -13,6 +14,14 @@ import { test as base, expect } from "@playwright/test";
 export const test = base.extend({
   page: async ({ page }, use) => {
     const errors: string[] = [];
+
+    await page.addInitScript((env) => {
+      // biome-ignore lint/suspicious/noExplicitAny: window.process is injected for tests
+      const processRef = (window as any).process ?? { env: {} };
+      // biome-ignore lint/suspicious/noExplicitAny: window.process is injected for tests
+      (window as any).process = processRef;
+      processRef.env = { ...processRef.env, ...env };
+    }, localClientEnv);
 
     page.on("console", (msg) => {
       if (msg.type() === "error") {

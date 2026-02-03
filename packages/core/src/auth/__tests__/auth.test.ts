@@ -1,18 +1,24 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
-vi.mock("@gemhog/env/server", () => ({
-  serverEnv: {
-    DATABASE_URL: "postgresql://test:test@localhost:5432/test",
-    DATABASE_URL_POOLER: "postgresql://test:test@localhost:5432/test",
-    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-    BETTER_AUTH_URL: "http://localhost:3000",
-    APP_URL: "http://localhost:3001",
-    GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
-    SENTRY_DSN: "https://key@sentry.io/123",
-  },
-}));
+const TEST_ENV = {
+  DATABASE_URL: "postgresql://test:test@localhost:5432/test",
+  DATABASE_URL_POOLER: "postgresql://test:test@localhost:5432/test",
+  BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
+  BETTER_AUTH_URL: "http://localhost:3000",
+  APP_URL: "http://localhost:3001",
+  GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
+  SENTRY_DSN: "https://key@sentry.io/123",
+};
 
-import { auth, getSession } from "../auth.service";
+let auth: typeof import("../auth.service").auth;
+let getSession: typeof import("../auth.service").getSession;
+
+beforeAll(async () => {
+  Object.assign(process.env, TEST_ENV);
+  const authModule = await import("../auth.service");
+  auth = authModule.auth;
+  getSession = authModule.getSession;
+});
 
 describe("auth", () => {
   describe("auth", () => {

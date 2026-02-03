@@ -4,20 +4,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // Track calls for assertions
 const subscribeCalls: string[] = [];
 
-vi.mock("@gemhog/env/server", () => ({
-  serverEnv: {
-    BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-    APP_URL: "http://localhost:3001",
-    DATABASE_URL: "postgresql://localhost/test",
-    DATABASE_URL_POOLER: "postgresql://localhost/test",
-    BETTER_AUTH_URL: "http://localhost:3001",
-    GOOGLE_GENERATIVE_AI_API_KEY: "test-key",
-    RESEND_API_KEY: "re_test_key",
-    SENTRY_DSN: "https://key@sentry.io/123",
-  },
-  ServerEnvService: Context.GenericTag("ServerEnvService"),
-  ServerEnvLive: Layer.empty,
-}));
+process.env.BETTER_AUTH_SECRET =
+  process.env.BETTER_AUTH_SECRET ?? "test-secret-at-least-32-characters-long";
+process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
 
 vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
@@ -29,15 +18,49 @@ vi.mock("@gemhog/core/email", () => {
   }>("EmailService");
 
   const SubscriberService = Context.GenericTag<{
-    createSubscriber: (
-      email: string,
-    ) => Effect.Effect<{ id: string; isNew: boolean }>;
-    readSubscriberById: (subscriberId: string) => Effect.Effect<unknown>;
-    readSubscriberByEmail: (email: string) => Effect.Effect<unknown>;
+    createSubscriber: (email: string) => Effect.Effect<{
+      id: string;
+      email: string;
+      status: string;
+      subscribedAt: Date;
+      verifiedAt: Date | null;
+      unsubscribedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
+    readSubscriberById: (subscriberId: string) => Effect.Effect<{
+      id: string;
+      email: string;
+      status: string;
+      subscribedAt: Date;
+      verifiedAt: Date | null;
+      unsubscribedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
+    readSubscriberByEmail: (email: string) => Effect.Effect<{
+      id: string;
+      email: string;
+      status: string;
+      subscribedAt: Date;
+      verifiedAt: Date | null;
+      unsubscribedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
     updateSubscriberById: (
       subscriberId: string,
       updates: unknown,
-    ) => Effect.Effect<void>;
+    ) => Effect.Effect<{
+      id: string;
+      email: string;
+      status: string;
+      subscribedAt: Date;
+      verifiedAt: Date | null;
+      unsubscribedAt: Date | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
     subscribe: (email: string) => Effect.Effect<{
       id: string;
       email: string;
@@ -58,11 +81,49 @@ vi.mock("@gemhog/core/email", () => {
 
   const MockSubscriberLayer = Layer.succeed(SubscriberService, {
     createSubscriber: (_email: string) =>
-      Effect.succeed({ id: "mock-id", isNew: true }),
-    readSubscriberById: (_id: string) => Effect.succeed(null),
+      Effect.succeed({
+        id: "mock-id",
+        email: "mock@example.com",
+        status: "pending",
+        subscribedAt: new Date(),
+        verifiedAt: null,
+        unsubscribedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    readSubscriberById: (_id: string) =>
+      Effect.succeed({
+        id: "mock-id",
+        email: "mock@example.com",
+        status: "pending",
+        subscribedAt: new Date(),
+        verifiedAt: null,
+        unsubscribedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
     readSubscriberByEmail: (email: string) =>
-      Effect.succeed({ id: "mock-id", email, status: "pending" }),
-    updateSubscriberById: (_id: string, _updates: unknown) => Effect.void,
+      Effect.succeed({
+        id: "mock-id",
+        email,
+        status: "pending",
+        subscribedAt: new Date(),
+        verifiedAt: null,
+        unsubscribedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    updateSubscriberById: (_id: string, _updates: unknown) =>
+      Effect.succeed({
+        id: "mock-id",
+        email: "mock@example.com",
+        status: "pending",
+        subscribedAt: new Date(),
+        verifiedAt: null,
+        unsubscribedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
     subscribe: (email: string) => {
       subscribeCalls.push(email);
       return Effect.succeed({
@@ -108,7 +169,7 @@ describe("subscriberRouter", () => {
     });
 
     it("should return subscriber object for valid email", async () => {
-      const caller = createCaller({ session: null });
+      const caller = createCaller({ session: null, headers: new Headers() });
       const result = await caller.subscriber.subscribe({
         email: "test@example.com",
       });
@@ -121,14 +182,14 @@ describe("subscriberRouter", () => {
     });
 
     it("should call subscriberService.subscribe with the email", async () => {
-      const caller = createCaller({ session: null });
+      const caller = createCaller({ session: null, headers: new Headers() });
       await caller.subscriber.subscribe({ email: "user@example.com" });
 
       expect(subscribeCalls).toContain("user@example.com");
     });
 
     it("should reject invalid email", async () => {
-      const caller = createCaller({ session: null });
+      const caller = createCaller({ session: null, headers: new Headers() });
 
       await expect(
         caller.subscriber.subscribe({ email: "not-an-email" }),

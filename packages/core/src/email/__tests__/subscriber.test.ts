@@ -1,21 +1,5 @@
-import { Context, Effect, Layer } from "effect";
-import { describe, expect, it, vi } from "vitest";
-
-vi.mock("@gemhog/env/server", () => {
-  const ServerEnvService = Context.GenericTag<{
-    BETTER_AUTH_SECRET: string;
-    DATABASE_URL: string;
-    DATABASE_URL_POOLER: string;
-    BETTER_AUTH_URL: string;
-    APP_URL: string;
-    GOOGLE_GENERATIVE_AI_API_KEY: string;
-    RESEND_API_KEY: string;
-    SENTRY_DSN: string;
-  }>("ServerEnvService");
-  return { ServerEnvService, ServerEnvLive: Layer.empty };
-});
-
-import { ServerEnvService } from "@gemhog/env/server";
+import { Effect, Layer } from "effect";
+import { describe, expect, it } from "vitest";
 import { SubscriberNotFoundError } from "../email.errors";
 import { SubscriberService } from "../subscriber.service";
 import type { Subscriber } from "../subscriber.sql";
@@ -33,26 +17,15 @@ function makeTestSubscriber(overrides?: Partial<Subscriber>): Subscriber {
   };
 }
 
-const TestServerEnv = Layer.succeed(ServerEnvService, {
-  BETTER_AUTH_SECRET: "test-secret",
-  DATABASE_URL: "",
-  DATABASE_URL_POOLER: "",
-  BETTER_AUTH_URL: "",
-  APP_URL: "",
-  GOOGLE_GENERATIVE_AI_API_KEY: "",
-  RESEND_API_KEY: "",
-  SENTRY_DSN: "",
-});
-
 const crudStubs = {
-  createSubscriber: (_email: string) =>
-    Effect.succeed({ id: "test-id", isNew: true }),
-  readSubscriberById: (_id: string) =>
-    Effect.succeed(null as Subscriber | null),
-  readSubscriberByEmail: (_email: string) =>
-    Effect.succeed(null as Subscriber | null),
-  updateSubscriberById: (_id: string, _updates: Partial<Subscriber>) =>
-    Effect.void,
+  createSubscriber: (email: string) =>
+    Effect.succeed(makeTestSubscriber({ id: "test-id", email })),
+  readSubscriberById: (id: string) =>
+    Effect.succeed(makeTestSubscriber({ id })),
+  readSubscriberByEmail: (email: string) =>
+    Effect.succeed(makeTestSubscriber({ email })),
+  updateSubscriberById: (id: string, updates: Partial<Subscriber>) =>
+    Effect.succeed(makeTestSubscriber({ id, ...updates })),
 };
 
 describe("SubscriberService", () => {
@@ -70,7 +43,6 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("new@example.com")),
           Effect.provide(TestLayer),
-          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -94,7 +66,6 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("pending@example.com")),
           Effect.provide(TestLayer),
-          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -115,7 +86,6 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("active@example.com")),
           Effect.provide(TestLayer),
-          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -136,7 +106,6 @@ describe("SubscriberService", () => {
         SubscriberService.pipe(
           Effect.flatMap((service) => service.subscribe("unsub@example.com")),
           Effect.provide(TestLayer),
-          Effect.provide(TestServerEnv),
         ),
       );
 
@@ -175,7 +144,9 @@ describe("SubscriberService", () => {
         subscribe: (_email) =>
           Effect.succeed(makeTestSubscriber({ status: "pending" })),
         verify: (_subscriberId) =>
-          Effect.fail(new SubscriberNotFoundError({ email: "id:missing-id" })),
+          Effect.fail(
+            new SubscriberNotFoundError({ identifier: "id:missing-id" }),
+          ),
         unsubscribe: (_subscriberId) => Effect.void,
       });
 
@@ -225,7 +196,9 @@ describe("SubscriberService", () => {
           Effect.succeed(makeTestSubscriber({ status: "pending" })),
         verify: (_subscriberId) => Effect.void,
         unsubscribe: (_subscriberId) =>
-          Effect.fail(new SubscriberNotFoundError({ email: "id:missing-id" })),
+          Effect.fail(
+            new SubscriberNotFoundError({ identifier: "id:missing-id" }),
+          ),
       });
 
       const result = await Effect.runPromise(
@@ -268,9 +241,13 @@ describe("SubscriberService", () => {
       expect(result?.email).toBe("found@example.com");
     });
 
-    it("returns null when not found", async () => {
+    it("fails with SubscriberNotFoundError when not found", async () => {
       const TestLayer = Layer.succeed(SubscriberService, {
         ...crudStubs,
+        readSubscriberByEmail: (email) =>
+          Effect.fail(
+            new SubscriberNotFoundError({ identifier: `email:${email}` }),
+          ),
         subscribe: (_email) =>
           Effect.succeed(makeTestSubscriber({ status: "pending" })),
         verify: (_subscriberId) => Effect.void,
@@ -283,10 +260,14 @@ describe("SubscriberService", () => {
             service.readSubscriberByEmail("missing@example.com"),
           ),
           Effect.provide(TestLayer),
+          Effect.either,
         ),
       );
 
-      expect(result).toBeNull();
+      expect(result._tag).toBe("Left");
+      if (result._tag === "Left") {
+        expect(result.left).toBeInstanceOf(SubscriberNotFoundError);
+      }
     });
   });
 });

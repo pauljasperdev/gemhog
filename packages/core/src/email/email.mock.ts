@@ -19,10 +19,11 @@ export const MockEmailService = Layer.succeed(EmailService, {
 });
 
 export const MockSubscriberService = Layer.succeed(SubscriberService, {
-  createSubscriber: (_email) => Effect.succeed({ id: "mock-id", isNew: true }),
+  createSubscriber: (email) => Effect.succeed({ ...mockSubscriber, email }),
   readSubscriberById: (_id) => Effect.succeed(mockSubscriber),
-  readSubscriberByEmail: (_email) => Effect.succeed(null),
-  updateSubscriberById: (_id, _updates) => Effect.void,
+  readSubscriberByEmail: (_email) => Effect.succeed(mockSubscriber),
+  updateSubscriberById: (_id, updates) =>
+    Effect.succeed({ ...mockSubscriber, ...updates }),
   subscribe: (_email) => Effect.succeed(mockSubscriber),
   verify: (_subscriberId) => Effect.void,
   unsubscribe: (_subscriberId) => Effect.void,
