@@ -1,9 +1,7 @@
 # Agent Instructions
 
-This project uses the
-[GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done)
-methodology for AI-assisted development. All project context lives in the
-`.planning/` folder.
+All project context lives in the `.planning/` folder. Libraries used in this
+project are cloned to `.repos/` for easy reference.
 
 ## Quick Start for AI Agents
 
@@ -87,11 +85,3 @@ details.
 
 - Critical/High/Medium findings block completion
 - Only Low severity is non-blocking
-
-## For Non-GSD Workflows
-
-If you're not using GSD commands, follow these verification steps manually:
-
-1. **Before completing work**: Run `pnpm test` (full pipeline)
-
-See the detailed docs in `.planning/codebase/` for complete requirements.

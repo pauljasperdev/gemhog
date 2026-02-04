@@ -2,5 +2,6 @@
 set -e
 
 rm -rf node_modules
-pnpm ci
+pnpm install
+./scripts/fetch-repos.sh
 pnpm exec playwright install chromium --with-deps
