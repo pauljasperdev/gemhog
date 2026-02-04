@@ -42,10 +42,11 @@ export default $config({
 
     await import("./infra/secrets");
     await import("./infra/neon");
-    const api = await import("./infra/api");
+    // we dont need the api right now
+    // const api = await import("./infra/api");
     const web = await import("./infra/web");
     return {
-      ...(api.outputs || {}),
+      // ...(api.outputs || {}),
       ...(web.outputs || {}),
     };
   },
