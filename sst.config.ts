@@ -31,13 +31,29 @@ export default $config({
   },
   async run() {
     // hack until closed: https://github.com/anomalyco/sst/issues/6198
+    $transform(aws.lambda.Permission, (args, _opts, name) => {
+      if (
+        args.action === "lambda:InvokeFunctionUrl" &&
+        args.principal === "*" &&
+        args.functionUrlAuthType === "NONE"
+      ) {
+        args.statementId = `FunctionUrlPublic-${name}`;
+      }
+    });
+
     $transform(aws.lambda.FunctionUrl, (args, _opts, name) => {
-      new awsnative.lambda.Permission(`${name}InvokePermission`, {
+      const permissionArgs = {
         action: "lambda:InvokeFunction",
         functionName: args.functionName,
         principal: "*",
         invokedViaFunctionUrl: true,
-      });
+        statementId: "FunctionURLInvokeAllowPublicAccess",
+      } as awsnative.lambda.PermissionArgs;
+
+      new awsnative.lambda.Permission(
+        `${name}InvokePermission`,
+        permissionArgs,
+      );
     });
 
     await import("./infra/secrets");
