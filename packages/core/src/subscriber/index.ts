@@ -1,6 +1,5 @@
 export {
   InvalidTokenError,
-  SubscriberError,
   SubscriberNotFoundError,
 } from "./subscriber.errors";
 export { MockSubscriberService } from "./subscriber.mock";
