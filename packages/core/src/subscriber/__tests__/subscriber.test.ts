@@ -1,6 +1,6 @@
 import { Effect, Layer } from "effect";
 import { describe, expect, it } from "vitest";
-import { SubscriberNotFoundError } from "../email.errors";
+import { SubscriberNotFoundError } from "../subscriber.errors";
 import { SubscriberService } from "../subscriber.service";
 import type { Subscriber } from "../subscriber.sql";
 

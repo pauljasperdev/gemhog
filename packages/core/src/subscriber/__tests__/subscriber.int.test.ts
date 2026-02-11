@@ -1,9 +1,9 @@
 import * as PgDrizzle from "@effect/sql-drizzle/Pg";
 import { PgClient } from "@effect/sql-pg";
+import { EmailServiceConsole } from "@gemhog/email";
 import { Effect, Layer, Redacted } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
-import { SubscriberNotFoundError } from "../email.errors";
-import { EmailServiceConsole } from "../email.service";
+import { SubscriberNotFoundError } from "../subscriber.errors";
 import {
   SubscriberService,
   SubscriberServiceLive,
