@@ -53,14 +53,38 @@
 **Core Layer:**
 
 - Purpose: Domain logic with Effect-based services, database, and schemas
-- Contains: Domain services (Auth), Drizzle schemas, Effect layers
+- Contains: Domain services (Auth, Subscriber), Drizzle schemas, Effect layers
 - Location: `packages/core/src/`
 - Structure:
   - `drizzle/` — Database client, connection layer
   - `auth/` — Authentication domain (service, schema, errors, mocks)
+  - `subscriber/` — Subscriber domain (service, schema, errors, mocks)
   - `migrations/` — Database migration files
-- Depends on: Env (DATABASE_URL, BETTER_AUTH_SECRET)
+- Depends on: Env (DATABASE_URL, BETTER_AUTH_SECRET), Email package, Telemetry
+  package
 - Used by: Server, API procedures
+
+**Email Package:**
+
+- Purpose: Email-sending service (standalone package)
+- Contains: EmailService Effect layer, templates, errors
+- Location: `packages/email/src/`
+- Structure:
+  - `email.service.ts` — Effect service for email sending (SES + console modes)
+  - `email.templates.ts` — HTML email templates
+  - `email.errors.ts` — EmailSendError (TaggedError)
+- Depends on: Env (RESEND_API_KEY, APP_URL)
+- Used by: Core (subscriber service), API procedures
+
+**Telemetry Package:**
+
+- Purpose: Tracing infrastructure (standalone package)
+- Contains: TracingLive layer for Effect services
+- Location: `packages/telemetry/src/`
+- Structure:
+  - `index.ts` — TracingLive layer
+- Depends on: None
+- Used by: Core (subscriber service), Email service
 
 **Configuration Layer:**
 
@@ -203,11 +227,17 @@
 - Triggers: Session validation, sign-in/sign-out
 - Responsibilities: AuthService layer, Better-Auth configuration
 
-**Email Domain:**
+**Subscriber Domain:**
 
-- Location: `packages/core/src/email/index.ts`
+- Location: `packages/core/src/subscriber/index.ts`
 - Triggers: Subscriber signup, email verification, unsubscribe
-- Responsibilities: SubscriberService, EmailService (SES + console modes)
+- Responsibilities: SubscriberService (CRUD, token generation/verification)
+
+**Email Service:**
+
+- Location: `packages/email/src/email.service.ts`
+- Triggers: Email sending requests from subscriber service
+- Responsibilities: EmailService (SES + console modes), email templates
 
 ## Error Handling
 
@@ -228,7 +258,8 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 
 - Auth: `AuthError`, `SessionNotFoundError`, `SessionExpiredError`,
   `UnauthorizedError`
-- Email: `InvalidTokenError`, `SubscriberNotFoundError`
+- Subscriber: `InvalidTokenError`, `SubscriberNotFoundError`
+- Email: `EmailSendError`
 
 ## Cross-Cutting Concerns
 
@@ -278,11 +309,17 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Structure:
   - `core/src/drizzle/` — Database client, connection
   - `core/src/auth/` — Auth domain (service, schema, errors)
+  - `core/src/subscriber/` — Subscriber domain (service, schema, errors)
   - `core/src/migrations/` — Database migration files
-- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`)
+- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`, `subscriber.sql.ts`)
 - Exports via `package.json`:
   - `@gemhog/core` → drizzle
   - `@gemhog/core/auth` → auth domain
+  - `@gemhog/core/subscriber` → subscriber domain
+- Standalone packages:
+  - `@gemhog/email` — Email service (zero dependencies on core or telemetry)
+  - `@gemhog/telemetry` — Tracing infrastructure (zero dependencies on core or
+    email)
 - Future domains (Deferred V1): `stock/`, `thesis/`, `newsletter/` added as
   sibling folders when implementing V1 features
 

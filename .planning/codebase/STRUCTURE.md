@@ -28,7 +28,9 @@ gemhog/
 │       └── package.json
 ├── packages/               # Shared internal libraries
 │   ├── api/               # tRPC router definitions
-│   ├── core/              # Domain-driven core (auth, drizzle)
+│   ├── core/              # Domain-driven core (auth, drizzle, subscriber)
+│   ├── email/             # Email service (SES + templates)
+│   ├── telemetry/         # Tracing infrastructure
 │   ├── env/               # Environment validation
 │   └── config/            # Shared TypeScript config
 ├── .planning/             # Planning documents (GSD)
@@ -87,16 +89,36 @@ gemhog/
 **packages/core/**
 
 - Purpose: Domain-driven core package (consolidated from db + auth)
-- Contains: Database layer, auth domain, email domain
+- Contains: Database layer, auth domain, subscriber domain
 - Key files:
   - `src/drizzle/index.ts` - Database client and Effect layers
   - `src/auth/index.ts` - Better-Auth config and helpers
-  - `src/email/index.ts` - Email and subscriber services
+  - `src/subscriber/index.ts` - Subscriber service
 - Subdirectories:
   - `src/drizzle/` - Database connection, client
   - `src/auth/` - Auth domain (service, schema, errors, mocks)
-  - `src/email/` - Email domain (subscriber service, email service, templates)
+  - `src/subscriber/` - Subscriber domain (service, schema, errors, mocks)
   - `src/migrations/` - Database migration files
+
+**packages/email/**
+
+- Purpose: Email-sending service (standalone package)
+- Contains: Email service, templates, errors
+- Key files:
+  - `src/email.service.ts` - EmailService Effect layer (SES + console modes)
+  - `src/email.templates.ts` - HTML email templates
+  - `src/email.errors.ts` - EmailSendError
+- Subdirectories: None (flat structure)
+- Dependencies: Zero dependencies on core or telemetry
+
+**packages/telemetry/**
+
+- Purpose: Tracing infrastructure (standalone package)
+- Contains: TracingLive layer for Effect services
+- Key files:
+  - `src/index.ts` - TracingLive layer
+- Subdirectories: None (flat structure)
+- Dependencies: Zero dependencies on core or email
 
 **packages/env/**
 
@@ -133,8 +155,10 @@ gemhog/
 - `apps/web/src/trpc/client.ts` - tRPC client (TanStack Query)
 - `packages/core/src/auth/index.ts` - Auth configuration
 - `packages/core/src/auth/auth.sql.ts` - Auth database schema
-- `packages/core/src/email/index.ts` - Email and subscriber services
-- `packages/core/src/email/subscriber.sql.ts` - Subscriber database schema
+- `packages/core/src/subscriber/index.ts` - Subscriber service
+- `packages/core/src/subscriber/subscriber.sql.ts` - Subscriber database schema
+- `packages/email/src/email.service.ts` - Email service
+- `packages/email/src/email.templates.ts` - Email templates
 - `packages/core/src/drizzle/client.ts` - Database client
 - `packages/env/src/server.ts` - Server env validation
 
@@ -282,11 +306,9 @@ packages/core/
 │   │   │   ├── schema.int.test.ts # Schema CRUD integration tests
 │   │   │   └── test-fixtures.ts # Test utilities (truncation, factories)
 │   │   └── index.ts         # Exports + Better-Auth config
-│   ├── email/             # Email domain (Phase 02)
+│   ├── subscriber/        # Subscriber domain (Phase 02)
 │   │   ├── subscriber.sql.ts    # Drizzle schema (subscriber table, status enum)
 │   │   ├── subscriber.service.ts # Effect service for subscriber CRUD
-│   │   ├── email.service.ts     # Effect service for email sending (SES + console)
-│   │   ├── email.templates.ts   # HTML email templates
 │   │   ├── token.ts             # HMAC token creation/verification
 │   │   ├── __tests__/           # Tests and fixtures
 │   │   │   ├── subscriber.int.test.ts # Integration tests
@@ -296,6 +318,19 @@ packages/core/
 │       ├── 0000_initial_schema.sql
 │       └── meta/_journal.json
 ├── drizzle.config.ts      # Schema glob: ./src/*/*.sql.ts
+└── package.json
+
+packages/email/
+├── src/
+│   ├── email.service.ts   # Effect service for email sending (SES + console)
+│   ├── email.templates.ts # HTML email templates
+│   ├── email.errors.ts    # EmailSendError (TaggedError)
+│   └── index.ts           # Exports
+└── package.json
+
+packages/telemetry/
+├── src/
+│   └── index.ts           # TracingLive layer
 └── package.json
 ```
 
@@ -314,6 +349,9 @@ packages/core/
 | `@gemhog/core/drizzle`       | DB instance (explicit)             |
 | `@gemhog/core/auth`          | Auth instance + Better-Auth config |
 | `@gemhog/core/auth/auth.sql` | Raw schema tables                  |
+| `@gemhog/core/subscriber`    | Subscriber service                 |
+| `@gemhog/email`              | Email service                      |
+| `@gemhog/telemetry`          | TracingLive layer                  |
 
 **Adding a New Domain:**
 

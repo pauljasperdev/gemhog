@@ -44,11 +44,14 @@
     - HMAC token-based verification/unsubscribe links
     - List-Unsubscribe headers (RFC 8058 compliant)
     - DKIM/SPF/DMARC configured via SST Email component
-  - Configuration: `SES_FROM_EMAIL` env var enables SES mode
+  - Configuration: `RESEND_API_KEY` env var enables SES mode
 - Local dev: Console logger mode (prints emails to terminal)
-- Implementation: Effect TS services in `packages/core/src/email/`
-- Layer composition: `EmailLayers` in `packages/core/src/email/email-layers.ts`
-  (exports via `@gemhog/core/email`)
+- Implementation: Effect TS services
+  - Email service: `packages/email/src/email.service.ts` (exports via
+    `@gemhog/email`)
+  - Subscriber service: `packages/core/src/subscriber/subscriber.service.ts`
+    (exports via `@gemhog/core/subscriber`)
+  - Token utilities: `packages/core/src/subscriber/token.ts`
 
 ### Deferred (V1)
 
