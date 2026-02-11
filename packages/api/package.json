@@ -13,6 +13,7 @@
   "dependencies": {
     "@effect/opentelemetry": "^0.61.0",
     "@gemhog/core": "workspace:*",
+    "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "@trpc/server": "catalog:",

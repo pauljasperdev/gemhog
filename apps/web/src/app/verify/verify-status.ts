@@ -1,8 +1,8 @@
 import {
-  EmailLayers,
+  SubscriberLayers,
   SubscriberService,
   verifyToken,
-} from "@gemhog/core/email";
+} from "@gemhog/core/subscriber";
 import { Effect } from "effect";
 
 export type VerifyStatus = "success" | "expired" | "invalid" | "error";
@@ -24,5 +24,5 @@ export async function getVerifyStatus(token: string): Promise<VerifyStatus> {
     Effect.catchAll(() => Effect.succeed("error" as VerifyStatus)),
   );
 
-  return Effect.runPromise(program.pipe(Effect.provide(EmailLayers)));
+  return Effect.runPromise(program.pipe(Effect.provide(SubscriberLayers)));
 }

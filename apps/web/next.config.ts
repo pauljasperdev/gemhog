@@ -7,7 +7,14 @@ const nextConfig: NextConfig = {
   env: loadClientEnv(),
   typedRoutes: true,
   reactCompiler: true,
-  transpilePackages: ["@gemhog/api", "@gemhog/core", "@gemhog/env", "shiki"],
+  transpilePackages: [
+    "@gemhog/api",
+    "@gemhog/core",
+    "@gemhog/email",
+    "@gemhog/env",
+    "@gemhog/telemetry",
+    "shiki",
+  ],
   skipTrailingSlashRedirect: true,
   async rewrites() {
     return [

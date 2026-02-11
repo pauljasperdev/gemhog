@@ -12,7 +12,7 @@ vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
 }));
 
-vi.mock("@gemhog/core/email", () => {
+vi.mock("@gemhog/core/subscriber", () => {
   const EmailService = Context.GenericTag<{
     send: (params: unknown) => Effect.Effect<void>;
   }>("EmailService");
@@ -146,7 +146,7 @@ vi.mock("@gemhog/core/email", () => {
     EmailServiceConsole: MockEmailLayer,
     EmailServiceLive: MockEmailLayer,
     SubscriberService,
-    EmailLayers: Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
+    SubscriberLayers: Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
     SubscriberServiceLive: MockSubscriberLayer,
     createToken: () => Effect.succeed("mock-token"),
     verificationEmail: () => ({

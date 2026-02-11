@@ -1,8 +1,8 @@
 import {
-  EmailLayers,
+  SubscriberLayers,
   SubscriberService,
   verifyToken,
-} from "@gemhog/core/email";
+} from "@gemhog/core/subscriber";
 import { Effect } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   );
 
   const result = await Effect.runPromise(
-    program.pipe(Effect.provide(EmailLayers)),
+    program.pipe(Effect.provide(SubscriberLayers)),
   );
 
   if (result === "success") {

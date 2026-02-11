@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { EmailService } from "@gemhog/email";
 import { Effect, Layer } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
@@ -11,8 +12,9 @@ vi.mock("@gemhog/core/drizzle", () => ({
   DatabaseLive: Layer.empty,
 }));
 
-vi.mock("@gemhog/core/email", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@gemhog/core/email")>();
+vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@gemhog/core/subscriber")>();
   const now = new Date();
   const mockSubscriber = {
     id: "mock-id",
@@ -26,7 +28,7 @@ vi.mock("@gemhog/core/email", async (importOriginal) => {
   };
   return {
     ...actual,
-    EmailLayers: Layer.mergeAll(
+    SubscriberLayers: Layer.mergeAll(
       Layer.succeed(actual.SubscriberService, {
         createSubscriber: () =>
           Effect.succeed({ ...mockSubscriber, status: "pending" }),
@@ -37,7 +39,7 @@ vi.mock("@gemhog/core/email", async (importOriginal) => {
         verify: () => Effect.succeed(mockSubscriber),
         unsubscribe: () => Effect.succeed(mockSubscriber),
       }),
-      Layer.succeed(actual.EmailService, {
+      Layer.succeed(EmailService, {
         send: () => Effect.void,
       }),
     ),
