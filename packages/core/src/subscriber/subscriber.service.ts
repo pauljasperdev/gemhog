@@ -1,11 +1,11 @@
 import type { SqlError } from "@effect/sql/SqlError";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
+import type { EmailSendError } from "@gemhog/email";
+import { EmailService, verificationEmail } from "@gemhog/email";
 import { eq } from "drizzle-orm";
 import { Config, Console, Context, Effect, Layer } from "effect";
 import type { ConfigError } from "effect/ConfigError";
-import { type EmailSendError, SubscriberNotFoundError } from "./email.errors";
-import { EmailService } from "./email.service";
-import { verificationEmail } from "./email.templates";
+import { SubscriberNotFoundError } from "./subscriber.errors";
 import { type Subscriber, subscriber } from "./subscriber.sql";
 import { createToken } from "./token";
 

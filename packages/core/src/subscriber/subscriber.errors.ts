@@ -1,10 +1,5 @@
 import { Data } from "effect";
 
-export class EmailSendError extends Data.TaggedError("EmailSendError")<{
-  message: string;
-  cause?: unknown;
-}> {}
-
 export class SubscriberError extends Data.TaggedError("SubscriberError")<{
   message: string;
   cause?: unknown;

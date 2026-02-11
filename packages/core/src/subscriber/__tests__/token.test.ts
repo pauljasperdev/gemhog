@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 import { beforeEach, describe, expect, it } from "vitest";
-import { InvalidTokenError } from "../email.errors";
+import { InvalidTokenError } from "../subscriber.errors";
 import { createToken, verifyToken } from "../token";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";

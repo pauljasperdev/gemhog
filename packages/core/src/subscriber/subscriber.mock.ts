@@ -1,5 +1,5 @@
+import { EmailService } from "@gemhog/email";
 import { Effect, Layer } from "effect";
-import { EmailService } from "./email.service";
 import { SubscriberService } from "./subscriber.service";
 import type { Subscriber } from "./subscriber.sql";
 
