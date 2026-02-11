@@ -1,5 +1,5 @@
 import * as Tracer from "@effect/opentelemetry/Tracer";
-import { EmailLayers, SubscriberService } from "@gemhog/core/email";
+import { SubscriberLayers, SubscriberService } from "@gemhog/core/subscriber";
 import { Console, Effect } from "effect";
 import { z } from "zod";
 
@@ -21,7 +21,7 @@ export const subscriberRouter = router({
         : program;
 
       const effect = programWithParent.pipe(
-        Effect.provide(EmailLayers),
+        Effect.provide(SubscriberLayers),
         Effect.tapErrorCause((cause) =>
           Console.error(
             `[subscriber.subscribe] failed for ${input.email}: ${String(cause)}`,

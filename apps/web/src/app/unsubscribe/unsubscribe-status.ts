@@ -1,8 +1,8 @@
 import {
-  EmailLayers,
+  SubscriberLayers,
   SubscriberService,
   verifyToken,
-} from "@gemhog/core/email";
+} from "@gemhog/core/subscriber";
 import { Effect } from "effect";
 
 export type UnsubscribeStatus = "success" | "invalid" | "error";
@@ -24,5 +24,5 @@ export async function getUnsubscribeStatus(
     Effect.catchAll(() => Effect.succeed("error" as UnsubscribeStatus)),
   );
 
-  return Effect.runPromise(program.pipe(Effect.provide(EmailLayers)));
+  return Effect.runPromise(program.pipe(Effect.provide(SubscriberLayers)));
 }

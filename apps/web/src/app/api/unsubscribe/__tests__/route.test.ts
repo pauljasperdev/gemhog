@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { createHmac } from "node:crypto";
+import { EmailService } from "@gemhog/email";
 import { Effect, Layer } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -9,8 +10,9 @@ const TEST_SECRET = "test-secret-at-least-32-characters-long";
 process.env.BETTER_AUTH_SECRET = TEST_SECRET;
 process.env.APP_URL = "http://localhost:3001";
 
-vi.mock("@gemhog/core/email", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@gemhog/core/email")>();
+vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@gemhog/core/subscriber")>();
   const now = new Date();
   const mockSubscriber = {
     id: "test-id",
@@ -24,8 +26,8 @@ vi.mock("@gemhog/core/email", async (importOriginal) => {
   };
   return {
     ...actual,
-    EmailLayers: Layer.mergeAll(
-      Layer.succeed(actual.EmailService, {
+    SubscriberLayers: Layer.mergeAll(
+      Layer.succeed(EmailService, {
         send: () => Effect.void,
       }),
       Layer.succeed(actual.SubscriberService, {
