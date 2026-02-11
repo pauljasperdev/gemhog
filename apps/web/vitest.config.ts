@@ -14,13 +14,8 @@ export default defineProject({
   ],
   test: {
     name: "web",
-    environment: "happy-dom",
-    include: [
-      "src/**/*.test.ts",
-      "src/**/*.test.tsx",
-      "app/**/*.test.ts",
-      "app/**/*.test.tsx",
-    ],
+    environment: "node",
+    include: ["src/**/*.test.ts", "app/**/*.test.ts"],
     exclude: [
       "**/*.int.test.ts",
       "**/*.int.test.tsx",

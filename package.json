@@ -45,7 +45,6 @@
     "@playwright/test": "^1.57.0",
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^4.0.17",
-    "happy-dom": "^20.3.3",
     "lefthook": "^2.0.15",
     "prettier": "^3.8.0",
     "sst": "3.17.37",
