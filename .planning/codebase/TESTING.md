@@ -95,7 +95,7 @@ configuration MUST have corresponding tests. No exceptions.
 | New env var in schema  | Unit test in `packages/env/src/*.test.ts` |
 | New env var for builds | Entry in `@gemhog/env/local-dev`          |
 | New API endpoint       | Unit test + integration test              |
-| New UI component       | Unit test (logic) + E2E test (user flow)  |
+| New UI component       | E2E test (user flow only)                 |
 | New database table     | Migration test + query tests              |
 | New build config       | Build test in `*.int.test.ts`             |
 
@@ -189,16 +189,8 @@ pnpm test
 - Config: `vitest.config.ts` (root) + per-package `vitest.config.ts` using
   `defineProject`
 - Projects: apps/server, apps/web, packages/api, packages/core, packages/env
-- Pattern: `*.test.ts` and `*.test.tsx` files
-- Excludes: `*.int.test.ts`, `*.int.test.tsx`, `*.e2e.test.ts` (handled at root
-  config level)
-
-**React Component Tests:** @testing-library/react + @testing-library/user-event
-
-- Environment: happy-dom (`apps/web/vitest.config.ts`)
-- Pattern: `*.test.tsx` co-located with components
-- Note: Requires explicit `cleanup()` in `afterEach` — happy-dom does not
-  auto-cleanup like jsdom
+- Pattern: `*.test.ts` files
+- Excludes: `*.int.test.ts`, `*.e2e.test.ts` (handled at root config level)
 
 **Effect Integration Tests:** @effect/vitest
 
@@ -296,12 +288,11 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 Tests are co-located with implementation using clear suffixes:
 
-| Suffix          | Type         | Description                       |
-| --------------- | ------------ | --------------------------------- |
-| `*.test.ts`     | Unit         | Fast, mocked externals            |
-| `*.test.tsx`    | Unit (React) | React component tests (happy-dom) |
-| `*.int.test.ts` | Integration  | Real DB, Docker required          |
-| `*.e2e.test.ts` | E2E          | Playwright, full app              |
+| Suffix          | Type        | Description              |
+| --------------- | ----------- | ------------------------ |
+| `*.test.ts`     | Unit        | Fast, mocked externals   |
+| `*.int.test.ts` | Integration | Real DB, Docker required |
+| `*.e2e.test.ts` | E2E         | Playwright, full app     |
 
 **Example structure:**
 
@@ -590,6 +581,39 @@ export function createTestUser() {
 }
 ```
 
+## What We Don't Test
+
+**React rendering and DOM interactions are covered exclusively by E2E tests.**
+
+We do not write isolated React component tests (no `@testing-library/react`, no
+`happy-dom`, no `*.test.tsx` files). Here's why:
+
+1. **E2E tests provide better coverage** — They test the full user flow,
+   including routing, data fetching, and real browser behavior
+2. **Avoid testing implementation details** — Component tests often break when
+   refactoring internal structure, even when user-facing behavior is unchanged
+3. **Reduce maintenance burden** — One E2E test replaces multiple component
+   tests and integration tests
+4. **Real browser environment** — E2E tests catch issues that jsdom/happy-dom
+   miss (CSS, layout, browser APIs)
+
+**What we DO test:**
+
+- **Business logic** — Pure functions, validation, transformations (unit tests)
+- **API contracts** — tRPC procedures, database queries (unit + integration
+  tests)
+- **User workflows** — Full flows from page load to completion (E2E tests)
+
+**Example:**
+
+- ❌ Don't: Write a component test for a `<LoginForm>` that mocks `fetch` and
+  checks if the form submits
+- ✅ Do: Write an E2E test that fills the form, submits, and verifies the user
+  is redirected to the dashboard
+
+If a UI component has complex logic (e.g., date formatting, validation), extract
+that logic into a pure function and unit test it separately.
+
 ## What to Mock
 
 **DO mock:**
@@ -604,6 +628,7 @@ export function createTestUser() {
 - Internal pure functions
 - Database in integration tests (use real Docker DB)
 - HTTP in E2E tests (use real servers)
+- React components (use E2E tests instead)
 
 ## Known Issues
 
