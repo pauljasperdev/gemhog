@@ -1,4 +1,3 @@
-import { EmailService } from "@gemhog/email";
 import { Effect, Layer } from "effect";
 import { SubscriberService } from "./subscriber.service";
 import type { Subscriber } from "./subscriber.sql";
@@ -13,10 +12,6 @@ const mockSubscriber: Subscriber = {
   createdAt: new Date(),
   updatedAt: new Date(),
 };
-
-export const MockEmailService = Layer.succeed(EmailService, {
-  send: (_params) => Effect.void,
-});
 
 export const MockSubscriberService = Layer.succeed(SubscriberService, {
   createSubscriber: (email) => Effect.succeed({ ...mockSubscriber, email }),
