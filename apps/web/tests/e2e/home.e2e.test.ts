@@ -22,7 +22,7 @@ test("page has content", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("signup form is visible", async ({ page }) => {
+test("subscribe form is visible", async ({ page }) => {
   await page.goto("/");
   const emailInput = page.getByLabel("Email address");
   await expect(emailInput).toBeVisible();

@@ -1,7 +1,7 @@
 "use client";
 
 import { LandingFooter } from "@/components/landing-footer";
-import { SignupForm } from "@/components/signup-form";
+import { SubscribeForm } from "@/components/subscribe-form";
 import { ThesisCarousel } from "./thesis-carousel";
 
 export function LandingPageContent() {
@@ -21,7 +21,7 @@ export function LandingPageContent() {
             </p>
 
             <div className="mt-10">
-              <SignupForm />
+              <SubscribeForm />
             </div>
           </div>
 
