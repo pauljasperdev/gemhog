@@ -103,10 +103,10 @@ configuration MUST have corresponding tests. No exceptions.
 
 These tests fail CI if you forget to add tests:
 
-| Guardrail                 | Location                                   | What it catches             |
-| ------------------------- | ------------------------------------------ | --------------------------- |
-| Env var test coverage     | `packages/env/src/__tests__/*.test.ts`     | Schema var without test     |
-| Build with local defaults | `apps/*/src/__tests__/startup.int.test.ts` | Missing local default entry |
+| Guardrail                 | Location                           | What it catches             |
+| ------------------------- | ---------------------------------- | --------------------------- |
+| Env var test coverage     | `packages/env/tests/*.test.ts`     | Schema var without test     |
+| Build with local defaults | `apps/*/tests/startup.int.test.ts` | Missing local default entry |
 
 **If a guardrail test fails, you MUST add the missing test. Do not disable the
 guardrail.**
@@ -203,8 +203,8 @@ pnpm test
 - Config: `vitest.integration.config.ts` (root)
 - Pattern: `*.int.test.ts` files
 - Discovered via glob across all packages
-- Includes dev server smoke test: `apps/web/src/__tests__/dev.int.test.ts`
-  (ensures `pnpm dev:web` starts with repo defaults)
+- Includes dev server smoke test: `apps/web/tests/dev.int.test.ts` (ensures
+  `pnpm dev:web` starts with repo defaults)
 
 **E2E:** Playwright
 
@@ -281,12 +281,12 @@ vitest.integration.config.ts  # Root: integration test config (separate run)
 
 - Package name for test output
 - Environment: `node` (server/api/core/env) or `happy-dom` (web)
-- Include patterns (most use `src/**/*.test.ts`)
+- Include patterns (most use `src/**/*.test.ts` and `tests/**/*.test.ts`)
 - Note: `apps/web` also includes `app/**/*.test.ts` for Next.js App Router
 
 ## Test File Naming Convention
 
-Tests are co-located with implementation using clear suffixes:
+Tests live in `tests/` directories (alongside `src/`) with clear suffixes:
 
 | Suffix          | Type        | Description              |
 | --------------- | ----------- | ------------------------ |
@@ -299,27 +299,29 @@ Tests are co-located with implementation using clear suffixes:
 ```
 src/
   users.ts
-  __tests__/
-    users.test.ts       # Unit test (mocked DB)
-    users.int.test.ts   # Integration test (real DB)
   auth/
     login.ts
-    __tests__/
-      login.test.ts     # Unit test
+tests/
+  users.test.ts         # Unit test (mocked DB)
+  users.int.test.ts     # Integration test (real DB)
+  auth/
+    login.test.ts       # Unit test
 ```
 
 ## Adding Integration Tests
 
 Any package can have integration tests. Simply:
 
-1. Create `src/__tests__/something.int.test.ts` (in the `__tests__/` subfolder)
+1. Create `tests/something.int.test.ts` (in the package/app `tests/` directory)
 2. Run `pnpm db:start` to start the infra
 3. Run `pnpm test` - tests are automatically discovered and run
 
 The `vitest.integration.config.ts` discovers all `*.int.test.ts` files across:
 
-- `apps/**/src/**/*.int.test.ts`
-- `packages/**/src/**/*.int.test.ts`
+- `apps/**/tests/**/*.int.test.ts`
+- `packages/**/tests/**/*.int.test.ts`
+- Transitional support: `apps/**/src/**/*.int.test.ts` and
+  `packages/**/src/**/*.int.test.ts`
 
 ## Test Patterns
 
@@ -548,21 +550,22 @@ a test, write the test first.
 
 ## Test Fixtures
 
-Test fixtures live with their domain tests in `__tests__/` subfolders:
+Test fixtures live with their domain tests under `tests/`:
 
 ```
 packages/core/src/auth/
-├── auth.sql.ts         # Schema
-├── auth.service.ts     # Service
-└── __tests__/
-    ├── auth.int.test.ts    # Integration tests
-    └── test-fixtures.ts    # Test utilities (truncation, factories)
+├── sql.ts              # Schema
+└── service.ts          # Service
+
+packages/core/tests/auth/
+├── service.int.test.ts # Integration tests
+└── test-fixtures.ts    # Test utilities (truncation, factories)
 ```
 
 **Example test fixture:**
 
 ```typescript
-// packages/core/src/auth/__tests__/test-fixtures.ts
+// packages/core/tests/auth/test-fixtures.ts
 import { sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
