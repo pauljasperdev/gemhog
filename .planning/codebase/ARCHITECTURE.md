@@ -70,9 +70,9 @@
 - Contains: EmailService Effect layer, templates, errors
 - Location: `packages/email/src/`
 - Structure:
-  - `email.service.ts` — Effect service for email sending (SES + console modes)
-  - `email.templates.ts` — HTML email templates
-  - `email.errors.ts` — EmailSendError (TaggedError)
+  - `service.ts` — Effect service for email sending (SES + console modes)
+  - `templates.ts` — HTML email templates
+  - `errors.ts` — EmailSendError (TaggedError)
 - Depends on: Env (RESEND_API_KEY, APP_URL)
 - Used by: Core (subscriber service), API procedures
 
@@ -116,8 +116,8 @@
 2. authClient.signIn() called (`apps/web/src/server/better-auth/client.ts`)
 3. HTTP POST to `/api/auth/*` (`apps/web/src/app/api/auth/[...all]/route.ts`)
 4. Better-Auth validates credentials via `auth.handler`
-   (`packages/core/src/auth/auth.service.ts`)
-5. Session created in database (`packages/core/src/auth/auth.sql.ts`)
+   (`packages/core/src/auth/service.ts`)
+5. Session created in database (`packages/core/src/auth/sql.ts`)
 6. HTTP-only cookie set
 7. Client redirects to dashboard
 
@@ -154,7 +154,7 @@
 **Effect Service:**
 
 - Purpose: Dependency-injected service with testable layers
-- Examples: `AuthService` (`packages/core/src/auth/auth.service.ts`)
+- Examples: `AuthService` (`packages/core/src/auth/service.ts`)
 - Pattern: Context.Tag + Layer for production, mock Layer for tests
 
 **Effect Layer:**
@@ -167,7 +167,7 @@
 
 - Purpose: Structured, typed domain errors
 - Examples: `AuthError`, `SessionNotFoundError`
-  (`packages/core/src/auth/auth.errors.ts`)
+  (`packages/core/src/auth/errors.ts`)
 - Pattern: `Data.TaggedError` for pattern matching in Effect
 
 **tRPC Procedure:**
@@ -186,7 +186,7 @@
 **Drizzle Schema:**
 
 - Purpose: Database table definitions with relations
-- Examples: `user`, `session`, `account` (`packages/core/src/auth/auth.sql.ts`)
+- Examples: `user`, `session`, `account` (`packages/core/src/auth/sql.ts`)
 - Pattern: Schema-first ORM with typed relations, `*.sql.ts` naming convention
 
 **Auth Client:**
@@ -235,7 +235,7 @@
 
 **Email Service:**
 
-- Location: `packages/email/src/email.service.ts`
+- Location: `packages/email/src/service.ts`
 - Triggers: Email sending requests from subscriber service
 - Responsibilities: EmailService (SES + console modes), email templates
 
@@ -297,8 +297,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 - Purpose: Testability, dependency injection, composable error handling
 - Scope: Core package services (`packages/core/`)
 - Implementation:
-  - Auth with direct Better Auth instance
-    (`packages/core/src/auth/auth.service.ts`)
+  - Auth with direct Better Auth instance (`packages/core/src/auth/service.ts`)
   - `DatabaseLive` layer composing PgClient + Drizzle
     (`packages/core/src/drizzle/index.ts`)
   - TaggedErrors for structured error handling
@@ -311,7 +310,7 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
   - `core/src/auth/` — Auth domain (service, schema, errors)
   - `core/src/subscriber/` — Subscriber domain (service, schema, errors)
   - `core/src/migrations/` — Database migration files
-- Schema naming: `*.sql.ts` files (e.g., `auth.sql.ts`, `subscriber.sql.ts`)
+- Schema naming: `*.sql.ts` files (e.g., `sql.ts` in each domain folder)
 - Exports via `package.json`:
   - `@gemhog/core` → drizzle
   - `@gemhog/core/auth` → auth domain
@@ -365,12 +364,12 @@ middleware). Domain services use Effect TaggedErrors for typed error handling.
 1. User submits email via tRPC `subscriber.subscribe` mutation
    (`packages/api/src/routers/subscriber.ts`)
 2. SubscriberService creates or reactivates subscriber in database
-   (`packages/core/src/email/subscriber.service.ts`)
+   (`packages/core/src/subscriber/service.ts`)
 3. HMAC tokens generated for verification and unsubscribe links
-   (`packages/core/src/email/token.ts` — reads `BETTER_AUTH_SECRET` via
+   (`packages/core/src/subscriber/token.ts` — reads `BETTER_AUTH_SECRET` via
    `Config.string()`)
 4. EmailService sends verification email (SES in prod, console in dev)
-   (`packages/core/src/email/email.service.ts`)
+   (`packages/email/src/service.ts`)
 5. User clicks verification link → `/verify?token=...`
 6. Verify handler reads subscriber by email and verifies by id
    (`apps/web/src/app/verify/verify-status.ts`)

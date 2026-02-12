@@ -47,10 +47,9 @@
   - Configuration: `RESEND_API_KEY` env var enables SES mode
 - Local dev: Console logger mode (prints emails to terminal)
 - Implementation: Effect TS services
-  - Email service: `packages/email/src/email.service.ts` (exports via
-    `@gemhog/email`)
-  - Subscriber service: `packages/core/src/subscriber/subscriber.service.ts`
-    (exports via `@gemhog/core/subscriber`)
+  - Email service: `packages/email/src/service.ts` (exports via `@gemhog/email`)
+  - Subscriber service: `packages/core/src/subscriber/service.ts` (exports via
+    `@gemhog/core/subscriber`)
   - Token utilities: `packages/core/src/subscriber/token.ts`
 
 ### Deferred (V1)
@@ -88,7 +87,7 @@ These integrations will be implemented after V0 foundation is complete.
 **Auth Provider:**
 
 - Better-Auth - Email/password authentication
-  - Implementation: `packages/core/src/auth/auth.service.ts`
+  - Implementation: `packages/core/src/auth/service.ts`
   - Handler: `apps/web/src/app/api/auth/[...all]/route.ts`
   - Database adapter: Drizzle ORM
   - Token storage: HTTP-only cookies

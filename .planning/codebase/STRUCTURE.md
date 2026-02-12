@@ -16,14 +16,14 @@ gemhog/
 │   └── web/                # Next.js frontend application
 │       ├── src/
 │       │   ├── app/        # Next.js App Router pages
-│       │   ├── __tests__/  # App-level unit/integration tests
 │       │   ├── components/ # React components
 │       │   ├── lib/        # Utility functions
 │       │   ├── instrumentation.ts        # Next.js server/edge instrumentation
 │       │   ├── instrumentation-client.ts # Next.js client instrumentation
 │       │   ├── server/     # Next server helpers (auth wrappers)
 │       │   └── trpc/       # tRPC client setup (TanStack Query)
-│       ├── tests/e2e/      # Playwright E2E tests
+│       ├── tests/          # App tests (unit, integration, E2E)
+│       │   └── e2e/        # Playwright E2E tests
 │       ├── next.config.ts
 │       └── package.json
 ├── packages/               # Shared internal libraries
@@ -105,9 +105,9 @@ gemhog/
 - Purpose: Email-sending service (standalone package)
 - Contains: Email service, templates, errors
 - Key files:
-  - `src/email.service.ts` - EmailService Effect layer (SES + console modes)
-  - `src/email.templates.ts` - HTML email templates
-  - `src/email.errors.ts` - EmailSendError
+  - `src/service.ts` - EmailService Effect layer (SES + console modes)
+  - `src/templates.ts` - HTML email templates
+  - `src/errors.ts` - EmailSendError
 - Subdirectories: None (flat structure)
 - Dependencies: Zero dependencies on core or telemetry
 
@@ -154,18 +154,18 @@ gemhog/
 - `apps/web/src/app/api/unsubscribe/route.ts` - RFC 8058 one-click unsubscribe
 - `apps/web/src/trpc/client.ts` - tRPC client (TanStack Query)
 - `packages/core/src/auth/index.ts` - Auth configuration
-- `packages/core/src/auth/auth.sql.ts` - Auth database schema
+- `packages/core/src/auth/sql.ts` - Auth database schema
 - `packages/core/src/subscriber/index.ts` - Subscriber service
-- `packages/core/src/subscriber/subscriber.sql.ts` - Subscriber database schema
-- `packages/email/src/email.service.ts` - Email service
-- `packages/email/src/email.templates.ts` - Email templates
+- `packages/core/src/subscriber/sql.ts` - Subscriber database schema
+- `packages/email/src/service.ts` - Email service
+- `packages/email/src/templates.ts` - Email templates
 - `packages/core/src/drizzle/client.ts` - Database client
 - `packages/env/src/server.ts` - Server env validation
 
 **Testing:**
 
-- Tests in `__tests__/` subfolders: `__tests__/*.test.ts` alongside source
-- Integration tests: `__tests__/*.int.test.ts` (requires Docker Postgres)
+- Tests in `tests/` directories mirroring source domains: `tests/**/*.test.ts`
+- Integration tests: `tests/**/*.int.test.ts` (requires Docker Postgres)
 - E2E tests: `apps/web/tests/e2e/*.e2e.test.ts`
 
 **Documentation:**
@@ -211,6 +211,7 @@ gemhog/
 - `page.tsx` - Next.js page component
 - `layout.tsx` - Next.js layout component
 - `*.config.ts` - Configuration files
+- Domain internals avoid redundant prefixes: `sql.ts`, `service.ts`, `errors.ts`
 
 ## Where to Add New Code
 
@@ -235,16 +236,17 @@ gemhog/
 **New Domain (in packages/core):**
 
 - Create folder: `packages/core/src/[domain]/`
-- Schema file: `packages/core/src/[domain]/[domain].sql.ts`
-- Service file: `packages/core/src/[domain]/[domain].service.ts`
-- Errors file: `packages/core/src/[domain]/[domain].errors.ts`
-- Mock file: `packages/core/src/[domain]/[domain].mock.ts`
+- Schema file: `packages/core/src/[domain]/sql.ts`
+- Service file: `packages/core/src/[domain]/service.ts`
+- Errors file: `packages/core/src/[domain]/errors.ts`
+- Mock file: `packages/core/src/[domain]/mock.ts`
+- Tests: `packages/core/tests/[domain]/service.test.ts`
 - Index: `packages/core/src/[domain]/index.ts`
 - Export from: `packages/core/package.json` exports field
 
 **New Database Table:**
 
-- Schema: `packages/core/src/[domain]/[domain].sql.ts`
+- Schema: `packages/core/src/[domain]/sql.ts`
 - Follow `*.sql.ts` naming convention for Drizzle schema files
 - Aggregate in: `packages/core/src/drizzle/index.ts`
 
@@ -293,38 +295,49 @@ packages/core/
 │   ├── drizzle/           # Database layer
 │   │   ├── client.ts      # Drizzle client instance
 │   │   ├── index.ts       # Effect layers (DatabaseLive)
-│   │   ├── connection.int.test.ts  # Effect layer integration tests
-│   │   └── migrations.int.test.ts  # Migration verification tests
 │   ├── auth/              # Auth domain
-│   │   ├── auth.sql.ts      # Drizzle schema (user, session, account, verification)
-│   │   ├── auth.service.ts  # Better Auth config
-│   │   ├── auth.errors.ts   # Domain errors (TaggedError)
-│   │   ├── auth.mock.ts     # Mock layer for testing
-│   │   ├── __tests__/       # Tests and fixtures
-│   │   │   ├── auth.test.ts     # Unit tests
-│   │   │   ├── auth.int.test.ts # Integration tests (better-auth API)
-│   │   │   ├── schema.int.test.ts # Schema CRUD integration tests
-│   │   │   └── test-fixtures.ts # Test utilities (truncation, factories)
+│   │   ├── sql.ts           # Drizzle schema (user, session, account, verification)
+│   │   ├── service.ts       # Better Auth config
+│   │   ├── errors.ts        # Domain errors (TaggedError)
+│   │   ├── drizzle.db.ts    # Drizzle DB instance for auth adapter
 │   │   └── index.ts         # Exports + Better-Auth config
 │   ├── subscriber/        # Subscriber domain (Phase 02)
-│   │   ├── subscriber.sql.ts    # Drizzle schema (subscriber table, status enum)
-│   │   ├── subscriber.service.ts # Effect service for subscriber CRUD
-│   │   ├── token.ts             # HMAC token creation/verification
-│   │   ├── __tests__/           # Tests and fixtures
-│   │   │   ├── subscriber.int.test.ts # Integration tests
-│   │   │   └── test-fixtures.ts # Test utilities
-│   │   └── index.ts             # Exports
+│   │   ├── sql.ts             # Drizzle schema (subscriber table, status enum)
+│   │   ├── service.ts         # Effect service for subscriber CRUD
+│   │   ├── errors.ts          # Domain errors (TaggedError)
+│   │   ├── layers.ts          # Effect layer composition
+│   │   ├── mock.ts            # Mock layer for tests
+│   │   ├── token.ts           # HMAC token creation/verification
+│   │   └── index.ts           # Exports
 │   └── migrations/        # Database migrations
 │       ├── 0000_initial_schema.sql
 │       └── meta/_journal.json
+├── tests/
+│   ├── drizzle/
+│   │   ├── connection.int.test.ts    # Effect layer integration tests
+│   │   ├── drizzle-config.test.ts    # Drizzle config guardrail
+│   │   └── migrations.int.test.ts    # Migration verification tests
+│   ├── auth/
+│   │   ├── service.test.ts           # Unit tests
+│   │   ├── service.int.test.ts       # Integration tests (better-auth API)
+│   │   ├── sql.int.test.ts           # Schema CRUD integration tests
+│   │   └── test-fixtures.ts          # Test utilities (truncation, factories)
+│   └── subscriber/
+│       ├── service.test.ts           # Unit tests
+│       ├── service.int.test.ts       # Integration tests
+│       ├── token.test.ts             # Token utility tests
+│       └── test-fixtures.ts          # Test utilities
 ├── drizzle.config.ts      # Schema glob: ./src/*/*.sql.ts
 └── package.json
 
 packages/email/
+├── tests/
+│   ├── service.test.ts     # Email service tests
+│   └── templates.test.ts   # Template rendering tests
 ├── src/
-│   ├── email.service.ts   # Effect service for email sending (SES + console)
-│   ├── email.templates.ts # HTML email templates
-│   ├── email.errors.ts    # EmailSendError (TaggedError)
+│   ├── service.ts         # Effect service for email sending (SES + console)
+│   ├── templates.ts       # HTML email templates
+│   ├── errors.ts          # EmailSendError (TaggedError)
 │   └── index.ts           # Exports
 └── package.json
 
@@ -339,28 +352,30 @@ packages/telemetry/
 - `*.sql.ts` naming for Drizzle schema files (not `*.schema.ts`)
 - Domain folders directly under `src/` (drizzle/, auth/)
 - Direct Better Auth instance in core
-- Tests in `__tests__/` subfolders with `.test.ts` suffix
+- Domain-local files use de-prefixed names (`service.ts`, `errors.ts`, `sql.ts`)
+- Tests in top-level `tests/` directories with `.test.ts` suffix
 
 **Export Paths:**
 
-| Import                       | Purpose                            |
-| ---------------------------- | ---------------------------------- |
-| `@gemhog/core`               | DB instance (main export)          |
-| `@gemhog/core/drizzle`       | DB instance (explicit)             |
-| `@gemhog/core/auth`          | Auth instance + Better-Auth config |
-| `@gemhog/core/auth/auth.sql` | Raw schema tables                  |
-| `@gemhog/core/subscriber`    | Subscriber service                 |
-| `@gemhog/email`              | Email service                      |
-| `@gemhog/telemetry`          | TracingLive layer                  |
+| Import                    | Purpose                            |
+| ------------------------- | ---------------------------------- |
+| `@gemhog/core`            | DB instance (main export)          |
+| `@gemhog/core/drizzle`    | DB instance (explicit)             |
+| `@gemhog/core/auth`       | Auth instance + Better-Auth config |
+| `@gemhog/core/auth/sql`   | Raw schema tables                  |
+| `@gemhog/core/subscriber` | Subscriber service                 |
+| `@gemhog/email`           | Email service                      |
+| `@gemhog/telemetry`       | TracingLive layer                  |
 
 **Adding a New Domain:**
 
 1. Create folder: `packages/core/src/[domain]/`
-2. Add schema: `[domain].sql.ts` (Drizzle tables)
-3. Add service: `[domain].service.ts` (Effect service + layer)
-4. Add errors: `[domain].errors.ts` (TaggedErrors)
-5. Add mock: `[domain].mock.ts` (test layer)
-6. Add test folder: `__tests__/` with `test-fixtures.ts` (truncation, factories)
+2. Add schema: `sql.ts` (Drizzle tables)
+3. Add service: `service.ts` (Effect service + layer)
+4. Add errors: `errors.ts` (TaggedErrors)
+5. Add mock: `mock.ts` (test layer)
+6. Add tests in `tests/[domain]/` with `test-fixtures.ts` (truncation,
+   factories)
 7. Add index: `index.ts` (exports)
 8. Register export in `package.json` exports field
 

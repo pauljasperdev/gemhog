@@ -440,10 +440,10 @@ as part of a dedicated database schema hardening phase.
 
 ### Test File Organization (Code Review Item 19) — IMPLEMENTED
 
-Test files now live in `__tests__/` subfolders within each directory, preserving
-colocation while visually separating test code from implementation. All test and
-fixture files use the `__tests__/` convention project-wide. Vitest glob patterns
-already match `__tests__/` subdirectories via `**`.
+Test files now live in top-level `tests/` directories alongside `src/`, with the
+test tree mirroring source domains where useful (for example,
+`tests/auth/service.test.ts`). All test and fixture files use the `tests/`
+convention project-wide.
 
 ---
 
