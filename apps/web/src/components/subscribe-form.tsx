@@ -28,7 +28,7 @@ function ErrorCard() {
     </div>
   );
 }
-export function SignupForm() {
+export function SubscribeForm() {
   const [status, setStatus] = useState<SubscribeStatus>("idle");
 
   const subscribe = useMutation({
@@ -36,7 +36,7 @@ export function SignupForm() {
     retry: 3,
     onMutate() {
       setStatus("subscribed");
-      trackEvent(AnalyticsEvents.SIGNUP_STARTED);
+      trackEvent(AnalyticsEvents.SUBSCRIBE_STARTED);
       form.reset();
       return undefined;
     },
@@ -44,7 +44,7 @@ export function SignupForm() {
       setStatus("error");
     },
     onSuccess() {
-      trackEvent(AnalyticsEvents.SIGNUP_COMPLETED);
+      trackEvent(AnalyticsEvents.SUBSCRIBE_COMPLETED);
     },
   });
 

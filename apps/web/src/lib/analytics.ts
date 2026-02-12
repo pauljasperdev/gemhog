@@ -2,8 +2,8 @@ import posthog from "posthog-js";
 
 export const AnalyticsEvents = {
   LANDING_PAGE_VIEWED: "landing_page_viewed",
-  SIGNUP_STARTED: "signup_started",
-  SIGNUP_COMPLETED: "signup_completed",
+  SUBSCRIBE_STARTED: "subscribe_started",
+  SUBSCRIBE_COMPLETED: "subscribe_completed",
 } as const;
 
 export function trackEvent(
