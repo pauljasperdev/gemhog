@@ -2,7 +2,7 @@ import { runtimeEnv } from "@gemhog/env/runtime";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "./src/*/*.sql.ts",
+  schema: "./src/*/sql.ts",
   out: "./src/migrations",
   dialect: "postgresql",
   dbCredentials: {
