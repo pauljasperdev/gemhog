@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  unsubscribeConfirmationEmail,
-  verificationEmail,
-} from "../email.templates";
+import { unsubscribeConfirmationEmail, verificationEmail } from "../templates";
 
 describe("email templates", () => {
   describe("verificationEmail", () => {

@@ -3,12 +3,9 @@ import { PgClient } from "@effect/sql-pg";
 import { EmailServiceConsole } from "@gemhog/email";
 import { Effect, Layer, Redacted } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
-import { SubscriberNotFoundError } from "../subscriber.errors";
-import {
-  SubscriberService,
-  SubscriberServiceLive,
-} from "../subscriber.service";
-import { subscriber } from "../subscriber.sql";
+import { SubscriberNotFoundError } from "../errors";
+import { SubscriberService, SubscriberServiceLive } from "../service";
+import { subscriber } from "../sql";
 
 const DATABASE_URL =
   process.env.DATABASE_URL ??

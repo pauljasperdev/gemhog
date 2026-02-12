@@ -1,6 +1,6 @@
 import { Effect, Layer } from "effect";
-import { SubscriberService } from "./subscriber.service";
-import type { Subscriber } from "./subscriber.sql";
+import { SubscriberService } from "./service";
+import type { Subscriber } from "./sql";
 
 const mockSubscriber: Subscriber = {
   id: "mock-id",

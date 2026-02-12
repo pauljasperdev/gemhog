@@ -2,7 +2,7 @@ import { EmailServiceConsole, EmailServiceLive } from "@gemhog/email";
 import { makeTracingLive } from "@gemhog/telemetry";
 import { Layer } from "effect";
 import { DatabaseLive } from "../drizzle/index";
-import { SubscriberServiceLive } from "./subscriber.service";
+import { SubscriberServiceLive } from "./service";
 
 const isLocal = process.env.LOCAL_ENV === "1";
 const EmailServiceLayer = isLocal ? EmailServiceConsole : EmailServiceLive;

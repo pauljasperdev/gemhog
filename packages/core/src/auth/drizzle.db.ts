@@ -1,7 +1,7 @@
 import "@gemhog/env/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import * as schema from "./auth.sql";
+import * as schema from "./sql";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 

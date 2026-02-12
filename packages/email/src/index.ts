@@ -1,12 +1,12 @@
-export { EmailSendError } from "./email.errors";
+export { EmailSendError } from "./errors";
 export {
   EmailService,
   EmailServiceConsole,
   EmailServiceLive,
   type SendEmailParams,
-} from "./email.service";
+} from "./service";
 export {
   type EmailContent,
   unsubscribeConfirmationEmail,
   verificationEmail,
-} from "./email.templates";
+} from "./templates";
