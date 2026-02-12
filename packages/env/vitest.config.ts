@@ -4,7 +4,7 @@ export default defineProject({
   test: {
     name: "@gemhog/env",
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "tests/**/*.test.ts"],
     exclude: ["**/*.int.test.ts", "**/*.e2e.test.ts"],
   },
 });
