@@ -1,7 +1,7 @@
 import { Config, Console, Context, Effect, Layer, Schedule } from "effect";
 import { Resend } from "resend";
-import { EmailSendError } from "./email.errors";
-import type { EmailContent } from "./email.templates";
+import { EmailSendError } from "./errors";
+import type { EmailContent } from "./templates";
 
 export interface SendEmailParams {
   to: string;

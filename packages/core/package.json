@@ -11,14 +11,14 @@
     "./auth": {
       "default": "./src/auth/index.ts"
     },
-    "./auth/auth.sql": {
-      "default": "./src/auth/auth.sql.ts"
+    "./auth/sql": {
+      "default": "./src/auth/sql.ts"
     },
     "./subscriber": {
       "default": "./src/subscriber/index.ts"
     },
-    "./subscriber/subscriber.sql": {
-      "default": "./src/subscriber/subscriber.sql.ts"
+    "./subscriber/sql": {
+      "default": "./src/subscriber/sql.ts"
     }
   },
   "scripts": {

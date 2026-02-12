@@ -10,12 +10,12 @@ const TEST_ENV = {
   SENTRY_DSN: "https://key@sentry.io/123",
 };
 
-let auth: typeof import("../auth.service").auth;
-let getSession: typeof import("../auth.service").getSession;
+let auth: typeof import("../service").auth;
+let getSession: typeof import("../service").getSession;
 
 beforeAll(async () => {
   Object.assign(process.env, TEST_ENV);
-  const authModule = await import("../auth.service");
+  const authModule = await import("../service");
   auth = authModule.auth;
   getSession = authModule.getSession;
 });

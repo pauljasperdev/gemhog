@@ -1,8 +1,8 @@
 import "@gemhog/env/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import * as schema from "./auth.sql";
 import { db } from "./drizzle.db";
+import * as schema from "./sql";
 
 const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
 

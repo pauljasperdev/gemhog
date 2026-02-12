@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { Config, Effect } from "effect";
 import type { ConfigError } from "effect/ConfigError";
-import { InvalidTokenError } from "./subscriber.errors";
+import { InvalidTokenError } from "./errors";
 
 export interface TokenPayload {
   email: string;

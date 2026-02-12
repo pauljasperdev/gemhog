@@ -5,8 +5,8 @@ import { EmailService, verificationEmail } from "@gemhog/email";
 import { eq } from "drizzle-orm";
 import { Config, Console, Context, Effect, Layer } from "effect";
 import type { ConfigError } from "effect/ConfigError";
-import { SubscriberNotFoundError } from "./subscriber.errors";
-import { type Subscriber, subscriber } from "./subscriber.sql";
+import { SubscriberNotFoundError } from "./errors";
+import { type Subscriber, subscriber } from "./sql";
 import { createToken } from "./token";
 
 export class SubscriberService extends Context.Tag("SubscriberService")<
