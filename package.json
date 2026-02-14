@@ -19,7 +19,7 @@
     "db:down": "docker compose -f ./infra/docker-compose.yml down",
     "db:migrate": "pnpm --filter @gemhog/core db:migrate",
     "format:md": "prettier --write \"**/*.md\"",
-    "prepare": "lefthook install",
+    "prepare": "lefthook install && effect-language-service patch",
     "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter web dev",
     "dev:server": "pnpm --filter server dev",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
+    "@effect/language-service": "^0.73.1",
     "@gemhog/config": "workspace:*",
     "@playwright/mcp": "0.0.47",
     "@playwright/test": "^1.57.0",
