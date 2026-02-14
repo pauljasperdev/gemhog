@@ -2,7 +2,7 @@
 
 import { createHmac } from "node:crypto";
 import { EmailService } from "@gemhog/email";
-import { Effect, Layer } from "effect";
+import * as Effect from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
@@ -26,20 +26,22 @@ vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
   };
   return {
     ...actual,
-    SubscriberLayers: Layer.mergeAll(
-      Layer.succeed(EmailService, {
-        send: () => Effect.void,
+    SubscriberLayers: Effect.Layer.mergeAll(
+      Effect.Layer.succeed(EmailService, {
+        send: () => Effect.Effect.succeed(undefined),
       }),
-      Layer.succeed(actual.SubscriberService, {
+      Effect.Layer.succeed(actual.SubscriberRepository, {
         createSubscriber: () =>
-          Effect.succeed({ ...mockSubscriber, status: "pending" }),
-        readSubscriberById: () => Effect.succeed(mockSubscriber),
-        readSubscriberByEmail: () => Effect.succeed(mockSubscriber),
-        updateSubscriberById: () => Effect.succeed(mockSubscriber),
+          Effect.Effect.succeed({ ...mockSubscriber, status: "pending" }),
+        readSubscriberById: () => Effect.Effect.succeed(mockSubscriber),
+        readSubscriberByEmail: () => Effect.Effect.succeed(mockSubscriber),
+        updateSubscriberById: () => Effect.Effect.succeed(mockSubscriber),
+      }),
+      Effect.Layer.succeed(actual.SubscriberService, {
         subscribe: () =>
-          Effect.succeed({ ...mockSubscriber, status: "pending" }),
-        verify: () => Effect.succeed(mockSubscriber),
-        unsubscribe: () => Effect.succeed(mockSubscriber),
+          Effect.Effect.succeed({ ...mockSubscriber, status: "pending" }),
+        verify: () => Effect.Effect.void,
+        unsubscribe: () => Effect.Effect.void,
       }),
     ),
   };

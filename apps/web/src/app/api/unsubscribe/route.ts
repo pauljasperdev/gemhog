@@ -1,9 +1,10 @@
 import {
   SubscriberLayers,
+  SubscriberRepository,
   SubscriberService,
   verifyToken,
 } from "@gemhog/core/subscriber";
-import { Effect } from "effect";
+import * as Effect from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 
 type UnsubscribeResult = "success" | "invalid" | "error";
@@ -15,22 +16,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing token" }, { status: 400 });
   }
 
-  const program = Effect.gen(function* () {
+  const program = Effect.Effect.gen(function* () {
+    const subscriberRepository = yield* SubscriberRepository;
     const subscriberService = yield* SubscriberService;
     const payload = yield* verifyToken(token);
-    const sub = yield* subscriberService.readSubscriberByEmail(payload.email);
+    const sub = yield* subscriberRepository.readSubscriberByEmail(
+      payload.email,
+    );
     if (!sub) return "error" as UnsubscribeResult;
     yield* subscriberService.unsubscribe(sub.id);
     return "success" as UnsubscribeResult;
   }).pipe(
-    Effect.catchTag("InvalidTokenError", () =>
-      Effect.succeed("invalid" as UnsubscribeResult),
+    Effect.Effect.catchTag("InvalidTokenError", () =>
+      Effect.Effect.succeed("invalid" as UnsubscribeResult),
     ),
-    Effect.catchAll(() => Effect.succeed("error" as UnsubscribeResult)),
+    Effect.Effect.catchAll(() =>
+      Effect.Effect.succeed("error" as UnsubscribeResult),
+    ),
   );
 
-  const result = await Effect.runPromise(
-    program.pipe(Effect.provide(SubscriberLayers)),
+  const result = await Effect.Effect.runPromise(
+    program.pipe(Effect.Effect.provide(SubscriberLayers)),
   );
 
   if (result === "success") {

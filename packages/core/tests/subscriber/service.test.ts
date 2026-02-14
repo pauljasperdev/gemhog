@@ -1,4 +1,4 @@
-import { Effect, Layer } from "effect";
+import * as Effect from "effect";
 import { describe, expect, it } from "vitest";
 import { SubscriberNotFoundError } from "../../src/subscriber/errors";
 import { SubscriberService } from "../../src/subscriber/service";
@@ -17,32 +17,22 @@ function makeTestSubscriber(overrides?: Partial<Subscriber>): Subscriber {
   };
 }
 
-const crudStubs = {
-  createSubscriber: (email: string) =>
-    Effect.succeed(makeTestSubscriber({ id: "test-id", email })),
-  readSubscriberById: (id: string) =>
-    Effect.succeed(makeTestSubscriber({ id })),
-  readSubscriberByEmail: (email: string) =>
-    Effect.succeed(makeTestSubscriber({ email })),
-  updateSubscriberById: (id: string, updates: Partial<Subscriber>) =>
-    Effect.succeed(makeTestSubscriber({ id, ...updates })),
-};
-
 describe("SubscriberService", () => {
   describe("subscribe", () => {
     it("creates a new subscriber with pending status", async () => {
       const sub = makeTestSubscriber({ id: "new-id", status: "pending" });
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        subscribe: (_email) => Effect.succeed(sub),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
+        subscribe: (_email) => Effect.Effect.succeed(sub),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.subscribe("new@example.com")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) =>
+            service.subscribe("new@example.com"),
+          ),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -55,17 +45,18 @@ describe("SubscriberService", () => {
         id: "existing-id",
         status: "pending",
       });
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        subscribe: (_email) => Effect.succeed(sub),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
+        subscribe: (_email) => Effect.Effect.succeed(sub),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.subscribe("pending@example.com")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) =>
+            service.subscribe("pending@example.com"),
+          ),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -75,17 +66,18 @@ describe("SubscriberService", () => {
 
     it("returns existing subscriber for active email (silent success)", async () => {
       const sub = makeTestSubscriber({ id: "active-id", status: "active" });
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        subscribe: (_email) => Effect.succeed(sub),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
+        subscribe: (_email) => Effect.Effect.succeed(sub),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.subscribe("active@example.com")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) =>
+            service.subscribe("active@example.com"),
+          ),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -95,17 +87,18 @@ describe("SubscriberService", () => {
 
     it("resets to pending for resubscribe after unsubscribed", async () => {
       const sub = makeTestSubscriber({ id: "resub-id", status: "pending" });
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        subscribe: (_email) => Effect.succeed(sub),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
+        subscribe: (_email) => Effect.Effect.succeed(sub),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.subscribe("unsub@example.com")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) =>
+            service.subscribe("unsub@example.com"),
+          ),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -117,21 +110,20 @@ describe("SubscriberService", () => {
   describe("verify", () => {
     it("sets status to active and verifiedAt", async () => {
       let verified = false;
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
         subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
+          Effect.Effect.succeed(makeTestSubscriber({ status: "pending" })),
         verify: (_subscriberId) => {
           verified = true;
-          return Effect.void;
+          return Effect.Effect.succeed(undefined);
         },
-        unsubscribe: (_subscriberId) => Effect.void,
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      await Effect.runPromise(
+      await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.verify("test-id")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) => service.verify("test-id")),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -139,22 +131,21 @@ describe("SubscriberService", () => {
     });
 
     it("fails with SubscriberNotFoundError for nonexistent id", async () => {
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
         subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
+          Effect.Effect.succeed(makeTestSubscriber({ status: "pending" })),
         verify: (_subscriberId) =>
-          Effect.fail(
+          Effect.Effect.fail(
             new SubscriberNotFoundError({ identifier: "id:missing-id" }),
           ),
-        unsubscribe: (_subscriberId) => Effect.void,
+        unsubscribe: (_subscriberId) => Effect.Effect.succeed(undefined),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.verify("missing-id")),
-          Effect.provide(TestLayer),
-          Effect.either,
+          Effect.Effect.flatMap((service) => service.verify("missing-id")),
+          Effect.Effect.provide(TestLayer),
+          Effect.Effect.either,
         ),
       );
 
@@ -168,21 +159,20 @@ describe("SubscriberService", () => {
   describe("unsubscribe", () => {
     it("sets status to unsubscribed and unsubscribedAt", async () => {
       let unsubscribed = false;
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
         subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
-        verify: (_subscriberId) => Effect.void,
+          Effect.Effect.succeed(makeTestSubscriber({ status: "pending" })),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
         unsubscribe: (_subscriberId) => {
           unsubscribed = true;
-          return Effect.void;
+          return Effect.Effect.succeed(undefined);
         },
       });
 
-      await Effect.runPromise(
+      await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.unsubscribe("test-id")),
-          Effect.provide(TestLayer),
+          Effect.Effect.flatMap((service) => service.unsubscribe("test-id")),
+          Effect.Effect.provide(TestLayer),
         ),
       );
 
@@ -190,77 +180,21 @@ describe("SubscriberService", () => {
     });
 
     it("fails with SubscriberNotFoundError for nonexistent id", async () => {
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
+      const TestLayer = Effect.Layer.succeed(SubscriberService, {
         subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
-        verify: (_subscriberId) => Effect.void,
+          Effect.Effect.succeed(makeTestSubscriber({ status: "pending" })),
+        verify: (_subscriberId) => Effect.Effect.succeed(undefined),
         unsubscribe: (_subscriberId) =>
-          Effect.fail(
+          Effect.Effect.fail(
             new SubscriberNotFoundError({ identifier: "id:missing-id" }),
           ),
       });
 
-      const result = await Effect.runPromise(
+      const result = await Effect.Effect.runPromise(
         SubscriberService.pipe(
-          Effect.flatMap((service) => service.unsubscribe("missing-id")),
-          Effect.provide(TestLayer),
-          Effect.either,
-        ),
-      );
-
-      expect(result._tag).toBe("Left");
-      if (result._tag === "Left") {
-        expect(result.left).toBeInstanceOf(SubscriberNotFoundError);
-      }
-    });
-  });
-
-  describe("readSubscriberByEmail", () => {
-    it("returns subscriber when found", async () => {
-      const sub = makeTestSubscriber({ email: "found@example.com" });
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        readSubscriberByEmail: (_email) => Effect.succeed(sub),
-        subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
-      });
-
-      const result = await Effect.runPromise(
-        SubscriberService.pipe(
-          Effect.flatMap((service) =>
-            service.readSubscriberByEmail("found@example.com"),
-          ),
-          Effect.provide(TestLayer),
-        ),
-      );
-
-      expect(result).not.toBeNull();
-      expect(result?.email).toBe("found@example.com");
-    });
-
-    it("fails with SubscriberNotFoundError when not found", async () => {
-      const TestLayer = Layer.succeed(SubscriberService, {
-        ...crudStubs,
-        readSubscriberByEmail: (email) =>
-          Effect.fail(
-            new SubscriberNotFoundError({ identifier: `email:${email}` }),
-          ),
-        subscribe: (_email) =>
-          Effect.succeed(makeTestSubscriber({ status: "pending" })),
-        verify: (_subscriberId) => Effect.void,
-        unsubscribe: (_subscriberId) => Effect.void,
-      });
-
-      const result = await Effect.runPromise(
-        SubscriberService.pipe(
-          Effect.flatMap((service) =>
-            service.readSubscriberByEmail("missing@example.com"),
-          ),
-          Effect.provide(TestLayer),
-          Effect.either,
+          Effect.Effect.flatMap((service) => service.unsubscribe("missing-id")),
+          Effect.Effect.provide(TestLayer),
+          Effect.Effect.either,
         ),
       );
 

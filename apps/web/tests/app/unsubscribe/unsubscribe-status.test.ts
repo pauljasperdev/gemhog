@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { EmailService } from "@gemhog/email";
-import { Effect, Layer } from "effect";
+import * as Effect from "effect";
 import { describe, expect, it, vi } from "vitest";
 
 const TEST_SECRET = "test-secret-at-least-32-characters-long";
@@ -9,7 +9,7 @@ process.env.BETTER_AUTH_SECRET = TEST_SECRET;
 process.env.APP_URL = "http://localhost:3001";
 
 vi.mock("@gemhog/core/drizzle", () => ({
-  DatabaseLive: Layer.empty,
+  DatabaseLive: Effect.Layer.empty,
 }));
 
 vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
@@ -28,19 +28,21 @@ vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
   };
   return {
     ...actual,
-    SubscriberLayers: Layer.mergeAll(
-      Layer.succeed(actual.SubscriberService, {
+    SubscriberLayers: Effect.Layer.mergeAll(
+      Effect.Layer.succeed(actual.SubscriberRepository, {
         createSubscriber: () =>
-          Effect.succeed({ ...mockSubscriber, status: "pending" }),
-        readSubscriberById: () => Effect.succeed(mockSubscriber),
-        readSubscriberByEmail: () => Effect.succeed(mockSubscriber),
-        updateSubscriberById: () => Effect.succeed(mockSubscriber),
-        subscribe: () => Effect.succeed(mockSubscriber),
-        verify: () => Effect.succeed(mockSubscriber),
-        unsubscribe: () => Effect.succeed(mockSubscriber),
+          Effect.Effect.succeed({ ...mockSubscriber, status: "pending" }),
+        readSubscriberById: () => Effect.Effect.succeed(mockSubscriber),
+        readSubscriberByEmail: () => Effect.Effect.succeed(mockSubscriber),
+        updateSubscriberById: () => Effect.Effect.succeed(mockSubscriber),
       }),
-      Layer.succeed(EmailService, {
-        send: () => Effect.void,
+      Effect.Layer.succeed(actual.SubscriberService, {
+        subscribe: () => Effect.Effect.succeed(mockSubscriber),
+        verify: () => Effect.Effect.void,
+        unsubscribe: () => Effect.Effect.void,
+      }),
+      Effect.Layer.succeed(EmailService, {
+        send: () => Effect.Effect.succeed(undefined),
       }),
     ),
   };
