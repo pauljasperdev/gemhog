@@ -1,4 +1,4 @@
-import { Context, Effect, Layer } from "effect";
+import * as Effect from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Track calls for assertions
@@ -9,15 +9,15 @@ process.env.BETTER_AUTH_SECRET =
 process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
 
 vi.mock("@gemhog/core/drizzle", () => ({
-  DatabaseLive: Layer.empty,
+  DatabaseLive: Effect.Layer.empty,
 }));
 
 vi.mock("@gemhog/core/subscriber", () => {
-  const EmailService = Context.GenericTag<{
+  const EmailService = Effect.Context.GenericTag<{
     send: (params: unknown) => Effect.Effect<void>;
   }>("EmailService");
 
-  const SubscriberService = Context.GenericTag<{
+  const SubscriberService = Effect.Context.GenericTag<{
     createSubscriber: (email: string) => Effect.Effect<{
       id: string;
       email: string;
@@ -75,13 +75,13 @@ vi.mock("@gemhog/core/subscriber", () => {
     unsubscribe: (subscriberId: string) => Effect.Effect<void>;
   }>("SubscriberService");
 
-  const MockEmailLayer = Layer.succeed(EmailService, {
-    send: () => Effect.void,
+  const MockEmailLayer = Effect.Layer.succeed(EmailService, {
+    send: () => Effect.Effect.Effect.succeed(undefined),
   });
 
-  const MockSubscriberLayer = Layer.succeed(SubscriberService, {
+  const MockSubscriberLayer = Effect.Layer.succeed(SubscriberService, {
     createSubscriber: (_email: string) =>
-      Effect.succeed({
+      Effect.Effect.succeed({
         id: "mock-id",
         email: "mock@example.com",
         status: "pending",
@@ -92,7 +92,7 @@ vi.mock("@gemhog/core/subscriber", () => {
         updatedAt: new Date(),
       }),
     readSubscriberById: (_id: string) =>
-      Effect.succeed({
+      Effect.Effect.succeed({
         id: "mock-id",
         email: "mock@example.com",
         status: "pending",
@@ -103,7 +103,7 @@ vi.mock("@gemhog/core/subscriber", () => {
         updatedAt: new Date(),
       }),
     readSubscriberByEmail: (email: string) =>
-      Effect.succeed({
+      Effect.Effect.succeed({
         id: "mock-id",
         email,
         status: "pending",
@@ -114,7 +114,7 @@ vi.mock("@gemhog/core/subscriber", () => {
         updatedAt: new Date(),
       }),
     updateSubscriberById: (_id: string, _updates: unknown) =>
-      Effect.succeed({
+      Effect.Effect.succeed({
         id: "mock-id",
         email: "mock@example.com",
         status: "pending",
@@ -126,7 +126,7 @@ vi.mock("@gemhog/core/subscriber", () => {
       }),
     subscribe: (email: string) => {
       subscribeCalls.push(email);
-      return Effect.succeed({
+      return Effect.Effect.succeed({
         id: "mock-id",
         email,
         status: "pending" as const,
@@ -137,8 +137,8 @@ vi.mock("@gemhog/core/subscriber", () => {
         updatedAt: new Date(),
       });
     },
-    verify: () => Effect.void,
-    unsubscribe: () => Effect.void,
+    verify: () => Effect.Effect.Effect.succeed(undefined),
+    unsubscribe: () => Effect.Effect.Effect.succeed(undefined),
   });
 
   return {
@@ -146,9 +146,12 @@ vi.mock("@gemhog/core/subscriber", () => {
     EmailServiceConsole: MockEmailLayer,
     EmailServiceLive: MockEmailLayer,
     SubscriberService,
-    SubscriberLayers: Layer.mergeAll(MockEmailLayer, MockSubscriberLayer),
+    SubscriberLayers: Effect.Layer.mergeAll(
+      MockEmailLayer,
+      MockSubscriberLayer,
+    ),
     SubscriberServiceLive: MockSubscriberLayer,
-    createToken: () => Effect.succeed("mock-token"),
+    createToken: () => Effect.Effect.succeed("mock-token"),
     verificationEmail: () => ({
       subject: "Verify",
       html: "<p>Verify</p>",

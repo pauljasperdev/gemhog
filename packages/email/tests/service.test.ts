@@ -1,7 +1,7 @@
-import { Effect } from "effect";
+import * as Effect from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-import { EmailService, EmailServiceConsole } from "../src/service";
+import { EmailServiceConsole } from "../src/console";
+import { EmailService } from "../src/service";
 
 describe("EmailServiceConsole", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
@@ -15,19 +15,16 @@ describe("EmailServiceConsole", () => {
   });
 
   it("logs email to console", async () => {
-    await Effect.runPromise(
+    await Effect.Effect.runPromise(
       EmailService.pipe(
-        Effect.flatMap((service) =>
-          service.send({
-            to: "user@example.com",
-            email: {
-              subject: "Test Subject",
-              html: "<p>Hello</p>",
-              text: "Hello",
-            },
+        Effect.Effect.flatMap((service) =>
+          service.send("user@example.com", {
+            subject: "Test Subject",
+            html: "<p>Hello</p>",
+            text: "Hello",
           }),
         ),
-        Effect.provide(EmailServiceConsole),
+        Effect.Effect.provide(EmailServiceConsole),
       ),
     );
 
@@ -41,33 +38,34 @@ describe("EmailServiceConsole", () => {
 
   it("resolves successfully without throwing", async () => {
     await expect(
-      Effect.runPromise(
+      Effect.Effect.runPromise(
         EmailService.pipe(
-          Effect.flatMap((service) =>
-            service.send({
-              to: "user@example.com",
-              email: { subject: "Test", html: "<p>Test</p>", text: "Test" },
+          Effect.Effect.flatMap((service) =>
+            service.send("user@example.com", {
+              subject: "Test",
+              html: "<p>Test</p>",
+              text: "Test",
             }),
           ),
-          Effect.provide(EmailServiceConsole),
+          Effect.Effect.provide(EmailServiceConsole),
         ),
       ),
     ).resolves.toBeUndefined();
   });
 
   it("logs headers when provided", async () => {
-    await Effect.runPromise(
+    await Effect.Effect.runPromise(
       EmailService.pipe(
-        Effect.flatMap((service) =>
-          service.send({
-            to: "user@example.com",
-            email: { subject: "Test", html: "<p>Test</p>", text: "Test" },
-            headers: {
+        Effect.Effect.flatMap((service) =>
+          service.send(
+            "user@example.com",
+            { subject: "Test", html: "<p>Test</p>", text: "Test" },
+            {
               "List-Unsubscribe": "<https://gemhog.com/unsubscribe?token=abc>",
             },
-          }),
+          ),
         ),
-        Effect.provide(EmailServiceConsole),
+        Effect.Effect.provide(EmailServiceConsole),
       ),
     );
 

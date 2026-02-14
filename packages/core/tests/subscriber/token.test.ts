@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import * as Effect from "effect";
 import { beforeEach, describe, expect, it } from "vitest";
 import { InvalidTokenError } from "../../src/subscriber/errors";
 import { createToken, verifyToken } from "../../src/subscriber/token";
@@ -17,7 +17,7 @@ describe("token", () => {
   describe("createToken", () => {
     it("should return a base64url-encoded string", async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -32,7 +32,7 @@ describe("token", () => {
 
     it('should create tokens with action "verify"', async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -45,7 +45,7 @@ describe("token", () => {
 
     it('should create tokens with action "unsubscribe"', async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "unsubscribe",
@@ -61,7 +61,7 @@ describe("token", () => {
     it("should return the original payload for a valid token", async () => {
       setSecret(TEST_SECRET);
       const expiresAt = Date.now() + 60_000;
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -69,7 +69,7 @@ describe("token", () => {
         }),
       );
 
-      const result = await Effect.runPromise(verifyToken(token));
+      const result = await Effect.Effect.runPromise(verifyToken(token));
 
       expect(result).toEqual({
         email: "user@example.com",
@@ -80,7 +80,7 @@ describe("token", () => {
 
     it("should fail with expired reason for an expired token", async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -88,8 +88,8 @@ describe("token", () => {
         }),
       );
 
-      const result = await Effect.runPromise(
-        verifyToken(token).pipe(Effect.either),
+      const result = await Effect.Effect.runPromise(
+        verifyToken(token).pipe(Effect.Effect.either),
       );
 
       expect(result._tag).toBe("Left");
@@ -103,7 +103,7 @@ describe("token", () => {
 
     it("should fail with invalid_signature for a tampered token", async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -113,8 +113,8 @@ describe("token", () => {
 
       const tampered = `X${token.slice(1)}`;
 
-      const result = await Effect.runPromise(
-        verifyToken(tampered).pipe(Effect.either),
+      const result = await Effect.Effect.runPromise(
+        verifyToken(tampered).pipe(Effect.Effect.either),
       );
 
       expect(result._tag).toBe("Left");
@@ -126,8 +126,8 @@ describe("token", () => {
     it("should fail for malformed/garbage input", async () => {
       setSecret(TEST_SECRET);
       for (const input of ["not-a-real-token", "", "abcdef"]) {
-        const result = await Effect.runPromise(
-          verifyToken(input).pipe(Effect.either),
+        const result = await Effect.Effect.runPromise(
+          verifyToken(input).pipe(Effect.Effect.either),
         );
 
         expect(result._tag).toBe("Left");
@@ -145,16 +145,16 @@ describe("token", () => {
         expiresAt: Date.now() + 60_000,
       };
 
-      const token1 = await Effect.runPromise(createToken(payload));
+      const token1 = await Effect.Effect.runPromise(createToken(payload));
       setSecret("different-secret-at-least-32-characters-long");
-      const token2 = await Effect.runPromise(createToken(payload));
+      const token2 = await Effect.Effect.runPromise(createToken(payload));
 
       expect(token1).not.toBe(token2);
     });
 
     it("should fail for a token signed with a different secret", async () => {
       setSecret(TEST_SECRET);
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({
           email: "user@example.com",
           action: "verify",
@@ -163,8 +163,8 @@ describe("token", () => {
       );
 
       setSecret("wrong-secret-at-least-32-characters-long");
-      const result = await Effect.runPromise(
-        verifyToken(token).pipe(Effect.either),
+      const result = await Effect.Effect.runPromise(
+        verifyToken(token).pipe(Effect.Effect.either),
       );
 
       expect(result._tag).toBe("Left");
@@ -184,10 +184,10 @@ describe("token", () => {
       const action = "unsubscribe" as const;
       const expiresAt = Date.now() + 3600_000;
 
-      const token = await Effect.runPromise(
+      const token = await Effect.Effect.runPromise(
         createToken({ email, action, expiresAt }),
       );
-      const result = await Effect.runPromise(verifyToken(token));
+      const result = await Effect.Effect.runPromise(verifyToken(token));
 
       expect(result.email).toBe(email);
       expect(result.action).toBe(action);
