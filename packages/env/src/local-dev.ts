@@ -1,9 +1,13 @@
 const DATABASE_URL = "postgresql://postgres:password@localhost:5432/gemhog";
 const BETTER_AUTH_SECRET = "ZpgIiuzmFRdZ6OSFTJQ1PHqgRLyhnzIe";
 const BETTER_AUTH_URL = "http://localhost:3000";
-const APP_URL = "http://localhost:3001";
 const GOOGLE_GENERATIVE_AI_API_KEY = "XXXXXXXXXXXXXXXXXXXXX";
 const RESEND_API_KEY = "re_local_dev_placeholder";
+const PODSCAN_API_TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+const PODSCAN_BASE_URL = "https://podscan.fm/api/v1";
+
+// public varaibles
+const APP_URL = "http://localhost:3001";
 const SENTRY_DSN =
   "https://b0e726cbc64e580010757cb06aa83a72@o4510769605115904.ingest.de.sentry.io/4510769606295632";
 const POSTHOG_KEY = "phc_KHm7rTBstZVB3AEtPp8w08yEQgKcPw1c2lEvVbOmzjm";
@@ -18,10 +22,12 @@ export const localServerEnv = {
   GOOGLE_GENERATIVE_AI_API_KEY,
   RESEND_API_KEY,
   SENTRY_DSN,
+  PODSCAN_API_TOKEN,
+  PODSCAN_BASE_URL,
 } as const;
 
 export const localClientEnv = {
-  NEXT_PUBLIC_SERVER_URL: APP_URL,
+  NEXT_PUBLIC_SERVER_URL: APP_URL, // switchted from hono to next so app url is now the server url
   NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
   NEXT_PUBLIC_POSTHOG_KEY: POSTHOG_KEY,
   NEXT_PUBLIC_POSTHOG_HOST: POSTHOG_HOST,

@@ -80,6 +80,8 @@ describe("server env injection", () => {
     process.env.BETTER_AUTH_URL = "http://localhost:3000";
     process.env.APP_URL = "http://localhost:3001";
     process.env.GOOGLE_GENERATIVE_AI_API_KEY = "test-google-api-key";
+    process.env.PODSCAN_API_TOKEN = "podscan-test-token";
+    process.env.PODSCAN_BASE_URL = "https://api.podscan.fm/v1";
     process.env.RESEND_API_KEY = "re_test_key";
     process.env.SENTRY_DSN = "https://key@sentry.io/123";
     process.env.LOCAL_ENV = "1";
@@ -93,6 +95,8 @@ describe("server env injection", () => {
     expect(process.env.BETTER_AUTH_SECRET).toBe(
       "super-secret-key-at-least-32-chars",
     );
+    expect(process.env.PODSCAN_API_TOKEN).toBe("podscan-test-token");
+    expect(process.env.PODSCAN_BASE_URL).toBe("https://api.podscan.fm/v1");
   });
 
   it("uses local defaults when LOCAL_ENV=1", async () => {
@@ -102,6 +106,8 @@ describe("server env injection", () => {
     delete process.env.BETTER_AUTH_URL;
     delete process.env.APP_URL;
     delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    delete process.env.PODSCAN_API_TOKEN;
+    delete process.env.PODSCAN_BASE_URL;
     delete process.env.RESEND_API_KEY;
     delete process.env.SENTRY_DSN;
     process.env.LOCAL_ENV = "1";
@@ -120,6 +126,10 @@ describe("server env injection", () => {
     expect(process.env.GOOGLE_GENERATIVE_AI_API_KEY).toBe(
       localServerEnv.GOOGLE_GENERATIVE_AI_API_KEY,
     );
+    expect(process.env.PODSCAN_API_TOKEN).toBe(
+      localServerEnv.PODSCAN_API_TOKEN,
+    );
+    expect(process.env.PODSCAN_BASE_URL).toBe(localServerEnv.PODSCAN_BASE_URL);
     expect(process.env.RESEND_API_KEY).toBe(localServerEnv.RESEND_API_KEY);
     expect(process.env.SENTRY_DSN).toBe(localServerEnv.SENTRY_DSN);
   });
@@ -131,6 +141,8 @@ describe("server env injection", () => {
     delete process.env.BETTER_AUTH_URL;
     delete process.env.APP_URL;
     delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    delete process.env.PODSCAN_API_TOKEN;
+    delete process.env.PODSCAN_BASE_URL;
     delete process.env.RESEND_API_KEY;
     delete process.env.SENTRY_DSN;
     delete process.env.LOCAL_ENV;
