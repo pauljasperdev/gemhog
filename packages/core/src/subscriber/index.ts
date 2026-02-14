@@ -1,7 +1,11 @@
 export { InvalidTokenError, SubscriberNotFoundError } from "./errors";
 export { SubscriberLayers } from "./layers";
-export { MockSubscriberService } from "./mock";
-export { SubscriberService, SubscriberServiceLive } from "./service";
+export { SubscriberRepository } from "./repository";
+export { SubscriberRepositoryLive } from "./repository.live";
+export { MockSubscriberRepository } from "./repository.mock";
+export { SubscriberService } from "./service";
+export { SubscriberServiceLive } from "./service.live";
+export { MockSubscriberService } from "./service.mock";
 export type { Subscriber } from "./sql";
 export * as subscriberSchema from "./sql";
 export type { TokenPayload } from "./token";

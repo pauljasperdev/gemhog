@@ -1,19 +1,19 @@
-import { Config, ConfigProvider, Effect } from "effect";
+import * as Effect from "effect";
 import { localRuntimeEnv } from "./local-dev";
 
-const RuntimeConfig = Config.all({
-  DATABASE_URL: Config.nonEmptyString("DATABASE_URL"),
+const RuntimeConfig = Effect.Config.all({
+  DATABASE_URL: Effect.Config.nonEmptyString("DATABASE_URL"),
 });
 
-export type RuntimeEnv = Config.Config.Success<typeof RuntimeConfig>;
+export type RuntimeEnv = Effect.Config.Config.Success<typeof RuntimeConfig>;
 
 const isLocal = process.env.LOCAL_ENV === "1";
 
 const provider = isLocal
-  ? ConfigProvider.fromJson(localRuntimeEnv)
-  : ConfigProvider.fromEnv();
+  ? Effect.ConfigProvider.fromJson(localRuntimeEnv)
+  : Effect.ConfigProvider.fromEnv();
 
 export const RuntimeEnvEffect =
-  Effect.withConfigProvider(provider)(RuntimeConfig);
+  Effect.Effect.withConfigProvider(provider)(RuntimeConfig);
 
-export const runtimeEnv: RuntimeEnv = Effect.runSync(RuntimeEnvEffect);
+export const runtimeEnv: RuntimeEnv = Effect.Effect.runSync(RuntimeEnvEffect);
