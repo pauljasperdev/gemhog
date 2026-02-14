@@ -1,0 +1,29 @@
+{
+  "name": "@gemhog/extraction",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./podscan": {
+      "default": "./src/podscan/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "check-types": "tsc --noEmit",
+    "top10": "bun --env-file=../../.env run scripts/podscan-top10.ts",
+    "latest": "bun --env-file=../../.env run scripts/podscan-latest-episodes.ts"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.94.4",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

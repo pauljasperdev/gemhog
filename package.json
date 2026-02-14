@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "@gemhog/env": "workspace:*",
-    "dotenv": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -51,7 +50,7 @@
     "react-doctor": "^0.0.28",
     "sst": "3.17.37",
     "typescript": "catalog:",
-    "vitest": "^4.0.17"
+    "vitest": "catalog:"
   },
   "packageManager": "pnpm@10.15.1",
   "pnpm": {

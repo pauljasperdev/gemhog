@@ -22,12 +22,12 @@
     "@sentry/node": "^10.36.0",
     "@trpc/server": "catalog:",
     "ai": "catalog:",
-    "hono": "^4.8.2",
+    "hono": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@gemhog/config": "workspace:*",
-    "@types/node": "^22.13.14",
+    "@types/node": "catalog:",
     "tsdown": "^0.16.5",
     "tsx": "^4.19.2",
     "typescript": "catalog:"

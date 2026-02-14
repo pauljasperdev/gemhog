@@ -11,15 +11,15 @@
   },
   "scripts": {},
   "dependencies": {
-    "@effect/opentelemetry": "^0.61.0",
+    "@effect/opentelemetry": "catalog:",
     "@gemhog/core": "workspace:*",
     "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
-    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api": "catalog:",
     "@trpc/server": "catalog:",
     "effect": "catalog:",
-    "hono": "^4.11.4",
-    "superjson": "^2.2.1",
+    "hono": "catalog:",
+    "superjson": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
