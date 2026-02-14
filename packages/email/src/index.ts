@@ -1,10 +1,7 @@
+export { EmailServiceConsole } from "./console";
 export { EmailSendError } from "./errors";
-export {
-  EmailService,
-  EmailServiceConsole,
-  EmailServiceLive,
-  type SendEmailParams,
-} from "./service";
+export { EmailServiceLive } from "./resend";
+export { EmailService } from "./service";
 export {
   type EmailContent,
   unsubscribeConfirmationEmail,

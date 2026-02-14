@@ -1,6 +1,6 @@
 import * as Tracer from "@effect/opentelemetry/Tracer";
 import { SubscriberLayers, SubscriberService } from "@gemhog/core/subscriber";
-import { Console, Effect } from "effect";
+import * as Effect from "effect";
 import { z } from "zod";
 
 import { publicProcedure, router } from "../index";
@@ -10,7 +10,7 @@ export const subscriberRouter = router({
   subscribe: publicProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input, ctx }) => {
-      const program = Effect.gen(function* () {
+      const program = Effect.Effect.gen(function* () {
         const service = yield* SubscriberService;
         return yield* service.subscribe(input.email);
       });
@@ -21,14 +21,14 @@ export const subscriberRouter = router({
         : program;
 
       const effect = programWithParent.pipe(
-        Effect.provide(SubscriberLayers),
-        Effect.tapErrorCause((cause) =>
-          Console.error(
+        Effect.Effect.provide(SubscriberLayers),
+        Effect.Effect.tapErrorCause((cause) =>
+          Effect.Console.error(
             `[subscriber.subscribe] failed for ${input.email}: ${String(cause)}`,
           ),
         ),
       );
 
-      return Effect.runPromise(effect);
+      return Effect.Effect.runPromise(effect);
     }),
 });
