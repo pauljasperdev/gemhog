@@ -617,6 +617,21 @@ We do not write isolated React component tests (no `@testing-library/react`, no
 If a UI component has complex logic (e.g., date formatting, validation), extract
 that logic into a pure function and unit test it separately.
 
+## Application Wiring Code (No Tests Required)
+
+**Library/package code** (`packages/*`): Full test coverage mandatory. TDD when
+specified.
+
+**Application wiring code** (`apps/functions/*`, Lambda handlers, infra glue):
+No automated tests required when the handler is pure composition of
+already-tested services. The handler just wires services together — the services
+themselves are tested in their packages.
+
+Examples: Lambda handlers that compose Effect layers, SST infrastructure files,
+build configs.
+
+The distinction: Test the _services_, not the _wiring_.
+
 ## What to Mock
 
 **DO mock:**
