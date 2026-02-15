@@ -1,24 +1,26 @@
-import type { SqlError } from "@effect/sql/SqlError";
 import * as Effect from "effect";
-import type { SubscriberNotFoundError } from "./errors";
+import type {
+  SubscriberNotFoundError,
+  SubscriberRepositoryError,
+} from "./errors";
 import type { Subscriber } from "./sql";
 
 interface SubscriberRepositoryShape {
   readonly createSubscriber: (
     email: string,
-  ) => Effect.Effect.Effect<Subscriber, SqlError, never>;
+  ) => Effect.Effect.Effect<Subscriber, SubscriberRepositoryError, never>;
   readonly readSubscriberById: (
     subscriberId: string,
   ) => Effect.Effect.Effect<
     Subscriber,
-    SqlError | SubscriberNotFoundError,
+    SubscriberRepositoryError | SubscriberNotFoundError,
     never
   >;
   readonly readSubscriberByEmail: (
     email: string,
   ) => Effect.Effect.Effect<
     Subscriber,
-    SqlError | SubscriberNotFoundError,
+    SubscriberRepositoryError | SubscriberNotFoundError,
     never
   >;
   readonly updateSubscriberById: (
@@ -26,7 +28,7 @@ interface SubscriberRepositoryShape {
     updates: Partial<Subscriber>,
   ) => Effect.Effect.Effect<
     Subscriber,
-    SqlError | SubscriberNotFoundError,
+    SubscriberRepositoryError | SubscriberNotFoundError,
     never
   >;
 }

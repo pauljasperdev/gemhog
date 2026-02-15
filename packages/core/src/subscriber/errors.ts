@@ -11,3 +11,15 @@ export class InvalidTokenError extends Effect.Data.TaggedError(
 )<{
   reason: "expired" | "invalid_signature" | "malformed";
 }> {}
+
+export class SubscriberRepositoryError extends Effect.Data.TaggedError(
+  "SubscriberRepositoryError",
+)<{
+  cause: unknown;
+}> {}
+
+export class SubscriberServiceError extends Effect.Data.TaggedError(
+  "SubscriberServiceError",
+)<{
+  cause: unknown;
+}> {}

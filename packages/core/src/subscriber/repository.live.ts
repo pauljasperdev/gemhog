@@ -1,7 +1,7 @@
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { eq } from "drizzle-orm";
 import * as Effect from "effect";
-import { SubscriberNotFoundError } from "./errors";
+import { SubscriberNotFoundError, SubscriberRepositoryError } from "./errors";
 import { SubscriberRepository } from "./repository";
 import { type Subscriber, subscriber } from "./sql";
 
@@ -98,10 +98,30 @@ export const SubscriberRepositoryLive = Effect.Layer.effect(
       );
 
     return SubscriberRepository.of({
-      createSubscriber,
-      readSubscriberByEmail,
-      readSubscriberById,
-      updateSubscriberById,
+      createSubscriber: (email) =>
+        createSubscriber(email).pipe(
+          Effect.Effect.catchTag("SqlError", (e) =>
+            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+          ),
+        ),
+      readSubscriberByEmail: (email) =>
+        readSubscriberByEmail(email).pipe(
+          Effect.Effect.catchTag("SqlError", (e) =>
+            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+          ),
+        ),
+      readSubscriberById: (subscriberId) =>
+        readSubscriberById(subscriberId).pipe(
+          Effect.Effect.catchTag("SqlError", (e) =>
+            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+          ),
+        ),
+      updateSubscriberById: (subscriberId, updates) =>
+        updateSubscriberById(subscriberId, updates).pipe(
+          Effect.Effect.catchTag("SqlError", (e) =>
+            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+          ),
+        ),
     });
   }),
 );
