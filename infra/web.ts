@@ -36,6 +36,9 @@ export const web = new sst.aws.Nextjs("Web", {
     SENTRY_AUTH_TOKEN: secrets.SentryAuthToken.value,
     SENTRY_ORG: secrets.SentryOrg.value,
     SENTRY_PROJECT: secrets.SentryProject.value,
+    SST_STAGE: $app.stage,
+    PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
+    PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
   },
 });
 
