@@ -1,0 +1,19 @@
+{
+  "name": "functions",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gemhog/core": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "@effect-aws/lambda": "^1.5.0",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@gemhog/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}
