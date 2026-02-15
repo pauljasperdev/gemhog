@@ -1,5 +1,6 @@
 import { EmailService, verificationEmail } from "@gemhog/email";
 import * as Effect from "effect";
+import { SubscriberServiceError } from "./errors";
 import { SubscriberRepository } from "./repository";
 import { SubscriberService } from "./service";
 import { createToken } from "./token";
@@ -9,12 +10,11 @@ export const SubscriberServiceLive = Effect.Layer.effect(
   Effect.Effect.gen(function* () {
     const repository = yield* SubscriberRepository;
     const emailService = yield* EmailService;
+    const appUrl = yield* Effect.Config.string("APP_URL");
 
     return SubscriberService.of({
       subscribe: (email) =>
         Effect.Effect.gen(function* () {
-          const appUrl = yield* Effect.Config.string("APP_URL");
-
           const sub = yield* repository.createSubscriber(email);
           const shouldSendEmail = sub.status === "pending";
 
@@ -46,7 +46,17 @@ export const SubscriberServiceLive = Effect.Layer.effect(
           }
 
           return sub;
-        }).pipe(Effect.Effect.withSpan("subscriber.subscribe")),
+        }).pipe(
+          Effect.Effect.catchTags({
+            SubscriberRepositoryError: (e) =>
+              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+            ConfigError: (e) =>
+              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+            EmailSendError: (e) =>
+              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+          }),
+          Effect.Effect.withSpan("subscriber.subscribe"),
+        ),
 
       verify: (subscriberId) =>
         repository.readSubscriberById(subscriberId).pipe(
@@ -57,6 +67,9 @@ export const SubscriberServiceLive = Effect.Layer.effect(
             }),
           ),
           Effect.Effect.asVoid,
+          Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
+            Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+          ),
           Effect.Effect.withSpan("subscriber.verify"),
         ),
 
@@ -69,6 +82,9 @@ export const SubscriberServiceLive = Effect.Layer.effect(
             }),
           ),
           Effect.Effect.asVoid,
+          Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
+            Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+          ),
           Effect.Effect.withSpan("subscriber.unsubscribe"),
         ),
     });

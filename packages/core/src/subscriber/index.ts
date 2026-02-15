@@ -1,4 +1,9 @@
-export { InvalidTokenError, SubscriberNotFoundError } from "./errors";
+export {
+  InvalidTokenError,
+  SubscriberNotFoundError,
+  SubscriberRepositoryError,
+  SubscriberServiceError,
+} from "./errors";
 export { SubscriberLayers } from "./layers";
 export { SubscriberRepository } from "./repository";
 export { SubscriberRepositoryLive } from "./repository.live";
