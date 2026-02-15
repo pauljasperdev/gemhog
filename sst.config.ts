@@ -61,6 +61,7 @@ export default $config({
     // we dont need the api right now
     // const api = await import("./infra/api");
     const web = await import("./infra/web");
+    await import("./infra/cron");
     return {
       // ...(api.outputs || {}),
       ...(web.outputs || {}),
