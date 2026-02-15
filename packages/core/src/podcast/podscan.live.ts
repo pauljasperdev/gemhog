@@ -6,16 +6,16 @@ import {
 } from "@effect/platform";
 import * as Effect from "effect";
 
-import { PodScanError } from "./errors";
+import { PodscanError } from "./errors";
+import { PodscanService } from "./podscan";
 import {
-  PodScanEpisodesResponse,
-  PodScanPodcastDetailResponse,
-  PodScanTopPodcastsResponse,
+  PodscanEpisodesResponse,
+  PodscanPodcastDetailResponse,
+  PodscanTopPodcastsResponse,
 } from "./schema";
-import { PodScanService } from "./service";
 
-export const PodScanServiceLive = Effect.Layer.effect(
-  PodScanService,
+export const PodscanServiceLive = Effect.Layer.effect(
+  PodscanService,
   Effect.Effect.gen(function* () {
     const token = yield* Effect.Config.redacted("PODSCAN_API_TOKEN");
     const url = yield* Effect.Config.string("PODSCAN_BASE_URL").pipe(
@@ -32,19 +32,19 @@ export const PodScanServiceLive = Effect.Layer.effect(
         client.execute,
       );
 
-    return PodScanService.of({
+    return PodscanService.of({
       getTop: (category, limit) =>
         Effect.Effect.gen(function* () {
           const response = yield* query(
             `/charts/apple/us/${category}/top?limit=${String(limit)}`,
           );
           const body = yield* HttpClientResponse.schemaBodyJson(
-            PodScanTopPodcastsResponse,
+            PodscanTopPodcastsResponse,
           )(response);
           return body.podcasts;
         }).pipe(
           Effect.Effect.mapError(
-            (cause: unknown) => new PodScanError({ cause }),
+            (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
 
@@ -54,11 +54,11 @@ export const PodScanServiceLive = Effect.Layer.effect(
             `/podcasts/${podcastId}/episodes?limit=${String(limit)}`,
           );
           return yield* HttpClientResponse.schemaBodyJson(
-            PodScanEpisodesResponse,
+            PodscanEpisodesResponse,
           )(response);
         }).pipe(
           Effect.Effect.mapError(
-            (cause: unknown) => new PodScanError({ cause }),
+            (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
 
@@ -66,16 +66,16 @@ export const PodScanServiceLive = Effect.Layer.effect(
         Effect.Effect.gen(function* () {
           const response = yield* query(`/podcasts/${podcastId}`);
           const body = yield* HttpClientResponse.schemaBodyJson(
-            PodScanPodcastDetailResponse,
+            PodscanPodcastDetailResponse,
           )(response);
           return body.podcast;
         }).pipe(
           Effect.Effect.mapError(
-            (cause: unknown) => new PodScanError({ cause }),
+            (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
     });
   }).pipe(
-    Effect.Effect.mapError((cause: unknown) => new PodScanError({ cause })),
+    Effect.Effect.mapError((cause: unknown) => new PodscanError({ cause })),
   ),
 ).pipe(Effect.Layer.provide(FetchHttpClient.layer));

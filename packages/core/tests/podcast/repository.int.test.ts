@@ -6,10 +6,10 @@ import {
   EpisodeNotFoundError,
   PodcastNotFoundError,
   PodcastRepositoryError,
-} from "../../src/podscan/errors";
-import { PodcastRepository } from "../../src/podscan/repository";
-import { PodcastRepositoryLive } from "../../src/podscan/repository.live";
-import { episode, podcast } from "../../src/podscan/sql";
+} from "../../src/podcast/errors";
+import { PodcastRepository } from "../../src/podcast/repository";
+import { PodcastRepositoryLive } from "../../src/podcast/repository.live";
+import { episode, podcast } from "../../src/podcast/sql";
 import { createMockEpisode, createMockPodcastDetail } from "./test-fixtures";
 
 const DATABASE_URL =
@@ -74,7 +74,7 @@ describe("podcast repository integration", () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
 
-      // Verify all 27 PodScanPodcastDetail fields are stored
+      // Verify all 27 PodscanPodcastDetail fields are stored
       expect(result.podscanPodcastId).toBe(mockPodcast.podcast_id);
       expect(result.name).toBe(mockPodcast.podcast_name);
       expect(result.url).toBe(mockPodcast.podcast_url);

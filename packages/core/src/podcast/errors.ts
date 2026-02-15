@@ -1,6 +1,6 @@
 import * as Effect from "effect";
 
-export class PodScanError extends Effect.Data.TaggedError("PodScanError")<{
+export class PodscanError extends Effect.Data.TaggedError("PodscanError")<{
   readonly cause: unknown;
 }> {}
 

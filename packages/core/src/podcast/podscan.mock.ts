@@ -1,13 +1,13 @@
 import * as Effect from "effect";
+import { PodscanService } from "./podscan";
 import type {
-  PodScanChartPodcast,
-  PodScanEpisode,
-  PodScanPagination,
-  PodScanPodcastDetail,
+  PodscanChartPodcast,
+  PodscanEpisode,
+  PodscanPagination,
+  PodscanPodcastDetail,
 } from "./schema";
-import { PodScanService } from "./service";
 
-const mockChartPodcasts: ReadonlyArray<PodScanChartPodcast> = [
+const mockChartPodcasts: ReadonlyArray<PodscanChartPodcast> = [
   {
     rank: 1,
     name: "Mock Podcast Alpha",
@@ -36,7 +36,7 @@ const mockChartPodcasts: ReadonlyArray<PodScanChartPodcast> = [
   },
 ];
 
-const mockPagination: PodScanPagination = {
+const mockPagination: PodscanPagination = {
   total: "100",
   per_page: "10",
   current_page: "1",
@@ -45,7 +45,7 @@ const mockPagination: PodScanPagination = {
   to: "10",
 };
 
-const mockPodcastDetail: PodScanPodcastDetail = {
+const mockPodcastDetail: PodscanPodcastDetail = {
   podcast_id: "mock-podcast-detail-1",
   podcast_guid: "mock-guid-12345",
   podcast_name: "Mock Podcast Detail",
@@ -82,7 +82,7 @@ const mockPodcastDetail: PodScanPodcastDetail = {
   },
 };
 
-const mockEpisodes: ReadonlyArray<PodScanEpisode> = [
+const mockEpisodes: ReadonlyArray<PodscanEpisode> = [
   {
     episode_id: "mock-episode-1",
     episode_title: "Mock Episode 1: Getting Started",
@@ -161,9 +161,9 @@ const mockEpisodes: ReadonlyArray<PodScanEpisode> = [
   },
 ];
 
-export const MockPodScanService = Effect.Layer.succeed(
-  PodScanService,
-  PodScanService.of({
+export const MockPodscanService = Effect.Layer.succeed(
+  PodscanService,
+  PodscanService.of({
     getTop: (_category, _limit) => Effect.Effect.succeed(mockChartPodcasts),
     getLatest: (_podcastId, _limit) =>
       Effect.Effect.succeed({

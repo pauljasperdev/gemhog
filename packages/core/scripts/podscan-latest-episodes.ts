@@ -1,12 +1,12 @@
 import { Effect } from "effect";
-import { PodScanService, PodScanServiceLive } from "../src/podscan";
+import { PodscanService, PodscanServiceLive } from "../src/podcast";
 
 const podcastId = "pd_a86x53rznwa5wgdv";
 
 const limit = 5;
 
 const program = Effect.gen(function* () {
-  const podScan = yield* PodScanService;
+  const podScan = yield* PodscanService;
   const { episodes } = yield* podScan.getLatest(podcastId, limit);
   yield* Effect.sync(() => {
     console.log(episodes);
@@ -15,7 +15,7 @@ const program = Effect.gen(function* () {
 
 Effect.runPromise(
   program.pipe(
-    Effect.provide(PodScanServiceLive),
+    Effect.provide(PodscanServiceLive),
     Effect.catchAll((error) =>
       Effect.sync(() => {
         console.error(

@@ -1,15 +1,15 @@
 import type {
-  PodScanEpisode,
-  PodScanPodcastDetail,
-} from "../../src/podscan/schema";
+  PodscanEpisode,
+  PodscanPodcastDetail,
+} from "../../src/podcast/schema";
 
 /**
- * Factory function to create mock PodScanPodcastDetail objects for testing.
+ * Factory function to create mock PodscanPodcastDetail objects for testing.
  * Provides sensible defaults for all 27 fields and accepts partial overrides.
  */
 export function createMockPodcastDetail(
-  overrides?: Partial<PodScanPodcastDetail>,
-): PodScanPodcastDetail {
+  overrides?: Partial<PodscanPodcastDetail>,
+): PodscanPodcastDetail {
   const timestamp = Date.now();
 
   return {
@@ -52,13 +52,13 @@ export function createMockPodcastDetail(
 }
 
 /**
- * Factory function to create mock PodScanEpisode objects for testing.
+ * Factory function to create mock PodscanEpisode objects for testing.
  * Provides sensible defaults for all 21 fields plus nested podcast object,
  * and accepts partial overrides.
  */
 export function createMockEpisode(
-  overrides?: Partial<PodScanEpisode>,
-): PodScanEpisode {
+  overrides?: Partial<PodscanEpisode>,
+): PodscanEpisode {
   const timestamp = Date.now();
 
   return {

@@ -8,7 +8,7 @@ import {
   PodcastRepositoryError,
 } from "./errors";
 import { PodcastRepository } from "./repository";
-import type { PodScanEpisode, PodScanPodcastDetail } from "./schema";
+import type { PodscanEpisode, PodscanPodcastDetail } from "./schema";
 import { type Episode, episode, type Podcast, podcast } from "./sql";
 
 export const PodcastRepositoryLive = Effect.Layer.effect(
@@ -17,7 +17,7 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
     const db = yield* PgDrizzle;
 
     const upsertPodcastByPodscanId = (
-      data: PodScanPodcastDetail,
+      data: PodscanPodcastDetail,
     ): Effect.Effect.Effect<Podcast, PodcastRepositoryError, never> =>
       Effect.Effect.gen(function* () {
         const podcastData = {
@@ -72,7 +72,7 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
       );
 
     const upsertEpisodeByPodscanId = (
-      data: PodScanEpisode,
+      data: PodscanEpisode,
     ): Effect.Effect.Effect<Episode, PodcastRepositoryError, never> =>
       Effect.Effect.gen(function* () {
         const podcastRows = yield* db

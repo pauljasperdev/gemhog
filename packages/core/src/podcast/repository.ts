@@ -4,16 +4,16 @@ import type {
   PodcastNotFoundError,
   PodcastRepositoryError,
 } from "./errors";
-import type { PodScanEpisode, PodScanPodcastDetail } from "./schema";
+import type { PodscanEpisode, PodscanPodcastDetail } from "./schema";
 import type { Episode, Podcast } from "./sql";
 
 interface PodcastRepositoryShape {
   readonly upsertPodcastByPodscanId: (
-    data: PodScanPodcastDetail,
+    data: PodscanPodcastDetail,
   ) => Effect.Effect.Effect<Podcast, PodcastRepositoryError, never>;
 
   readonly upsertEpisodeByPodscanId: (
-    data: PodScanEpisode,
+    data: PodscanEpisode,
   ) => Effect.Effect.Effect<Episode, PodcastRepositoryError, never>;
 
   readonly readPodcastById: (
@@ -42,5 +42,5 @@ interface PodcastRepositoryShape {
 }
 
 export class PodcastRepository extends Effect.Context.Tag(
-  "@gemhog/core/podscan/PodcastRepository",
+  "@gemhog/core/podcast/PodcastRepository",
 )<PodcastRepository, PodcastRepositoryShape>() {}

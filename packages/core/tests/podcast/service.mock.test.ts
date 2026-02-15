@@ -1,20 +1,20 @@
 import * as Effect from "effect";
 import { describe, expect, it } from "vitest";
-import { PodScanService } from "../../src/podscan/service";
-import { MockPodScanService } from "../../src/podscan/service.mock";
+import { PodscanService } from "../../src/podcast/podscan";
+import { MockPodscanService } from "../../src/podcast/podscan.mock";
 
 const runWithMockService = <A, E>(
-  effect: Effect.Effect.Effect<A, E, PodScanService>,
+  effect: Effect.Effect.Effect<A, E, PodscanService>,
 ) =>
   Effect.Effect.runPromise(
-    effect.pipe(Effect.Effect.provide(MockPodScanService)),
+    effect.pipe(Effect.Effect.provide(MockPodscanService)),
   );
 
-describe("MockPodScanService", () => {
+describe("MockPodscanService", () => {
   describe("getTop", () => {
     it("returns array of mock chart podcasts", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) => service.getTop("technology", 10)),
         ),
       );
@@ -25,7 +25,7 @@ describe("MockPodScanService", () => {
 
     it("returns podcasts with correct shape", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) => service.getTop("technology", 10)),
         ),
       );
@@ -48,7 +48,7 @@ describe("MockPodScanService", () => {
 
     it("returns podcasts with correct types", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) => service.getTop("technology", 10)),
         ),
       );
@@ -73,7 +73,7 @@ describe("MockPodScanService", () => {
   describe("getLatest", () => {
     it("returns episodes and pagination object", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -88,7 +88,7 @@ describe("MockPodScanService", () => {
 
     it("returns episodes with correct shape", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -126,7 +126,7 @@ describe("MockPodScanService", () => {
 
     it("returns episodes with correct types", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -156,7 +156,7 @@ describe("MockPodScanService", () => {
 
     it("returns pagination with string fields", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -174,7 +174,7 @@ describe("MockPodScanService", () => {
 
     it("returns pagination with expected values", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -192,7 +192,7 @@ describe("MockPodScanService", () => {
 
     it("returns episodes array with multiple items", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getLatest("mock-podcast-1", 10),
           ),
@@ -204,9 +204,9 @@ describe("MockPodScanService", () => {
   });
 
   describe("getPodcast", () => {
-    it("returns a PodScanPodcastDetail object", async () => {
+    it("returns a PodscanPodcastDetail object", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getPodcast("mock-podcast-1"),
           ),
@@ -219,14 +219,14 @@ describe("MockPodScanService", () => {
 
     it("returns detail with correct shape (27 fields)", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getPodcast("mock-podcast-1"),
           ),
         ),
       );
 
-      // Verify all 27 PodScanPodcastDetail fields exist
+      // Verify all 27 PodscanPodcastDetail fields exist
       expect(result).toHaveProperty("podcast_id");
       expect(result).toHaveProperty("podcast_guid");
       expect(result).toHaveProperty("podcast_name");
@@ -258,7 +258,7 @@ describe("MockPodScanService", () => {
 
     it("returns detail with correct types", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) =>
             service.getPodcast("mock-podcast-1"),
           ),
@@ -298,10 +298,10 @@ describe("MockPodScanService", () => {
     });
   });
 
-  describe("MockPodScanService layer", () => {
-    it("provides PodScanService correctly", async () => {
+  describe("MockPodscanService layer", () => {
+    it("provides PodscanService correctly", async () => {
       const result = await runWithMockService(
-        PodScanService.pipe(
+        PodscanService.pipe(
           Effect.Effect.flatMap((service) => {
             expect(typeof service.getTop).toBe("function");
             expect(typeof service.getLatest).toBe("function");

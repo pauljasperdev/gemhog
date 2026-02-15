@@ -2,13 +2,13 @@ export {
   EpisodeNotFoundError,
   PodcastNotFoundError,
   PodcastRepositoryError,
-  PodScanError,
+  PodscanError,
 } from "./errors";
+export { PodscanService } from "./podscan";
+export { PodscanServiceLive } from "./podscan.live";
+export { MockPodscanService } from "./podscan.mock";
 export { PodcastRepository } from "./repository";
 export { PodcastRepositoryLive } from "./repository.live";
 export * from "./schema";
-export { PodScanService } from "./service";
-export { PodScanServiceLive } from "./service.live";
-export { MockPodScanService } from "./service.mock";
 export type { Episode, Podcast } from "./sql";
-export * as podscanSchema from "./sql";
+export * as podcastSchema from "./sql";
