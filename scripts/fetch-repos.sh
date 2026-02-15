@@ -8,6 +8,7 @@ mkdir -p "$REPOS_DIR"
 
 REPOS=(
   "effect|https://github.com/Effect-TS/effect"
+  "effect-aws|https://github.com/floydspace/effect-aws"
   "better-auth|https://github.com/better-auth/better-auth"
   "sst|https://github.com/sst/sst"
   "nextjs|https://github.com/vercel/next.js"
