@@ -5,7 +5,6 @@ export const PodScanPodcast = Schema.Struct({
   podcast_id: Schema.String,
   podcast_name: Schema.String,
   podcast_url: Schema.String,
-  podcast_reach_score: Schema.NullOr(Schema.Number),
 });
 
 export type PodScanPodcast = Schema.Schema.Type<typeof PodScanPodcast>;
@@ -15,20 +14,32 @@ export const PodScanEpisode = Schema.Struct({
   episode_id: Schema.String,
   episode_title: Schema.String,
   episode_url: Schema.String,
-  episode_audio_url: Schema.NullOr(Schema.String),
-  episode_image_url: Schema.NullOr(Schema.String),
-  episode_duration: Schema.NullOr(Schema.Number),
-  episode_word_count: Schema.NullOr(Schema.Number),
-  episode_transcript: Schema.NullOr(Schema.String),
-  episode_description: Schema.NullOr(Schema.String),
-  episode_categories: Schema.Array(
+  episode_audio_url: Schema.String,
+  episode_image_url: Schema.String,
+  episode_duration: Schema.Number,
+  episode_word_count: Schema.Number,
+  episode_transcript: Schema.String,
+  episode_description: Schema.String,
+  episode_categories: Schema.Struct({
+    category_id: Schema.String,
+    category_name: Schema.String,
+  }),
+  episode_fully_processed: Schema.Boolean,
+  episode_guid: Schema.String,
+  episode_has_guests: Schema.Boolean,
+  episode_has_sponsors: Schema.Boolean,
+  episode_permalink: Schema.NullOr(Schema.String),
+  episode_transcript_word_level_timestamps: Schema.Unknown,
+  metadata: Schema.Unknown,
+  topics: Schema.Array(
     Schema.Struct({
-      category_id: Schema.String,
-      category_name: Schema.String,
+      topic_id: Schema.String,
+      topic_name: Schema.String,
+      topic_name_normalized: Schema.String,
     }),
   ),
   podcast: PodScanPodcast,
-  posted_at: Schema.NullOr(Schema.String),
+  posted_at: Schema.String,
   created_at: Schema.String,
   updated_at: Schema.String,
 });
@@ -54,17 +65,56 @@ export type PodScanChartPodcast = Schema.Schema.Type<
   typeof PodScanChartPodcast
 >;
 
+// PodScanPodcastDetail
+export const PodScanPodcastDetail = Schema.Struct({
+  podcast_id: Schema.String,
+  podcast_guid: Schema.String,
+  podcast_name: Schema.String,
+  podcast_url: Schema.String,
+  podcast_description: Schema.String,
+  podcast_image_url: Schema.String,
+  publisher_name: Schema.String,
+  is_active: Schema.Boolean,
+  rss_url: Schema.String,
+  episode_count: Schema.Number,
+  last_posted_at: Schema.String,
+  language: Schema.String,
+  region: Schema.String,
+  last_scanned_at: Schema.String,
+  created_at: Schema.String,
+  updated_at: Schema.String,
+  is_duplicate: Schema.Boolean,
+  is_duplicate_of: Schema.NullOr(Schema.String),
+  podcast_itunes_id: Schema.NullOr(Schema.String),
+  podcast_spotify_id: Schema.NullOr(Schema.String),
+  podcast_reach_score: Schema.NullOr(Schema.Number),
+  podcast_has_guests: Schema.NullOr(Schema.Boolean),
+  podcast_has_sponsors: Schema.NullOr(Schema.Boolean),
+  podcast_categories: Schema.Array(Schema.String),
+  podcast_iab_categories: Schema.Array(Schema.String),
+  reach: Schema.Unknown,
+  brand_safety: Schema.NullOr(Schema.Unknown),
+});
+
+export type PodScanPodcastDetail = Schema.Schema.Type<
+  typeof PodScanPodcastDetail
+>;
+
+export const PodScanPodcastDetailResponse = Schema.Struct({
+  podcast: PodScanPodcastDetail,
+});
+
 export const PodScanTopPodcastsResponse = Schema.Struct({
   podcasts: Schema.Array(PodScanChartPodcast),
 });
 
 const PodScanPagination = Schema.Struct({
-  total: Schema.Number,
-  per_page: Schema.Number,
-  current_page: Schema.Number,
-  last_page: Schema.Number,
-  from: Schema.NullOr(Schema.Number),
-  to: Schema.NullOr(Schema.Number),
+  total: Schema.String,
+  per_page: Schema.String,
+  current_page: Schema.String,
+  last_page: Schema.String,
+  from: Schema.String,
+  to: Schema.String,
 });
 
 export type PodScanPagination = Schema.Schema.Type<typeof PodScanPagination>;

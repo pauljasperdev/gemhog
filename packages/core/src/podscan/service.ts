@@ -4,6 +4,7 @@ import type {
   PodScanChartPodcast,
   PodScanEpisode,
   PodScanPagination,
+  PodScanPodcastDetail,
 } from "./schema";
 
 interface PodScanServiceSchape {
@@ -27,6 +28,10 @@ interface PodScanServiceSchape {
     PodScanError,
     never
   >;
+
+  readonly getPodcast: (
+    podcastId: string,
+  ) => Effect.Effect.Effect<PodScanPodcastDetail, PodScanError, never>;
 }
 
 export class PodScanService extends Effect.Context.Tag(

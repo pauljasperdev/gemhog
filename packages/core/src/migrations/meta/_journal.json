@@ -15,6 +15,20 @@
       "when": 1769518608232,
       "tag": "0001_tidy_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771104750983,
+      "tag": "0002_nice_captain_britain",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771153425279,
+      "tag": "0003_wet_weapon_omega",
+      "breakpoints": true
     }
   ]
 }

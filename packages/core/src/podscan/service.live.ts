@@ -7,10 +7,14 @@ import {
 import * as Effect from "effect";
 
 import { PodScanError } from "./errors";
-import { PodScanEpisodesResponse, PodScanTopPodcastsResponse } from "./schema";
+import {
+  PodScanEpisodesResponse,
+  PodScanPodcastDetailResponse,
+  PodScanTopPodcastsResponse,
+} from "./schema";
 import { PodScanService } from "./service";
 
-export const PodScanLive = Effect.Layer.effect(
+export const PodScanServiceLive = Effect.Layer.effect(
   PodScanService,
   Effect.Effect.gen(function* () {
     const token = yield* Effect.Config.redacted("PODSCAN_API_TOKEN");
@@ -52,6 +56,19 @@ export const PodScanLive = Effect.Layer.effect(
           return yield* HttpClientResponse.schemaBodyJson(
             PodScanEpisodesResponse,
           )(response);
+        }).pipe(
+          Effect.Effect.mapError(
+            (cause: unknown) => new PodScanError({ cause }),
+          ),
+        ),
+
+      getPodcast: (podcastId) =>
+        Effect.Effect.gen(function* () {
+          const response = yield* query(`/podcasts/${podcastId}`);
+          const body = yield* HttpClientResponse.schemaBodyJson(
+            PodScanPodcastDetailResponse,
+          )(response);
+          return body.podcast;
         }).pipe(
           Effect.Effect.mapError(
             (cause: unknown) => new PodScanError({ cause }),
