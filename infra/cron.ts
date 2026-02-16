@@ -3,8 +3,6 @@ import { secrets } from "./secrets";
 export const episodeSyncCron = new sst.aws.Cron("EpisodeSyncCron", {
   function: {
     handler: "apps/functions/src/sync-episodes.handler",
-    timeout: "60 seconds",
-    memory: "256 MB",
     environment: {
       DATABASE_URL: $dev
         ? "postgresql://postgres:password@localhost:5432/gemhog"

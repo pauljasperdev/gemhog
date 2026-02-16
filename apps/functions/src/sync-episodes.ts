@@ -2,39 +2,18 @@ import "@gemhog/env/server";
 
 import type { EventBridgeEvent, LambdaContext } from "@effect-aws/lambda";
 import { LambdaHandler } from "@effect-aws/lambda";
-import { DatabaseLive } from "@gemhog/core/drizzle";
 import {
-  MockPodscanService,
+  PodcastLive,
   PodcastRepository,
-  PodcastRepositoryLive,
   PodscanService,
-  PodscanServiceLive,
 } from "@gemhog/core/podcast";
-import { Config, Effect, Layer } from "effect";
+import { Effect } from "effect";
 
 // Podcast IDs to sync from Podscan — replace with actual Podscan podcast IDs
 const PODCAST_IDS: readonly string[] = [
   // "abc123", // Example: Replace with real Podscan podcast ID
   // "def456", // Example: Replace with real Podscan podcast ID
 ];
-
-const PodscanLayer = Layer.unwrapEffect(
-  Effect.gen(function* () {
-    const stage = yield* Config.string("SST_STAGE").pipe(
-      Config.withDefault("dev"),
-    );
-    if (stage === "prod") {
-      yield* Effect.logInfo("Using real Podscan API (prod stage)");
-      return PodscanServiceLive;
-    }
-    yield* Effect.logInfo(`Using mock Podscan service (stage: ${stage})`);
-    return MockPodscanService;
-  }),
-);
-
-const AppLayer = Layer.mergeAll(PodcastRepositoryLive, PodscanLayer).pipe(
-  Layer.provide(DatabaseLive),
-);
 
 const effectHandler = (
   _event: EventBridgeEvent<string, unknown>,
@@ -83,5 +62,5 @@ const effectHandler = (
 
 export const handler = LambdaHandler.make({
   handler: effectHandler,
-  layer: AppLayer,
+  layer: PodcastLive,
 });
