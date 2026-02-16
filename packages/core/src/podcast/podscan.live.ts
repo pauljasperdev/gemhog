@@ -5,7 +5,7 @@ import {
   HttpClientResponse,
 } from "@effect/platform";
 import * as Effect from "effect";
-
+import { SqlLive } from "../sql";
 import { PodscanError } from "./errors";
 import { PodscanService } from "./podscan";
 import {
@@ -78,4 +78,7 @@ export const PodscanServiceLive = Effect.Layer.effect(
   }).pipe(
     Effect.Effect.mapError((cause: unknown) => new PodscanError({ cause })),
   ),
-).pipe(Effect.Layer.provide(FetchHttpClient.layer));
+).pipe(
+  Effect.Layer.provide(FetchHttpClient.layer),
+  Effect.Layer.provide(SqlLive),
+);

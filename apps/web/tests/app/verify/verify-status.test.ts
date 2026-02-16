@@ -8,8 +8,8 @@ const TEST_SECRET = "test-secret-at-least-32-characters-long";
 process.env.BETTER_AUTH_SECRET = TEST_SECRET;
 process.env.APP_URL = "http://localhost:3001";
 
-vi.mock("@gemhog/core/drizzle", () => ({
-  DatabaseLive: Effect.Layer.empty,
+vi.mock("@gemhog/core/sql", () => ({
+  SqlLive: Effect.Layer.empty,
 }));
 
 vi.mock("@gemhog/core/subscriber", async (importOriginal) => {
