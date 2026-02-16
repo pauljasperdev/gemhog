@@ -1,15 +1,16 @@
+import { FetchHttpClient } from "@effect/platform";
 import * as Effect from "effect";
 import { SqlLive } from "../sql";
 import { PodscanServiceLive } from "./podscan.live";
 import { MockPodscanService } from "./podscan.mock";
 import { PodcastRepositoryLive } from "./repository.live";
 
-const PodscanLayer = Effect.Layer.suspend(() => {
+export const PodscanLayer = Effect.Layer.suspend(() => {
   const isProd = process.env.SST_STAGE === "prod";
   return isProd ? PodscanServiceLive : MockPodscanService;
-});
+}).pipe(Effect.Layer.provide(FetchHttpClient.layer));
 
-const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
+export const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
   Effect.Layer.provide(SqlLive),
 );
 

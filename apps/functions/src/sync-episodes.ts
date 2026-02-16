@@ -3,7 +3,7 @@ import "@gemhog/env/server";
 import type { EventBridgeEvent, LambdaContext } from "@effect-aws/lambda";
 import { LambdaHandler } from "@effect-aws/lambda";
 import {
-  PodcastLive,
+  PodcastLayer,
   PodcastRepository,
   PodscanService,
 } from "@gemhog/core/podcast";
@@ -62,5 +62,5 @@ const effectHandler = (
 
 export const handler = LambdaHandler.make({
   handler: effectHandler,
-  layer: PodcastLive,
+  layer: PodcastLayer,
 });

@@ -94,10 +94,12 @@ const mockEpisodes: ReadonlyArray<PodscanEpisode> = [
     episode_transcript:
       "This is a mock transcript for testing. Welcome to the podcast. Today we discuss important topics. This mock transcript contains enough content to be realistic.",
     episode_description: "A mock episode for testing purposes.",
-    episode_categories: {
-      category_id: "cat-1",
-      category_name: "Technology",
-    },
+    episode_categories: [
+      {
+        category_id: "cat-1",
+        category_name: "Technology",
+      },
+    ],
     episode_fully_processed: true,
     episode_guid: "mock-guid-1",
     episode_has_guests: true,
@@ -132,10 +134,12 @@ const mockEpisodes: ReadonlyArray<PodscanEpisode> = [
     episode_transcript:
       "This is another mock transcript for testing. We continue our discussion. More content here for realism. Testing the transcript field.",
     episode_description: "Another mock episode for testing.",
-    episode_categories: {
-      category_id: "cat-2",
-      category_name: "Business",
-    },
+    episode_categories: [
+      {
+        category_id: "cat-2",
+        category_name: "Business",
+      },
+    ],
     episode_fully_processed: true,
     episode_guid: "mock-guid-2",
     episode_has_guests: false,

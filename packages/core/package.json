@@ -9,7 +9,10 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "podcast:find-resources": "tsx --env-file .env scripts/podscan-find-resources.ts",
+    "podcast:latest-episodes": "tsx --env-file .env scripts/podscan-latest-episodes.ts",
+    "podcast:top10": "tsx --env-file .env scripts/podscan-top10.ts"
   },
   "dependencies": {
     "@effect/platform": "^0.94.5",

@@ -1,5 +1,5 @@
 import { Effect } from "effect";
-import { PodscanService, PodscanServiceLive } from "../src/podcast";
+import { PodscanLayer, PodscanService } from "../src/podcast";
 
 const program = Effect.gen(function* () {
   const podScan = yield* PodscanService;
@@ -9,7 +9,7 @@ const program = Effect.gen(function* () {
 
 Effect.runPromise(
   program.pipe(
-    Effect.provide(PodscanServiceLive),
+    Effect.provide(PodscanLayer),
     Effect.catchAll((error) =>
       Effect.sync(() => {
         console.error(error);

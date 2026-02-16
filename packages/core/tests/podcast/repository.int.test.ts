@@ -225,6 +225,9 @@ describe("podcast repository integration", () => {
       expect(result.title).toBe(episodeData.episode_title);
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
+      expect(result.categories).toEqual([
+        { category_id: "cat-1", category_name: "Technology" },
+      ]);
     });
 
     it("updates existing episode when podscan ID matches", async () => {

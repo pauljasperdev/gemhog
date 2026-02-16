@@ -4,7 +4,7 @@ export {
   PodcastRepositoryError,
   PodscanError,
 } from "./errors";
-export { PodcastLayer as PodcastLive } from "./layer";
+export * from "./layer";
 export { PodscanService } from "./podscan";
 export { PodscanServiceLive } from "./podscan.live";
 export { MockPodscanService } from "./podscan.mock";

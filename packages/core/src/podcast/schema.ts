@@ -20,10 +20,12 @@ export const PodscanEpisode = Schema.Struct({
   episode_word_count: Schema.Number,
   episode_transcript: Schema.String,
   episode_description: Schema.String,
-  episode_categories: Schema.Struct({
-    category_id: Schema.String,
-    category_name: Schema.String,
-  }),
+  episode_categories: Schema.Array(
+    Schema.Struct({
+      category_id: Schema.String,
+      category_name: Schema.String,
+    }),
+  ),
   episode_fully_processed: Schema.Boolean,
   episode_guid: Schema.String,
   episode_has_guests: Schema.Boolean,

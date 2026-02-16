@@ -72,10 +72,12 @@ export function createMockEpisode(
     episode_transcript:
       "This is a test transcript for testing. Welcome to the podcast. Today we discuss important topics.",
     episode_description: "A test episode for testing purposes.",
-    episode_categories: {
-      category_id: "cat-1",
-      category_name: "Technology",
-    },
+    episode_categories: [
+      {
+        category_id: "cat-1",
+        category_name: "Technology",
+      },
+    ],
     episode_fully_processed: true,
     episode_guid: `test-episode-guid-${timestamp}`,
     episode_has_guests: true,
