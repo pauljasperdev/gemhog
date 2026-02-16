@@ -164,12 +164,12 @@ describe("MockPodscanService", () => {
       );
 
       const { pagination } = result;
-      expect(typeof pagination.total).toBe("string");
-      expect(typeof pagination.per_page).toBe("string");
-      expect(typeof pagination.current_page).toBe("string");
-      expect(typeof pagination.last_page).toBe("string");
-      expect(typeof pagination.from).toBe("string");
-      expect(typeof pagination.to).toBe("string");
+      expect(typeof pagination.total).toBe("number");
+      expect(typeof pagination.per_page).toBe("number");
+      expect(typeof pagination.current_page).toBe("number");
+      expect(typeof pagination.last_page).toBe("number");
+      expect(typeof pagination.from).toBe("number");
+      expect(typeof pagination.to).toBe("number");
     });
 
     it("returns pagination with expected values", async () => {
@@ -182,12 +182,12 @@ describe("MockPodscanService", () => {
       );
 
       const { pagination } = result;
-      expect(pagination.total).toBe("100");
-      expect(pagination.per_page).toBe("10");
-      expect(pagination.current_page).toBe("1");
-      expect(pagination.last_page).toBe("10");
-      expect(pagination.from).toBe("1");
-      expect(pagination.to).toBe("10");
+      expect(pagination.total).toBe(100);
+      expect(pagination.per_page).toBe(10);
+      expect(pagination.current_page).toBe(1);
+      expect(pagination.last_page).toBe(10);
+      expect(pagination.from).toBe(1);
+      expect(pagination.to).toBe(10);
     });
 
     it("returns episodes array with multiple items", async () => {

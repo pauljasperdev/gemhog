@@ -111,12 +111,12 @@ export const PodscanTopPodcastsResponse = Schema.Struct({
 });
 
 const PodscanPagination = Schema.Struct({
-  total: Schema.String,
-  per_page: Schema.String,
-  current_page: Schema.String,
-  last_page: Schema.String,
-  from: Schema.String,
-  to: Schema.String,
+  total: Schema.Number,
+  per_page: Schema.Number,
+  current_page: Schema.Number,
+  last_page: Schema.Number,
+  from: Schema.Number,
+  to: Schema.Number,
 });
 
 export type PodscanPagination = Schema.Schema.Type<typeof PodscanPagination>;

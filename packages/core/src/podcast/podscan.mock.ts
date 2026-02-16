@@ -37,12 +37,12 @@ const mockChartPodcasts: ReadonlyArray<PodscanChartPodcast> = [
 ];
 
 const mockPagination: PodscanPagination = {
-  total: "100",
-  per_page: "10",
-  current_page: "1",
-  last_page: "10",
-  from: "1",
-  to: "10",
+  total: 100,
+  per_page: 10,
+  current_page: 1,
+  last_page: 10,
+  from: 1,
+  to: 10,
 };
 
 const mockPodcastDetail: PodscanPodcastDetail = {
