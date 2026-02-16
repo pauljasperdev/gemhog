@@ -13,7 +13,7 @@ describe("database migrations", () => {
   let db: ReturnType<typeof drizzle>;
   const migrationsFolder = path.resolve(
     import.meta.dirname,
-    "../../src/migrations",
+    "../../migrations",
   );
 
   beforeAll(async () => {
