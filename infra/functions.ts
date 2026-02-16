@@ -11,3 +11,13 @@ export const syncEpisodes = new sst.aws.Function("SyncEpisodes", {
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
   },
 });
+
+export const trigger = $dev
+  ? new sst.aws.Function("Trigger", {
+      handler: "apps/functions/src/trigger-sync.handler",
+      url: true,
+      environment: {
+        SYNC_FUNCTION_NAME: syncEpisodes.name,
+      },
+    })
+  : undefined;

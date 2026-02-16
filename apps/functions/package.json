@@ -12,6 +12,7 @@
     "effect": "catalog:"
   },
   "devDependencies": {
+    "@aws-sdk/client-lambda": "^3",
     "@gemhog/config": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"
