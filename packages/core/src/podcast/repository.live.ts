@@ -211,12 +211,28 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
           }),
         );
 
+    const episodeExistsByPodscanId = (
+      podscanEpisodeId: string,
+    ): Effect.Effect.Effect<boolean, PodcastRepositoryError, never> =>
+      db
+        .select({ id: episode.id })
+        .from(episode)
+        .where(eq(episode.podscanEpisodeId, podscanEpisodeId))
+        .pipe(
+          Effect.Effect.map((rows) => rows.length > 0),
+          Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
+            const cause = `Database operation failed during episode exists check: ${sqlError.message}`;
+            return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
+          }),
+        );
+
     return PodcastRepository.of({
       upsertPodcastByPodscanId,
       upsertEpisodeByPodscanId,
       readPodcastById,
       readEpisodeById,
       readEpisodesByPodcastId,
+      episodeExistsByPodscanId,
     });
   }),
 );
