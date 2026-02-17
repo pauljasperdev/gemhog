@@ -9,10 +9,18 @@ import {
 } from "@gemhog/core/podcast";
 import { Effect } from "effect";
 
-// Podcast IDs to sync from Podscan — replace with actual Podscan podcast IDs
+// Daily investing podcasts (5+ episodes/week — current market commentary)
 const PODCAST_IDS: readonly string[] = [
-  // "abc123", // Example: Replace with real Podscan podcast ID
-  // "def456", // Example: Replace with real Podscan podcast ID
+  "pd_ndbka52yzyqj2gez", // Money Guy Show
+  "pd_ndbka52ppbyj2gez", // Money For Couples with Ramit Sethi
+  "pd_vp6km5awq8b94lae", // Rich Dad Radio Show
+  "pd_3ymxjxog7ypjb8v6", // The Wealth Effect (Green Moon)
+  "pd_pmk29n3q2rdjev8n", // The Investing for Beginners Podcast
+  "pd_dpmk29nmper5ev8n", // Invest Like the Best with Patrick O'Shaughnessy
+  "pd_eaboy5lnapkjzvdx", // NerdWallet's Smart Money Podcast
+  "pd_mqazg9yb6bajr6w4", // All the Hacks: Money, Points & Life
+  "pd_7a3do5b3ywp9kxyr", // WashingtonWise (Charles Schwab)
+  "pd_ka86x53mllm9wgdv", // Macro Voices
 ];
 
 const effectHandler = (
