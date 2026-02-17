@@ -60,10 +60,12 @@ export default $config({
     await import("./infra/neon");
     // we dont need the api right now
     // const api = await import("./infra/api");
+    const bucket = await import("./infra/bucket");
     const web = await import("./infra/web");
     await import("./infra/cron");
     return {
       // ...(api.outputs || {}),
+      ...(bucket.outputs || {}),
       ...(web.outputs || {}),
     };
   },
