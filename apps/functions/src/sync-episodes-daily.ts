@@ -1,6 +1,5 @@
 import "@gemhog/env/server";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import type { EventBridgeEvent, LambdaContext } from "@effect-aws/lambda";
 import { LambdaHandler } from "@effect-aws/lambda";
 import {
@@ -8,6 +7,7 @@ import {
   PodcastRepository,
   PodscanService,
 } from "@gemhog/core/podcast";
+import { PutObjectCommand, S3Client } from "@gemhog/core/s3";
 import { Effect } from "effect";
 
 const s3 = new S3Client({});
