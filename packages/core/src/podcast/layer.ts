@@ -17,8 +17,8 @@ export const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
 );
 
 export const BucketLayer = Effect.Layer.suspend(() => {
-  const isLocal = process.env.LOCAL_ENV === "1";
-  return isLocal ? BucketServiceMock : BucketServiceLive;
+  const isDev = process.env.SST_DEV === "true";
+  return isDev ? BucketServiceMock : BucketServiceLive;
 });
 
 export const PodcastLayer = Effect.Layer.mergeAll(
