@@ -1,39 +1,25 @@
-import { Input as InputPrimitive } from "@base-ui/react/input";
-import type { VariantProps } from "class-variance-authority";
-import { cva } from "class-variance-authority";
+import * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const inputVariants = cva(
-  "w-full min-w-0 border border-input bg-transparent py-1 text-xs outline-none transition-colors file:inline-flex file:h-6 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-xs placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20 md:text-xs dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:disabled:bg-input/80",
-  {
-    variants: {
-      size: {
-        default: "h-8 rounded-none px-2.5",
-        pill: "h-12 rounded-full px-6",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-    },
-  },
-);
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-function Input({
-  className,
-  type,
-  size = "default",
-  ...props
-}: Omit<React.ComponentProps<"input">, "size"> &
-  VariantProps<typeof inputVariants>) {
-  return (
-    <InputPrimitive
-      type={type}
-      data-slot="input"
-      className={cn(inputVariants({ size, className }))}
-      {...props}
-    />
-  );
-}
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-9 w-full border border-input bg-background px-3 py-1 font-body text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = "Input"
 
-export { Input, inputVariants };
+export { Input }
