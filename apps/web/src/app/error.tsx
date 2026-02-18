@@ -20,7 +20,7 @@ export default function AppError({
   return (
     <div className="flex min-h-[400px] items-center justify-center p-4">
       <div className="max-w-md text-center">
-        <h2 className="font-semibold text-foreground text-xl">
+        <h2 className="font-heading font-semibold text-foreground text-xl uppercase tracking-tight">
           Something went wrong
         </h2>
         <p className="mt-2 text-muted-foreground">

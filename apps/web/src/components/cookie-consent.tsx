@@ -41,11 +41,11 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] rounded-lg border border-border bg-card p-5 shadow-lg"
+      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] border border-border bg-card p-5 shadow-lg"
       role="dialog"
       aria-label="Cookie consent"
     >
-      <h3 className="font-semibold text-foreground text-sm">
+      <h3 className="font-heading font-semibold text-foreground text-sm">
         Would you like a cookie?
       </h3>
       <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
