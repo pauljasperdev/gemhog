@@ -1,4 +1,8 @@
+export { BucketService } from "./bucket";
+export { BucketServiceLive } from "./bucket.live";
+export { BucketServiceMock, makeBucketServiceMock } from "./bucket.mock";
 export {
+  BucketError,
   EpisodeNotFoundError,
   PodcastNotFoundError,
   PodcastRepositoryError,
