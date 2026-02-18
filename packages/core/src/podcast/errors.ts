@@ -21,3 +21,7 @@ export class PodcastNotFoundError extends Effect.Data.TaggedError(
 )<{
   identifier: string;
 }> {}
+
+export class BucketError extends Effect.Data.TaggedError("BucketError")<{
+  readonly cause: unknown;
+}> {}
