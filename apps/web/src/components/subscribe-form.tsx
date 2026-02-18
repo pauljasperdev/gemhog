@@ -89,8 +89,6 @@ export function SubscribeForm() {
     <div className="w-full max-w-md">
       {status === "subscribed" ? (
         <SuccessCard />
-      ) : status === "error" ? (
-        <ErrorCard />
       ) : (
         <form
           onSubmit={(e) => {
