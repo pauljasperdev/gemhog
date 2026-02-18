@@ -20,7 +20,7 @@ export default function GlobalError({
       <body>
         <div className="flex h-screen items-center justify-center bg-background p-4">
           <div className="max-w-md text-center">
-            <h1 className="font-bold text-2xl text-foreground">
+            <h1 className="font-bold font-heading text-2xl text-foreground uppercase tracking-tight">
               Something went wrong
             </h1>
             <p className="mt-2 text-muted-foreground">
