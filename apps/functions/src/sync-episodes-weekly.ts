@@ -3,15 +3,12 @@ import "@gemhog/env/server";
 import type { EventBridgeEvent, LambdaContext } from "@effect-aws/lambda";
 import { LambdaHandler } from "@effect-aws/lambda";
 import {
+  BucketService,
   PodcastLayer,
   PodcastRepository,
   PodscanService,
 } from "@gemhog/core/podcast";
-import { PutObjectCommand, S3Client } from "@gemhog/core/s3";
 import { Effect } from "effect";
-
-const s3 = new S3Client({});
-const bucketName = process.env.PODCAST_BUCKET_NAME;
 
 // Weekly investing podcasts (<2.5 episodes/week — in-depth analysis)
 const PODCAST_IDS: readonly string[] = [
@@ -34,7 +31,8 @@ const effectHandler = (
   Effect.gen(function* () {
     const podscan = yield* PodscanService;
     const repo = yield* PodcastRepository;
-    const today = new Date().toISOString().split("T")[0];
+    const bucket = yield* BucketService;
+    const today = new Date().toISOString().split("T")[0] ?? "";
 
     let processed = 0;
     let totalEpisodes = 0;
@@ -51,25 +49,16 @@ const effectHandler = (
             .episodeExistsByPodscanId(ep.episode_id)
             .pipe(Effect.map((exists) => !exists));
           yield* repo.upsertEpisodeByPodscanId(ep);
-          if (isNew && bucketName) {
-            yield* Effect.tryPromise({
-              try: () =>
-                s3.send(
-                  new PutObjectCommand({
-                    Bucket: bucketName,
-                    Key: `weekly/${today}/${ep.episode_id}.json`,
-                    Body: JSON.stringify(ep),
-                    ContentType: "application/json",
-                  }),
+          if (isNew) {
+            yield* bucket
+              .writeEpisode("weekly", today, ep)
+              .pipe(
+                Effect.catchAll((error) =>
+                  Effect.logWarning(
+                    `Failed to write episode ${ep.episode_id} to bucket: ${String(error)}`,
+                  ),
                 ),
-              catch: (err) => new Error(`S3 write failed: ${String(err)}`),
-            }).pipe(
-              Effect.catchAll((error) =>
-                Effect.logWarning(
-                  `Failed to write episode ${ep.episode_id} to S3: ${String(error)}`,
-                ),
-              ),
-            );
+              );
           }
         }
 
