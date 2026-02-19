@@ -40,8 +40,16 @@ const effectHandler = (
 
     for (const podcastId of PODCAST_IDS) {
       yield* Effect.gen(function* () {
-        const detail = yield* podscan.getPodcast(podcastId);
-        yield* repo.upsertPodcastByPodscanId(detail);
+        const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+        const existing = yield* repo.readPodcastByPodscanId(podcastId);
+        const isFresh =
+          existing !== null &&
+          Date.now() - existing.updatedAt.getTime() < ONE_MONTH_MS;
+
+        if (!isFresh) {
+          const detail = yield* podscan.getPodcast(podcastId);
+          yield* repo.upsertPodcastByPodscanId(detail);
+        }
 
         const { episodes } = yield* podscan.getLatest(podcastId);
         for (const ep of episodes) {
