@@ -12,7 +12,7 @@ import {
   PodscanTopPodcastsResponse,
 } from "./schema";
 
-export const PodscanServiceLive = Effect.Layer.effect(
+export const PodscanServiceLive = Effect.Layer.scoped(
   PodscanService,
   Effect.Effect.gen(function* () {
     const token = yield* Effect.Config.redacted("PODSCAN_API_TOKEN");
