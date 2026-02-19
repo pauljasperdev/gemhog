@@ -45,21 +45,29 @@ const effectHandler = (
 
         const { episodes } = yield* podscan.getLatest(podcastId);
         for (const ep of episodes) {
-          const isNew = yield* repo
-            .episodeExistsByPodscanId(ep.episode_id)
-            .pipe(Effect.map((exists) => !exists));
-          yield* repo.upsertEpisodeByPodscanId(ep);
-          if (isNew) {
-            yield* bucket
-              .writeEpisode("weekly", today, ep)
-              .pipe(
-                Effect.catchAll((error) =>
-                  Effect.logWarning(
-                    `Failed to write episode ${ep.episode_id} to bucket: ${String(error)}`,
+          yield* Effect.gen(function* () {
+            const isNew = yield* repo
+              .episodeExistsByPodscanId(ep.episode_id)
+              .pipe(Effect.map((exists) => !exists));
+            yield* repo.upsertEpisodeByPodscanId(ep);
+            if (isNew) {
+              yield* bucket
+                .writeEpisode("weekly", today, ep)
+                .pipe(
+                  Effect.catchAll((error) =>
+                    Effect.logWarning(
+                      `Failed to write episode ${ep.episode_id} to bucket: ${String(error)}`,
+                    ),
                   ),
-                ),
-              );
-          }
+                );
+            }
+          }).pipe(
+            Effect.catchAll((error) =>
+              Effect.logWarning(
+                `Failed to sync episode ${ep.episode_id}: ${String(error)}`,
+              ),
+            ),
+          );
         }
 
         totalEpisodes += episodes.length;
