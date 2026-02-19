@@ -71,6 +71,24 @@ describe("MockPodscanService", () => {
   });
 
   describe("getLatest", () => {
+    it("returns episodes tied to requested podcast id", async () => {
+      const requestedPodcastId = "pd_custom_sync_target";
+      const result = await runWithMockService(
+        PodscanService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.getLatest(requestedPodcastId, 10),
+          ),
+        ),
+      );
+
+      expect(result.episodes.length).toBeGreaterThan(0);
+      expect(
+        result.episodes.every(
+          (episode) => episode.podcast.podcast_id === requestedPodcastId,
+        ),
+      ).toBe(true);
+    });
+
     it("returns episodes and pagination object", async () => {
       const result = await runWithMockService(
         PodscanService.pipe(
@@ -204,6 +222,19 @@ describe("MockPodscanService", () => {
   });
 
   describe("getPodcast", () => {
+    it("returns detail for requested podcast id", async () => {
+      const requestedPodcastId = "pd_custom_sync_target";
+      const result = await runWithMockService(
+        PodscanService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.getPodcast(requestedPodcastId),
+          ),
+        ),
+      );
+
+      expect(result.podcast_id).toBe(requestedPodcastId);
+    });
+
     it("returns a PodscanPodcastDetail object", async () => {
       const result = await runWithMockService(
         PodscanService.pipe(

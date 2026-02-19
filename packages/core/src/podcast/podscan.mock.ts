@@ -165,15 +165,58 @@ const mockEpisodes: ReadonlyArray<PodscanEpisode> = [
   },
 ];
 
+const resolvePodcastSnapshot = (podcastId: string) => {
+  const chartPodcast = mockChartPodcasts.find(
+    (podcast) => podcast.podcast_id === podcastId,
+  );
+  return {
+    id: podcastId,
+    name: chartPodcast?.name ?? mockPodcastDetail.podcast_name,
+    url: chartPodcast?.podcast_id
+      ? `https://example.com/podcasts/${chartPodcast.podcast_id}`
+      : mockPodcastDetail.podcast_url,
+    publisher: chartPodcast?.publisher ?? mockPodcastDetail.publisher_name,
+  };
+};
+
+const buildPodcastDetail = (podcastId: string): PodscanPodcastDetail => {
+  const snapshot = resolvePodcastSnapshot(podcastId);
+  return {
+    ...mockPodcastDetail,
+    podcast_id: snapshot.id,
+    podcast_name: snapshot.name,
+    podcast_url: snapshot.url,
+    publisher_name: snapshot.publisher,
+  };
+};
+
+const buildLatestEpisodes = (
+  podcastId: string,
+): ReadonlyArray<PodscanEpisode> => {
+  const snapshot = resolvePodcastSnapshot(podcastId);
+  return mockEpisodes.map((episode, index) => ({
+    ...episode,
+    episode_id: `${podcastId}-episode-${String(index + 1)}`,
+    episode_guid: `${podcastId}-guid-${String(index + 1)}`,
+    episode_permalink: `https://example.com/podcasts/${podcastId}/episodes/${String(index + 1)}`,
+    podcast: {
+      podcast_id: snapshot.id,
+      podcast_name: snapshot.name,
+      podcast_url: snapshot.url,
+    },
+  }));
+};
+
 export const MockPodscanService = Effect.Layer.succeed(
   PodscanService,
   PodscanService.of({
     getTop: (_category, _limit) => Effect.Effect.succeed(mockChartPodcasts),
-    getLatest: (_podcastId, _limit) =>
+    getLatest: (podcastId, _limit) =>
       Effect.Effect.succeed({
-        episodes: mockEpisodes,
+        episodes: buildLatestEpisodes(podcastId),
         pagination: mockPagination,
       }),
-    getPodcast: (_podcastId) => Effect.Effect.succeed(mockPodcastDetail),
+    getPodcast: (podcastId) =>
+      Effect.Effect.succeed(buildPodcastDetail(podcastId)),
   }),
 );

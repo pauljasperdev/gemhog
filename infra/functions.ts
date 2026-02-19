@@ -33,6 +33,12 @@ export const trigger = $dev
   ? new sst.aws.Function("Trigger", {
       handler: "apps/functions/src/trigger-sync.handler",
       url: true,
+      permissions: [
+        {
+          actions: ["lambda:InvokeFunction"],
+          resources: [syncEpisodesDaily.arn, syncEpisodesWeekly.arn],
+        },
+      ],
       environment: {
         SYNC_DAILY_FUNCTION_NAME: syncEpisodesDaily.name,
         SYNC_WEEKLY_FUNCTION_NAME: syncEpisodesWeekly.name,
