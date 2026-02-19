@@ -16,6 +16,7 @@ function Calendar({
 }: CalendarProps) {
   return (
     <DayPicker
+      data-slot="calendar"
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
@@ -55,7 +56,7 @@ function Calendar({
       }}
       components={
         {
-          Chevron: ({ orientation, ...props }) =>
+          Chevron: ({ orientation }) =>
             orientation === "left" ? (
               <ChevronLeft className="h-4 w-4" />
             ) : (
@@ -67,6 +68,5 @@ function Calendar({
     />
   );
 }
-Calendar.displayName = "Calendar";
 
 export { Calendar };
