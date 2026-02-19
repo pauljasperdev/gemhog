@@ -7,19 +7,25 @@ import { PodscanServiceLive } from "./podscan.live";
 import { MockPodscanService } from "./podscan.mock";
 import { PodcastRepositoryLive } from "./repository.live";
 
-export const PodscanLayer = Effect.Layer.suspend(() => {
-  const isProd = process.env.SST_STAGE === "prod";
-  return isProd ? PodscanServiceLive : MockPodscanService;
-}).pipe(Effect.Layer.provide(FetchHttpClient.layer));
+export const PodscanLayer = Effect.Layer.unwrapEffect(
+  Effect.Effect.gen(function* () {
+    const stage = yield* Effect.Config.string("SST_STAGE");
+    return stage === "paul" ? PodscanServiceLive : MockPodscanService;
+  }),
+).pipe(Effect.Layer.provide(FetchHttpClient.layer));
 
 export const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
   Effect.Layer.provide(SqlLive),
 );
 
-export const BucketLayer = Effect.Layer.suspend(() => {
-  const isLocal = process.env.LOCAL_ENV === "1";
-  return isLocal ? BucketServiceMock : BucketServiceLive;
-});
+export const BucketLayer = Effect.Layer.unwrapEffect(
+  Effect.Effect.gen(function* () {
+    const isDev = yield* Effect.Config.boolean("SST_DEV").pipe(
+      Effect.Config.withDefault(true),
+    );
+    return isDev ? BucketServiceMock : BucketServiceLive;
+  }),
+);
 
 export const PodcastLayer = Effect.Layer.mergeAll(
   PodcastRepositoryLayer,
