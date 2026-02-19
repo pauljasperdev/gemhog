@@ -7,6 +7,7 @@
     "sst:dev": "next dev --port 3001",
     "build": "next build",
     "build:opennext": "npx --yes @opennextjs/aws@3.6.6 build",
+    "check-types": "tsc --noEmit",
     "start": "next start"
   },
   "dependencies": {
