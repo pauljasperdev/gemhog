@@ -92,8 +92,21 @@ export const PodscanPodcastDetail = Schema.Struct({
   podcast_reach_score: Schema.NullOr(Schema.Number),
   podcast_has_guests: Schema.NullOr(Schema.Boolean),
   podcast_has_sponsors: Schema.NullOr(Schema.Boolean),
-  podcast_categories: Schema.Array(Schema.String),
-  podcast_iab_categories: Schema.Array(Schema.String),
+  podcast_categories: Schema.Array(
+    Schema.Struct({
+      category_id: Schema.String,
+      category_name: Schema.String,
+    }),
+  ),
+  podcast_iab_categories: Schema.Array(
+    Schema.Struct({
+      iab_category_id: Schema.String,
+      unique_id: Schema.String,
+      name: Schema.String,
+      tier_path: Schema.String,
+      confidence: Schema.String,
+    }),
+  ),
   reach: Schema.Unknown,
   brand_safety: Schema.NullOr(Schema.Unknown),
 });

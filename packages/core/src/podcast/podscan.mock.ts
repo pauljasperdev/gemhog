@@ -70,8 +70,27 @@ const mockPodcastDetail: PodscanPodcastDetail = {
   podcast_reach_score: 8500,
   podcast_has_guests: true,
   podcast_has_sponsors: true,
-  podcast_categories: ["Technology", "Business", "Entrepreneurship"],
-  podcast_iab_categories: ["Technology", "Business"],
+  podcast_categories: [
+    { category_id: "ct_mock_tech", category_name: "Technology" },
+    { category_id: "ct_mock_biz", category_name: "Business" },
+    { category_id: "ct_mock_entre", category_name: "Entrepreneurship" },
+  ],
+  podcast_iab_categories: [
+    {
+      iab_category_id: "ic_mock_tech",
+      unique_id: "686",
+      name: "Technology & Computing",
+      tier_path: "Technology & Computing",
+      confidence: "0.9500",
+    },
+    {
+      iab_category_id: "ic_mock_biz",
+      unique_id: "52",
+      name: "Business and Finance",
+      tier_path: "Business and Finance",
+      confidence: "0.9200",
+    },
+  ],
   reach: {
     monthly_listeners: 50000,
     engagement_rate: 0.85,

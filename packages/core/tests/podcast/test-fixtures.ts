@@ -37,8 +37,19 @@ export function createMockPodcastDetail(
     podcast_reach_score: 8500,
     podcast_has_guests: true,
     podcast_has_sponsors: true,
-    podcast_categories: ["Technology", "Business"],
-    podcast_iab_categories: ["Technology"],
+    podcast_categories: [
+      { category_id: "ct_test_tech", category_name: "Technology" },
+      { category_id: "ct_test_biz", category_name: "Business" },
+    ],
+    podcast_iab_categories: [
+      {
+        iab_category_id: "ic_test_tech",
+        unique_id: "686",
+        name: "Technology & Computing",
+        tier_path: "Technology & Computing",
+        confidence: "0.9500",
+      },
+    ],
     reach: {
       monthly_listeners: 50000,
       engagement_rate: 0.85,
