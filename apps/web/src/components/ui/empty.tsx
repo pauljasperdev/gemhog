@@ -1,89 +1,89 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-const Empty = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="empty"
-    className={cn(
-      "flex flex-col items-center justify-center gap-4 text-center py-12 px-6",
-      className
-    )}
-    {...props}
-  />
-))
-Empty.displayName = "Empty"
+function Empty({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="empty"
+      className={cn(
+        "flex flex-col items-center justify-center gap-4 text-center py-12 px-6",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
-const EmptyHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="empty-header"
-    className={cn("flex flex-col items-center gap-2", className)}
-    {...props}
-  />
-))
-EmptyHeader.displayName = "EmptyHeader"
+function EmptyHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="empty-header"
+      className={cn("flex flex-col items-center gap-2", className)}
+      {...props}
+    />
+  );
+}
 
-const EmptyMedia = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="empty-media"
-    className={cn(
-      "flex items-center justify-center text-muted-foreground [&>svg]:size-12",
-      className
-    )}
-    {...props}
-  />
-))
-EmptyMedia.displayName = "EmptyMedia"
+function EmptyMedia({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="empty-media"
+      className={cn(
+        "flex items-center justify-center text-muted-foreground [&>svg]:size-12",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
-const EmptyTitle = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    data-slot="empty-title"
-    className={cn("font-heading text-lg font-semibold uppercase tracking-wide", className)}
-    {...props}
-  />
-))
-EmptyTitle.displayName = "EmptyTitle"
+function EmptyTitle({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3
+      data-slot="empty-title"
+      className={cn(
+        "font-heading text-lg font-semibold uppercase tracking-wide",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
-const EmptyContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-slot="empty-content"
-    className={cn("flex flex-col items-center gap-3", className)}
-    {...props}
-  />
-))
-EmptyContent.displayName = "EmptyContent"
+function EmptyContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="empty-content"
+      className={cn("flex flex-col items-center gap-3", className)}
+      {...props}
+    />
+  );
+}
 
-const EmptyDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    data-slot="empty-description"
-    className={cn("text-muted-foreground text-sm max-w-sm", className)}
-    {...props}
-  />
-))
-EmptyDescription.displayName = "EmptyDescription"
+function EmptyDescription({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      data-slot="empty-description"
+      className={cn("text-muted-foreground text-sm max-w-sm", className)}
+      {...props}
+    />
+  );
+}
 
 export {
   Empty,
@@ -92,4 +92,4 @@ export {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-}
+};
