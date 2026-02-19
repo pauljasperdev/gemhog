@@ -435,6 +435,48 @@ describe("podcast repository integration", () => {
     });
   });
 
+  describe("readPodcastByPodscanId", () => {
+    it("returns podcast when found by podscan ID", async () => {
+      const podcastData = createMockPodcastDetail({
+        podcast_id: "test-podscan-id-read",
+        podcast_name: "Podcast to Read by Podscan ID",
+      });
+
+      const created = await runWithRepository(
+        PodcastRepository.pipe(
+          Effect.Effect.flatMap((repo) =>
+            repo.upsertPodcastByPodscanId(podcastData),
+          ),
+        ),
+      );
+
+      const result = await runWithRepository(
+        PodcastRepository.pipe(
+          Effect.Effect.flatMap((repo) =>
+            repo.readPodcastByPodscanId(podcastData.podcast_id),
+          ),
+        ),
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(created.id);
+      expect(result?.podscanPodcastId).toBe(podcastData.podcast_id);
+      expect(result?.name).toBe(podcastData.podcast_name);
+    });
+
+    it("returns null when podscan ID not found", async () => {
+      const result = await runWithRepository(
+        PodcastRepository.pipe(
+          Effect.Effect.flatMap((repo) =>
+            repo.readPodcastByPodscanId("nonexistent-podscan-id"),
+          ),
+        ),
+      );
+
+      expect(result).toBeNull();
+    });
+  });
+
   describe("readEpisodesByPodcastId", () => {
     it("returns all episodes for podcast", async () => {
       // Setup podcast

@@ -19,15 +19,28 @@ export const PodscanServiceLive = Effect.Layer.effect(
     const url = yield* Effect.Config.string("PODSCAN_BASE_URL").pipe(
       Effect.Config.withDefault("https://api.podscan.fm/v1"),
     );
+    const limiter = yield* Effect.RateLimiter.make({
+      limit: 10,
+      interval: "1 minutes",
+    });
+    const semaphore = yield* Effect.Effect.makeSemaphore(5);
     const client = (yield* HttpClient.HttpClient).pipe(
       HttpClient.filterStatusOk,
+      HttpClient.retryTransient({
+        times: 3,
+        schedule: Effect.Schedule.exponential("500 millis"),
+      }),
     );
 
     const query = (path: string) =>
-      HttpClientRequest.get(path).pipe(
-        HttpClientRequest.prependUrl(url),
-        HttpClientRequest.bearerToken(Effect.Redacted.value(token)),
-        client.execute,
+      semaphore.withPermits(1)(
+        limiter(
+          HttpClientRequest.get(path).pipe(
+            HttpClientRequest.prependUrl(url),
+            HttpClientRequest.bearerToken(Effect.Redacted.value(token)),
+            client.execute,
+          ),
+        ),
       );
 
     return PodscanService.of({
