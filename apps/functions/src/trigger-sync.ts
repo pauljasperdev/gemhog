@@ -19,63 +19,54 @@ export async function handler() {
     };
   }
 
+  let dailyResult: { status: string; statusCode?: number; error?: string };
   try {
-    const [dailyResult, weeklyResult] = await Promise.allSettled([
-      lambda.send(
-        new InvokeCommand({
-          FunctionName: dailyFunctionName,
-          InvocationType: "RequestResponse",
-        }),
-      ),
-      lambda.send(
-        new InvokeCommand({
-          FunctionName: weeklyFunctionName,
-          InvocationType: "RequestResponse",
-        }),
-      ),
-    ]);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Sync triggered",
-        daily: {
-          function: dailyFunctionName,
-          statusCode:
-            dailyResult.status === "fulfilled"
-              ? dailyResult.value.StatusCode
-              : undefined,
-          status: dailyResult.status,
-          ...(dailyResult.status === "rejected" && {
-            error:
-              dailyResult.reason instanceof Error
-                ? dailyResult.reason.message
-                : String(dailyResult.reason),
-          }),
-        },
-        weekly: {
-          function: weeklyFunctionName,
-          statusCode:
-            weeklyResult.status === "fulfilled"
-              ? weeklyResult.value.StatusCode
-              : undefined,
-          status: weeklyResult.status,
-          ...(weeklyResult.status === "rejected" && {
-            error:
-              weeklyResult.reason instanceof Error
-                ? weeklyResult.reason.message
-                : String(weeklyResult.reason),
-          }),
-        },
+    const result = await lambda.send(
+      new InvokeCommand({
+        FunctionName: dailyFunctionName,
+        InvocationType: "RequestResponse",
       }),
-    };
+    );
+    dailyResult = { status: "fulfilled", statusCode: result.StatusCode };
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "Failed to invoke sync functions",
-        details: error instanceof Error ? error.message : String(error),
-      }),
+    dailyResult = {
+      status: "rejected",
+      error: error instanceof Error ? error.message : String(error),
     };
   }
+
+  let weeklyResult: { status: string; statusCode?: number; error?: string };
+  try {
+    const result = await lambda.send(
+      new InvokeCommand({
+        FunctionName: weeklyFunctionName,
+        InvocationType: "RequestResponse",
+      }),
+    );
+    weeklyResult = { status: "fulfilled", statusCode: result.StatusCode };
+  } catch (error) {
+    weeklyResult = {
+      status: "rejected",
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: "Sync triggered",
+      daily: {
+        function: dailyFunctionName,
+        statusCode: dailyResult.statusCode,
+        status: dailyResult.status,
+        ...(dailyResult.error !== undefined && { error: dailyResult.error }),
+      },
+      weekly: {
+        function: weeklyFunctionName,
+        statusCode: weeklyResult.statusCode,
+        status: weeklyResult.status,
+        ...(weeklyResult.error !== undefined && { error: weeklyResult.error }),
+      },
+    }),
+  };
 }
