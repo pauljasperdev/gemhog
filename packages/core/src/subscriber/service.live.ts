@@ -1,4 +1,8 @@
-import { EmailService, verificationEmail } from "@gemhog/email";
+import {
+  type EmailContent,
+  EmailService,
+  verificationEmail,
+} from "@gemhog/email";
 import * as Effect from "effect";
 import { SubscriberServiceError } from "./errors";
 import { SubscriberRepository } from "./repository";
@@ -33,7 +37,10 @@ export const SubscriberServiceLive = Effect.Layer.effect(
 
             const verifyUrl = `${appUrl}/verify?token=${token}`;
             const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
-            const { subject, html, text } = verificationEmail({ verifyUrl });
+            const { subject, html, text } =
+              yield* Effect.Effect.promise<EmailContent>(() =>
+                verificationEmail({ verifyUrl }),
+              );
 
             yield* emailService.send(
               email,

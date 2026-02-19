@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   unsubscribeConfirmationEmail,
   verificationEmail,
@@ -7,7 +7,11 @@ import {
 describe("email templates", () => {
   describe("verificationEmail", () => {
     const verifyUrl = "https://gemhog.com/api/email/verify?token=abc123";
-    const result = verificationEmail({ verifyUrl });
+    let result: Awaited<ReturnType<typeof verificationEmail>>;
+
+    beforeAll(async () => {
+      result = await verificationEmail({ verifyUrl });
+    });
 
     it("returns subject containing 'Confirm'", () => {
       expect(result.subject).toContain("Confirm");
@@ -27,11 +31,11 @@ describe("email templates", () => {
     });
 
     it("HTML contains 'didn't sign up' disclaimer", () => {
-      expect(result.html).toContain("didn't sign up");
+      expect(result.html).toContain("didn&#x27;t sign up");
     });
 
-    it("HTML contains CAN-SPAM footer placeholder", () => {
-      expect(result.html).toContain("CAN-SPAM footer placeholder");
+    it("HTML contains footer text", () => {
+      expect(result.html).toContain("Podcast Intelligence");
     });
 
     it("returns plain text version containing the verifyUrl", () => {
@@ -42,10 +46,22 @@ describe("email templates", () => {
     it("plain text version mentions 7-day expiry", () => {
       expect(result.text).toContain("7 days");
     });
+
+    it("HTML contains dark background color", () => {
+      expect(result.html).toContain("#0a0a0a");
+    });
+
+    it("HTML contains primary brand color", () => {
+      expect(result.html).toContain("#c8ff00");
+    });
   });
 
   describe("unsubscribeConfirmationEmail", () => {
-    const result = unsubscribeConfirmationEmail();
+    let result: Awaited<ReturnType<typeof unsubscribeConfirmationEmail>>;
+
+    beforeAll(async () => {
+      result = await unsubscribeConfirmationEmail();
+    });
 
     it("returns a valid subject", () => {
       expect(result.subject).toBeTruthy();
@@ -53,7 +69,7 @@ describe("email templates", () => {
     });
 
     it("returns valid HTML", () => {
-      expect(result.html).toContain("<!DOCTYPE html>");
+      expect(result.html).toContain("<!DOCTYPE html");
       expect(result.html).toContain("</html>");
     });
 
@@ -72,6 +88,14 @@ describe("email templates", () => {
 
     it("plain text version contains resubscribe info", () => {
       expect(result.text).toContain("gemhog.com");
+    });
+
+    it("HTML contains dark background color", () => {
+      expect(result.html).toContain("#0a0a0a");
+    });
+
+    it("HTML contains primary brand color", () => {
+      expect(result.html).toContain("#c8ff00");
     });
   });
 });
