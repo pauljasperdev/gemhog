@@ -9,6 +9,11 @@ pnpm check
 echo "OK static"
 echo ""
 
+echo "=== React Doctor ==="
+react-doctor . --yes --no-ami
+echo "OK react-doctor"
+echo ""
+
 echo "=== Unit Tests ==="
 vitest run
 echo "OK unit"
