@@ -46,7 +46,11 @@ interface PodcastRepositoryShape {
 
   readonly readPodcastByPodscanId: (
     podscanPodcastId: string,
-  ) => Effect.Effect.Effect<Podcast | null, PodcastRepositoryError, never>;
+  ) => Effect.Effect.Effect<
+    Podcast,
+    PodcastRepositoryError | PodcastNotFoundError,
+    never
+  >;
 }
 
 export class PodcastRepository extends Effect.Context.Tag(

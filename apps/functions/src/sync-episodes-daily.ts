@@ -41,10 +41,13 @@ const effectHandler = (
     for (const podcastId of PODCAST_IDS) {
       yield* Effect.gen(function* () {
         const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
-        const existing = yield* repo.readPodcastByPodscanId(podcastId);
-        const isFresh =
-          existing !== null &&
-          Date.now() - existing.updatedAt.getTime() < ONE_MONTH_MS;
+        const isFresh = yield* repo.readPodcastByPodscanId(podcastId).pipe(
+          Effect.map(
+            (existing) =>
+              Date.now() - existing.updatedAt.getTime() < ONE_MONTH_MS,
+          ),
+          Effect.catchTag("PodcastNotFoundError", () => Effect.succeed(false)),
+        );
 
         if (!isFresh) {
           const detail = yield* podscan.getPodcast(podcastId);

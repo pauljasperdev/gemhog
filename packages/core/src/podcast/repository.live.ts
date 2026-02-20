@@ -228,13 +228,24 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
     const readPodcastByPodscanId = (
       podscanPodcastId: string,
-    ): Effect.Effect.Effect<Podcast | null, PodcastRepositoryError, never> =>
+    ): Effect.Effect.Effect<
+      Podcast,
+      PodcastRepositoryError | PodcastNotFoundError,
+      never
+    > =>
       db
         .select()
         .from(podcast)
         .where(eq(podcast.podscanPodcastId, podscanPodcastId))
         .pipe(
-          Effect.Effect.map((rows: Podcast[]) => rows[0] ?? null),
+          Effect.Effect.map((rows: Podcast[]) => rows[0]),
+          Effect.Effect.flatMap((row) =>
+            row
+              ? Effect.Effect.succeed(row)
+              : Effect.Effect.fail(
+                  new PodcastNotFoundError({ identifier: podscanPodcastId }),
+                ),
+          ),
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during podcast read by podscan ID: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));

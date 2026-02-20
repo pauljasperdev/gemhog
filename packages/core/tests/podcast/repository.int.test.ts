@@ -458,22 +458,28 @@ describe("podcast repository integration", () => {
         ),
       );
 
-      expect(result).not.toBeNull();
-      expect(result?.id).toBe(created.id);
-      expect(result?.podscanPodcastId).toBe(podcastData.podcast_id);
-      expect(result?.name).toBe(podcastData.podcast_name);
+      expect(result.id).toBe(created.id);
+      expect(result.podscanPodcastId).toBe(podcastData.podcast_id);
+      expect(result.name).toBe(podcastData.podcast_name);
     });
 
-    it("returns null when podscan ID not found", async () => {
+    it("fails with PodcastNotFoundError when podscan ID not found", async () => {
       const result = await runWithRepository(
         PodcastRepository.pipe(
           Effect.Effect.flatMap((repo) =>
             repo.readPodcastByPodscanId("nonexistent-podscan-id"),
           ),
+          Effect.Effect.either,
         ),
       );
 
-      expect(result).toBeNull();
+      expect(result._tag).toBe("Left");
+      if (result._tag === "Left") {
+        expect(result.left).toBeInstanceOf(PodcastNotFoundError);
+        if (result.left instanceof PodcastNotFoundError) {
+          expect(result.left.identifier).toBe("nonexistent-podscan-id");
+        }
+      }
     });
   });
 
