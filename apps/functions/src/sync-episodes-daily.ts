@@ -24,7 +24,7 @@ const PODCAST_IDS: readonly string[] = [
   "pd_ka86x53mllm9wgdv", // Macro Voices
 ];
 
-const effectHandler = (
+export const effectHandler = (
   _event: EventBridgeEvent<string, unknown>,
   _context: LambdaContext,
 ) =>
@@ -72,13 +72,7 @@ const effectHandler = (
                   ),
                 );
             }
-          }).pipe(
-            Effect.catchAll((error) =>
-              Effect.logWarning(
-                `Failed to sync episode ${ep.episode_id}: ${String(error)}`,
-              ),
-            ),
-          );
+          });
         }
 
         totalEpisodes += episodes.length;
@@ -87,11 +81,14 @@ const effectHandler = (
           `Synced podcast ${podcastId}: ${String(episodes.length)} episodes`,
         );
       }).pipe(
-        Effect.catchAll((error) =>
+        Effect.tapError((error) =>
+          Effect.logError(`Failed to sync podcast ${podcastId}`, error),
+        ),
+        Effect.catchTag("PodscanError", (error) =>
           Effect.gen(function* () {
             errors.push(podcastId);
-            yield* Effect.logError(
-              `Failed to sync podcast ${podcastId}`,
+            yield* Effect.logWarning(
+              `Skipping podcast ${podcastId}: Podscan API error`,
               error,
             );
           }),

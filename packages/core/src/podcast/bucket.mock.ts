@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { FileSystem } from "@effect/platform";
 import * as NodeFileSystem from "@effect/platform-node/NodeFileSystem";
 import * as Effect from "effect";
@@ -28,6 +29,7 @@ export const makeBucketServiceMock = (basePath: string) =>
     }),
   );
 
-export const BucketServiceMock = makeBucketServiceMock(".bucket").pipe(
-  Effect.Layer.provide(NodeFileSystem.layer),
-);
+// sst dev runs from .sst/artifacts/{name}-{stage}/ — resolve up to project root
+export const BucketServiceMock = makeBucketServiceMock(
+  resolve("..", "..", "..", ".bucket"),
+).pipe(Effect.Layer.provide(NodeFileSystem.layer));
