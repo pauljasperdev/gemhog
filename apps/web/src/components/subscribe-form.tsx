@@ -34,7 +34,7 @@ function SuccessCard() {
   );
 }
 
-function ErrorCard() {
+function _ErrorCard() {
   return (
     <div
       role="alert"

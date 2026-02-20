@@ -45,6 +45,7 @@ function EmptyMedia({
 
 function EmptyTitle({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
@@ -55,7 +56,9 @@ function EmptyTitle({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 

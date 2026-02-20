@@ -36,6 +36,7 @@ function Alert({
 
 function AlertTitle({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
@@ -46,7 +47,9 @@ function AlertTitle({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </h5>
   );
 }
 

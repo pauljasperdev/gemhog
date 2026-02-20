@@ -71,7 +71,7 @@ function FieldError({
         const message = typeof error === "string" ? error : error.message;
         return (
           <p
-            key={index}
+            key={message}
             data-slot="field-error"
             className={cn("text-destructive text-xs font-medium", className)}
           >
@@ -100,11 +100,13 @@ function FieldGroup({
 // FieldLabel — styled label
 function FieldLabel({
   className,
+  htmlFor,
   ...props
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
       data-slot="field-label"
+      htmlFor={htmlFor}
       className={cn(
         "font-body text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
