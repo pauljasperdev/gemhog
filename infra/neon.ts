@@ -1,11 +1,11 @@
 import { secrets } from "./secrets";
 
-export const neon = new sst.Linkable("Neon", {
-  properties: {
-    url: secrets.DatabaseUrl.value,
-    urlPooler: secrets.DatabaseUrlPooler.value,
-  },
-});
+export const DATABASE_URL = $dev
+  ? "postgresql://postgres:password@localhost:5432/gemhog"
+  : secrets.DatabaseUrl.value;
+export const DATABASE_URL_POOLER = $dev
+  ? "postgresql://postgres:password@localhost:5432/gemhog"
+  : secrets.DatabaseUrlPooler.value;
 
 new sst.x.DevCommand("Database", {
   dev: {
@@ -20,6 +20,6 @@ new sst.x.DevCommand("Studio", {
     command: "pnpm sst:db:studio",
   },
   environment: {
-    DATABASE_URL: secrets.DatabaseUrl.value,
+    DATABASE_URL,
   },
 });

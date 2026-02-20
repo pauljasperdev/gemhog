@@ -1,13 +1,12 @@
 import { podcastBucket } from "./bucket";
+import { DATABASE_URL_POOLER } from "./neon";
 import { secrets } from "./secrets";
 
 export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
   handler: "apps/functions/src/sync-episodes-daily.handler",
   link: [podcastBucket],
   environment: {
-    DATABASE_URL: $dev
-      ? "postgresql://postgres:password@localhost:5432/gemhog"
-      : secrets.DatabaseUrlPooler.value,
+    DATABASE_URL_POOLER,
     SST_STAGE: $app.stage,
     PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
@@ -19,9 +18,7 @@ export const syncEpisodesWeekly = new sst.aws.Function("SyncEpisodesWeekly", {
   handler: "apps/functions/src/sync-episodes-weekly.handler",
   link: [podcastBucket],
   environment: {
-    DATABASE_URL: $dev
-      ? "postgresql://postgres:password@localhost:5432/gemhog"
-      : secrets.DatabaseUrlPooler.value,
+    DATABASE_URL_POOLER,
     SST_STAGE: $app.stage,
     PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",

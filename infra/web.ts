@@ -1,3 +1,4 @@
+import { DATABASE_URL_POOLER } from "./neon";
 import { domain } from "./router";
 import { secrets } from "./secrets";
 
@@ -18,12 +19,7 @@ export const web = new sst.aws.Nextjs("Web", {
     NEXT_PUBLIC_SERVER_URL: $dev
       ? "http://localhost:3001"
       : `https://${domain}`,
-    DATABASE_URL: $dev
-      ? "postgresql://postgres:password@localhost:5432/gemhog"
-      : secrets.DatabaseUrl.value,
-    DATABASE_URL_POOLER: $dev
-      ? "postgresql://postgres:password@localhost:5432/gemhog"
-      : secrets.DatabaseUrlPooler.value,
+    DATABASE_URL_POOLER,
     BETTER_AUTH_SECRET: secrets.BetterAuthSecret.value,
     BETTER_AUTH_URL: $dev ? "http://localhost:3001" : `https://${domain}`,
     APP_URL: $dev ? "http://localhost:3001" : `https://${domain}`,
