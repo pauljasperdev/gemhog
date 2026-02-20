@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getUnsubscribeStatus } from "./unsubscribe-status";
+
+export const metadata: Metadata = {
+  title: "Unsubscribe — Gemhog",
+  description: "Manage your email subscription preferences.",
+};
 
 function SuccessContent() {
   return (

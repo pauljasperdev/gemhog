@@ -2,7 +2,7 @@
 
 import { clientEnv } from "@gemhog/env/client-runtime";
 import { usePostHog } from "posthog-js/react";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export function CookieConsentBanner() {
@@ -13,7 +13,7 @@ export function CookieConsentBanner() {
     if (!posthog?.__loaded || !clientEnv.NEXT_PUBLIC_POSTHOG_KEY) return;
     const status = posthog.get_explicit_consent_status();
     if (status === "pending") {
-      setVisible(true);
+      startTransition(() => setVisible(true));
     }
   }, [posthog]);
 

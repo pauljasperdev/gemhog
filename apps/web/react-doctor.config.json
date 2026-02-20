@@ -1,0 +1,6 @@
+{
+  "ignore": {
+    "rules": ["react-doctor/no-prevent-default"],
+    "files": ["src/components/ui/chart.tsx"]
+  }
+}

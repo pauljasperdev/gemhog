@@ -31,9 +31,9 @@ function KbdGroup({
       className={cn("inline-flex items-center gap-0.5", className)}
       {...props}
     >
-      {childArray.map((child, index) => (
-        <React.Fragment key={index}>
-          {index > 0 && (
+      {childArray.map((child, i) => (
+        <React.Fragment key={(child as React.ReactElement).key}>
+          {i > 0 && (
             <span className="text-muted-foreground text-xs">{separator}</span>
           )}
           {child}
