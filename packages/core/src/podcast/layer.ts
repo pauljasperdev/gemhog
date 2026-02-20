@@ -10,10 +10,11 @@ import { PodcastRepositoryLive } from "./repository.live";
 export const PodscanLayer = Effect.Layer.unwrapEffect(
   Effect.Effect.gen(function* () {
     const stage = yield* Effect.Config.string("SST_STAGE");
-    return stage === "paul" ? PodscanServiceLive : MockPodscanService;
+    return stage === "dev" || stage === "prod"
+      ? PodscanServiceLive
+      : MockPodscanService;
   }),
 ).pipe(Effect.Layer.provide(FetchHttpClient.layer));
-
 export const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
   Effect.Layer.provide(SqlLive),
 );
