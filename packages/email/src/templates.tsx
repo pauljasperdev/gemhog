@@ -40,7 +40,7 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
         <meta name="supported-color-schemes" content="dark only" />
       </Head>
       <Preview>
-        Thanks for signing up! Confirm your email to start receiving insights.
+        Thanks for subscribing to Gemhog. Please confirm your email.
       </Preview>
       <Body
         style={{
@@ -94,7 +94,7 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
                 margin: "0 0 24px",
               }}
             >
-              Thanks for signing up! Please confirm your email address to start
+              Thanks for subscribing! Please confirm your email address to start
               receiving expert investment insights.
             </Text>
             <Button
@@ -123,8 +123,8 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
                 margin: "0 0 8px",
               }}
             >
-              This link expires in 7 days. If you didn't sign up for Gemhog, you
-              can safely ignore this email.
+              This link expires in 7 days. If you didn't subscribe to Gemhog,
+              you can safely ignore this email.
             </Text>
             {/* CAN-SPAM footer placeholder */}
           </Section>

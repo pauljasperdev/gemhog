@@ -30,8 +30,8 @@ describe("email templates", () => {
       expect(result.html).toContain("7 days");
     });
 
-    it("HTML contains 'didn't sign up' disclaimer", () => {
-      expect(result.html).toContain("didn&#x27;t sign up");
+    it("HTML contains 'didn't subscribe' disclaimer", () => {
+      expect(result.html).toContain("didn&#x27;t subscribe");
     });
 
     it("HTML contains footer text", () => {
