@@ -5,7 +5,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt =
-  "Gemhog — We listen to financial podcasts so you don't have to";
+  "Gemhog — We listen to investment podcasts so you don't have to";
 
 const urbanistBold = readFileSync(
   join(process.cwd(), "src/app/_fonts/Urbanist-Bold.ttf"),
@@ -69,7 +69,7 @@ export default function OgImage() {
           }}
         >
           <span style={{ color: "#e0e0e0" }}>We listen to&nbsp;</span>
-          <span style={{ color: "#c8ff00" }}>financial podcasts</span>
+          <span style={{ color: "#c8ff00" }}>investment podcasts</span>
           <span style={{ color: "#e0e0e0" }}>&nbsp;so you don't have to</span>
         </div>
 

@@ -26,12 +26,12 @@ const appUrl = Effect.Effect.runSync(Effect.Config.nonEmptyString("APP_URL"));
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: "Gemhog — We listen to financial podcasts so you don't have to",
+  title: "Gemhog — We listen to investment podcasts so you don't have to",
   description:
     "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
   openGraph: {
     type: "website",
-    title: "Gemhog — We listen to financial podcasts so you don't have to",
+    title: "Gemhog — We listen to investment podcasts so you don't have to",
     description:
       "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
     url: appUrl,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gemhog — We listen to financial podcasts so you don't have to",
+    title: "Gemhog — We listen to investment podcasts so you don't have to",
     description:
       "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
   },
