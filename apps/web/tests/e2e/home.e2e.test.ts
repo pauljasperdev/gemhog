@@ -8,7 +8,7 @@ test("homepage loads", async ({ page }) => {
   // Verify the landing page H1 is visible
   await expect(
     page.getByRole("heading", {
-      name: /we listen to financial podcasts/i,
+      name: /we listen to investment podcasts/i,
     }),
   ).toBeVisible();
 });

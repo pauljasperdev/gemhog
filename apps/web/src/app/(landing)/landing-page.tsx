@@ -52,7 +52,7 @@ export function LandingPage() {
           */}
           <h1 className="mb-10 max-w-5xl font-bold font-heading text-3xl text-foreground uppercase leading-[1.02] tracking-tight md:text-5xl lg:text-[4.5rem]">
             We listen to{" "}
-            <span className="text-primary">financial podcasts</span> so you
+            <span className="text-primary">investment podcasts</span> so you
             don&apos;t have to
           </h1>
           <div className="max-w-xl">
@@ -97,11 +97,11 @@ export function LandingPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {[
-              {
-                n: "001",
-                title: "EXTRACT",
-                desc: "We scan over 200 financial podcasts weekly. Every stock mention, conviction level, and investment thesis is carefully captured and catalogued.",
-              },
+               {
+                 n: "001",
+                 title: "EXTRACT",
+                 desc: "We scan over 200 investment podcasts weekly. Every stock mention, conviction level, and investment thesis is carefully captured and catalogued.",
+               },
               {
                 n: "002",
                 title: "ENRICH",
@@ -194,12 +194,12 @@ export function LandingPage() {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {[
-              {
-                quote:
-                  "I used to spend entire Sundays catching up on financial podcasts. Now I get sharper insights in five minutes over morning coffee.",
-                who: "Sarah K.",
-                title: "Portfolio Manager",
-              },
+               {
+                 quote:
+                   "I used to spend entire Sundays catching up on investment podcasts. Now I get sharper insights in five minutes over morning coffee.",
+                 who: "Sarah K.",
+                 title: "Portfolio Manager",
+               },
               {
                 quote:
                   "Caught a pick 36 hours before it trended on social media. That single edge paid for a year of Gemhog in one trade.",
