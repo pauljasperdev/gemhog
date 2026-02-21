@@ -35,13 +35,17 @@ const fontStack =
 function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <meta name="color-scheme" content="dark only" />
+        <meta name="supported-color-schemes" content="dark only" />
+      </Head>
       <Preview>
         Thanks for signing up! Confirm your email to start receiving insights.
       </Preview>
       <Body
         style={{
           backgroundColor: colors.bg,
+          colorScheme: "dark",
           margin: "0",
           padding: "0",
           fontFamily: fontStack,
@@ -146,13 +150,17 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
 function UnsubscribeConfirmationEmailTemplate() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <meta name="color-scheme" content="dark only" />
+        <meta name="supported-color-schemes" content="dark only" />
+      </Head>
       <Preview>
         You've been successfully unsubscribed from Gemhog emails.
       </Preview>
       <Body
         style={{
           backgroundColor: colors.bg,
+          colorScheme: "dark",
           margin: "0",
           padding: "0",
           fontFamily: fontStack,

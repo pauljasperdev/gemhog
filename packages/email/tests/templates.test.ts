@@ -54,6 +54,10 @@ describe("email templates", () => {
     it("HTML contains primary brand color", () => {
       expect(result.html).toContain("#c8ff00");
     });
+
+    it("HTML contains color-scheme dark declaration", () => {
+      expect(result.html).toContain("color-scheme");
+    });
   });
 
   describe("unsubscribeConfirmationEmail", () => {
@@ -96,6 +100,10 @@ describe("email templates", () => {
 
     it("HTML contains primary brand color", () => {
       expect(result.html).toContain("#c8ff00");
+    });
+
+    it("HTML contains color-scheme dark declaration", () => {
+      expect(result.html).toContain("color-scheme");
     });
   });
 });

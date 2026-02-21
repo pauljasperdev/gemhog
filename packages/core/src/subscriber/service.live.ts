@@ -29,27 +29,13 @@ export const SubscriberServiceLive = Effect.Layer.effect(
               expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
             });
 
-            const unsubscribeToken = yield* createToken({
-              email,
-              action: "unsubscribe",
-              expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
-            });
-
             const verifyUrl = `${appUrl}/verify?token=${token}`;
-            const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
             const { subject, html, text } =
               yield* Effect.Effect.promise<EmailContent>(() =>
                 verificationEmail({ verifyUrl }),
               );
 
-            yield* emailService.send(
-              email,
-              { subject, html, text },
-              {
-                "List-Unsubscribe": `<${unsubscribeUrl}>`,
-                "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-              },
-            );
+            yield* emailService.send(email, { subject, html, text });
           }
 
           return sub;
