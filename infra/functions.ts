@@ -1,6 +1,6 @@
 import { podcastBucket } from "./bucket";
-import { DATABASE_URL_POOLER } from "./neon";
 import { secrets } from "./secrets";
+import { DATABASE_URL_POOLER } from "./sql";
 
 export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
   handler: "apps/functions/src/sync-episodes-daily.handler",

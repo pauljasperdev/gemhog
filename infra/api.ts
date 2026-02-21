@@ -1,6 +1,6 @@
-import { DATABASE_URL_POOLER } from "./neon";
 import { domain, domainApi, router } from "./router";
 import { secrets } from "./secrets";
+import { DATABASE_URL_POOLER } from "./sql";
 
 export const api = new sst.aws.Function("Api", {
   handler: "apps/server/src/lambda.handler",

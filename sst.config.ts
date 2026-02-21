@@ -57,7 +57,7 @@ export default $config({
     });
 
     await import("./infra/secrets");
-    await import("./infra/neon");
+    await import("./infra/sql");
     // we dont need the api right now
     // const api = await import("./infra/api");
     const bucket = await import("./infra/bucket");

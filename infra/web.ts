@@ -1,6 +1,6 @@
-import { DATABASE_URL_POOLER } from "./neon";
 import { domain } from "./router";
 import { secrets } from "./secrets";
+import { DATABASE_URL_POOLER } from "./sql";
 
 const webDomain = {
   name: domain,
