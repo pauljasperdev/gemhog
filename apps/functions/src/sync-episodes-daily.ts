@@ -93,12 +93,28 @@ export const effectHandler = (
             );
           }),
         ),
+        Effect.catchTag("PodcastRepositoryError", (error) =>
+          Effect.gen(function* () {
+            errors.push(podcastId);
+            yield* Effect.logWarning(
+              `Skipping podcast ${podcastId}: DB error - ${error.cause}`,
+            );
+          }),
+        ),
       );
     }
 
     yield* Effect.logInfo(
       `Sync complete: ${String(processed)}/${String(PODCAST_IDS.length)} podcasts processed, ${String(totalEpisodes)} episodes upserted, ${String(errors.length)} errors`,
     );
+
+    if (processed === 0 && errors.length > 0) {
+      return yield* Effect.fail(
+        new Error(`All ${String(errors.length)} podcasts failed to sync`),
+      );
+    }
+
+    return { processed, totalEpisodes, errors };
   });
 
 export const handler = LambdaHandler.make({
