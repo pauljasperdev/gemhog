@@ -19,7 +19,12 @@ export async function handler() {
     };
   }
 
-  let dailyResult: { status: string; statusCode?: number; error?: string };
+  let dailyResult: {
+    status: string;
+    statusCode?: number;
+    error?: string;
+    payload?: unknown;
+  };
   try {
     const result = await lambda.send(
       new InvokeCommand({
@@ -27,7 +32,29 @@ export async function handler() {
         InvocationType: "RequestResponse",
       }),
     );
-    dailyResult = { status: "fulfilled", statusCode: result.StatusCode };
+    const rawPayload = result.Payload
+      ? new TextDecoder().decode(result.Payload)
+      : undefined;
+    let payload: unknown;
+    try {
+      payload = rawPayload ? JSON.parse(rawPayload) : undefined;
+    } catch {
+      payload = rawPayload;
+    }
+    if (result.FunctionError) {
+      dailyResult = {
+        status: "rejected",
+        statusCode: result.StatusCode,
+        error: result.FunctionError,
+        payload,
+      };
+    } else {
+      dailyResult = {
+        status: "fulfilled",
+        statusCode: result.StatusCode,
+        payload,
+      };
+    }
   } catch (error) {
     dailyResult = {
       status: "rejected",
@@ -35,7 +62,12 @@ export async function handler() {
     };
   }
 
-  let weeklyResult: { status: string; statusCode?: number; error?: string };
+  let weeklyResult: {
+    status: string;
+    statusCode?: number;
+    error?: string;
+    payload?: unknown;
+  };
   try {
     const result = await lambda.send(
       new InvokeCommand({
@@ -43,7 +75,29 @@ export async function handler() {
         InvocationType: "RequestResponse",
       }),
     );
-    weeklyResult = { status: "fulfilled", statusCode: result.StatusCode };
+    const rawPayload = result.Payload
+      ? new TextDecoder().decode(result.Payload)
+      : undefined;
+    let payload: unknown;
+    try {
+      payload = rawPayload ? JSON.parse(rawPayload) : undefined;
+    } catch {
+      payload = rawPayload;
+    }
+    if (result.FunctionError) {
+      weeklyResult = {
+        status: "rejected",
+        statusCode: result.StatusCode,
+        error: result.FunctionError,
+        payload,
+      };
+    } else {
+      weeklyResult = {
+        status: "fulfilled",
+        statusCode: result.StatusCode,
+        payload,
+      };
+    }
   } catch (error) {
     weeklyResult = {
       status: "rejected",
@@ -51,21 +105,22 @@ export async function handler() {
     };
   }
 
+  const overallStatusCode =
+    dailyResult.status === "rejected" || weeklyResult.status === "rejected"
+      ? 500
+      : 200;
+
   return {
-    statusCode: 200,
+    statusCode: overallStatusCode,
     body: JSON.stringify({
       message: "Sync triggered",
       daily: {
         function: dailyFunctionName,
-        statusCode: dailyResult.statusCode,
-        status: dailyResult.status,
-        ...(dailyResult.error !== undefined && { error: dailyResult.error }),
+        ...dailyResult,
       },
       weekly: {
         function: weeklyFunctionName,
-        statusCode: weeklyResult.statusCode,
-        status: weeklyResult.status,
-        ...(weeklyResult.error !== undefined && { error: weeklyResult.error }),
+        ...weeklyResult,
       },
     }),
   };
