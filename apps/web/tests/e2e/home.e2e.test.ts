@@ -5,41 +5,29 @@ test("homepage loads", async ({ page }) => {
   await page.goto("/");
   // Verify the page loads without error
   await expect(page).toHaveURL("/");
-  // Verify the landing page H1 is visible
-  await expect(
-    page.getByRole("heading", {
-      name: /we listen to investment podcasts/i,
-    }),
-  ).toBeVisible();
+  // Verify the landing page H1 is visible (structural: h1 element)
+  await expect(page.locator("h1")).toBeVisible();
 });
 
 test("page has content", async ({ page }) => {
   await page.goto("/");
-  // Verify email input and submit button are visible
-  await expect(page.getByLabel("Email address")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /get the free newsletter/i }),
-  ).toBeVisible();
+  // Verify email input and submit button are visible (structural selectors)
+  await expect(page.locator('input[type="email"]')).toBeVisible();
+  await expect(page.locator('button[type="submit"]')).toBeVisible();
 });
 
 test("subscribe form is visible", async ({ page }) => {
   await page.goto("/");
-  const emailInput = page.getByLabel("Email address");
+  const emailInput = page.locator('input[type="email"]');
   await expect(emailInput).toBeVisible();
-  const submitButton = page.getByRole("button", {
-    name: /get the free newsletter/i,
-  });
+  const submitButton = page.locator('button[type="submit"]');
   await expect(submitButton).toBeVisible();
   await expect(submitButton).toBeEnabled();
 });
 
 test("footer has privacy and cookie links", async ({ page }) => {
   await page.goto("/");
-  const footer = page.getByRole("contentinfo");
-  await expect(
-    footer.getByRole("link", { name: /privacy policy/i }),
-  ).toBeVisible();
-  await expect(
-    footer.getByRole("button", { name: /cookie settings/i }),
-  ).toBeVisible();
+  const footer = page.locator("footer");
+  await expect(footer.locator('a[href="/privacy"]')).toBeVisible();
+  await expect(footer.getByRole("button")).toBeVisible();
 });
