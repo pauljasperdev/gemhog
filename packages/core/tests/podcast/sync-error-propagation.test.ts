@@ -262,7 +262,7 @@ describe("sync-episodes-weekly error propagation", () => {
     }
   });
 
-  it("BucketLayer resolves without SST_DEV error when SST_STAGE is provided", async () => {
+  it("BucketLayer resolves to BucketServiceLive when SST_DEV is absent", async () => {
     const testEffect = BucketService.pipe(Effect.asVoid);
 
     const providedEffect = testEffect.pipe(
@@ -271,7 +271,9 @@ describe("sync-episodes-weekly error propagation", () => {
 
     const exit = await Effect.runPromiseExit(
       Effect.withConfigProvider(
-        ConfigProvider.fromMap(new Map([["SST_STAGE", "paul"]])),
+        ConfigProvider.fromMap(
+          new Map([["PODCAST_BUCKET_NAME", "test-bucket"]]),
+        ),
       )(providedEffect),
     );
 

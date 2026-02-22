@@ -21,10 +21,10 @@ export const PodcastRepositoryLayer = PodcastRepositoryLive.pipe(
 
 export const BucketLayer = Effect.Layer.unwrapEffect(
   Effect.Effect.gen(function* () {
-    const stage = yield* Effect.Config.string("SST_STAGE");
-    return stage === "dev" || stage === "prod"
-      ? BucketServiceLive
-      : BucketServiceMock;
+    const isDev = yield* Effect.Config.boolean("SST_DEV").pipe(
+      Effect.Config.withDefault(false),
+    );
+    return isDev ? BucketServiceMock : BucketServiceLive;
   }),
 );
 
