@@ -109,7 +109,7 @@ export const effectHandler = (
     );
 
     if (processed === 0 && errors.length > 0) {
-      return yield* Effect.fail(
+      return yield* Effect.die(
         new Error(`All ${String(errors.length)} podcasts failed to sync`),
       );
     }
