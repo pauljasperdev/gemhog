@@ -1,5 +1,6 @@
 import {
   HttpClient,
+  HttpClientError,
   HttpClientRequest,
   HttpClientResponse,
 } from "@effect/platform";
@@ -11,6 +12,21 @@ import {
   PodscanPodcastDetailResponse,
   PodscanTopPodcastsResponse,
 } from "./schema";
+
+const TRANSIENT_STATUSES = [408, 500, 502, 503, 504];
+
+const isTransient = (e: unknown): boolean => {
+  if (e instanceof HttpClientError.ResponseError) {
+    return TRANSIENT_STATUSES.includes(e.response.status);
+  }
+  if (e instanceof HttpClientError.RequestError) {
+    return e.reason === "Transport";
+  }
+  return false;
+};
+
+const isRateLimited = (e: unknown): boolean =>
+  e instanceof HttpClientError.ResponseError && e.response.status === 429;
 
 export const PodscanServiceLive = Effect.Layer.scoped(
   PodscanService,
@@ -26,10 +42,6 @@ export const PodscanServiceLive = Effect.Layer.scoped(
     const semaphore = yield* Effect.Effect.makeSemaphore(5);
     const client = (yield* HttpClient.HttpClient).pipe(
       HttpClient.filterStatusOk,
-      HttpClient.retryTransient({
-        times: 3,
-        schedule: Effect.Schedule.exponential("500 millis"),
-      }),
     );
 
     const query = (path: string) =>
@@ -54,6 +66,16 @@ export const PodscanServiceLive = Effect.Layer.scoped(
           )(response);
           return body.podcasts;
         }).pipe(
+          Effect.Effect.retry({
+            while: isTransient,
+            times: 3,
+            schedule: Effect.Schedule.exponential("500 millis"),
+          }),
+          Effect.Effect.retry({
+            while: isRateLimited,
+            times: 2,
+            schedule: Effect.Schedule.fixed("61 seconds"),
+          }),
           Effect.Effect.mapError(
             (cause: unknown) => new PodscanError({ cause }),
           ),
@@ -68,6 +90,16 @@ export const PodscanServiceLive = Effect.Layer.scoped(
             PodscanEpisodesResponse,
           )(response);
         }).pipe(
+          Effect.Effect.retry({
+            while: isTransient,
+            times: 3,
+            schedule: Effect.Schedule.exponential("500 millis"),
+          }),
+          Effect.Effect.retry({
+            while: isRateLimited,
+            times: 2,
+            schedule: Effect.Schedule.fixed("61 seconds"),
+          }),
           Effect.Effect.mapError(
             (cause: unknown) => new PodscanError({ cause }),
           ),
@@ -81,6 +113,16 @@ export const PodscanServiceLive = Effect.Layer.scoped(
           )(response);
           return body.podcast;
         }).pipe(
+          Effect.Effect.retry({
+            while: isTransient,
+            times: 3,
+            schedule: Effect.Schedule.exponential("500 millis"),
+          }),
+          Effect.Effect.retry({
+            while: isRateLimited,
+            times: 2,
+            schedule: Effect.Schedule.fixed("61 seconds"),
+          }),
           Effect.Effect.mapError(
             (cause: unknown) => new PodscanError({ cause }),
           ),

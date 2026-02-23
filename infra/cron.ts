@@ -7,5 +7,5 @@ export const episodeSyncDailyCron = new sst.aws.Cron("EpisodeSyncDailyCron", {
 
 export const episodeSyncWeeklyCron = new sst.aws.Cron("EpisodeSyncWeeklyCron", {
   function: syncEpisodesWeekly.arn,
-  schedule: "cron(0 2 ? * SUN *)", // 02:00 UTC Sundays = 03:00 CET
+  schedule: "cron(0 3 ? * SUN *)", // 03:00 UTC Sundays = 04:00 CET — staggered 1h after daily to avoid rate limit overlap
 });

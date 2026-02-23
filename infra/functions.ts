@@ -4,6 +4,7 @@ import { DATABASE_URL_POOLER } from "./sql";
 
 export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
   handler: "apps/functions/src/sync-episodes-daily.handler",
+  timeout: "3 minutes",
   link: [podcastBucket],
   environment: {
     DATABASE_URL_POOLER,
@@ -16,6 +17,7 @@ export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
 
 export const syncEpisodesWeekly = new sst.aws.Function("SyncEpisodesWeekly", {
   handler: "apps/functions/src/sync-episodes-weekly.handler",
+  timeout: "3 minutes",
   link: [podcastBucket],
   environment: {
     DATABASE_URL_POOLER,
