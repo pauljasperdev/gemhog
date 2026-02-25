@@ -84,7 +84,7 @@ export const PodscanServiceLive = Effect.Layer.scoped(
       getLatest: (podcastId, limit = 25) =>
         Effect.Effect.gen(function* () {
           const response = yield* query(
-            `/podcasts/${podcastId}/episodes?limit=${String(limit)}`,
+            `/podcasts/${podcastId}/episodes?limit=${String(limit)}&show_only_fully_processed=true`,
           );
           return yield* HttpClientResponse.schemaBodyJson(
             PodscanEpisodesResponse,
