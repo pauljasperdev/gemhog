@@ -7,7 +7,7 @@
   ],
   "type": "module",
   "scripts": {
-    "sso": "aws sso login --sso-session=gemhog",
+    "sso": "aws sso login --sso-session=sso",
     "bootstrap": "./scripts/bootstrap.sh",
     "build": "pnpm -r build",
     "check": "biome check --error-on-warnings --write . && pnpm -r check-types",
