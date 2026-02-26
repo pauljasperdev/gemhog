@@ -11,4 +11,5 @@ export const secrets = {
   SentryOrg: new sst.Secret("SentryOrg"),
   SentryProject: new sst.Secret("SentryProject"),
   PodscanApiToken: new sst.Secret("PodscanApiToken"),
+  AdminEmail: new sst.Secret("AdminEmail"),
 };

@@ -5,6 +5,7 @@ const GOOGLE_GENERATIVE_AI_API_KEY = "XXXXXXXXXXXXXXXXXXXXX";
 const RESEND_API_KEY = "re_local_dev_placeholder";
 const PODSCAN_API_TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 const PODSCAN_BASE_URL = "https://podscan.fm/api/v1";
+const ADMIN_EMAIL = "admin@gemhog.com";
 
 // public varaibles
 const APP_URL = "http://localhost:3001";
@@ -24,6 +25,7 @@ export const localServerEnv = {
   SENTRY_DSN,
   PODSCAN_API_TOKEN,
   PODSCAN_BASE_URL,
+  ADMIN_EMAIL,
 } as const;
 
 export const localClientEnv = {

@@ -35,6 +35,7 @@ export const web = new sst.aws.Nextjs("Web", {
     SST_STAGE: $app.stage,
     PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
+    ADMIN_EMAIL: secrets.AdminEmail.value,
   },
 });
 

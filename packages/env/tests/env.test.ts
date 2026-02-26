@@ -84,6 +84,7 @@ describe("server env injection", () => {
     process.env.PODSCAN_BASE_URL = "https://api.podscan.fm/v1";
     process.env.RESEND_API_KEY = "re_test_key";
     process.env.SENTRY_DSN = "https://key@sentry.io/123";
+    process.env.ADMIN_EMAIL = "admin@test.com";
     process.env.LOCAL_ENV = "1";
 
     await import("../src/server.js");
@@ -110,6 +111,7 @@ describe("server env injection", () => {
     delete process.env.PODSCAN_BASE_URL;
     delete process.env.RESEND_API_KEY;
     delete process.env.SENTRY_DSN;
+    delete process.env.ADMIN_EMAIL;
     process.env.LOCAL_ENV = "1";
 
     await import("../src/server.js");
@@ -132,6 +134,7 @@ describe("server env injection", () => {
     expect(process.env.PODSCAN_BASE_URL).toBe(localServerEnv.PODSCAN_BASE_URL);
     expect(process.env.RESEND_API_KEY).toBe(localServerEnv.RESEND_API_KEY);
     expect(process.env.SENTRY_DSN).toBe(localServerEnv.SENTRY_DSN);
+    expect(process.env.ADMIN_EMAIL).toBe(localServerEnv.ADMIN_EMAIL);
   });
 
   it("does nothing when LOCAL_ENV is not set", async () => {
@@ -145,6 +148,7 @@ describe("server env injection", () => {
     delete process.env.PODSCAN_BASE_URL;
     delete process.env.RESEND_API_KEY;
     delete process.env.SENTRY_DSN;
+    delete process.env.ADMIN_EMAIL;
     delete process.env.LOCAL_ENV;
 
     await import("../src/server.js");
