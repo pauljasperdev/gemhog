@@ -272,3 +272,131 @@ export async function unsubscribeConfirmationEmail(): Promise<EmailContent> {
     text,
   };
 }
+
+function SignInOtpEmailTemplate({ otp }: { otp: string }) {
+  return (
+    <Html lang="en">
+      <Head>
+        <meta name="color-scheme" content="dark only" />
+        <meta name="supported-color-schemes" content="dark only" />
+      </Head>
+      <Preview>Use this code to sign in to Gemhog.</Preview>
+      <Body
+        style={{
+          backgroundColor: colors.bg,
+          colorScheme: "dark",
+          margin: "0",
+          padding: "0",
+          fontFamily: fontStack,
+        }}
+      >
+        <Container
+          style={{ maxWidth: "560px", margin: "0 auto", padding: "40px 20px" }}
+        >
+          <Section style={{ marginBottom: "32px" }}>
+            <Text
+              style={{
+                color: colors.primary,
+                fontSize: "20px",
+                fontWeight: "700",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                margin: "0",
+              }}
+            >
+              GEMHOG
+            </Text>
+          </Section>
+
+          <Section
+            style={{
+              backgroundColor: colors.card,
+              padding: "32px",
+              borderLeft: `2px solid ${colors.primary}`,
+            }}
+          >
+            <Heading
+              style={{
+                color: colors.foreground,
+                fontSize: "24px",
+                fontWeight: "700",
+                margin: "0 0 16px",
+              }}
+            >
+              Your sign-in code
+            </Heading>
+            <Text
+              style={{
+                color: colors.muted,
+                fontSize: "16px",
+                lineHeight: "1.6",
+                margin: "0 0 24px",
+              }}
+            >
+              Use this code to sign in to Gemhog.
+            </Text>
+            <Section
+              style={{
+                backgroundColor: colors.border,
+                padding: "24px",
+                borderRadius: "8px",
+                marginBottom: "24px",
+                textAlign: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.primary,
+                  fontSize: "32px",
+                  fontWeight: "700",
+                  letterSpacing: "0.1em",
+                  margin: "0",
+                  fontFamily: "'Courier New', monospace",
+                }}
+              >
+                {otp}
+              </Text>
+            </Section>
+            <Text
+              style={{
+                color: colors.muted,
+                fontSize: "14px",
+                lineHeight: "1.5",
+                margin: "0",
+              }}
+            >
+              This code expires in 5 minutes.
+            </Text>
+          </Section>
+
+          <Hr style={{ borderColor: colors.border, margin: "24px 0 16px" }} />
+          <Text
+            style={{
+              color: colors.muted,
+              fontSize: "11px",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              margin: "0",
+            }}
+          >
+            Gemhog — Podcast Intelligence
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
+}
+
+export async function signInOtpEmail(params: {
+  otp: string;
+}): Promise<EmailContent> {
+  const html = await render(<SignInOtpEmailTemplate otp={params.otp} />);
+  const text = await render(<SignInOtpEmailTemplate otp={params.otp} />, {
+    plainText: true,
+  });
+  return {
+    subject: "Your Gemhog sign-in code",
+    html,
+    text,
+  };
+}

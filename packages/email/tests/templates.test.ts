@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import {
+  signInOtpEmail,
   unsubscribeConfirmationEmail,
   verificationEmail,
 } from "../src/templates";
@@ -104,6 +105,22 @@ describe("email templates", () => {
 
     it("HTML contains color-scheme dark declaration", () => {
       expect(result.html).toContain("color-scheme");
+    });
+  });
+
+  describe("signInOtpEmail", () => {
+    let result: Awaited<ReturnType<typeof signInOtpEmail>>;
+
+    beforeAll(async () => {
+      result = await signInOtpEmail({ otp: "123456" });
+    });
+
+    it("subject does not contain 'admin' (case-insensitive)", () => {
+      expect(result.subject.toLowerCase()).not.toContain("admin");
+    });
+
+    it("HTML does not contain 'admin panel' (case-insensitive)", () => {
+      expect(result.html.toLowerCase()).not.toContain("admin panel");
     });
   });
 });

@@ -5,6 +5,7 @@ export { EmailServiceLive } from "./resend";
 export { EmailService } from "./service";
 export {
   type EmailContent,
+  signInOtpEmail,
   unsubscribeConfirmationEmail,
   verificationEmail,
 } from "./templates";
