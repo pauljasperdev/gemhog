@@ -1,0 +1,31 @@
+{
+  "name": "@gemhog/podcast",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "podcast:find-resources": "tsx --env-file .env scripts/podscan-find-resources.ts",
+    "podcast:latest-episodes": "tsx --env-file .env scripts/podscan-latest-episodes.ts",
+    "podcast:top10": "tsx --env-file .env scripts/podscan-top10.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3",
+    "@effect/platform": "^0.94.5",
+    "@effect/platform-node": "^0.94.2",
+    "@effect/sql": "^0.49",
+    "@effect/sql-drizzle": "^0.48",
+    "@effect/sql-pg": "^0.50",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
