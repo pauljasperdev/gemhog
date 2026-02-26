@@ -1,0 +1,344 @@
+// packages/auth/tests/sql.int.test.ts
+
+/**
+ * Schema CRUD integration tests.
+ *
+ * Tests the drizzle schema definitions directly via typed CRUD operations.
+ * This verifies the schema works correctly independent of better-auth.
+ *
+ * Uses @effect/sql-drizzle via Effect layers for database access,
+ * consistent with the rest of packages/core.
+ */
+
+import * as PgDrizzle from "@effect/sql-drizzle/Pg";
+import { PgClient } from "@effect/sql-pg";
+import { expect, layer } from "@effect/vitest";
+import { eq } from "drizzle-orm";
+import * as Effect from "effect";
+import { describe } from "vitest";
+import { account, session, user, verification } from "../src/sql";
+
+// Test layer with explicit URL (bypasses Config.redacted)
+const TestPgLive = PgClient.layer({
+  url: Effect.Redacted.make(
+    process.env.DATABASE_URL ??
+      "postgresql://postgres:password@localhost:5432/gemhog",
+  ),
+});
+
+// Drizzle layer composed on top of test PgClient
+const TestDrizzleLive = PgDrizzle.layer.pipe(Effect.Layer.provide(TestPgLive));
+
+// Combined test layer
+const TestLayer = Effect.Layer.mergeAll(TestPgLive, TestDrizzleLive);
+
+// Helper to truncate auth tables (runs within Effect context)
+const truncateAuthTables = Effect.Effect.gen(function* () {
+  const db = yield* PgDrizzle.PgDrizzle;
+  yield* Effect.Effect.promise(() => db.delete(session));
+  yield* Effect.Effect.promise(() => db.delete(account));
+  yield* Effect.Effect.promise(() => db.delete(verification));
+  yield* Effect.Effect.promise(() => db.delete(user));
+});
+
+describe("schema CRUD", () => {
+  layer(TestLayer)("user table", (it) => {
+    it.effect("should insert and query user", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        const testUser = {
+          id: "test-user-id",
+          email: "test@example.com",
+          name: "Test User",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        // Insert user
+        const insertResult = yield* Effect.Effect.promise(() =>
+          db.insert(user).values(testUser).returning(),
+        );
+        const inserted = insertResult[0];
+
+        expect(inserted).toBeDefined();
+        expect(inserted?.id).toBe(testUser.id);
+        expect(inserted?.email).toBe(testUser.email);
+        expect(inserted?.name).toBe(testUser.name);
+        expect(inserted?.emailVerified).toBe(false);
+
+        // Query user by id
+        const queryResult = yield* Effect.Effect.promise(() =>
+          db.select().from(user).where(eq(user.id, testUser.id)),
+        );
+        const queried = queryResult[0];
+
+        expect(queried).toBeDefined();
+        expect(queried?.email).toBe(testUser.email);
+        expect(queried?.name).toBe(testUser.name);
+      }),
+    );
+
+    it.effect("should enforce unique email constraint", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        const testUser1 = {
+          id: "user-1",
+          email: "duplicate@example.com",
+          name: "User 1",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        const testUser2 = {
+          id: "user-2",
+          email: "duplicate@example.com", // Same email
+          name: "User 2",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        // First insert should succeed
+        yield* Effect.Effect.promise(() => db.insert(user).values(testUser1));
+
+        // Second insert with same email should fail
+        const result = yield* Effect.Effect.tryPromise(() =>
+          db.insert(user).values(testUser2),
+        ).pipe(Effect.Effect.either);
+
+        expect(result._tag).toBe("Left");
+      }),
+    );
+  });
+
+  layer(TestLayer)("session table", (it) => {
+    it.effect("should insert session linked to user", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        // Create user first
+        const testUser = {
+          id: "user-for-session",
+          email: "session-test@example.com",
+          name: "Session Test User",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        yield* Effect.Effect.promise(() => db.insert(user).values(testUser));
+
+        // Create session for user
+        const testSession = {
+          id: "session-id",
+          expiresAt: new Date(Date.now() + 86400000), // 24 hours
+          token: "test-token",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: testUser.id,
+        };
+
+        const insertResult = yield* Effect.Effect.promise(() =>
+          db.insert(session).values(testSession).returning(),
+        );
+        const inserted = insertResult[0];
+
+        expect(inserted).toBeDefined();
+        expect(inserted?.id).toBe(testSession.id);
+        expect(inserted?.token).toBe(testSession.token);
+        expect(inserted?.userId).toBe(testUser.id);
+
+        // Query session and verify relationship
+        const queryResult = yield* Effect.Effect.promise(() =>
+          db.select().from(session).where(eq(session.userId, testUser.id)),
+        );
+        const queried = queryResult[0];
+
+        expect(queried).toBeDefined();
+        expect(queried?.token).toBe(testSession.token);
+      }),
+    );
+
+    it.effect("should enforce foreign key to user", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        const testSession = {
+          id: "orphan-session",
+          expiresAt: new Date(Date.now() + 86400000),
+          token: "orphan-token",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: "nonexistent-user-id", // User doesn't exist
+        };
+
+        // Should fail due to foreign key constraint
+        const result = yield* Effect.Effect.tryPromise(() =>
+          db.insert(session).values(testSession),
+        ).pipe(Effect.Effect.either);
+
+        expect(result._tag).toBe("Left");
+      }),
+    );
+  });
+
+  layer(TestLayer)("account table", (it) => {
+    it.effect("should insert account linked to user", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        // Create user first
+        const testUser = {
+          id: "user-for-account",
+          email: "account-test@example.com",
+          name: "Account Test User",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        yield* Effect.Effect.promise(() => db.insert(user).values(testUser));
+
+        // Create account for user
+        const testAccount = {
+          id: "account-id",
+          accountId: "provider-account-id",
+          providerId: "github",
+          userId: testUser.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        const insertResult = yield* Effect.Effect.promise(() =>
+          db.insert(account).values(testAccount).returning(),
+        );
+        const inserted = insertResult[0];
+
+        expect(inserted).toBeDefined();
+        expect(inserted?.id).toBe(testAccount.id);
+        expect(inserted?.accountId).toBe(testAccount.accountId);
+        expect(inserted?.providerId).toBe(testAccount.providerId);
+        expect(inserted?.userId).toBe(testUser.id);
+      }),
+    );
+
+    it.effect("should store provider info correctly", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        // Create user first
+        const testUser = {
+          id: "user-for-provider",
+          email: "provider-test@example.com",
+          name: "Provider Test User",
+          emailVerified: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        yield* Effect.Effect.promise(() => db.insert(user).values(testUser));
+
+        // Create account with full provider info
+        const testAccount = {
+          id: "provider-account-id",
+          accountId: "12345",
+          providerId: "google",
+          userId: testUser.id,
+          accessToken: "access-token-value",
+          refreshToken: "refresh-token-value",
+          scope: "openid email profile",
+          accessTokenExpiresAt: new Date(Date.now() + 3600000),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        yield* Effect.Effect.promise(() =>
+          db.insert(account).values(testAccount),
+        );
+
+        // Query and verify all provider fields
+        const queryResult = yield* Effect.Effect.promise(() =>
+          db.select().from(account).where(eq(account.id, testAccount.id)),
+        );
+        const queried = queryResult[0];
+
+        expect(queried).toBeDefined();
+        expect(queried?.providerId).toBe("google");
+        expect(queried?.accountId).toBe("12345");
+        expect(queried?.accessToken).toBe("access-token-value");
+        expect(queried?.refreshToken).toBe("refresh-token-value");
+        expect(queried?.scope).toBe("openid email profile");
+      }),
+    );
+
+    it.effect("should enforce foreign key to user", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        const testAccount = {
+          id: "orphan-account",
+          accountId: "orphan-provider-id",
+          providerId: "github",
+          userId: "nonexistent-user-id", // User doesn't exist
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        // Should fail due to foreign key constraint
+        const result = yield* Effect.Effect.tryPromise(() =>
+          db.insert(account).values(testAccount),
+        ).pipe(Effect.Effect.either);
+
+        expect(result._tag).toBe("Left");
+      }),
+    );
+  });
+
+  layer(TestLayer)("verification table", (it) => {
+    it.effect("should insert and query verification", () =>
+      Effect.Effect.gen(function* () {
+        yield* truncateAuthTables;
+        const db = yield* PgDrizzle.PgDrizzle;
+
+        const testVerification = {
+          id: "verification-id",
+          identifier: "test@example.com",
+          value: "verification-code-123",
+          expiresAt: new Date(Date.now() + 3600000), // 1 hour
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        const insertResult = yield* Effect.Effect.promise(() =>
+          db.insert(verification).values(testVerification).returning(),
+        );
+        const inserted = insertResult[0];
+
+        expect(inserted).toBeDefined();
+        expect(inserted?.id).toBe(testVerification.id);
+        expect(inserted?.identifier).toBe(testVerification.identifier);
+        expect(inserted?.value).toBe(testVerification.value);
+
+        // Query by identifier
+        const queryResult = yield* Effect.Effect.promise(() =>
+          db
+            .select()
+            .from(verification)
+            .where(eq(verification.identifier, testVerification.identifier)),
+        );
+        const queried = queryResult[0];
+
+        expect(queried).toBeDefined();
+        expect(queried?.value).toBe(testVerification.value);
+      }),
+    );
+  });
+});
