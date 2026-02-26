@@ -34,5 +34,5 @@ interface SubscriberRepositoryShape {
 }
 
 export class SubscriberRepository extends Effect.Context.Tag(
-  "@gemhog/core/subscriber/SubscriberRepository",
+  "@gemhog/subscriber/SubscriberRepository",
 )<SubscriberRepository, SubscriberRepositoryShape>() {}

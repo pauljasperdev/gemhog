@@ -11,5 +11,5 @@ interface BucketServiceShape {
 }
 
 export class BucketService extends Effect.Context.Tag(
-  "@gemhog/core/podcast/BucketService",
+  "@gemhog/podcast/BucketService",
 )<BucketService, BucketServiceShape>() {}

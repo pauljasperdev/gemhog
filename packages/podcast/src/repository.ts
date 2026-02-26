@@ -54,5 +54,5 @@ interface PodcastRepositoryShape {
 }
 
 export class PodcastRepository extends Effect.Context.Tag(
-  "@gemhog/core/podcast/PodcastRepository",
+  "@gemhog/podcast/PodcastRepository",
 )<PodcastRepository, PodcastRepositoryShape>() {}

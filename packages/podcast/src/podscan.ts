@@ -35,5 +35,5 @@ interface PodscanServiceShape {
 }
 
 export class PodscanService extends Effect.Context.Tag(
-  "@gemhog/core/podcast/PodscanService",
+  "@gemhog/podcast/PodscanService",
 )<PodscanService, PodscanServiceShape>() {}

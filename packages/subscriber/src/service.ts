@@ -23,5 +23,5 @@ interface SubscriberServiceShape {
 }
 
 export class SubscriberService extends Effect.Context.Tag(
-  "@gemhog/core/subscriber/SubscriberService",
+  "@gemhog/subscriber/SubscriberService",
 )<SubscriberService, SubscriberServiceShape>() {}

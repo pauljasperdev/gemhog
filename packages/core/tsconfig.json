@@ -1,8 +1,0 @@
-{
-  "extends": "@gemhog/config/tsconfig.base.json",
-  "compilerOptions": {
-    "sourceMap": true,
-    "outDir": "dist",
-    "jsx": "react-jsx"
-  }
-}
