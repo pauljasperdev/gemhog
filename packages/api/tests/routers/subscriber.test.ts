@@ -12,6 +12,10 @@ vi.mock("@gemhog/db", () => ({
   SqlLive: Effect.Layer.empty,
 }));
 
+vi.mock("@gemhog/auth", () => ({
+  auth: { api: { sendVerificationOTP: vi.fn() } },
+}));
+
 vi.mock("@gemhog/subscriber", () => {
   const EmailService = Effect.Context.GenericTag<{
     send: (params: unknown) => Effect.Effect<void>;
