@@ -1,87 +1,39 @@
-# Agent Instructions
+# Gemhog — Project Vision
 
-All project context lives in the `.planning/` folder. Libraries used in this
-project are cloned to `.repos/` for easy reference.
+## What We're Building
 
-## Quick Start for AI Agents
+Gemhog is a research tool for part-time investors. It does two things:
 
-**Read these files in order:**
+1. **Surface expert ideas** — Digs through financial podcasts to extract the
+   investment theses and assumptions experts make, so users don't have to listen
+   to hours of content themselves.
+2. **Make data accessible** — Gives users easy access to the financial data they
+   need to evaluate those ideas on their own terms.
 
-1. `.planning/PROJECT.md` — Project vision, requirements, constraints, and key
-   decisions
-2. `.planning/codebase/ARCHITECTURE.md` — System architecture, layers, data
-   flows
-3. `.planning/codebase/STRUCTURE.md` — File/folder organization and package
-   layout
-4. `.planning/codebase/CONVENTIONS.md` — Coding standards and patterns to follow
-5. `.planning/codebase/STACK.md` — Technology stack and dependencies
+The core value proposition: _find expert ideas you'd miss, access the data to
+evaluate them yourself, skip the consultant._
 
-## Documentation Structure
+## Who It's For
 
-```
-.planning/
-├── PROJECT.md              # Source of truth for what we're building
-├── config.json             # GSD configuration
-├── codebase/
-│   ├── ARCHITECTURE.md     # How the system is structured
-│   ├── STRUCTURE.md        # File and folder organization
-│   ├── CONVENTIONS.md      # Coding patterns and standards
-│   ├── STACK.md            # Technologies and dependencies
-│   ├── INTEGRATIONS.md     # External services and APIs
-│   ├── TESTING.md          # Test commands and verification workflow
-│   ├── CONCERNS.md         # Known issues and technical debt
-│   ├── SECURITY-CHECKLIST.md # Security review checklist
-│   └── SECURITY-REVIEW.md  # Security audit trail
-└── phases/                 # Implementation phases (roadmap)
-```
+Part-time investors who allocate a portion of their portfolio to higher-risk,
+research-backed positions. They're curious and capable of forming their own
+opinions — they just lack the time to wade through podcasts and scattered data
+sources.
 
-## Key Context Files
+## The Pain Points We're Solving
 
-| File                    | Purpose                              | When to Read                               |
-| ----------------------- | ------------------------------------ | ------------------------------------------ |
-| `PROJECT.md`            | Requirements, constraints, decisions | Always — start here                        |
-| `ARCHITECTURE.md`       | System design, data flows            | Before structural changes                  |
-| `TESTING.md`            | Test commands and verification       | Before running tests or declaring complete |
-| `SECURITY-CHECKLIST.md` | Security review checklist            | Before implementing auth/data handling     |
-| `SECURITY-REVIEW.md`    | Security findings and audit trail    | Check for blocking findings before work    |
-| `CONCERNS.md`           | Known issues, tech debt              | Before major refactoring                   |
+- Financial podcasts are packed with valuable expert reasoning, but consuming
+  them takes hours
+- Relevant financial data exists but is fragmented, complex, or gated behind
+  expensive tools
+- Financial consultants solve this, but at a cost most part-time investors can't
+  justify
 
-## Available Skills
+## What This Is Not
 
-Use these skills (invoke with `/skill-name`) for specialized tasks:
-
-| Skill                          | Purpose                                             | When to Use                                                           |
-| ------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------- |
-| `/frontend-design`             | Create production-grade UI with high design quality | Building web components, pages, dashboards, React components          |
-| `/vercel-react-best-practices` | React/Next.js performance optimization from Vercel  | Writing, reviewing, or refactoring React/Next.js code for performance |
-| `/web-design-guidelines`       | Review UI code for best practices compliance        | Reviewing UI, checking accessibility, auditing UX                     |
-| `/copywriting`                 | Write or improve marketing copy                     | Homepage, landing pages, pricing, CTAs, feature pages                 |
-| `/better-auth-best-practices`  | Integrate Better Auth authentication framework      | Implementing or modifying authentication features                     |
-| `/effect-ts`                   | Comprehensive Effect-TS guide with correct APIs     | Building Effect applications, services, layers, or MCP servers        |
-| `/find-skills`                 | Discover and install agent skills                   | When users ask how to do X or need skill suggestions                  |
-
-## Important Constraints
-
-- **SST-agnostic code**: Application code reads env vars only — no SST SDK
-  imports. This enables local development and agent verification without cloud
-  context.
-- **Effect TS for backend**: Required for testability and dependency injection
-  (pending implementation).
-- **Self-documenting code**: Comments only when they add necessary context (why,
-  risks, or non-obvious behavior).
-
-## Verification Requirements
-
-**Before completing any plan, you MUST run:**
-
-```bash
-pnpm db:start && pnpm test
-```
-
-**This is non-negotiable.** See `.planning/codebase/TESTING.md` for full
-details.
-
-**Severity blocking:**
-
-- Critical/High/Medium findings block completion
-- Only Low severity is non-blocking
+- Not investment advice — Gemhog surfaces research; users make their own
+  decisions
+- Not a trading platform — no real-time trading features
+- Not for full-time investors or professionals — the target is the "spare time,
+  curious" investor
+- Not a community or social product — editorially curated, not user-generated
