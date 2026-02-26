@@ -1,0 +1,25 @@
+{
+  "name": "@gemhog/subscriber",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/sql-drizzle": "^0.48",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/email": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "@gemhog/telemetry": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/sql-pg": "^0.50",
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
