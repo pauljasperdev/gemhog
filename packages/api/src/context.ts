@@ -1,4 +1,4 @@
-import { auth } from "@gemhog/core/auth";
+import { auth } from "@gemhog/auth";
 
 export type CreateContextOptions = {
   headers: Headers;

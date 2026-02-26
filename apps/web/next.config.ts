@@ -9,9 +9,12 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: [
     "@gemhog/api",
-    "@gemhog/core",
+    "@gemhog/auth",
+    "@gemhog/db",
     "@gemhog/email",
     "@gemhog/env",
+    "@gemhog/podcast",
+    "@gemhog/subscriber",
     "@gemhog/telemetry",
     "shiki",
   ],

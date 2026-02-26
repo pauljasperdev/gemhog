@@ -1,5 +1,5 @@
 import * as Tracer from "@effect/opentelemetry/Tracer";
-import { SubscriberLayers, SubscriberService } from "@gemhog/core/subscriber";
+import { SubscriberLayers, SubscriberService } from "@gemhog/subscriber";
 import * as Effect from "effect";
 import { z } from "zod";
 

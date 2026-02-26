@@ -6,7 +6,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@gemhog/core": "workspace:*",
+    "@gemhog/podcast": "workspace:*",
+    "@gemhog/db": "workspace:*",
     "@gemhog/env": "workspace:*",
     "@effect-aws/lambda": "^1.5.0",
     "effect": "catalog:"

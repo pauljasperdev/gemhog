@@ -13,7 +13,7 @@
     "@ai-sdk/devtools": "^0.0.2",
     "@ai-sdk/google": "^3.0.1",
     "@gemhog/api": "workspace:*",
-    "@gemhog/core": "workspace:*",
+
     "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
     "@gemhog/telemetry": "workspace:*",

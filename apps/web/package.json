@@ -13,9 +13,11 @@
   "dependencies": {
     "@ai-sdk/react": "^3.0.3",
     "@gemhog/api": "workspace:*",
-    "@gemhog/core": "workspace:*",
+    "@gemhog/auth": "workspace:*",
+    "@gemhog/db": "workspace:*",
     "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
+    "@gemhog/subscriber": "workspace:*",
     "@gemhog/telemetry": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",

@@ -8,7 +8,7 @@ const { getSession } = vi.hoisted(() => {
   };
 });
 
-vi.mock("@gemhog/core/auth", () => ({
+vi.mock("@gemhog/auth", () => ({
   auth: {
     api: {
       getSession,

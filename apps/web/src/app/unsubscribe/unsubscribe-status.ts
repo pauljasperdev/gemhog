@@ -3,7 +3,7 @@ import {
   SubscriberRepository,
   SubscriberService,
   verifyToken,
-} from "@gemhog/core/subscriber";
+} from "@gemhog/subscriber";
 import * as Effect from "effect";
 
 export type UnsubscribeStatus = "success" | "invalid" | "error";

@@ -7,7 +7,7 @@ const { handler } = vi.hoisted(() => {
   };
 });
 
-vi.mock("@gemhog/core/auth", () => ({
+vi.mock("@gemhog/auth", () => ({
   auth: {
     handler,
   },

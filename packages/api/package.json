@@ -12,7 +12,9 @@
   "scripts": {},
   "dependencies": {
     "@effect/opentelemetry": "catalog:",
-    "@gemhog/core": "workspace:*",
+    "@gemhog/auth": "workspace:*",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/subscriber": "workspace:*",
     "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
     "@opentelemetry/api": "catalog:",

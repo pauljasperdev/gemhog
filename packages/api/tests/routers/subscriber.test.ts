@@ -8,11 +8,11 @@ process.env.BETTER_AUTH_SECRET =
   process.env.BETTER_AUTH_SECRET ?? "test-secret-at-least-32-characters-long";
 process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
 
-vi.mock("@gemhog/core/sql", () => ({
+vi.mock("@gemhog/db", () => ({
   SqlLive: Effect.Layer.empty,
 }));
 
-vi.mock("@gemhog/core/subscriber", () => {
+vi.mock("@gemhog/subscriber", () => {
   const EmailService = Effect.Context.GenericTag<{
     send: (params: unknown) => Effect.Effect<void>;
   }>("EmailService");

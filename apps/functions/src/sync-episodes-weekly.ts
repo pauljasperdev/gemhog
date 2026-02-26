@@ -7,7 +7,7 @@ import {
   PodcastLayer,
   PodcastRepository,
   PodscanService,
-} from "@gemhog/core/podcast";
+} from "@gemhog/podcast";
 import { Effect } from "effect";
 
 // Weekly investing podcasts (<2.5 episodes/week — in-depth analysis)

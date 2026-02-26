@@ -3,7 +3,7 @@ import {
   SubscriberRepository,
   SubscriberService,
   verifyToken,
-} from "@gemhog/core/subscriber";
+} from "@gemhog/subscriber";
 import * as Effect from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 
