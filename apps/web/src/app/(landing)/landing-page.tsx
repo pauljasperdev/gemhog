@@ -8,7 +8,6 @@ export function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background font-body text-foreground">
       {/* Nav */}
-      {/*
       <nav className="flex items-center justify-between border-primary/20 border-b px-6 py-6 md:px-12">
         <div className="font-bold font-heading text-foreground text-lg uppercase tracking-tight">
           Gemhog<span className="text-primary">.</span>
@@ -33,14 +32,13 @@ export function LandingPage() {
             Proof
           </a>
         </div>
-        <Link
-          href="#"
+        <a
+          href="/sign-in"
           className="border border-primary px-5 py-2.5 font-heading font-semibold text-[11px] text-primary uppercase tracking-widest transition-colors hover:border-foreground hover:text-foreground"
         >
-          Sign Up
-        </Link>
+          Sign In
+        </a>
       </nav>
-      */}
 
       {/* Hero Section */}
       <section className="flex flex-1 items-center justify-center px-6 py-16 md:px-12">
