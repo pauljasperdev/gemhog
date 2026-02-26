@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@gemhog/db": "workspace:*",
+    "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
     "better-auth": "catalog:",
     "drizzle-orm": "^0.45.1",
