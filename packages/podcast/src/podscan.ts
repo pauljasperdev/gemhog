@@ -20,6 +20,8 @@ interface PodscanServiceShape {
   readonly getLatest: (
     podcastId: string,
     limit?: number,
+    since?: string,
+    page?: number,
   ) => Effect.Effect.Effect<
     {
       readonly episodes: ReadonlyArray<PodscanEpisode>;

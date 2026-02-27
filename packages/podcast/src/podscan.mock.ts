@@ -230,7 +230,7 @@ export const MockPodscanService = Effect.Layer.succeed(
   PodscanService,
   PodscanService.of({
     getTop: (_category, _limit) => Effect.Effect.succeed(mockChartPodcasts),
-    getLatest: (podcastId, _limit) =>
+    getLatest: (podcastId, _limit, _since, _page) =>
       Effect.Effect.succeed({
         episodes: buildLatestEpisodes(podcastId),
         pagination: mockPagination,

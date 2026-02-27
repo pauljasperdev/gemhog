@@ -81,11 +81,12 @@ export const PodscanServiceLive = Effect.Layer.scoped(
           ),
         ),
 
-      getLatest: (podcastId, limit = 25) =>
+      getLatest: (podcastId, limit = 25, since?, page?) =>
         Effect.Effect.gen(function* () {
-          const response = yield* query(
-            `/podcasts/${podcastId}/episodes?limit=${String(limit)}&show_only_fully_processed=true`,
-          );
+          let url = `/podcasts/${podcastId}/episodes?limit=${String(limit)}&show_only_fully_processed=true`;
+          if (since !== undefined) url += `&since=${since}`;
+          if (page !== undefined) url += `&page=${String(page)}`;
+          const response = yield* query(url);
           return yield* HttpClientResponse.schemaBodyJson(
             PodscanEpisodesResponse,
           )(response);
