@@ -1,6 +1,7 @@
 "use client";
 
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -119,6 +120,13 @@ export function SignInForm() {
               className="h-12 w-full rounded-none font-heading text-sm tracking-wide"
             >
               {loading ? "Sending..." : "Send Code"}
+            </Button>
+            <Button
+              variant="outline"
+              asChild
+              className="h-12 w-full rounded-none font-heading text-sm tracking-wide"
+            >
+              <Link href="/">Go back</Link>
             </Button>
           </form>
         ) : (
