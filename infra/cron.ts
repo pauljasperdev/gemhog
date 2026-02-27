@@ -1,11 +1,6 @@
-import { syncEpisodesDaily, syncEpisodesWeekly } from "./functions";
+import { syncEpisodesDaily } from "./functions";
 
 export const episodeSyncDailyCron = new sst.aws.Cron("EpisodeSyncDailyCron", {
   function: syncEpisodesDaily.arn,
   schedule: "cron(0 2 * * ? *)", // 02:00 UTC = 03:00 CET
-});
-
-export const episodeSyncWeeklyCron = new sst.aws.Cron("EpisodeSyncWeeklyCron", {
-  function: syncEpisodesWeekly.arn,
-  schedule: "cron(0 3 ? * SUN *)", // 03:00 UTC Sundays = 04:00 CET — staggered 1h after daily to avoid rate limit overlap
 });

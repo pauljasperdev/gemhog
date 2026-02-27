@@ -15,9 +15,9 @@ export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
   },
 });
 
-export const syncEpisodesWeekly = new sst.aws.Function("SyncEpisodesWeekly", {
-  handler: "apps/functions/src/sync-episodes-weekly.handler",
-  timeout: "3 minutes",
+export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
+  handler: "apps/functions/src/backfill-episodes.handler",
+  timeout: "5 minutes", // 5 podcasts × 10 pages = 50 requests, well within trial limits
   link: [podcastBucket],
   environment: {
     DATABASE_URL_POOLER,
@@ -34,11 +34,10 @@ export const trigger = new sst.aws.Function("Trigger", {
   permissions: [
     {
       actions: ["lambda:InvokeFunction"],
-      resources: [syncEpisodesDaily.arn, syncEpisodesWeekly.arn],
+      resources: [backfillEpisodes.arn],
     },
   ],
   environment: {
-    SYNC_DAILY_FUNCTION_NAME: syncEpisodesDaily.name,
-    SYNC_WEEKLY_FUNCTION_NAME: syncEpisodesWeekly.name,
+    BACKFILL_FUNCTION_NAME: backfillEpisodes.name,
   },
 });
