@@ -24,6 +24,8 @@ const PODCAST_IDS: readonly string[] = [
   "pd_ka86x53mllm9wgdv", // Macro Voices
 ];
 
+const MAX_PAGES = 25;
+
 export const effectHandler = (
   _event: EventBridgeEvent<string, unknown>,
   _context: LambdaContext,
@@ -33,42 +35,68 @@ export const effectHandler = (
     const repo = yield* PodcastRepository;
     const bucket = yield* BucketService;
     const today = new Date().toISOString().split("T")[0] ?? "";
-    const since = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
 
     let processed = 0;
     let totalEpisodes = 0;
+    let totalNewEpisodes = 0;
     const errors: string[] = [];
 
     for (const podcastId of PODCAST_IDS) {
       yield* Effect.gen(function* () {
-        const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
-        const isFresh = yield* repo.readPodcastByPodscanId(podcastId).pipe(
-          Effect.map(
-            (existing) =>
-              Date.now() - existing.updatedAt.getTime() < ONE_MONTH_MS,
-          ),
-          Effect.catchTag("PodcastNotFoundError", () => Effect.succeed(false)),
+        // First fetch page 1 to discover last_page
+        const firstPage = yield* podscan.getLatest(podcastId, 25, undefined, 1);
+        const lastPage = Math.min(firstPage.pagination.last_page, MAX_PAGES);
+
+        yield* Effect.logInfo(
+          `Fetched page 1/${String(lastPage)} for podcast ${podcastId}`,
         );
 
-        if (!isFresh) {
-          const detail = yield* podscan.getPodcast(podcastId);
-          yield* repo.upsertPodcastByPodscanId(detail);
-        }
-
-        const { episodes } = yield* podscan.getLatest(
-          podcastId,
-          undefined,
-          since,
-        );
-        for (const ep of episodes) {
+        // Process page 1 episodes
+        for (const ep of firstPage.episodes) {
           yield* Effect.gen(function* () {
-            const isNew = yield* repo
-              .episodeExistsByPodscanId(ep.episode_id)
-              .pipe(Effect.map((exists) => !exists));
+            const exists = yield* repo.episodeExistsByPodscanId(ep.episode_id);
+            if (exists) return;
+
+            const postedAtDate = ep.posted_at.split("T")[0] ?? today;
             yield* repo.upsertEpisodeByPodscanId(ep);
-            if (isNew) {
+            yield* bucket
+              .writeEpisode("daily", postedAtDate, ep)
+              .pipe(
+                Effect.catchAll((error) =>
+                  Effect.logWarning(
+                    `Failed to write episode ${ep.episode_id} to bucket: ${String(error)}`,
+                  ),
+                ),
+              );
+            totalNewEpisodes += 1;
+          });
+        }
+        totalEpisodes += firstPage.episodes.length;
+
+        // Loop pages 2..lastPage
+        for (let page = 2; page <= lastPage; page++) {
+          const pageResult = yield* podscan.getLatest(
+            podcastId,
+            25,
+            undefined,
+            page,
+          );
+
+          yield* Effect.logInfo(
+            `Fetched page ${String(page)}/${String(lastPage)} for podcast ${podcastId}`,
+          );
+
+          for (const ep of pageResult.episodes) {
+            yield* Effect.gen(function* () {
+              const exists = yield* repo.episodeExistsByPodscanId(
+                ep.episode_id,
+              );
+              if (exists) return;
+
+              const postedAtDate = ep.posted_at.split("T")[0] ?? today;
+              yield* repo.upsertEpisodeByPodscanId(ep);
               yield* bucket
-                .writeEpisode("daily", today, ep)
+                .writeEpisode("daily", postedAtDate, ep)
                 .pipe(
                   Effect.catchAll((error) =>
                     Effect.logWarning(
@@ -76,18 +104,19 @@ export const effectHandler = (
                     ),
                   ),
                 );
-            }
-          });
+              totalNewEpisodes += 1;
+            });
+          }
+          totalEpisodes += pageResult.episodes.length;
         }
 
-        totalEpisodes += episodes.length;
         processed += 1;
         yield* Effect.logInfo(
-          `Synced podcast ${podcastId}: ${String(episodes.length)} episodes`,
+          `Backfilled podcast ${podcastId}: ${String(lastPage)} pages processed`,
         );
       }).pipe(
         Effect.tapError((error) =>
-          Effect.logError(`Failed to sync podcast ${podcastId}`, error),
+          Effect.logError(`Failed to backfill podcast ${podcastId}`, error),
         ),
         Effect.catchTag("PodscanError", (error) =>
           Effect.gen(function* () {
@@ -110,16 +139,16 @@ export const effectHandler = (
     }
 
     yield* Effect.logInfo(
-      `Sync complete: ${String(processed)}/${String(PODCAST_IDS.length)} podcasts processed, ${String(totalEpisodes)} episodes upserted, ${String(errors.length)} errors`,
+      `Backfill complete: ${String(processed)}/${String(PODCAST_IDS.length)} podcasts processed, ${String(totalEpisodes)} episodes checked, ${String(totalNewEpisodes)} new episodes written, ${String(errors.length)} errors`,
     );
 
     if (processed === 0 && errors.length > 0) {
       return yield* Effect.die(
-        new Error(`All ${String(errors.length)} podcasts failed to sync`),
+        new Error(`All ${String(errors.length)} podcasts failed to backfill`),
       );
     }
 
-    return { processed, totalEpisodes, errors };
+    return { processed, totalEpisodes, totalNewEpisodes, errors };
   });
 
 export const handler = LambdaHandler.make({
