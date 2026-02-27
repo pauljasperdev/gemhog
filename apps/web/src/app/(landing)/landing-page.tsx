@@ -12,7 +12,7 @@ export function LandingPage() {
         <div className="font-bold font-heading text-foreground text-lg uppercase tracking-tight">
           Gemhog<span className="text-primary">.</span>
         </div>
-        <div className="hidden items-center gap-8 font-heading md:flex">
+        {/* 
           <a
             href="#features"
             className="text-[#666] text-[11px] uppercase tracking-[0.2em] transition-colors hover:text-primary"
@@ -31,7 +31,7 @@ export function LandingPage() {
           >
             Proof
           </a>
-        </div>
+        */}
         <a
           href="/sign-in"
           className="border border-primary px-5 py-2.5 font-heading font-semibold text-[11px] text-primary uppercase tracking-widest transition-colors hover:border-foreground hover:text-foreground"
