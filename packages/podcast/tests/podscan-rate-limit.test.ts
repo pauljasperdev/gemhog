@@ -153,3 +153,69 @@ describe("Podscan rate-limit retry behavior", () => {
     }),
   );
 });
+
+describe("Podscan getLatest URL parameters", () => {
+  it.effect("since parameter is correctly appended to URL", () =>
+    Effect.Effect.gen(function* () {
+      let capturedUrl: string | undefined;
+      const layer = Layer.succeed(
+        HttpClient.HttpClient,
+        HttpClient.make((request, _url, _signal, _fiber) => {
+          capturedUrl = request.url;
+          return Effect.Effect.succeed(
+            makeClientResponse(request, 200, validEpisodesBody),
+          );
+        }),
+      );
+      const serviceLayer = makeServiceLayer(layer);
+
+      const fiber = yield* Effect.Effect.fork(
+        PodscanService.pipe(
+          Effect.Effect.flatMap((svc) =>
+            svc.getLatest("pd_test_123", undefined, "2024-02-26T00:00:00Z"),
+          ),
+          Effect.Effect.provide(Layer.orDie(serviceLayer)),
+          Effect.Effect.exit,
+        ),
+      );
+      yield* TestClock.adjust("0 millis");
+
+      yield* Fiber.join(fiber);
+
+      expect(capturedUrl).toBeDefined();
+      expect(capturedUrl).toContain("&since=2024-02-26T00:00:00Z");
+    }),
+  );
+
+  it.effect("page parameter is correctly appended to URL", () =>
+    Effect.Effect.gen(function* () {
+      let capturedUrl: string | undefined;
+      const layer = Layer.succeed(
+        HttpClient.HttpClient,
+        HttpClient.make((request, _url, _signal, _fiber) => {
+          capturedUrl = request.url;
+          return Effect.Effect.succeed(
+            makeClientResponse(request, 200, validEpisodesBody),
+          );
+        }),
+      );
+      const serviceLayer = makeServiceLayer(layer);
+
+      const fiber = yield* Effect.Effect.fork(
+        PodscanService.pipe(
+          Effect.Effect.flatMap((svc) =>
+            svc.getLatest("pd_test_123", undefined, undefined, 3),
+          ),
+          Effect.Effect.provide(Layer.orDie(serviceLayer)),
+          Effect.Effect.exit,
+        ),
+      );
+      yield* TestClock.adjust("0 millis");
+
+      yield* Fiber.join(fiber);
+
+      expect(capturedUrl).toBeDefined();
+      expect(capturedUrl).toContain("&page=3");
+    }),
+  );
+});
