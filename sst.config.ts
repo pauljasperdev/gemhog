@@ -16,46 +16,10 @@ export default $config({
               : "gemhog.dev",
         },
         cloudflare: true,
-        // hack until closed: https://github.com/anomalyco/sst/issues/6198
-        "aws-native": {
-          version: "1.49.0",
-          region: "eu-central-1",
-          profile: process.env.CODEBUILD_BUILD_ID
-            ? undefined
-            : input.stage === "prod"
-              ? "gemhog.prod"
-              : "gemhog.dev",
-        },
       },
     };
   },
   async run() {
-    // hack until closed: https://github.com/anomalyco/sst/issues/6198
-    $transform(aws.lambda.Permission, (args, _opts, name) => {
-      if (
-        args.action === "lambda:InvokeFunctionUrl" &&
-        args.principal === "*" &&
-        args.functionUrlAuthType === "NONE"
-      ) {
-        args.statementId = `FunctionUrlPublic-${name}`;
-      }
-    });
-
-    $transform(aws.lambda.FunctionUrl, (args, _opts, name) => {
-      const permissionArgs = {
-        action: "lambda:InvokeFunction",
-        functionName: args.functionName,
-        principal: "*",
-        invokedViaFunctionUrl: true,
-        statementId: "FunctionURLInvokeAllowPublicAccess",
-      } as awsnative.lambda.PermissionArgs;
-
-      new awsnative.lambda.Permission(
-        `${name}InvokePermission`,
-        permissionArgs,
-      );
-    });
-
     await import("./infra/secrets");
     await import("./infra/sql");
     // we dont need the api right now
