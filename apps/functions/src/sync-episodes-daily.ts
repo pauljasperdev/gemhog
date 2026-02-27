@@ -10,18 +10,21 @@ import {
 } from "@gemhog/podcast";
 import { Effect } from "effect";
 
-// Daily investing podcasts (5+ episodes/week — current market commentary)
+// MVP investing podcasts — balanced daily + weekly content
 const PODCAST_IDS: readonly string[] = [
-  "pd_ndbka52yzyqj2gez", // Money Guy Show
-  "pd_ndbka52ppbyj2gez", // Money For Couples with Ramit Sethi
-  "pd_vp6km5awq8b94lae", // Rich Dad Radio Show
-  "pd_3ymxjxog7ypjb8v6", // The Wealth Effect (Green Moon)
-  "pd_pmk29n3q2rdjev8n", // The Investing for Beginners Podcast
-  "pd_dpmk29nmper5ev8n", // Invest Like the Best with Patrick O'Shaughnessy
-  "pd_eaboy5lnapkjzvdx", // NerdWallet's Smart Money Podcast
-  "pd_mqazg9yb6bajr6w4", // All the Hacks: Money, Points & Life
-  "pd_7a3do5b3ywp9kxyr", // WashingtonWise (Charles Schwab)
-  "pd_ka86x53mllm9wgdv", // Macro Voices
+  // Daily market shows (high volume, current news)
+  "pd_4evzb9qe3e49873g", // Thoughts on the Market (Morgan Stanley) - daily
+  "pd_4evzb9qkyyl9873g", // Wall Street Breakfast (Seeking Alpha) - daily
+  "pd_w6go3jmkn6l52la7", // Motley Fool Money - daily
+
+  // Weekly deep-dives (quality investment theses)
+  "pd_6gokljvvn7yj37ma", // All-In - weekly
+  "pd_dpmk29nmper5ev8n", // Invest Like the Best - weekly
+  "pd_v8xnmz97l4534qeo", // We Study Billionaires - weekly
+  "pd_kwgp3jzaep9xnbyz", // Odd Lots (Bloomberg) - 3x/week
+  "pd_exk67jggkrjm8lrw", // Animal Spirits - 2x/week
+  "pd_dbka52p8eemj2gez", // Prof G Markets - 2x/week
+  "pd_ka86x53mllm9wgdv", // Macro Voices - weekly
 ];
 
 export const effectHandler = (
