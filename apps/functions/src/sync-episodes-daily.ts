@@ -10,21 +10,25 @@ import {
 } from "@gemhog/podcast";
 import { Effect } from "effect";
 
-// MVP investing podcasts — balanced daily + weekly content
+// MVP investing podcasts — 12 core shows for daily sync
 const PODCAST_IDS: readonly string[] = [
-  // Daily market shows (high volume, current news)
-  "pd_4evzb9qe3e49873g", // Thoughts on the Market (Morgan Stanley) - daily
-  "pd_4evzb9qkyyl9873g", // Wall Street Breakfast (Seeking Alpha) - daily
-  "pd_w6go3jmkn6l52la7", // Motley Fool Money - daily
+  // Daily market shows
+  "pd_4evzb9qe3e49873g", // Thoughts on the Market (Morgan Stanley)
+  "pd_4evzb9qkyyl9873g", // Wall Street Breakfast (Seeking Alpha)
+  "pd_w6go3jmkn6l52la7", // Motley Fool Money
 
-  // Weekly deep-dives (quality investment theses)
-  "pd_6gokljvvn7yj37ma", // All-In - weekly
-  "pd_dpmk29nmper5ev8n", // Invest Like the Best - weekly
-  "pd_v8xnmz97l4534qeo", // We Study Billionaires - weekly
-  "pd_kwgp3jzaep9xnbyz", // Odd Lots (Bloomberg) - 3x/week
-  "pd_exk67jggkrjm8lrw", // Animal Spirits - 2x/week
-  "pd_dbka52p8eemj2gez", // Prof G Markets - 2x/week
-  "pd_ka86x53mllm9wgdv", // Macro Voices - weekly
+  // Weekly deep-dives
+  "pd_6gokljvvn7yj37ma", // All-In
+  "pd_dpmk29nmper5ev8n", // Invest Like the Best
+  "pd_v8xnmz97l4534qeo", // We Study Billionaires
+  "pd_kwgp3jzaep9xnbyz", // Odd Lots (Bloomberg)
+  "pd_exk67jggkrjm8lrw", // Animal Spirits
+  "pd_dbka52p8eemj2gez", // Prof G Markets
+  "pd_ka86x53mllm9wgdv", // Macro Voices
+
+  // Company deep-dives
+  "pd_k42yajrkaq9p8owz", // Acquired
+  "pd_rw2lvjex6x5zax36", // Business Breakdowns
 ];
 
 export const effectHandler = (
