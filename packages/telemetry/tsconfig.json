@@ -2,6 +2,7 @@
   "extends": "@gemhog/config/tsconfig.base.json",
   "compilerOptions": {
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["vitest/globals"]
   }
 }
