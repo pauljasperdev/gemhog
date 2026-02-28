@@ -1,7 +1,9 @@
 import * as Effect from "effect";
+import { annotateCurrentSpan } from "effect/Effect";
 import { Resend } from "resend";
 import { EmailSendError } from "./errors";
 import { EmailService } from "./service";
+import type { EmailContent } from "./templates";
 
 const TRANSIENT_ERROR_NAMES = new Set([
   "rate_limit_exceeded",
@@ -34,35 +36,44 @@ export const EmailServiceLive = Effect.Layer.effect(
     const resend = new Resend(RESEND_API_KEY);
 
     return EmailService.of({
-      send: (to, email, headers) =>
-        Effect.Effect.tryPromise({
-          try: async () => {
-            const { error } = await resend.emails.send({
-              from: FROM_EMAIL,
-              to: [to],
-              subject: email.subject,
-              html: email.html,
-              headers,
-            });
-            if (error) throw error;
-          },
-          catch: (error) =>
-            new EmailSendError({
-              message: `Failed to send email to ${to}`,
-              cause: error,
-            }),
-        }).pipe(
-          Effect.Effect.tapErrorCause((cause) =>
-            Effect.Console.error(
-              `[EmailService] send failed for ${to}: ${String(cause)}`,
+      send: Effect.Effect.fn("email.resend.send")(
+        function* (
+          to: string,
+          email: EmailContent,
+          headers?: Record<string, string>,
+        ) {
+          yield* annotateCurrentSpan("email.to", to);
+          return yield* Effect.Effect.tryPromise({
+            try: async () => {
+              const { error } = await resend.emails.send({
+                from: FROM_EMAIL,
+                to: [to],
+                subject: email.subject,
+                html: email.html,
+                headers,
+              });
+              if (error) throw error;
+            },
+            catch: (error) =>
+              new EmailSendError({
+                message: `Failed to send email to ${to}`,
+                cause: error,
+              }),
+          });
+        },
+        (eff, to) =>
+          eff.pipe(
+            Effect.Effect.tapErrorCause((cause) =>
+              Effect.Console.error(
+                `[EmailService] send failed for ${to}: ${String(cause)}`,
+              ),
             ),
+            Effect.Effect.retry({
+              schedule: retrySchedule,
+              while: isTransientError,
+            }),
           ),
-          Effect.Effect.retry({
-            schedule: retrySchedule,
-            while: isTransientError,
-          }),
-          Effect.Effect.withSpan("email.send"),
-        ),
+      ),
     });
   }),
 );
