@@ -7,13 +7,11 @@ const nextConfig: NextConfig = {
   env: loadClientEnv(),
   typedRoutes: true,
   reactCompiler: true,
+  experimental: {
+    inlineCss: true,
+  },
   transpilePackages: [
-    "@gemhog/api",
-    "@gemhog/auth",
-    "@gemhog/db",
-    "@gemhog/email",
     "@gemhog/env",
-    "@gemhog/podcast",
     "@gemhog/subscriber",
     "@gemhog/telemetry",
     "shiki",
