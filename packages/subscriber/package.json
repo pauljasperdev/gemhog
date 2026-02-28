@@ -17,9 +17,11 @@
     "effect": "catalog:"
   },
   "devDependencies": {
+    "@effect/opentelemetry": "catalog:",
     "@effect/sql-pg": "^0.50",
     "@effect/vitest": "catalog:",
     "@gemhog/config": "workspace:*",
+    "@opentelemetry/sdk-trace-base": "^2.2.0",
     "typescript": "catalog:"
   }
 }
