@@ -111,3 +111,57 @@ export function createMockEpisode(
     ...overrides,
   };
 }
+
+/**
+ * Factory function to create a mock PodscanEpisode with nullable fields set to null.
+ * Used to test that the schema correctly handles null values for episode_guid,
+ * episode_has_guests, and episode_has_sponsors.
+ */
+export function createMockEpisodeWithNullableFields(
+  overrides?: Partial<PodscanEpisode>,
+): PodscanEpisode {
+  const timestamp = Date.now();
+
+  return {
+    episode_id: `test-episode-nullable-${timestamp}`,
+    episode_title: "Test Episode with Nullable Fields",
+    episode_url: "https://example.com/test-episode-nullable",
+    episode_audio_url: "https://example.com/test-audio-nullable.mp3",
+    episode_image_url: "https://example.com/test-image-nullable.jpg",
+    episode_duration: 3600,
+    episode_word_count: 5000,
+    episode_transcript:
+      "This is a test transcript for testing nullable fields. Welcome to the podcast.",
+    episode_description:
+      "A test episode with nullable fields for testing purposes.",
+    episode_categories: [
+      {
+        category_id: "cat-1",
+        category_name: "Technology",
+      },
+    ],
+    episode_fully_processed: true,
+    episode_guid: null,
+    episode_has_guests: null,
+    episode_has_sponsors: null,
+    episode_permalink: "https://example.com/test-episode-nullable-permalink",
+    episode_transcript_word_level_timestamps: {},
+    metadata: {},
+    topics: [
+      {
+        topic_id: "topic-1",
+        topic_name: "AI",
+        topic_name_normalized: "ai",
+      },
+    ],
+    podcast: {
+      podcast_id: "test-podcast-1",
+      podcast_name: "Test Podcast",
+      podcast_url: "https://example.com/test-podcast",
+    },
+    posted_at: "2024-02-14T10:00:00Z",
+    created_at: "2024-02-14T10:00:00Z",
+    updated_at: "2024-02-14T10:00:00Z",
+    ...overrides,
+  };
+}

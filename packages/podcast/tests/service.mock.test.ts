@@ -164,9 +164,18 @@ describe("MockPodscanService", () => {
       expect(typeof episode.episode_transcript).toBe("string");
       expect(typeof episode.episode_description).toBe("string");
       expect(typeof episode.episode_fully_processed).toBe("boolean");
-      expect(typeof episode.episode_guid).toBe("string");
-      expect(typeof episode.episode_has_guests).toBe("boolean");
-      expect(typeof episode.episode_has_sponsors).toBe("boolean");
+      expect(
+        typeof episode.episode_guid === "string" ||
+          episode.episode_guid === null,
+      ).toBe(true);
+      expect(
+        typeof episode.episode_has_guests === "boolean" ||
+          episode.episode_has_guests === null,
+      ).toBe(true);
+      expect(
+        typeof episode.episode_has_sponsors === "boolean" ||
+          episode.episode_has_sponsors === null,
+      ).toBe(true);
       expect(typeof episode.posted_at).toBe("string");
       expect(typeof episode.created_at).toBe("string");
       expect(typeof episode.updated_at).toBe("string");
@@ -218,6 +227,34 @@ describe("MockPodscanService", () => {
       );
 
       expect(result.episodes.length).toBeGreaterThan(0);
+    });
+
+    it("returns episodes with nullable fields (guid, has_guests, has_sponsors)", async () => {
+      const result = await runWithMockService(
+        PodscanService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.getLatest("mock-podcast-1", 10),
+          ),
+        ),
+      );
+
+      const episode = result.episodes[0];
+      expect(episode).toBeDefined();
+      if (!episode) return;
+
+      // Verify nullable fields can be string/boolean or null
+      expect(
+        episode.episode_guid === null ||
+          typeof episode.episode_guid === "string",
+      ).toBe(true);
+      expect(
+        episode.episode_has_guests === null ||
+          typeof episode.episode_has_guests === "boolean",
+      ).toBe(true);
+      expect(
+        episode.episode_has_sponsors === null ||
+          typeof episode.episode_has_sponsors === "boolean",
+      ).toBe(true);
     });
   });
 
