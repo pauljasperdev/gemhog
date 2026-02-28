@@ -94,34 +94,66 @@ export const SubscriberRepositoryLive = Effect.Layer.effect(
             // biome-ignore lint/style/noNonNullAssertion: Database insert returns at least one row.
             .pipe(Effect.Effect.map((rows: Subscriber[]) => rows[0]!)),
         ),
-        Effect.Effect.withSpan("subscriber.create"),
       );
 
     return SubscriberRepository.of({
-      createSubscriber: (email) =>
-        createSubscriber(email).pipe(
-          Effect.Effect.catchTag("SqlError", (e) =>
-            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+      createSubscriber: Effect.Effect.fn("subscriber.repository.create")(
+        function* (email: string) {
+          yield* Effect.Effect.annotateCurrentSpan("email", email);
+          return yield* createSubscriber(email);
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.catchTag("SqlError", (e) =>
+              Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+            ),
           ),
-        ),
-      readSubscriberByEmail: (email) =>
-        readSubscriberByEmail(email).pipe(
-          Effect.Effect.catchTag("SqlError", (e) =>
-            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+      ),
+      readSubscriberByEmail: Effect.Effect.fn(
+        "subscriber.repository.readByEmail",
+      )(
+        function* (email: string) {
+          return yield* readSubscriberByEmail(email);
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.catchTag("SqlError", (e) =>
+              Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+            ),
           ),
-        ),
-      readSubscriberById: (subscriberId) =>
-        readSubscriberById(subscriberId).pipe(
-          Effect.Effect.catchTag("SqlError", (e) =>
-            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+      ),
+      readSubscriberById: Effect.Effect.fn("subscriber.repository.readById")(
+        function* (subscriberId: string) {
+          yield* Effect.Effect.annotateCurrentSpan(
+            "subscriberId",
+            subscriberId,
+          );
+          return yield* readSubscriberById(subscriberId);
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.catchTag("SqlError", (e) =>
+              Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+            ),
           ),
-        ),
-      updateSubscriberById: (subscriberId, updates) =>
-        updateSubscriberById(subscriberId, updates).pipe(
-          Effect.Effect.catchTag("SqlError", (e) =>
-            Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+      ),
+      updateSubscriberById: Effect.Effect.fn(
+        "subscriber.repository.updateById",
+      )(
+        function* (subscriberId: string, updates: Partial<Subscriber>) {
+          yield* Effect.Effect.annotateCurrentSpan(
+            "subscriberId",
+            subscriberId,
+          );
+          return yield* updateSubscriberById(subscriberId, updates);
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.catchTag("SqlError", (e) =>
+              Effect.Effect.fail(new SubscriberRepositoryError({ cause: e })),
+            ),
           ),
-        ),
+      ),
     });
   }),
 );

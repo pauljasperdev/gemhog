@@ -4,6 +4,7 @@ import {
   verificationEmail,
 } from "@gemhog/email";
 import * as Effect from "effect";
+import { annotateCurrentSpan } from "effect/Effect";
 import { SubscriberServiceError } from "./errors";
 import { SubscriberRepository } from "./repository";
 import { SubscriberService } from "./service";
@@ -17,8 +18,9 @@ export const SubscriberServiceLive = Effect.Layer.effect(
     const appUrl = yield* Effect.Config.string("APP_URL");
 
     return SubscriberService.of({
-      subscribe: (email) =>
-        Effect.Effect.gen(function* () {
+      subscribe: Effect.Effect.fn("subscriber.service.subscribe")(
+        function* (email: string) {
+          yield* annotateCurrentSpan("email", email);
           const sub = yield* repository.createSubscriber(email);
           const shouldSendEmail = sub.status === "pending";
 
@@ -39,47 +41,55 @@ export const SubscriberServiceLive = Effect.Layer.effect(
           }
 
           return sub;
-        }).pipe(
-          Effect.Effect.catchTags({
-            SubscriberRepositoryError: (e) =>
-              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
-            ConfigError: (e) =>
-              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
-            EmailSendError: (e) =>
-              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
-          }),
-          Effect.Effect.withSpan("subscriber.subscribe"),
-        ),
-
-      verify: (subscriberId) =>
-        repository.readSubscriberById(subscriberId).pipe(
-          Effect.Effect.flatMap(() =>
-            repository.updateSubscriberById(subscriberId, {
-              status: "active",
-              verifiedAt: new Date(),
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.catchTags({
+              SubscriberRepositoryError: (e) =>
+                Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+              ConfigError: (e) =>
+                Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+              EmailSendError: (e) =>
+                Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
             }),
           ),
-          Effect.Effect.asVoid,
-          Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
-            Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
-          ),
-          Effect.Effect.withSpan("subscriber.verify"),
-        ),
+      ),
 
-      unsubscribe: (subscriberId) =>
-        repository.readSubscriberById(subscriberId).pipe(
-          Effect.Effect.flatMap(() =>
-            repository.updateSubscriberById(subscriberId, {
-              status: "unsubscribed",
-              unsubscribedAt: new Date(),
-            }),
+      verify: Effect.Effect.fn("subscriber.service.verify")(
+        function* (subscriberId: string) {
+          yield* annotateCurrentSpan("subscriberId", subscriberId);
+          yield* repository.readSubscriberById(subscriberId);
+          yield* repository.updateSubscriberById(subscriberId, {
+            status: "active",
+            verifiedAt: new Date(),
+          });
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.asVoid,
+            Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
+              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+            ),
           ),
-          Effect.Effect.asVoid,
-          Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
-            Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+      ),
+
+      unsubscribe: Effect.Effect.fn("subscriber.service.unsubscribe")(
+        function* (subscriberId: string) {
+          yield* annotateCurrentSpan("subscriberId", subscriberId);
+          yield* repository.readSubscriberById(subscriberId);
+          yield* repository.updateSubscriberById(subscriberId, {
+            status: "unsubscribed",
+            unsubscribedAt: new Date(),
+          });
+        },
+        (eff) =>
+          eff.pipe(
+            Effect.Effect.asVoid,
+            Effect.Effect.catchTag("SubscriberRepositoryError", (e) =>
+              Effect.Effect.fail(new SubscriberServiceError({ cause: e })),
+            ),
           ),
-          Effect.Effect.withSpan("subscriber.unsubscribe"),
-        ),
+      ),
     });
   }),
 );
