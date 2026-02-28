@@ -65,30 +65,36 @@ describe("Subscriber Service Span Tracing", () => {
       tracerLayer,
     );
 
-    const result = await Effect.Effect.runPromise(
-      SubscriberService.pipe(
-        Effect.Effect.flatMap((service) =>
-          service.subscribe("test@example.com"),
-        ),
-        Effect.Effect.provide(TestLayers),
-        Effect.Effect.either,
-      ),
-    );
+    // IMPORTANT: Read spans INSIDE the Effect scope, before NodeSdk shuts down
+    // the exporter (which clears _finishedSpans on shutdown).
+    const { result, spanNames, subscribeSpanAttrs } =
+      await Effect.Effect.runPromise(
+        Effect.Effect.gen(function* () {
+          const result = yield* SubscriberService.pipe(
+            Effect.Effect.flatMap((service) =>
+              service.subscribe("test@example.com"),
+            ),
+            Effect.Effect.either,
+          );
+          const spans = exporter.getFinishedSpans();
+          const subscribeSpan = spans.find(
+            (s) => s.name === "subscriber.service.subscribe",
+          );
+          return {
+            result,
+            spanNames: spans.map((s) => s.name),
+            subscribeSpanAttrs: subscribeSpan?.attributes ?? null,
+          };
+        }).pipe(Effect.Effect.provide(TestLayers)),
+      );
 
     expect(result._tag).toBe("Right");
 
-    const spans = exporter.getFinishedSpans();
-    const spanNames = spans.map((s) => s.name);
-
-    // Assert span name exists
+    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("subscriber.service.subscribe");
 
     // Assert span has email attribute
-    const subscribeSpan = spans.find(
-      (s) => s.name === "subscriber.service.subscribe",
-    );
-    expect(subscribeSpan).toBeDefined();
-    expect(subscribeSpan?.attributes).toEqual(
+    expect(subscribeSpanAttrs).toEqual(
       expect.objectContaining({
         email: "test@example.com",
       }),
@@ -118,28 +124,32 @@ describe("Subscriber Service Span Tracing", () => {
       tracerLayer,
     );
 
-    const result = await Effect.Effect.runPromise(
-      SubscriberService.pipe(
-        Effect.Effect.flatMap((service) => service.verify("test-id")),
-        Effect.Effect.provide(TestLayers),
-        Effect.Effect.either,
-      ),
-    );
+    const { result, spanNames, verifySpanAttrs } =
+      await Effect.Effect.runPromise(
+        Effect.Effect.gen(function* () {
+          const result = yield* SubscriberService.pipe(
+            Effect.Effect.flatMap((service) => service.verify("test-id")),
+            Effect.Effect.either,
+          );
+          const spans = exporter.getFinishedSpans();
+          const verifySpan = spans.find(
+            (s) => s.name === "subscriber.service.verify",
+          );
+          return {
+            result,
+            spanNames: spans.map((s) => s.name),
+            verifySpanAttrs: verifySpan?.attributes ?? null,
+          };
+        }).pipe(Effect.Effect.provide(TestLayers)),
+      );
 
     expect(result._tag).toBe("Right");
 
-    const spans = exporter.getFinishedSpans();
-    const spanNames = spans.map((s) => s.name);
-
-    // Assert span name exists
+    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("subscriber.service.verify");
 
     // Assert span has subscriberId attribute
-    const verifySpan = spans.find(
-      (s) => s.name === "subscriber.service.verify",
-    );
-    expect(verifySpan).toBeDefined();
-    expect(verifySpan?.attributes).toEqual(
+    expect(verifySpanAttrs).toEqual(
       expect.objectContaining({
         subscriberId: "test-id",
       }),
@@ -169,28 +179,32 @@ describe("Subscriber Service Span Tracing", () => {
       tracerLayer,
     );
 
-    const result = await Effect.Effect.runPromise(
-      SubscriberService.pipe(
-        Effect.Effect.flatMap((service) => service.unsubscribe("test-id")),
-        Effect.Effect.provide(TestLayers),
-        Effect.Effect.either,
-      ),
-    );
+    const { result, spanNames, unsubscribeSpanAttrs } =
+      await Effect.Effect.runPromise(
+        Effect.Effect.gen(function* () {
+          const result = yield* SubscriberService.pipe(
+            Effect.Effect.flatMap((service) => service.unsubscribe("test-id")),
+            Effect.Effect.either,
+          );
+          const spans = exporter.getFinishedSpans();
+          const unsubscribeSpan = spans.find(
+            (s) => s.name === "subscriber.service.unsubscribe",
+          );
+          return {
+            result,
+            spanNames: spans.map((s) => s.name),
+            unsubscribeSpanAttrs: unsubscribeSpan?.attributes ?? null,
+          };
+        }).pipe(Effect.Effect.provide(TestLayers)),
+      );
 
     expect(result._tag).toBe("Right");
 
-    const spans = exporter.getFinishedSpans();
-    const spanNames = spans.map((s) => s.name);
-
-    // Assert span name exists
+    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("subscriber.service.unsubscribe");
 
     // Assert span has subscriberId attribute
-    const unsubscribeSpan = spans.find(
-      (s) => s.name === "subscriber.service.unsubscribe",
-    );
-    expect(unsubscribeSpan).toBeDefined();
-    expect(unsubscribeSpan?.attributes).toEqual(
+    expect(unsubscribeSpanAttrs).toEqual(
       expect.objectContaining({
         subscriberId: "test-id",
       }),
@@ -224,20 +238,21 @@ describe("Subscriber Service Span Tracing", () => {
       tracerLayer,
     );
 
-    const result = await Effect.Effect.runPromise(
-      SubscriberService.pipe(
-        Effect.Effect.flatMap((service) =>
-          service.subscribe("test@example.com"),
-        ),
-        Effect.Effect.provide(TestLayers),
-        Effect.Effect.either,
-      ),
+    const { result, spanCount } = await Effect.Effect.runPromise(
+      Effect.Effect.gen(function* () {
+        const result = yield* SubscriberService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.subscribe("test@example.com"),
+          ),
+          Effect.Effect.either,
+        );
+        const spans = exporter.getFinishedSpans();
+        return { result, spanCount: spans.length };
+      }).pipe(Effect.Effect.provide(TestLayers)),
     );
 
     expect(result._tag).toBe("Left");
-
-    const spans = exporter.getFinishedSpans();
-    // Even on failure, span should be created
-    expect(spans.length).toBeGreaterThan(0);
+    // Even on failure, span should be created — THIS WILL FAIL until implementation
+    expect(spanCount).toBeGreaterThan(0);
   });
 });

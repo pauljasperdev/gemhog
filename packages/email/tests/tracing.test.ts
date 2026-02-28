@@ -9,6 +9,18 @@ import { EmailServiceConsole } from "../src/console";
 import { EmailServiceLive } from "../src/resend";
 import { EmailService } from "../src/service";
 
+// Mock the Resend SDK to avoid real HTTP calls
+vi.mock("resend", () => ({
+  Resend: vi.fn().mockImplementation(() => ({
+    emails: {
+      send: vi.fn().mockResolvedValue({ data: { id: "mock-id" }, error: null }),
+    },
+  })),
+}));
+
+// Set API key for EmailServiceLive config
+process.env.RESEND_API_KEY = "test-key";
+
 describe("Email Tracing", () => {
   let exporter: InMemorySpanExporter;
   let tracerLayer: Effect.Layer.Layer<never>;
@@ -23,76 +35,68 @@ describe("Email Tracing", () => {
   });
 
   it("EmailServiceConsole creates email.console.send span", async () => {
-    const program = EmailService.pipe(
-      Effect.Effect.flatMap((service) =>
-        service.send("to@example.com", {
-          subject: "Test Subject",
-          html: "<p>Hello</p>",
-          text: "Hello",
-        }),
+    // IMPORTANT: Read spans INSIDE the Effect scope, before NodeSdk shuts down
+    // the exporter (which clears _finishedSpans on shutdown).
+    const { spanNames, emailToAttr } = await Effect.Effect.runPromise(
+      Effect.Effect.gen(function* () {
+        yield* EmailService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.send("to@example.com", {
+              subject: "Test Subject",
+              html: "<p>Hello</p>",
+              text: "Hello",
+            }),
+          ),
+        );
+        const spans = exporter.getFinishedSpans();
+        const emailSpan = spans.find((s) => s.name === "email.console.send");
+        return {
+          spanNames: spans.map((s) => s.name),
+          emailToAttr: emailSpan?.attributes?.["email.to"] ?? null,
+        };
+      }).pipe(
+        Effect.Effect.provide(
+          Effect.Layer.mergeAll(EmailServiceConsole, tracerLayer),
+        ),
       ),
-      Effect.Effect.provide(
-        Effect.Layer.mergeAll(EmailServiceConsole, tracerLayer),
-      ),
-      Effect.Effect.either,
     );
 
-    const result = await Effect.Effect.runPromise(program);
-    expect(result).toBeDefined();
-
-    const spans = exporter.getFinishedSpans();
-    const spanNames = spans.map((s) => s.name);
-
-    // This will FAIL because current implementation uses "email.send"
-    // but test expects "email.console.send"
+    // THIS WILL FAIL until implementation — current span name is "email.send"
     expect(spanNames).toContain("email.console.send");
 
     // Verify email.to attribute is set
-    const emailSpan = spans.find((s) => s.name === "email.console.send");
-    expect(emailSpan?.attributes?.["email.to"]).toBe("to@example.com");
+    expect(emailToAttr).toBe("to@example.com");
   });
 
   it("EmailServiceLive creates email.resend.send span", async () => {
-    // Mock the Resend SDK to avoid real HTTP calls
-    vi.mock("resend", () => ({
-      Resend: vi.fn().mockImplementation(() => ({
-        emails: {
-          send: vi
-            .fn()
-            .mockResolvedValue({ data: { id: "mock-id" }, error: null }),
-        },
-      })),
-    }));
-
-    // Set API key for config
-    process.env.RESEND_API_KEY = "test-key";
-
-    const program = EmailService.pipe(
-      Effect.Effect.flatMap((service) =>
-        service.send("to@example.com", {
-          subject: "Test Subject",
-          html: "<p>Hello</p>",
-          text: "Hello",
-        }),
+    const { spanNames, emailToAttr } = await Effect.Effect.runPromise(
+      Effect.Effect.gen(function* () {
+        yield* EmailService.pipe(
+          Effect.Effect.flatMap((service) =>
+            service.send("to@example.com", {
+              subject: "Test Subject",
+              html: "<p>Hello</p>",
+              text: "Hello",
+            }),
+          ),
+        );
+        const spans = exporter.getFinishedSpans();
+        const emailSpan = spans.find((s) => s.name === "email.resend.send");
+        return {
+          spanNames: spans.map((s) => s.name),
+          emailToAttr: emailSpan?.attributes?.["email.to"] ?? null,
+        };
+      }).pipe(
+        Effect.Effect.provide(
+          Effect.Layer.mergeAll(EmailServiceLive, tracerLayer),
+        ),
       ),
-      Effect.Effect.provide(
-        Effect.Layer.mergeAll(EmailServiceLive, tracerLayer),
-      ),
-      Effect.Effect.either,
     );
 
-    const result = await Effect.Effect.runPromise(program);
-    expect(result).toBeDefined();
-
-    const spans = exporter.getFinishedSpans();
-    const spanNames = spans.map((s) => s.name);
-
-    // This will FAIL because current implementation uses "email.send"
-    // but test expects "email.resend.send"
+    // THIS WILL FAIL until implementation — current span name is "email.send"
     expect(spanNames).toContain("email.resend.send");
 
     // Verify email.to attribute is set
-    const emailSpan = spans.find((s) => s.name === "email.resend.send");
-    expect(emailSpan?.attributes?.["email.to"]).toBe("to@example.com");
+    expect(emailToAttr).toBe("to@example.com");
   });
 });
