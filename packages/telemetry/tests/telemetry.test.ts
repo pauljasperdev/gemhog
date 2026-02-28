@@ -13,25 +13,31 @@ import { makeTracingLive } from "../src/index";
 // ------------------------------------------------------------------
 
 vi.mock("@opentelemetry/sdk-trace-base", () => ({
-  ConsoleSpanExporter: vi.fn(() => ({
-    export: vi.fn((_spans: unknown, done: (result: unknown) => void) =>
-      done({ code: 0 }),
-    ),
-    shutdown: vi.fn(() => Promise.resolve()),
-  })),
-  BatchSpanProcessor: vi.fn(() => ({
-    onStart: vi.fn(),
-    onEnd: vi.fn(),
-    shutdown: vi.fn(() => Promise.resolve()),
-    forceFlush: vi.fn(() => Promise.resolve()),
-  })),
+  ConsoleSpanExporter: vi.fn(function () {
+    return {
+      export: vi.fn((_spans: unknown, done: (result: unknown) => void) =>
+        done({ code: 0 }),
+      ),
+      shutdown: vi.fn(() => Promise.resolve()),
+    };
+  }),
+  BatchSpanProcessor: vi.fn(function () {
+    return {
+      onStart: vi.fn(),
+      onEnd: vi.fn(),
+      shutdown: vi.fn(() => Promise.resolve()),
+      forceFlush: vi.fn(() => Promise.resolve()),
+    };
+  }),
 }));
 
 vi.mock("@opentelemetry/sdk-trace-node", () => ({
-  TraceIdRatioBasedSampler: vi.fn(() => ({
-    shouldSample: vi.fn(() => ({ decision: 1 })),
-    toString: vi.fn(() => "TraceIdRatioBasedSampler"),
-  })),
+  TraceIdRatioBasedSampler: vi.fn(function () {
+    return {
+      shouldSample: vi.fn(() => ({ decision: 1 })),
+      toString: vi.fn(() => "TraceIdRatioBasedSampler"),
+    };
+  }),
 }));
 
 // ------------------------------------------------------------------

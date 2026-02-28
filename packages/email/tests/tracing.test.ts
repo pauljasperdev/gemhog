@@ -1,3 +1,4 @@
+// UNIQUE_MARKER_EMAIL_12345
 import * as NodeSdk from "@effect/opentelemetry/NodeSdk";
 import {
   InMemorySpanExporter,
@@ -11,11 +12,13 @@ import { EmailService } from "../src/service";
 
 // Mock the Resend SDK to avoid real HTTP calls
 vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(() => ({
-    emails: {
-      send: vi.fn().mockResolvedValue({ data: { id: "mock-id" }, error: null }),
-    },
-  })),
+  Resend: vi.fn().mockImplementation(function () {
+    return {
+      emails: {
+        send: vi.fn().mockResolvedValue({ data: { id: "mock-id" }, error: null }),
+      },
+    };
+  }),
 }));
 
 // Set API key for EmailServiceLive config
