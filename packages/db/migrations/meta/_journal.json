@@ -43,6 +43,13 @@
       "when": 1772131957520,
       "tag": "0005_lethal_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1772307647241,
+      "tag": "0006_daffy_colleen_wing",
+      "breakpoints": true
     }
   ]
 }
