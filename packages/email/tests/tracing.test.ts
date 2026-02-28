@@ -11,11 +11,15 @@ import { EmailServiceLive } from "../src/resend";
 import { EmailService } from "../src/service";
 
 // Mock the Resend SDK to avoid real HTTP calls
+// Named function expression: biome does not convert named functions to arrows,
+// and vitest SSR mode requires a non-arrow function to use as a constructor (new Resend(...)).
 vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(function () {
+  Resend: vi.fn().mockImplementation(function mockResend() {
     return {
       emails: {
-        send: vi.fn().mockResolvedValue({ data: { id: "mock-id" }, error: null }),
+        send: vi
+          .fn()
+          .mockResolvedValue({ data: { id: "mock-id" }, error: null }),
       },
     };
   }),
@@ -64,10 +68,7 @@ describe("Email Tracing", () => {
       ),
     );
 
-    // THIS WILL FAIL until implementation — current span name is "email.send"
     expect(spanNames).toContain("email.console.send");
-
-    // Verify email.to attribute is set
     expect(emailToAttr).toBe("to@example.com");
   });
 
@@ -96,10 +97,7 @@ describe("Email Tracing", () => {
       ),
     );
 
-    // THIS WILL FAIL until implementation — current span name is "email.send"
     expect(spanNames).toContain("email.resend.send");
-
-    // Verify email.to attribute is set
     expect(emailToAttr).toBe("to@example.com");
   });
 });

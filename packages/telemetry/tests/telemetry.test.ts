@@ -10,10 +10,13 @@ import { makeTracingLive } from "../src/index";
 
 // ------------------------------------------------------------------
 // Module mocks — top-level, hoisted by vi (bun-compatible, no importOriginal)
+// Named function expressions are used because:
+//   1. vitest SSR mode requires non-arrow functions for constructor mocks (new ClassName())
+//   2. biome's useArrowFunction rule does not apply to named function expressions
 // ------------------------------------------------------------------
 
 vi.mock("@opentelemetry/sdk-trace-base", () => ({
-  ConsoleSpanExporter: vi.fn(function () {
+  ConsoleSpanExporter: vi.fn(function mockConsoleSpanExporter() {
     return {
       export: vi.fn((_spans: unknown, done: (result: unknown) => void) =>
         done({ code: 0 }),
@@ -21,7 +24,7 @@ vi.mock("@opentelemetry/sdk-trace-base", () => ({
       shutdown: vi.fn(() => Promise.resolve()),
     };
   }),
-  BatchSpanProcessor: vi.fn(function () {
+  BatchSpanProcessor: vi.fn(function mockBatchSpanProcessor() {
     return {
       onStart: vi.fn(),
       onEnd: vi.fn(),
@@ -32,7 +35,7 @@ vi.mock("@opentelemetry/sdk-trace-base", () => ({
 }));
 
 vi.mock("@opentelemetry/sdk-trace-node", () => ({
-  TraceIdRatioBasedSampler: vi.fn(function () {
+  TraceIdRatioBasedSampler: vi.fn(function mockTraceIdRatioBasedSampler() {
     return {
       shouldSample: vi.fn(() => ({ decision: 1 })),
       toString: vi.fn(() => "TraceIdRatioBasedSampler"),
