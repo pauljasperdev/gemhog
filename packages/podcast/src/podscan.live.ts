@@ -68,8 +68,8 @@ export const PodscanServiceLive = Effect.Layer.scoped(
         )(response);
         return body.podcasts;
       },
-      (effect) =>
-        effect.pipe(
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,
@@ -98,8 +98,8 @@ export const PodscanServiceLive = Effect.Layer.scoped(
           PodscanEpisodesResponse,
         )(response);
       },
-      (effect) =>
-        effect.pipe(
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,
@@ -125,8 +125,8 @@ export const PodscanServiceLive = Effect.Layer.scoped(
         )(response);
         return body.podcast;
       },
-      (effect) =>
-        effect.pipe(
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,

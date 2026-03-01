@@ -313,6 +313,7 @@ describe("Podcast Service Span Tracing", () => {
         const topSpan = spans.find((s) => s.name === "podcast.podscan.getTop");
         return {
           result,
+          // biome-ignore lint/suspicious/noExplicitAny: test helper
           spanNames: spans.map((s: any) => s.name),
           topSpanAttrs: topSpan?.attributes ?? null,
         };
@@ -321,7 +322,6 @@ describe("Podcast Service Span Tracing", () => {
 
     expect(result._tag).toBe("Right");
 
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getTop");
 
     expect(topSpanAttrs).toEqual(
@@ -353,6 +353,7 @@ describe("Podcast Service Span Tracing", () => {
           );
           return {
             result,
+            // biome-ignore lint/suspicious/noExplicitAny: test helper
             spanNames: spans.map((s: any) => s.name),
             latestSpanAttrs: latestSpan?.attributes ?? null,
           };
@@ -361,7 +362,6 @@ describe("Podcast Service Span Tracing", () => {
 
     expect(result._tag).toBe("Right");
 
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getLatest");
 
     expect(latestSpanAttrs).toEqual(
@@ -393,6 +393,7 @@ describe("Podcast Service Span Tracing", () => {
           );
           return {
             result,
+            // biome-ignore lint/suspicious/noExplicitAny: test helper
             spanNames: spans.map((s: any) => s.name),
             podcastSpanAttrs: podcastSpan?.attributes ?? null,
           };
@@ -401,7 +402,6 @@ describe("Podcast Service Span Tracing", () => {
 
     expect(result._tag).toBe("Right");
 
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getPodcast");
 
     expect(podcastSpanAttrs).toEqual(
@@ -417,6 +417,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -434,6 +435,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -450,6 +452,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -467,6 +470,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -481,6 +485,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -496,6 +501,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -510,6 +516,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -525,6 +532,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -539,6 +547,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -556,6 +565,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -570,6 +580,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -587,6 +598,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -601,6 +613,7 @@ describe("Podcast Service Span Tracing", () => {
     });
     const TestDrizzleLayer = Effect.Layer.succeed(
       PgDrizzle,
+      // biome-ignore lint/suspicious/noExplicitAny: test helper
       mockDrizzle as any,
     );
     const TestRepoLayer = PodcastRepositoryLive.pipe(
@@ -618,6 +631,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
@@ -642,6 +656,7 @@ describe("Podcast Service Span Tracing", () => {
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
+        // biome-ignore lint/suspicious/noExplicitAny: test helper
         return { result, spanNames: spans.map((s: any) => s.name) };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
