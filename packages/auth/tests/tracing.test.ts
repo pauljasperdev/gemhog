@@ -139,30 +139,4 @@ describe("auth tracing", () => {
       }
     });
   });
-
-  describe("Better Auth instrumentation", () => {
-    /**
-     * Better Auth spans require HTTP request infrastructure.
-     *
-     * The instrumentBetterAuth wrapper creates spans when Better Auth's
-     * handler processes HTTP requests. Testing these spans in isolation
-     * requires either:
-     * - A real HTTP server to make requests through Better Auth's handler
-     * - Mocking the entire request/response cycle
-     *
-     * These are better suited for integration tests (Task 7) where we can:
-     * - Start a test server with the instrumented auth handler
-     * - Make real HTTP requests to trigger auth operations
-     * - Capture and verify spans through the tracing pipeline
-     */
-    it.skip("creates span for getSession operation", async () => {
-      // Integration test: requires HTTP server to call auth.api.getSession
-      // See: apps/web/tests/auth-integration.test.ts (Task 7)
-    });
-
-    it.skip("creates span for sign-in operation", async () => {
-      // Integration test: requires HTTP server to process sign-in request
-      // See: apps/web/tests/auth-integration.test.ts (Task 7)
-    });
-  });
 });

@@ -5,13 +5,14 @@ import {
   HttpClientResponse,
 } from "@effect/platform";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
-import { beforeEach, describe, expect, it, vi } from "@effect/vitest";
+import { beforeEach, describe, expect, it } from "@effect/vitest";
 import type { Episode, Podcast } from "@gemhog/db/podcast";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
 import * as Effect from "effect";
+import { vi } from "vitest";
 import { BucketService } from "../src/bucket";
 import { BucketServiceLive } from "../src/bucket.live";
 import { PodscanService } from "../src/podscan";
@@ -25,12 +26,19 @@ import type {
 } from "../src/schema";
 
 // Mock S3Client to avoid real AWS calls in tests
-vi.mock("@aws-sdk/client-s3", () => ({
-  S3Client: vi.fn(() => ({
-    send: vi.fn().mockResolvedValue({}),
-  })),
-  PutObjectCommand: vi.fn((params) => params),
-}));
+vi.mock("@aws-sdk/client-s3", () => {
+  class MockS3Client {
+    send = vi.fn(async () => ({}));
+  }
+  return {
+    S3Client: MockS3Client,
+    PutObjectCommand: class {
+      constructor(params: unknown) {
+        Object.assign(this, params);
+      }
+    },
+  };
+});
 
 process.env.PODSCAN_API_TOKEN = process.env.PODSCAN_API_TOKEN ?? "test-token";
 process.env.PODSCAN_BASE_URL =
