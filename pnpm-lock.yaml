@@ -647,6 +647,9 @@ importers:
       '@gemhog/env':
         specifier: workspace:*
         version: link:../env
+      '@gemhog/telemetry':
+        specifier: workspace:*
+        version: link:../telemetry
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.10)(pg@8.17.2)
