@@ -27,6 +27,7 @@ export default $config({
     const bucket = await import("./infra/bucket");
     const web = await import("./infra/web");
     await import("./infra/cron");
+    await import("./infra/ci");
     return {
       // ...(api.outputs || {}),
       ...(bucket.outputs || {}),
