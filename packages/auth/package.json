@@ -11,6 +11,8 @@
     "@gemhog/db": "workspace:*",
     "@gemhog/email": "workspace:*",
     "@gemhog/env": "workspace:*",
+    "@kubiks/otel-better-auth": "^2.0.2",
+    "@opentelemetry/api": "catalog:",
     "better-auth": "catalog:",
     "drizzle-orm": "^0.45.1",
     "effect": "catalog:"
