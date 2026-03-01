@@ -123,15 +123,6 @@ new aws.iam.RolePolicy("GemhogCodebuildRolePolicy", {
         Resource: ["*"],
       },
       {
-        Sid: "CloudflareSecret",
-        Effect: "Allow",
-        Action: ["secretsmanager:GetSecretValue"],
-        Resource: [
-          "arn:aws:secretsmanager:eu-central-1:*:secret:gemhog/cloudflare-api-token*",
-          "arn:aws:secretsmanager:eu-central-1:*:secret:gemhog/cloudflare-default-account-id*",
-        ],
-      },
-      {
         Sid: "CloudWatchLogs",
         Effect: "Allow",
         Action: [
@@ -165,7 +156,7 @@ phases:
   build:
     commands:
       - pnpm sst deploy --stage ${stage}
-      - pnpm sst shell --stage ${stage} -- pnpm --filter @gemhog/db db:migrate`;
+      - pnpm --filter @gemhog/db db:migrate`;
 }
 
 // Single project per account
@@ -191,13 +182,18 @@ const project = new aws.codebuild.Project("GemhogDeploy", {
     environmentVariables: [
       {
         name: "CLOUDFLARE_API_TOKEN",
-        value: "gemhog/cloudflare-api-token",
-        type: "SECRETS_MANAGER",
+        value: `/sst/gemhog/${stage}/Secret/CloudflareApiToken/value`,
+        type: "PARAMETER_STORE",
       },
       {
         name: "CLOUDFLARE_DEFAULT_ACCOUNT_ID",
-        value: "gemhog/cloudflare-default-account-id",
-        type: "SECRETS_MANAGER",
+        value: `/sst/gemhog/${stage}/Secret/CloudflareAccountId/value`,
+        type: "PARAMETER_STORE",
+      },
+      {
+        name: "DATABASE_URL",
+        value: `/sst/gemhog/${stage}/Secret/DatabaseUrl/value`,
+        type: "PARAMETER_STORE",
       },
     ],
   },
