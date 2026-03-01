@@ -55,8 +55,8 @@ export function LandingPage() {
           </h1>
           <div className="max-w-xl">
             <h2 className="mb-10 font-normal text-lg text-muted-foreground leading-relaxed">
-              Investment ideas, trends, and expert takes — delivered to your
-              inbox.
+              Expert claims surfaced and clustered — so you can make sharper
+              decisions. Stay on top of current trends in the stock market.
             </h2>
             <SubscribeForm />
           </div>

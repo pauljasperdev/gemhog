@@ -40,7 +40,7 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
         <meta name="supported-color-schemes" content="dark only" />
       </Head>
       <Preview>
-        Thanks for subscribing to Gemhog. Please confirm your email.
+        Thanks for signing up for Gemhog. Please confirm your email.
       </Preview>
       <Body
         style={{
@@ -94,8 +94,8 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
                 margin: "0 0 24px",
               }}
             >
-              Thanks for subscribing! Please confirm your email address to start
-              receiving expert investment insights.
+              Thanks for signing up! Please confirm your email address to get
+              early access.
             </Text>
             <Button
               href={verifyUrl}
@@ -110,7 +110,7 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
                 letterSpacing: "0.05em",
               }}
             >
-              Confirm subscription
+              Confirm my spot
             </Button>
           </Section>
 
@@ -255,7 +255,7 @@ export async function verificationEmail(params: {
     { plainText: true },
   );
   return {
-    subject: "Confirm your Gemhog subscription",
+    subject: "Confirm your spot on the Gemhog waitlist",
     html,
     text,
   };

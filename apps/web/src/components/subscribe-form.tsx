@@ -27,7 +27,7 @@ function SuccessCard() {
           Check your inbox
         </p>
         <p className="text-muted-foreground text-xs">
-          You&apos;re on the list.
+          You&apos;re on the waitlist.
         </p>
       </div>
     </div>
@@ -120,7 +120,7 @@ export function SubscribeForm() {
                       type="submit"
                       className="h-12 w-36 shrink-0 rounded-none px-8 font-heading text-sm tracking-wide"
                     >
-                      Subscribe
+                      Join Waitlist
                     </Button>
                   </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -132,8 +132,7 @@ export function SubscribeForm() {
       )}
 
       <p className="mt-6 text-muted-foreground text-xs">
-        By subscribing, you agree to receive our newsletter. Unsubscribe
-        anytime.{" "}
+        By signing up, you agree to receive our newsletter. Unsubscribe anytime.{" "}
         <Link
           href="/privacy"
           className="text-primary underline-offset-4 hover:underline"
