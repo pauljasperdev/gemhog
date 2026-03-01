@@ -2,7 +2,6 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -130,16 +129,6 @@ export function SubscribeForm() {
           </form.Field>
         </form>
       )}
-
-      <p className="mt-6 text-muted-foreground text-xs">
-        By signing up, you agree to receive our newsletter. Unsubscribe anytime.{" "}
-        <Link
-          href="/privacy"
-          className="text-primary underline-offset-4 hover:underline"
-        >
-          privacy policy
-        </Link>
-      </p>
     </div>
   );
 }

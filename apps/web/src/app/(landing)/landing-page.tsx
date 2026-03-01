@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import { SubscribeForm } from "@/components/subscribe-form";
-
 export function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background font-body text-foreground">
@@ -53,10 +52,13 @@ export function LandingPage() {
             <span className="text-primary">investment podcasts</span> so you
             don&apos;t have to
           </h1>
-          <div className="max-w-xl">
+          <div className="max-w-2xl">
             <h2 className="mb-10 font-normal text-lg text-muted-foreground leading-relaxed">
-              Expert claims surfaced and clustered — so you can make better
-              decisions. Stay on top of current trends in the stock market.
+              <p>
+                Expert claims surfaced and clustered — so you can make better
+                decisions.{" "}
+              </p>
+              <p>Stay on top of current trends in the stock market.</p>
             </h2>
             <SubscribeForm />
           </div>
