@@ -1,5 +1,6 @@
 import { FetchHttpClient } from "@effect/platform";
 import { SqlLive } from "@gemhog/db";
+import { makeTracingLive } from "@gemhog/telemetry";
 import * as Effect from "effect";
 import { BucketServiceLive } from "./bucket.live";
 import { BucketServiceMock } from "./bucket.mock";
@@ -29,6 +30,7 @@ export const BucketLayer = Effect.Layer.unwrapEffect(
 );
 
 export const PodcastLayer = Effect.Layer.mergeAll(
+  makeTracingLive("gemhog-podcast"),
   PodcastRepositoryLayer,
   PodscanLayer,
   BucketLayer,
