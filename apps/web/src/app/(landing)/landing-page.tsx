@@ -55,7 +55,7 @@ export function LandingPage() {
           </h1>
           <div className="max-w-xl">
             <h2 className="mb-10 font-normal text-lg text-muted-foreground leading-relaxed">
-              Expert claims surfaced and clustered — so you can make sharper
+              Expert claims surfaced and clustered — so you can make better
               decisions. Stay on top of current trends in the stock market.
             </h2>
             <SubscribeForm />
