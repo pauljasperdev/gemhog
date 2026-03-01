@@ -2,6 +2,7 @@ import type { SqlError } from "@effect/sql/SqlError";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { eq } from "drizzle-orm";
 import * as Effect from "effect";
+import { annotateCurrentSpan } from "effect/Effect";
 import {
   EpisodeNotFoundError,
   PodcastNotFoundError,
@@ -9,17 +10,19 @@ import {
 } from "./errors";
 import { PodcastRepository } from "./repository";
 import type { PodscanEpisode, PodscanPodcastDetail } from "./schema";
-import { type Episode, episode, type Podcast, podcast } from "./sql";
+import { episode, podcast } from "./sql";
 
 export const PodcastRepositoryLive = Effect.Layer.effect(
   PodcastRepository,
   Effect.Effect.gen(function* () {
     const db = yield* PgDrizzle;
 
-    const upsertPodcastByPodscanId = (
-      data: PodscanPodcastDetail,
-    ): Effect.Effect.Effect<Podcast, PodcastRepositoryError, never> =>
-      Effect.Effect.gen(function* () {
+    const upsertPodcastByPodscanId = Effect.Effect.fn(
+      "podcast.repository.upsertPodcast",
+    )(
+      function* (data: PodscanPodcastDetail) {
+        yield* annotateCurrentSpan("podscanPodcastId", data.podcast_id);
+
         const podcastData = {
           podscanPodcastId: data.podcast_id,
           name: data.podcast_name,
@@ -64,17 +67,22 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         // biome-ignore lint/style/noNonNullAssertion: Database upsert returns at least one row.
         return rows[0]!;
-      }).pipe(
-        Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
-          const cause = `Database operation failed during podcast upsert: ${sqlError.message}`;
-          return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
-        }),
-      );
+      },
+      (effect) =>
+        effect.pipe(
+          Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
+            const cause = `Database operation failed during podcast upsert: ${sqlError.message}`;
+            return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
+          }),
+        ),
+    );
 
-    const upsertEpisodeByPodscanId = (
-      data: PodscanEpisode,
-    ): Effect.Effect.Effect<Episode, PodcastRepositoryError, never> =>
-      Effect.Effect.gen(function* () {
+    const upsertEpisodeByPodscanId = Effect.Effect.fn(
+      "podcast.repository.upsertEpisode",
+    )(
+      function* (data: PodscanEpisode) {
+        yield* annotateCurrentSpan("podscanEpisodeId", data.episode_id);
+
         const podcastRows = yield* db
           .select()
           .from(podcast)
@@ -133,124 +141,142 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         // biome-ignore lint/style/noNonNullAssertion: Database upsert returns at least one row.
         return rows[0]!;
-      }).pipe(
-        Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
-          const cause = `Database operation failed during episode upsert: ${sqlError.message}`;
-          return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
-        }),
-      );
+      },
+      (effect) =>
+        effect.pipe(
+          Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
+            const cause = `Database operation failed during episode upsert: ${sqlError.message}`;
+            return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
+          }),
+        ),
+    );
 
-    const readPodcastById = (
-      podcastId: string,
-    ): Effect.Effect.Effect<
-      Podcast,
-      PodcastRepositoryError | PodcastNotFoundError,
-      never
-    > =>
-      db
-        .select()
-        .from(podcast)
-        .where(eq(podcast.id, podcastId))
-        .pipe(
-          Effect.Effect.map((rows: Podcast[]) => rows[0]),
-          Effect.Effect.flatMap((row) =>
-            row
-              ? Effect.Effect.succeed(row)
-              : Effect.Effect.fail(
-                  new PodcastNotFoundError({ identifier: podcastId }),
-                ),
-          ),
+    const readPodcastById = Effect.Effect.fn(
+      "podcast.repository.readPodcastById",
+    )(
+      function* (podcastId: string) {
+        yield* annotateCurrentSpan("podcastId", podcastId);
+
+        const rows = yield* db
+          .select()
+          .from(podcast)
+          .where(eq(podcast.id, podcastId));
+
+        const row = rows[0];
+        if (!row) {
+          return yield* Effect.Effect.fail(
+            new PodcastNotFoundError({ identifier: podcastId }),
+          );
+        }
+        return row;
+      },
+      (effect) =>
+        effect.pipe(
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during podcast read: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
           }),
-        );
+        ),
+    );
 
-    const readEpisodeById = (
-      episodeId: string,
-    ): Effect.Effect.Effect<
-      Episode,
-      PodcastRepositoryError | EpisodeNotFoundError,
-      never
-    > =>
-      db
-        .select()
-        .from(episode)
-        .where(eq(episode.id, episodeId))
-        .pipe(
-          Effect.Effect.map((rows: Episode[]) => rows[0]),
-          Effect.Effect.flatMap((row) =>
-            row
-              ? Effect.Effect.succeed(row)
-              : Effect.Effect.fail(
-                  new EpisodeNotFoundError({ identifier: episodeId }),
-                ),
-          ),
+    const readEpisodeById = Effect.Effect.fn(
+      "podcast.repository.readEpisodeById",
+    )(
+      function* (episodeId: string) {
+        yield* annotateCurrentSpan("episodeId", episodeId);
+
+        const rows = yield* db
+          .select()
+          .from(episode)
+          .where(eq(episode.id, episodeId));
+
+        const row = rows[0];
+        if (!row) {
+          return yield* Effect.Effect.fail(
+            new EpisodeNotFoundError({ identifier: episodeId }),
+          );
+        }
+        return row;
+      },
+      (effect) =>
+        effect.pipe(
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during episode read: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
           }),
-        );
+        ),
+    );
 
-    const readEpisodesByPodcastId = (
-      podcastId: string,
-    ): Effect.Effect.Effect<
-      ReadonlyArray<Episode>,
-      PodcastRepositoryError,
-      never
-    > =>
-      db
-        .select()
-        .from(episode)
-        .where(eq(episode.podcastId, podcastId))
-        .pipe(
-          Effect.Effect.map((rows) => rows),
+    const readEpisodesByPodcastId = Effect.Effect.fn(
+      "podcast.repository.readEpisodesByPodcastId",
+    )(
+      function* (podcastId: string) {
+        yield* annotateCurrentSpan("podcastId", podcastId);
+
+        const rows = yield* db
+          .select()
+          .from(episode)
+          .where(eq(episode.podcastId, podcastId));
+        return rows;
+      },
+      (effect) =>
+        effect.pipe(
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during episodes read: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
           }),
-        );
+        ),
+    );
 
-    const episodeExistsByPodscanId = (
-      podscanEpisodeId: string,
-    ): Effect.Effect.Effect<boolean, PodcastRepositoryError, never> =>
-      db
-        .select({ id: episode.id })
-        .from(episode)
-        .where(eq(episode.podscanEpisodeId, podscanEpisodeId))
-        .pipe(
-          Effect.Effect.map((rows) => rows.length > 0),
+    const episodeExistsByPodscanId = Effect.Effect.fn(
+      "podcast.repository.episodeExists",
+    )(
+      function* (podscanEpisodeId: string) {
+        yield* annotateCurrentSpan("podscanEpisodeId", podscanEpisodeId);
+
+        const rows = yield* db
+          .select({ id: episode.id })
+          .from(episode)
+          .where(eq(episode.podscanEpisodeId, podscanEpisodeId));
+
+        return rows.length > 0;
+      },
+      (effect) =>
+        effect.pipe(
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during episode exists check: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
           }),
-        );
+        ),
+    );
 
-    const readPodcastByPodscanId = (
-      podscanPodcastId: string,
-    ): Effect.Effect.Effect<
-      Podcast,
-      PodcastRepositoryError | PodcastNotFoundError,
-      never
-    > =>
-      db
-        .select()
-        .from(podcast)
-        .where(eq(podcast.podscanPodcastId, podscanPodcastId))
-        .pipe(
-          Effect.Effect.map((rows: Podcast[]) => rows[0]),
-          Effect.Effect.flatMap((row) =>
-            row
-              ? Effect.Effect.succeed(row)
-              : Effect.Effect.fail(
-                  new PodcastNotFoundError({ identifier: podscanPodcastId }),
-                ),
-          ),
+    const readPodcastByPodscanId = Effect.Effect.fn(
+      "podcast.repository.readPodcastByPodscanId",
+    )(
+      function* (podscanPodcastId: string) {
+        yield* annotateCurrentSpan("podscanPodcastId", podscanPodcastId);
+
+        const rows = yield* db
+          .select()
+          .from(podcast)
+          .where(eq(podcast.podscanPodcastId, podscanPodcastId));
+
+        const row = rows[0];
+        if (!row) {
+          return yield* Effect.Effect.fail(
+            new PodcastNotFoundError({ identifier: podscanPodcastId }),
+          );
+        }
+        return row;
+      },
+      (effect) =>
+        effect.pipe(
           Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
             const cause = `Database operation failed during podcast read by podscan ID: ${sqlError.message}`;
             return Effect.Effect.fail(new PodcastRepositoryError({ cause }));
           }),
-        );
+        ),
+    );
 
     return PodcastRepository.of({
       upsertPodcastByPodscanId,
