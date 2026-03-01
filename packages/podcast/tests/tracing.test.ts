@@ -4,6 +4,7 @@ import {
   type HttpClientRequest,
   HttpClientResponse,
 } from "@effect/platform";
+import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { beforeEach, describe, expect, it, vi } from "@effect/vitest";
 import type { Episode, Podcast } from "@gemhog/db/podcast";
 import {
@@ -16,6 +17,7 @@ import { BucketServiceLive } from "../src/bucket.live";
 import { PodscanService } from "../src/podscan";
 import { PodscanServiceLive } from "../src/podscan.live";
 import { PodcastRepository } from "../src/repository";
+import { PodcastRepositoryLive } from "../src/repository.live";
 import type {
   PodscanChartPodcast,
   PodscanEpisode,
@@ -250,6 +252,37 @@ const podscanHttpClientLayer = Effect.Layer.succeed(
   }),
 );
 
+// Mock PgDrizzle for repository tests - creates a chainable mock that returns Effects
+function makeMockPgDrizzle(config: {
+  selectResult?: unknown[];
+  insertResult?: unknown[];
+}) {
+  const selectResult = config.selectResult ?? [];
+  const insertResult = config.insertResult ?? [];
+
+  const mockChain = {
+    // select() or select({...})
+    select: (_fields?: unknown) => ({
+      from: (_table: unknown) => ({
+        where: (_condition: unknown) => Effect.Effect.succeed(selectResult),
+        pipe: (
+          fn: (eff: Effect.Effect.Effect<unknown[], never, never>) => unknown,
+        ) => fn(Effect.Effect.succeed(selectResult)),
+      }),
+    }),
+    // insert(table)
+    insert: (_table: unknown) => ({
+      values: (_data: unknown) => ({
+        onConflictDoUpdate: (_config: unknown) => ({
+          returning: () => Effect.Effect.succeed(insertResult),
+        }),
+      }),
+    }),
+  };
+
+  return mockChain;
+}
+
 describe("Podcast Service Span Tracing", () => {
   let exporter: InMemorySpanExporter;
   let tracerLayer: Effect.Layer.Layer<never>;
@@ -379,20 +412,18 @@ describe("Podcast Service Span Tracing", () => {
   });
 
   it("upsertPodcast creates podcast.repository.upsertPodcast span", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    const mockDrizzle = makeMockPgDrizzle({
+      insertResult: [makeTestPodcast()],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -408,26 +439,24 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.upsertPodcast");
   });
 
   it("upsertEpisode creates podcast.repository.upsertEpisode span", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    // upsertEpisode first queries for the podcast, then inserts the episode
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [makeTestPodcast()],
+      insertResult: [makeTestEpisode()],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -443,27 +472,22 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.upsertEpisode");
   });
 
   it("readPodcastById creates podcast.repository.readPodcastById span with podcastId attribute", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) =>
-        Effect.Effect.succeed(makeTestPodcast({ id: _id })),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [makeTestPodcast({ id: "test-id" })],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -477,27 +501,22 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.readPodcastById");
   });
 
   it("readEpisodeById creates podcast.repository.readEpisodeById span with episodeId attribute", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) =>
-        Effect.Effect.succeed(makeTestEpisode({ id: _id })),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [makeTestEpisode({ id: "test-id" })],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -511,26 +530,22 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.readEpisodeById");
   });
 
   it("readEpisodesByPodcastId creates podcast.repository.readEpisodesByPodcastId span with podcastId attribute", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode({ podcastId: _id })]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [makeTestEpisode({ podcastId: "test-podcast-id" })],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -546,26 +561,22 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.readEpisodesByPodcastId");
   });
 
   it("episodeExistsByPodscanId creates podcast.repository.episodeExists span with podscanEpisodeId attribute", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) => Effect.Effect.succeed(makeTestPodcast()),
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [{ id: "some-episode-id" }],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -581,27 +592,22 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.episodeExists");
   });
 
   it("readPodcastByPodscanId creates podcast.repository.readPodcastByPodscanId span with podscanPodcastId attribute", async () => {
-    const TestRepositoryLayer = Effect.Layer.succeed(PodcastRepository, {
-      upsertPodcastByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestPodcast()),
-      upsertEpisodeByPodscanId: (_data) =>
-        Effect.Effect.succeed(makeTestEpisode()),
-      readPodcastById: (_id) => Effect.Effect.succeed(makeTestPodcast()),
-      readEpisodeById: (_id) => Effect.Effect.succeed(makeTestEpisode()),
-      readEpisodesByPodcastId: (_id) =>
-        Effect.Effect.succeed([makeTestEpisode()]),
-      episodeExistsByPodscanId: (_id) => Effect.Effect.succeed(true),
-      readPodcastByPodscanId: (_id) =>
-        Effect.Effect.succeed(makeTestPodcast({ podscanPodcastId: _id })),
+    const mockDrizzle = makeMockPgDrizzle({
+      selectResult: [makeTestPodcast({ podscanPodcastId: "test-podscan-id" })],
     });
+    const TestDrizzleLayer = Effect.Layer.succeed(
+      PgDrizzle,
+      mockDrizzle as any,
+    );
+    const TestRepoLayer = PodcastRepositoryLive.pipe(
+      Effect.Layer.provide(TestDrizzleLayer),
+    );
 
-    const TestLayers = Effect.Layer.mergeAll(TestRepositoryLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(TestRepoLayer, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
@@ -617,8 +623,6 @@ describe("Podcast Service Span Tracing", () => {
     );
 
     expect(result._tag).toBe("Right");
-
-    // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.repository.readPodcastByPodscanId");
   });
 
