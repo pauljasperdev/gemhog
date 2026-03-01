@@ -1,4 +1,5 @@
 import "@gemhog/env/server";
+import { instrumentBetterAuth } from "@kubiks/otel-better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, emailOTP } from "better-auth/plugins";
@@ -19,7 +20,7 @@ const trustedOrigins = [
   process.env.BETTER_AUTH_URL,
 ].filter((origin): origin is string => Boolean(origin));
 
-export const auth = betterAuth({
+const unwrappedAuth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
@@ -59,6 +60,11 @@ export const auth = betterAuth({
     }),
   ],
 });
+
+export const auth = instrumentBetterAuth(
+  unwrappedAuth as unknown as Parameters<typeof instrumentBetterAuth>[0],
+  { tracerName: "gemhog-auth" },
+) as unknown as typeof unwrappedAuth;
 
 export type Session = typeof auth.$Infer.Session;
 
