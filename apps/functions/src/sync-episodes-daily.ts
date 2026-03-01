@@ -127,7 +127,9 @@ export const effectHandler = (
     }
 
     return { processed, totalEpisodes, errors };
-  });
+  }).pipe(
+    Effect.ensuring(Effect.sleep("200 millis")), // Allow BatchSpanProcessor to flush before Lambda freeze
+  );
 
 export const handler = LambdaHandler.make({
   handler: effectHandler,
