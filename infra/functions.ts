@@ -3,6 +3,7 @@ import { secrets } from "./secrets";
 import { DATABASE_URL_POOLER } from "./sql";
 
 export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
+  runtime: "nodejs22.x",
   handler: "apps/functions/src/sync-episodes-daily.handler",
   timeout: "3 minutes",
   link: [podcastBucket],
@@ -16,6 +17,7 @@ export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
 });
 
 export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
+  runtime: "nodejs22.x",
   handler: "apps/functions/src/backfill-episodes.handler",
   timeout: "5 minutes", // 5 podcasts × 10 pages = 50 requests, well within trial limits
   link: [podcastBucket],
@@ -29,6 +31,7 @@ export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
 });
 
 export const trigger = new sst.aws.Function("Trigger", {
+  runtime: "nodejs22.x",
   handler: "apps/functions/src/trigger-sync.handler",
   url: true,
   permissions: [

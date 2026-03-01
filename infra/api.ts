@@ -3,6 +3,7 @@ import { secrets } from "./secrets";
 import { DATABASE_URL_POOLER } from "./sql";
 
 export const api = new sst.aws.Function("Api", {
+  runtime: "nodejs22.x",
   handler: "apps/server/src/lambda.handler",
   streaming: !$dev,
   url: {
