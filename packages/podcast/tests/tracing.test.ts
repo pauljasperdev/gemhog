@@ -1,5 +1,10 @@
 import * as NodeSdk from "@effect/opentelemetry/NodeSdk";
-import { beforeEach, describe, expect, it } from "@effect/vitest";
+import {
+  HttpClient,
+  type HttpClientRequest,
+  HttpClientResponse,
+} from "@effect/platform";
+import { beforeEach, describe, expect, it, vi } from "@effect/vitest";
 import type { Episode, Podcast } from "@gemhog/db/podcast";
 import {
   InMemorySpanExporter,
@@ -7,13 +12,29 @@ import {
 } from "@opentelemetry/sdk-trace-base";
 import * as Effect from "effect";
 import { BucketService } from "../src/bucket";
+import { BucketServiceLive } from "../src/bucket.live";
 import { PodscanService } from "../src/podscan";
+import { PodscanServiceLive } from "../src/podscan.live";
 import { PodcastRepository } from "../src/repository";
 import type {
   PodscanChartPodcast,
   PodscanEpisode,
   PodscanPodcastDetail,
 } from "../src/schema";
+
+// Mock S3Client to avoid real AWS calls in tests
+vi.mock("@aws-sdk/client-s3", () => ({
+  S3Client: vi.fn(() => ({
+    send: vi.fn().mockResolvedValue({}),
+  })),
+  PutObjectCommand: vi.fn((params) => params),
+}));
+
+process.env.PODSCAN_API_TOKEN = process.env.PODSCAN_API_TOKEN ?? "test-token";
+process.env.PODSCAN_BASE_URL =
+  process.env.PODSCAN_BASE_URL ?? "https://test.podscan.api/v1";
+process.env.PODCAST_BUCKET_NAME =
+  process.env.PODCAST_BUCKET_NAME ?? "test-bucket";
 
 function makeTestPodcast(overrides?: Partial<Podcast>): Podcast {
   return {
@@ -182,6 +203,53 @@ function makeTestPodscanPodcastDetail(
   };
 }
 
+const makeClientResponse = (
+  request: HttpClientRequest.HttpClientRequest,
+  body: unknown,
+): HttpClientResponse.HttpClientResponse =>
+  HttpClientResponse.fromWeb(
+    request,
+    new Response(JSON.stringify(body), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    }),
+  );
+
+const podscanHttpClientLayer = Effect.Layer.succeed(
+  HttpClient.HttpClient,
+  HttpClient.make((request, _url, _signal, _fiber) => {
+    if (request.url.includes("/charts/apple/us/")) {
+      return Effect.Effect.succeed(
+        makeClientResponse(request, {
+          podcasts: [makeTestPodscanChartPodcast()],
+        }),
+      );
+    }
+
+    if (request.url.includes("/episodes?")) {
+      return Effect.Effect.succeed(
+        makeClientResponse(request, {
+          episodes: [makeTestPodscanEpisode()],
+          pagination: {
+            total: 1,
+            per_page: 10,
+            current_page: 1,
+            last_page: 1,
+            from: 1,
+            to: 1,
+          },
+        }),
+      );
+    }
+
+    return Effect.Effect.succeed(
+      makeClientResponse(request, {
+        podcast: makeTestPodscanPodcastDetail(),
+      }),
+    );
+  }),
+);
+
 describe("Podcast Service Span Tracing", () => {
   let exporter: InMemorySpanExporter;
   let tracerLayer: Effect.Layer.Layer<never>;
@@ -195,37 +263,26 @@ describe("Podcast Service Span Tracing", () => {
   });
 
   it("getTop creates podcast.podscan.getTop span with category attribute", async () => {
-    const TestPodscanLayer = Effect.Layer.succeed(PodscanService, {
-      getTop: (_category, _limit) =>
-        Effect.Effect.succeed([makeTestPodscanChartPodcast()]),
-      getLatest: (_podcastId, _limit, _since, _page) =>
-        Effect.Effect.succeed({
-          episodes: [makeTestPodscanEpisode()],
-          pagination: {
-            total: 1,
-            per_page: 10,
-            current_page: 1,
-            last_page: 1,
-            from: 1,
-            to: 1,
-          },
-        }),
-      getPodcast: (_podcastId) =>
-        Effect.Effect.succeed(makeTestPodscanPodcastDetail()),
-    });
-
-    const TestLayers = Effect.Layer.mergeAll(TestPodscanLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(
+      PodscanServiceLive.pipe(Effect.Layer.provide(podscanHttpClientLayer)),
+      tracerLayer,
+    );
 
     // IMPORTANT: Read spans INSIDE the Effect scope, before NodeSdk shuts down
     // the exporter (which clears _finishedSpans on shutdown).
-    const { result, spanNames } = await Effect.Effect.runPromise(
+    const { result, spanNames, topSpanAttrs } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {
         const result = yield* PodscanService.pipe(
           Effect.Effect.flatMap((service) => service.getTop("technology", 10)),
           Effect.Effect.either,
         );
         const spans = exporter.getFinishedSpans();
-        return { result, spanNames: spans.map((s: any) => s.name) };
+        const topSpan = spans.find((s) => s.name === "podcast.podscan.getTop");
+        return {
+          result,
+          spanNames: spans.map((s: any) => s.name),
+          topSpanAttrs: topSpan?.attributes ?? null,
+        };
       }).pipe(Effect.Effect.provide(TestLayers)),
     );
 
@@ -233,88 +290,92 @@ describe("Podcast Service Span Tracing", () => {
 
     // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getTop");
+
+    expect(topSpanAttrs).toEqual(
+      expect.objectContaining({
+        category: "technology",
+        limit: 10,
+      }),
+    );
   });
 
   it("getLatest creates podcast.podscan.getLatest span with podcastId attribute", async () => {
-    const TestPodscanLayer = Effect.Layer.succeed(PodscanService, {
-      getTop: (_category, _limit) =>
-        Effect.Effect.succeed([makeTestPodscanChartPodcast()]),
-      getLatest: (_podcastId, _limit, _since, _page) =>
-        Effect.Effect.succeed({
-          episodes: [makeTestPodscanEpisode()],
-          pagination: {
-            total: 1,
-            per_page: 10,
-            current_page: 1,
-            last_page: 1,
-            from: 1,
-            to: 1,
-          },
-        }),
-      getPodcast: (_podcastId) =>
-        Effect.Effect.succeed(makeTestPodscanPodcastDetail()),
-    });
-
-    const TestLayers = Effect.Layer.mergeAll(TestPodscanLayer, tracerLayer);
-
-    const { result, spanNames } = await Effect.Effect.runPromise(
-      Effect.Effect.gen(function* () {
-        const result = yield* PodscanService.pipe(
-          Effect.Effect.flatMap((service) =>
-            service.getLatest("test-podcast-id", 10),
-          ),
-          Effect.Effect.either,
-        );
-        const spans = exporter.getFinishedSpans();
-        return { result, spanNames: spans.map((s: any) => s.name) };
-      }).pipe(Effect.Effect.provide(TestLayers)),
+    const TestLayers = Effect.Layer.mergeAll(
+      PodscanServiceLive.pipe(Effect.Layer.provide(podscanHttpClientLayer)),
+      tracerLayer,
     );
+
+    const { result, spanNames, latestSpanAttrs } =
+      await Effect.Effect.runPromise(
+        Effect.Effect.gen(function* () {
+          const result = yield* PodscanService.pipe(
+            Effect.Effect.flatMap((service) =>
+              service.getLatest("test-podcast-id", 10),
+            ),
+            Effect.Effect.either,
+          );
+          const spans = exporter.getFinishedSpans();
+          const latestSpan = spans.find(
+            (s) => s.name === "podcast.podscan.getLatest",
+          );
+          return {
+            result,
+            spanNames: spans.map((s: any) => s.name),
+            latestSpanAttrs: latestSpan?.attributes ?? null,
+          };
+        }).pipe(Effect.Effect.provide(TestLayers)),
+      );
 
     expect(result._tag).toBe("Right");
 
     // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getLatest");
+
+    expect(latestSpanAttrs).toEqual(
+      expect.objectContaining({
+        podcastId: "test-podcast-id",
+        limit: 10,
+      }),
+    );
   });
 
   it("getPodcast creates podcast.podscan.getPodcast span with podcastId attribute", async () => {
-    const TestPodscanLayer = Effect.Layer.succeed(PodscanService, {
-      getTop: (_category, _limit) =>
-        Effect.Effect.succeed([makeTestPodscanChartPodcast()]),
-      getLatest: (_podcastId, _limit, _since, _page) =>
-        Effect.Effect.succeed({
-          episodes: [makeTestPodscanEpisode()],
-          pagination: {
-            total: 1,
-            per_page: 10,
-            current_page: 1,
-            last_page: 1,
-            from: 1,
-            to: 1,
-          },
-        }),
-      getPodcast: (_podcastId) =>
-        Effect.Effect.succeed(makeTestPodscanPodcastDetail()),
-    });
-
-    const TestLayers = Effect.Layer.mergeAll(TestPodscanLayer, tracerLayer);
-
-    const { result, spanNames } = await Effect.Effect.runPromise(
-      Effect.Effect.gen(function* () {
-        const result = yield* PodscanService.pipe(
-          Effect.Effect.flatMap((service) =>
-            service.getPodcast("test-podcast-id"),
-          ),
-          Effect.Effect.either,
-        );
-        const spans = exporter.getFinishedSpans();
-        return { result, spanNames: spans.map((s: any) => s.name) };
-      }).pipe(Effect.Effect.provide(TestLayers)),
+    const TestLayers = Effect.Layer.mergeAll(
+      PodscanServiceLive.pipe(Effect.Layer.provide(podscanHttpClientLayer)),
+      tracerLayer,
     );
+
+    const { result, spanNames, podcastSpanAttrs } =
+      await Effect.Effect.runPromise(
+        Effect.Effect.gen(function* () {
+          const result = yield* PodscanService.pipe(
+            Effect.Effect.flatMap((service) =>
+              service.getPodcast("test-podcast-id"),
+            ),
+            Effect.Effect.either,
+          );
+          const spans = exporter.getFinishedSpans();
+          const podcastSpan = spans.find(
+            (s) => s.name === "podcast.podscan.getPodcast",
+          );
+          return {
+            result,
+            spanNames: spans.map((s: any) => s.name),
+            podcastSpanAttrs: podcastSpan?.attributes ?? null,
+          };
+        }).pipe(Effect.Effect.provide(TestLayers)),
+      );
 
     expect(result._tag).toBe("Right");
 
     // Assert span name exists — THIS WILL FAIL until implementation
     expect(spanNames).toContain("podcast.podscan.getPodcast");
+
+    expect(podcastSpanAttrs).toEqual(
+      expect.objectContaining({
+        podcastId: "test-podcast-id",
+      }),
+    );
   });
 
   it("upsertPodcast creates podcast.repository.upsertPodcast span", async () => {
@@ -562,12 +623,7 @@ describe("Podcast Service Span Tracing", () => {
   });
 
   it("writeEpisode creates podcast.bucket.writeEpisode span", async () => {
-    const TestBucketLayer = Effect.Layer.succeed(BucketService, {
-      writeEpisode: (_prefix, _date, _episode) =>
-        Effect.Effect.succeed(undefined),
-    });
-
-    const TestLayers = Effect.Layer.mergeAll(TestBucketLayer, tracerLayer);
+    const TestLayers = Effect.Layer.mergeAll(BucketServiceLive, tracerLayer);
 
     const { result, spanNames } = await Effect.Effect.runPromise(
       Effect.Effect.gen(function* () {

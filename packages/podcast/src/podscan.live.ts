@@ -5,6 +5,7 @@ import {
   HttpClientResponse,
 } from "@effect/platform";
 import * as Effect from "effect";
+import { annotateCurrentSpan } from "effect/Effect";
 import { PodscanError } from "./errors";
 import { PodscanService } from "./podscan";
 import {
@@ -55,17 +56,20 @@ export const PodscanServiceLive = Effect.Layer.scoped(
         ),
       );
 
-    return PodscanService.of({
-      getTop: (category, limit) =>
-        Effect.Effect.gen(function* () {
-          const response = yield* query(
-            `/charts/apple/us/${category}/top?limit=${String(limit)}`,
-          );
-          const body = yield* HttpClientResponse.schemaBodyJson(
-            PodscanTopPodcastsResponse,
-          )(response);
-          return body.podcasts;
-        }).pipe(
+    const getTop = Effect.Effect.fn("podcast.podscan.getTop")(
+      function* (category: string, limit: number) {
+        yield* annotateCurrentSpan("category", category);
+        yield* annotateCurrentSpan("limit", limit);
+        const response = yield* query(
+          `/charts/apple/us/${category}/top?limit=${String(limit)}`,
+        );
+        const body = yield* HttpClientResponse.schemaBodyJson(
+          PodscanTopPodcastsResponse,
+        )(response);
+        return body.podcasts;
+      },
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,
@@ -80,17 +84,22 @@ export const PodscanServiceLive = Effect.Layer.scoped(
             (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
+    );
 
-      getLatest: (podcastId, limit = 25, since?, page?) =>
-        Effect.Effect.gen(function* () {
-          let url = `/podcasts/${podcastId}/episodes?limit=${String(limit)}&show_only_fully_processed=true`;
-          if (since !== undefined) url += `&since=${since}`;
-          if (page !== undefined) url += `&page=${String(page)}`;
-          const response = yield* query(url);
-          return yield* HttpClientResponse.schemaBodyJson(
-            PodscanEpisodesResponse,
-          )(response);
-        }).pipe(
+    const getLatest = Effect.Effect.fn("podcast.podscan.getLatest")(
+      function* (podcastId: string, limit = 25, since?: string, page?: number) {
+        yield* annotateCurrentSpan("podcastId", podcastId);
+        yield* annotateCurrentSpan("limit", limit);
+        let url = `/podcasts/${podcastId}/episodes?limit=${String(limit)}&show_only_fully_processed=true`;
+        if (since !== undefined) url += `&since=${since}`;
+        if (page !== undefined) url += `&page=${String(page)}`;
+        const response = yield* query(url);
+        return yield* HttpClientResponse.schemaBodyJson(
+          PodscanEpisodesResponse,
+        )(response);
+      },
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,
@@ -105,15 +114,19 @@ export const PodscanServiceLive = Effect.Layer.scoped(
             (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
+    );
 
-      getPodcast: (podcastId) =>
-        Effect.Effect.gen(function* () {
-          const response = yield* query(`/podcasts/${podcastId}`);
-          const body = yield* HttpClientResponse.schemaBodyJson(
-            PodscanPodcastDetailResponse,
-          )(response);
-          return body.podcast;
-        }).pipe(
+    const getPodcast = Effect.Effect.fn("podcast.podscan.getPodcast")(
+      function* (podcastId: string) {
+        yield* annotateCurrentSpan("podcastId", podcastId);
+        const response = yield* query(`/podcasts/${podcastId}`);
+        const body = yield* HttpClientResponse.schemaBodyJson(
+          PodscanPodcastDetailResponse,
+        )(response);
+        return body.podcast;
+      },
+      (eff) =>
+        eff.pipe(
           Effect.Effect.retry({
             while: isTransient,
             times: 3,
@@ -128,7 +141,9 @@ export const PodscanServiceLive = Effect.Layer.scoped(
             (cause: unknown) => new PodscanError({ cause }),
           ),
         ),
-    });
+    );
+
+    return PodscanService.of({ getTop, getLatest, getPodcast });
   }).pipe(
     Effect.Effect.mapError((cause: unknown) => new PodscanError({ cause })),
   ),
