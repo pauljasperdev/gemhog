@@ -13,6 +13,4 @@ export const secrets = {
   PodscanApiToken: new sst.Secret("PodscanApiToken"),
   AdminEmail: new sst.Secret("AdminEmail"),
   GithubConnectionArn: new sst.Secret("GithubConnectionArn"),
-  CloudflareApiToken: new sst.Secret("CloudflareApiToken"),
-  CloudflareAccountId: new sst.Secret("CloudflareAccountId"),
 };
