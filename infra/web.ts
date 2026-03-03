@@ -12,6 +12,10 @@ const webDomain = {
 export const web = new sst.aws.Nextjs("Web", {
   path: "apps/web",
   domain: webDomain,
+  invalidation: {
+    paths: "all",
+    wait: $app.stage === "prod",
+  },
   dev: {
     command: "pnpm run sst:dev",
   },
