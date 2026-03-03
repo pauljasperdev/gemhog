@@ -20,13 +20,13 @@ export interface EmailContent {
 }
 
 const colors = {
-  bg: "#0a0a0a",
-  card: "#111111",
-  border: "#222222",
-  foreground: "#e0e0e0",
-  muted: "#888888",
-  primary: "#c8ff00",
-  primaryFg: "#0a0a0a",
+  bg: "#F5F5F0",
+  card: "#FFFFFF",
+  border: "#C8C4BB",
+  foreground: "#1C1C1C",
+  muted: "#555555",
+  primary: "#0D9488",
+  primaryFg: "#FFFFFF",
 };
 
 const fontStack =
@@ -36,8 +36,8 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
   return (
     <Html lang="en">
       <Head>
-        <meta name="color-scheme" content="dark only" />
-        <meta name="supported-color-schemes" content="dark only" />
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light only" />
       </Head>
       <Preview>
         Thanks for signing up for Gemhog. Please confirm your email.
@@ -45,7 +45,7 @@ function VerificationEmailTemplate({ verifyUrl }: { verifyUrl: string }) {
       <Body
         style={{
           backgroundColor: colors.bg,
-          colorScheme: "dark",
+          colorScheme: "light",
           margin: "0",
           padding: "0",
           fontFamily: fontStack,
@@ -151,8 +151,8 @@ function UnsubscribeConfirmationEmailTemplate() {
   return (
     <Html lang="en">
       <Head>
-        <meta name="color-scheme" content="dark only" />
-        <meta name="supported-color-schemes" content="dark only" />
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light only" />
       </Head>
       <Preview>
         You've been successfully unsubscribed from Gemhog emails.
@@ -160,7 +160,7 @@ function UnsubscribeConfirmationEmailTemplate() {
       <Body
         style={{
           backgroundColor: colors.bg,
-          colorScheme: "dark",
+          colorScheme: "light",
           margin: "0",
           padding: "0",
           fontFamily: fontStack,
@@ -277,14 +277,14 @@ function SignInOtpEmailTemplate({ otp }: { otp: string }) {
   return (
     <Html lang="en">
       <Head>
-        <meta name="color-scheme" content="dark only" />
-        <meta name="supported-color-schemes" content="dark only" />
+        <meta name="color-scheme" content="light only" />
+        <meta name="supported-color-schemes" content="light only" />
       </Head>
       <Preview>Use this code to sign in to Gemhog.</Preview>
       <Body
         style={{
           backgroundColor: colors.bg,
-          colorScheme: "dark",
+          colorScheme: "light",
           margin: "0",
           padding: "0",
           fontFamily: fontStack,

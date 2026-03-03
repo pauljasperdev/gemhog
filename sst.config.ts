@@ -34,39 +34,4 @@ export default $config({
       ...(web.outputs || {}),
     };
   },
-  console: {
-    autodeploy: {
-      target(event) {
-        if (
-          event.type === "branch" &&
-          event.branch === "main" &&
-          event.action === "pushed"
-        ) {
-          return { stage: "prod" };
-        }
-        if (event.type === "branch" && event.action === "pushed") {
-          return {
-            stage: event.branch
-              .replace(/[^a-zA-Z0-9-]/g, "-")
-              .replace(/-+/g, "-")
-              .replace(/^-/g, "")
-              .replace(/-$/g, ""),
-          };
-        }
-        if (event.type === "pull_request") {
-          return { stage: `pr-${event.number}` };
-        }
-      },
-      async workflow({ $, event }) {
-        await $`npm install -g pnpm`;
-        await $`pnpm install`;
-        if (event.action === "removed") {
-          await $`pnpm sst remove`;
-        } else {
-          await $`pnpm sst deploy`;
-          await $`pnpm db:migrate`;
-        }
-      },
-    },
-  },
 });

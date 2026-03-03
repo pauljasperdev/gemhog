@@ -24,7 +24,7 @@ describe("email templates", () => {
 
     it("HTML contains a confirm button/link", () => {
       expect(result.html).toContain(`href="${verifyUrl}"`);
-      expect(result.html).toContain("Confirm subscription");
+      expect(result.html).toContain("Confirm my spot");
     });
 
     it("HTML contains 7-day expiry notice", () => {
@@ -48,12 +48,12 @@ describe("email templates", () => {
       expect(result.text).toContain("7 days");
     });
 
-    it("HTML contains dark background color", () => {
-      expect(result.html).toContain("#0a0a0a");
+    it("HTML contains light background color", () => {
+      expect(result.html).toContain("#F5F5F0");
     });
 
-    it("HTML contains primary brand color", () => {
-      expect(result.html).toContain("#c8ff00");
+    it("HTML contains primary teal brand color", () => {
+      expect(result.html).toContain("#0D9488");
     });
 
     it("HTML contains color-scheme dark declaration", () => {
@@ -95,12 +95,12 @@ describe("email templates", () => {
       expect(result.text).toContain("gemhog.com");
     });
 
-    it("HTML contains dark background color", () => {
-      expect(result.html).toContain("#0a0a0a");
+    it("HTML contains light background color", () => {
+      expect(result.html).toContain("#F5F5F0");
     });
 
-    it("HTML contains primary brand color", () => {
-      expect(result.html).toContain("#c8ff00");
+    it("HTML contains primary teal brand color", () => {
+      expect(result.html).toContain("#0D9488");
     });
 
     it("HTML contains color-scheme dark declaration", () => {

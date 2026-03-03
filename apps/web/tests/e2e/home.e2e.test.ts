@@ -12,15 +12,15 @@ test("homepage loads", async ({ page }) => {
 test("page has content", async ({ page }) => {
   await page.goto("/");
   // Verify email input and submit button are visible (structural selectors)
-  await expect(page.locator('input[type="email"]')).toBeVisible();
-  await expect(page.locator('button[type="submit"]')).toBeVisible();
+  await expect(page.locator('input[type="email"]').first()).toBeVisible();
+  await expect(page.locator('button[type="submit"]').first()).toBeVisible();
 });
 
 test("subscribe form is visible", async ({ page }) => {
   await page.goto("/");
-  const emailInput = page.locator('input[type="email"]');
+  const emailInput = page.locator('input[type="email"]').first();
   await expect(emailInput).toBeVisible();
-  const submitButton = page.locator('button[type="submit"]');
+  const submitButton = page.locator('button[type="submit"]').first();
   await expect(submitButton).toBeVisible();
   await expect(submitButton).toBeEnabled();
 });

@@ -22,7 +22,7 @@ export default function OgImage() {
         height: 630,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "#F5F5F0",
         padding: "60px 80px",
       }}
     >
@@ -35,7 +35,7 @@ export default function OgImage() {
       >
         <span
           style={{
-            color: "#c8ff00",
+            color: "#0D9488",
             fontSize: 28,
             fontWeight: 700,
             letterSpacing: "0.15em",
@@ -68,21 +68,22 @@ export default function OgImage() {
             marginBottom: 32,
           }}
         >
-          <span style={{ color: "#e0e0e0" }}>We listen to&nbsp;</span>
-          <span style={{ color: "#c8ff00" }}>investment podcasts</span>
-          <span style={{ color: "#e0e0e0" }}>&nbsp;so you don't have to</span>
+          <span style={{ color: "#1C1C1C" }}>We listen to&nbsp;</span>
+          <span style={{ color: "#0D9488" }}>investment podcasts&nbsp;</span>
+          <span style={{ color: "#1C1C1C" }}>so you don't have to</span>
         </div>
 
         <div
           style={{
             display: "flex",
-            color: "#888888",
+            color: "#555555",
             fontSize: 28,
             fontFamily: "DM Sans",
             lineHeight: 1.5,
           }}
         >
-          Investment ideas, trends, and expert takes — delivered to your inbox.
+          Expert claims surfaced and clustered — so you can make better
+          decisions.
         </div>
       </div>
 
@@ -90,7 +91,7 @@ export default function OgImage() {
         style={{
           display: "flex",
           alignItems: "center",
-          borderTop: "1px solid #222222",
+          borderTop: "1px solid #C8C4BB",
           paddingTop: 24,
           marginTop: 40,
         }}
