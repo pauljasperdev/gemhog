@@ -166,7 +166,7 @@ phases:
       - pnpm install --frozen-lockfile
   build:
     commands:
-      - pnpm sst deploy --stage ${stage}
+      - pnpm sst deploy --stage ${stage} || (echo "SST deploy failed" && exit 1)
       - pnpm --filter @gemhog/db db:migrate`;
 }
 
@@ -187,7 +187,7 @@ const project = new aws.codebuild.Project("GemhogDeploy", {
     },
   },
   environment: {
-    computeType: "BUILD_GENERAL1_SMALL",
+    computeType: "BUILD_GENERAL1_MEDIUM",
     image: "aws/codebuild/standard:7.0",
     type: "LINUX_CONTAINER",
     environmentVariables: [],
