@@ -42,6 +42,23 @@ vi.mock("@opentelemetry/sdk-trace-node", () => ({
     };
   }),
 }));
+vi.mock("@sentry/opentelemetry", () => ({
+  SentrySpanProcessor: vi.fn(function mockSentrySpanProcessor() {
+    return {
+      onStart: vi.fn(),
+      onEnd: vi.fn(),
+      shutdown: vi.fn(() => Promise.resolve()),
+      forceFlush: vi.fn(() => Promise.resolve()),
+    };
+  }),
+}));
+
+vi.mock("@sentry/node", () => ({
+  default: {
+    init: vi.fn(),
+  },
+  init: vi.fn(),
+}));
 
 // ------------------------------------------------------------------
 // Test setup
@@ -52,7 +69,6 @@ let consoleSpy: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
   vi.clearAllMocks();
-  delete process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
   delete process.env.SENTRY_DSN;
   delete process.env.OTEL_TRACES_SAMPLER_ARG;
 });
@@ -80,8 +96,8 @@ describe("backward compatibility", () => {
 // Console fallback
 // ------------------------------------------------------------------
 
-describe("console fallback", () => {
-  it("uses ConsoleSpanExporter when OTLP endpoint is not set", async () => {
+describe("console fallback (SENTRY_DSN missing)", () => {
+  it("uses ConsoleSpanExporter when SENTRY_DSN is not set", async () => {
     const { ConsoleSpanExporter } = await import(
       "@opentelemetry/sdk-trace-base"
     );
@@ -101,6 +117,55 @@ describe("console fallback", () => {
     );
 
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("console"));
+  });
+});
+
+// ------------------------------------------------------------------
+// Sentry integration
+// ------------------------------------------------------------------
+
+describe("sentry integration", () => {
+  it("constructs SentrySpanProcessor when SENTRY_DSN is present", async () => {
+    process.env.SENTRY_DSN = "https://key@sentry.io/123456";
+    const { SentrySpanProcessor } = await import("@sentry/opentelemetry");
+
+    const layer = makeTracingLive("test-service");
+    await Effect.Effect.runPromise(
+      Effect.Effect.void.pipe(Effect.Effect.provide(layer)),
+    );
+
+    expect(SentrySpanProcessor).toHaveBeenCalled();
+  });
+
+  it("calls Sentry.init with DSN when SENTRY_DSN is present", async () => {
+    process.env.SENTRY_DSN = "https://key@sentry.io/123456";
+    const Sentry = await import("@sentry/node");
+
+    const layer = makeTracingLive("test-service");
+    await Effect.Effect.runPromise(
+      Effect.Effect.void.pipe(Effect.Effect.provide(layer)),
+    );
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: "https://key@sentry.io/123456",
+        skipOpenTelemetrySetup: true,
+      }),
+    );
+  });
+
+  it("does not use ConsoleSpanExporter when SENTRY_DSN is present", async () => {
+    process.env.SENTRY_DSN = "https://key@sentry.io/123456";
+    const { ConsoleSpanExporter } = await import(
+      "@opentelemetry/sdk-trace-base"
+    );
+
+    const layer = makeTracingLive("test-service");
+    await Effect.Effect.runPromise(
+      Effect.Effect.void.pipe(Effect.Effect.provide(layer)),
+    );
+
+    expect(ConsoleSpanExporter).not.toHaveBeenCalled();
   });
 });
 
