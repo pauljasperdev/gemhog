@@ -13,13 +13,14 @@ export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
     PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
     PODCAST_BUCKET_NAME: podcastBucket.name,
+    SENTRY_DSN: secrets.SentryDsn.value,
   },
 });
 
 export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
   runtime: "nodejs22.x",
   handler: "apps/functions/src/backfill-episodes.handler",
-  timeout: "5 minutes", // 5 podcasts × 10 pages = 50 requests, well within trial limits
+  timeout: "15 minutes", // 5 podcasts × 10 pages = 50 requests, well within trial limits
   link: [podcastBucket],
   environment: {
     DATABASE_URL_POOLER,
@@ -27,6 +28,7 @@ export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
     PODSCAN_API_TOKEN: secrets.PodscanApiToken.value,
     PODSCAN_BASE_URL: "https://podscan.fm/api/v1",
     PODCAST_BUCKET_NAME: podcastBucket.name,
+    SENTRY_DSN: secrets.SentryDsn.value,
   },
 });
 
@@ -42,5 +44,6 @@ export const trigger = new sst.aws.Function("Trigger", {
   ],
   environment: {
     BACKFILL_FUNCTION_NAME: backfillEpisodes.name,
+    SENTRY_DSN: secrets.SentryDsn.value,
   },
 });
