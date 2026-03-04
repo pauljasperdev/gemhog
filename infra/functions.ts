@@ -20,7 +20,7 @@ export const syncEpisodesDaily = new sst.aws.Function("SyncEpisodesDaily", {
 export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
   runtime: "nodejs22.x",
   handler: "apps/functions/src/backfill-episodes.handler",
-  timeout: "15 minutes", // 5 podcasts × 10 pages = 50 requests, well within trial limits
+  timeout: "15 minutes",
   link: [podcastBucket],
   environment: {
     DATABASE_URL_POOLER,
@@ -34,6 +34,7 @@ export const backfillEpisodes = new sst.aws.Function("BackfillEpisodes", {
 
 export const trigger = new sst.aws.Function("Trigger", {
   runtime: "nodejs22.x",
+  timeout: "15 minutes",
   handler: "apps/functions/src/trigger-sync.handler",
   url: true,
   permissions: [

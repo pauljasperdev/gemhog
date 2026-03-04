@@ -18,6 +18,8 @@
     "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.38.0",
+    "@sentry/node": "^10.36.0",
+    "@sentry/opentelemetry": "^10.36.0",
     "effect": "catalog:"
   },
   "devDependencies": {

@@ -751,6 +751,12 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: ^1.38.0
         version: 1.39.0
+      '@sentry/node':
+        specifier: ^10.36.0
+        version: 10.36.0
+      '@sentry/opentelemetry':
+        specifier: ^10.36.0
+        version: 10.36.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.39.0)
       effect:
         specifier: 'catalog:'
         version: 3.19.15

@@ -1,12 +1,13 @@
 import * as NodeSdk from "@effect/opentelemetry/NodeSdk";
 import * as OtelApi from "@opentelemetry/api";
 import { W3CTraceContextPropagator } from "@opentelemetry/core";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import {
   BatchSpanProcessor,
   ConsoleSpanExporter,
 } from "@opentelemetry/sdk-trace-base";
 import { TraceIdRatioBasedSampler } from "@opentelemetry/sdk-trace-node";
+import * as Sentry from "@sentry/node";
+import { SentrySpanProcessor } from "@sentry/opentelemetry";
 import * as Effect from "effect";
 import { pipe } from "effect/Function";
 import * as Option from "effect/Option";
@@ -45,11 +46,7 @@ export const makeTracingLive = (config: TracingConfig) =>
 
       const sampler = new TraceIdRatioBasedSampler(samplingRate);
 
-      // OTLP config
-      const otlpEndpoint = yield* pipe(
-        Effect.Config.string("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"),
-        Effect.Config.option,
-      );
+      // Sentry DSN config
       const sentryDsn = yield* pipe(
         Effect.Config.string("SENTRY_DSN"),
         Effect.Config.option,
@@ -59,21 +56,23 @@ export const makeTracingLive = (config: TracingConfig) =>
         `Telemetry: serviceName=${cfg.serviceName} sampling=${samplingRate}`,
       );
 
-      // Choose exporter based on OTLP availability
-      let exporter: OTLPTraceExporter | ConsoleSpanExporter;
-      if (Option.isSome(otlpEndpoint) && Option.isSome(sentryDsn)) {
+      // Choose span processor based on Sentry DSN availability
+      let spanProcessor: BatchSpanProcessor | SentrySpanProcessor;
+      if (Option.isSome(sentryDsn)) {
         OtelApi.propagation.setGlobalPropagator(
           new W3CTraceContextPropagator(),
         );
-        exporter = new OTLPTraceExporter({
-          url: otlpEndpoint.value,
-          headers: { "x-sentry-dsn": sentryDsn.value },
+        // Initialize Sentry with DSN
+        Sentry.init({
+          dsn: sentryDsn.value,
+          skipOpenTelemetrySetup: true,
         });
+        spanProcessor = new SentrySpanProcessor();
       } else {
         yield* Effect.Effect.log(
-          "OTLP endpoint not configured, using console exporter",
+          "SENTRY_DSN not configured, using console exporter",
         );
-        exporter = new ConsoleSpanExporter();
+        spanProcessor = new BatchSpanProcessor(new ConsoleSpanExporter());
       }
 
       return NodeSdk.layer(() => ({
@@ -86,7 +85,7 @@ export const makeTracingLive = (config: TracingConfig) =>
             "deployment.environment": process.env.NODE_ENV ?? "development",
           },
         },
-        spanProcessor: new BatchSpanProcessor(exporter),
+        spanProcessor: spanProcessor,
         tracerConfig: { sampler },
         shutdownTimeout: "10 seconds",
       }));
