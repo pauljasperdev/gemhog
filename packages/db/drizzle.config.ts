@@ -1,4 +1,3 @@
-import { runtimeEnv } from "@gemhog/env/runtime";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -10,6 +9,8 @@ export default defineConfig({
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: runtimeEnv.DATABASE_URL,
+    url:
+      process.env.DATABASE_URL ??
+      "postgresql://postgres:password@localhost:5432/gemhog",
   },
 });

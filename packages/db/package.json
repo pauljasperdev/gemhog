@@ -5,14 +5,15 @@
     ".": "./src/index.ts",
     "./auth": "./src/auth.sql.ts",
     "./podcast": "./src/podcast.sql.ts",
-    "./subscriber": "./src/subscriber.sql.ts"
+    "./subscriber": "./src/subscriber.sql.ts",
+    "./migrate": "./src/migrate.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "tsx src/migrate.local.ts"
   },
   "dependencies": {
     "@effect/sql": "^0.49",
@@ -28,6 +29,7 @@
     "@gemhog/config": "workspace:*",
     "@types/pg": "^8.15.6",
     "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0",
     "typescript": "catalog:"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "name": "@gemhog/sst",
+  "type": "module",
+  "scripts": {
+    "migrate": "tsx src/migrate.ts"
+  },
+  "dependencies": {
+    "sst": "4.1.1",
+    "@gemhog/db": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "catalog:"
+  }
+}

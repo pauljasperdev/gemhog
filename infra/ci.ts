@@ -149,7 +149,6 @@ env:
   secrets-manager:
     CLOUDFLARE_API_TOKEN: "gemhog/cloudflare-api-token"
     CLOUDFLARE_DEFAULT_ACCOUNT_ID: "gemhog/cloudflare-default-account-id"
-    DATABASE_URL: "gemhog/${stage}/database-url"
 phases:
   install:
     runtime-versions:
@@ -162,7 +161,7 @@ phases:
   build:
     commands:
       - pnpm sst deploy --stage ${stage} || (echo "SST deploy failed" && exit 1)
-      - pnpm --filter @gemhog/db db:migrate`;
+      - pnpm sst shell --stage ${stage} -- pnpm --filter @gemhog/sst migrate`;
   }
 
   // Single project per account
