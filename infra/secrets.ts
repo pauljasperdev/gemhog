@@ -12,5 +12,5 @@ export const secrets = {
   SentryProject: new sst.Secret("SentryProject"),
   PodscanApiToken: new sst.Secret("PodscanApiToken"),
   AdminEmail: new sst.Secret("AdminEmail"),
-  GithubConnectionArn: new sst.Secret("GithubConnectionArn"),
+  GithubConnectionArn: new sst.Secret("GithubConnectionArn", "unknown"),
 };
