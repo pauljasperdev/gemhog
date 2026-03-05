@@ -33,6 +33,7 @@ export const localClientEnv = {
   NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
   NEXT_PUBLIC_POSTHOG_KEY: POSTHOG_KEY,
   NEXT_PUBLIC_POSTHOG_HOST: POSTHOG_HOST,
+  NEXT_PUBLIC_DISABLE_ANALYTICS: "1",
 } as const;
 
 export const localRuntimeEnv = {
