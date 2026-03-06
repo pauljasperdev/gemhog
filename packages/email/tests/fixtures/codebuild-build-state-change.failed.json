@@ -1,0 +1,115 @@
+{
+  "account": "379995600607",
+  "detailType": "CodeBuild Build State Change",
+  "region": "eu-central-1",
+  "source": "aws.codebuild",
+  "time": "2026-03-05T20:58:07Z",
+  "notificationRuleArn": "arn:aws:codestar-notifications:eu-central-1:379995600607:notificationrule/bf45ff4655daed1e9ffc6a525e71c12dd6da2ec1",
+  "detail": {
+    "build-status": "FAILED",
+    "project-name": "gemhog-deploy-dev",
+    "build-id": "arn:aws:codebuild:eu-central-1:379995600607:build/gemhog-deploy-dev:76b1e04c-9920-41c7-8a7d-bc75b8bd516b",
+    "additional-information": {
+      "cache": { "type": "NO_CACHE" },
+      "build-number": 10.0,
+      "timeout-in-minutes": 30.0,
+      "build-complete": true,
+      "initiator": "GitHub-Hookshot/1cdf727",
+      "build-start-time": "Mar 5, 2026 8:57:06 PM",
+      "source": {
+        "report-build-status": false,
+        "auth": {
+          "resource": "arn:aws:codeconnections:eu-central-1:379995600607:connection/4729833d-d01e-4f1c-937c-d998187f4428",
+          "type": "CODECONNECTIONS"
+        },
+        "location": "https://github.com/pauljasperdev/gemhog",
+        "git-clone-depth": 0.0,
+        "type": "GITHUB"
+      },
+      "source-version": "b021fab27c008bc900814799ce75f47de7538cdf",
+      "artifact": { "location": "" },
+      "environment": {
+        "image": "aws/codebuild/standard:7.0",
+        "privileged-mode": false,
+        "image-pull-credentials-type": "CODEBUILD",
+        "compute-type": "BUILD_GENERAL1_MEDIUM",
+        "type": "LINUX_CONTAINER",
+        "environment-variables": []
+      },
+      "logs": {
+        "group-name": "/aws/codebuild/gemhog-deploy-dev",
+        "stream-name": "76b1e04c-9920-41c7-8a7d-bc75b8bd516b",
+        "deep-link": "https://console.aws.amazon.com/cloudwatch/home?region=eu-central-1#logsV2:log-groups/log-group/$252Faws$252Fcodebuild$252Fgemhog-deploy-dev/log-events/76b1e04c-9920-41c7-8a7d-bc75b8bd516b"
+      },
+      "phases": [
+        {
+          "phase-context": [],
+          "start-time": "Mar 5, 2026 8:57:06 PM",
+          "end-time": "Mar 5, 2026 8:57:06 PM",
+          "duration-in-seconds": 0.0,
+          "phase-type": "SUBMITTED",
+          "phase-status": "SUCCEEDED"
+        },
+        {
+          "phase-context": [],
+          "start-time": "Mar 5, 2026 8:57:06 PM",
+          "end-time": "Mar 5, 2026 8:57:07 PM",
+          "duration-in-seconds": 0.0,
+          "phase-type": "QUEUED",
+          "phase-status": "SUCCEEDED"
+        },
+        {
+          "phase-context": [": "],
+          "start-time": "Mar 5, 2026 8:57:07 PM",
+          "end-time": "Mar 5, 2026 8:57:12 PM",
+          "duration-in-seconds": 5.0,
+          "phase-type": "PROVISIONING",
+          "phase-status": "SUCCEEDED"
+        },
+        {
+          "phase-context": [": "],
+          "start-time": "Mar 5, 2026 8:57:12 PM",
+          "end-time": "Mar 5, 2026 8:58:03 PM",
+          "duration-in-seconds": 50.0,
+          "phase-type": "DOWNLOAD_SOURCE",
+          "phase-status": "SUCCEEDED"
+        },
+        {
+          "phase-context": [": "],
+          "start-time": "Mar 5, 2026 8:58:03 PM",
+          "end-time": "Mar 5, 2026 8:58:04 PM",
+          "duration-in-seconds": 1.0,
+          "phase-type": "INSTALL",
+          "phase-status": "SUCCEEDED"
+        },
+        {
+          "phase-context": [
+            "COMMAND_EXECUTION_ERROR: Error while executing command: pnpm install --frozen-lockfile. Reason: exit status 1"
+          ],
+          "start-time": "Mar 5, 2026 8:58:04 PM",
+          "end-time": "Mar 5, 2026 8:58:05 PM",
+          "duration-in-seconds": 0.0,
+          "phase-type": "PRE_BUILD",
+          "phase-status": "FAILED"
+        },
+        {
+          "phase-context": [": "],
+          "start-time": "Mar 5, 2026 8:58:05 PM",
+          "end-time": "Mar 5, 2026 8:58:05 PM",
+          "duration-in-seconds": 0.0,
+          "phase-type": "FINALIZING",
+          "phase-status": "SUCCEEDED"
+        },
+        { "start-time": "Mar 5, 2026 8:58:05 PM", "phase-type": "COMPLETED" }
+      ],
+      "queued-timeout-in-minutes": 480.0
+    },
+    "current-phase": "COMPLETED",
+    "current-phase-context": "[: ]",
+    "version": "1"
+  },
+  "resources": [
+    "arn:aws:codebuild:eu-central-1:379995600607:build/gemhog-deploy-dev:76b1e04c-9920-41c7-8a7d-bc75b8bd516b"
+  ],
+  "additionalAttributes": {}
+}

@@ -112,6 +112,9 @@ importers:
       '@gemhog/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@gemhog/email':
+        specifier: workspace:*
+        version: link:../../packages/email
       '@gemhog/env':
         specifier: workspace:*
         version: link:../../packages/env

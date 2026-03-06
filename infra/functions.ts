@@ -48,3 +48,17 @@ export const trigger = new sst.aws.Function("Trigger", {
     SENTRY_DSN: secrets.SentryDsn.value,
   },
 });
+
+export const codebuildNotificationEmail = new sst.aws.Function(
+  "CodebuildNotificationEmail",
+  {
+    runtime: "nodejs22.x",
+    handler: "apps/functions/src/codebuild-notification.handler",
+    timeout: "30 seconds",
+    environment: {
+      ADMIN_EMAIL: secrets.AdminEmail.value,
+      RESEND_API_KEY: secrets.ResendApiKey.value,
+      SENTRY_DSN: secrets.SentryDsn.value,
+    },
+  },
+);

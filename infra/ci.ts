@@ -7,6 +7,7 @@
  *      --query "Connections[?ConnectionName=='gemhog-github'].ConnectionArn" --output text
  */
 
+import { codebuildNotificationEmail } from "./functions";
 import { secrets } from "./secrets";
 
 const GITHUB_REPO = "https://github.com/pauljasperdev/gemhog";
@@ -232,11 +233,18 @@ phases:
     ),
   });
 
-  // Requires email confirmation on first deploy — check your inbox
-  new aws.sns.TopicSubscription("GemhogCodebuildEmailSubscription", {
+  // Lambda processes CodeBuild notifications and sends formatted emails
+  new aws.lambda.Permission("GemhogCodebuildLambdaPermission", {
+    action: "lambda:InvokeFunction",
+    function: codebuildNotificationEmail.arn,
+    principal: "sns.amazonaws.com",
+    sourceArn: notificationTopic.arn,
+  });
+
+  new aws.sns.TopicSubscription("GemhogCodebuildLambdaSubscription", {
     topic: notificationTopic.arn,
-    protocol: "email",
-    endpoint: secrets.AdminEmail.value,
+    protocol: "lambda",
+    endpoint: codebuildNotificationEmail.arn,
   });
 
   new aws.codestarnotifications.NotificationRule(
