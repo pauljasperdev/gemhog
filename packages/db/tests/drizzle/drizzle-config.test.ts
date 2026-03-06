@@ -9,10 +9,9 @@ const importConfig = async () => {
 };
 
 describe("drizzle.config", () => {
-  it("uses local defaults when LOCAL_ENV=1", async () => {
+  it("falls back to localhost when DATABASE_URL missing", async () => {
     process.env = {
       ...originalEnv,
-      LOCAL_ENV: "1",
       DOTENV_CONFIG_PATH: "/nonexistent.env",
     };
     delete process.env.DATABASE_URL;
@@ -24,13 +23,19 @@ describe("drizzle.config", () => {
     expect(config.dbCredentials.url).toBe(localServerEnv.DATABASE_URL);
   });
 
-  it("throws when DATABASE_URL is missing without LOCAL_ENV", async () => {
-    process.env = { ...originalEnv };
-    process.env.DOTENV_CONFIG_PATH = "/nonexistent.env";
-    delete process.env.LOCAL_ENV;
-    delete process.env.DATABASE_URL;
+  it("uses DATABASE_URL when explicitly provided", async () => {
+    const customUrl = "postgresql://test:test@remote:5432/testdb";
+    process.env = {
+      ...originalEnv,
+      DATABASE_URL: customUrl,
+      DOTENV_CONFIG_PATH: "/nonexistent.env",
+    };
 
-    await expect(importConfig()).rejects.toThrow();
+    const config = (await importConfig()).default as {
+      dbCredentials: { url: string };
+    };
+
+    expect(config.dbCredentials.url).toBe(customUrl);
   });
 });
 
