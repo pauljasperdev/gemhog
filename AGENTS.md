@@ -37,3 +37,20 @@ sources.
 - Not for full-time investors or professionals — the target is the "spare time,
   curious" investor
 - Not a community or social product — editorially curated, not user-generated
+
+## Resources
+
+- source code of dependecies in `.repos`
+- context7 for documentation
+- use available skills
+
+## Testing
+
+- use red-green TDD development whenever possbile
+- frontend code jsx must not be tested
+- run `pnpm test` to run test suite
+
+## Effect TS
+
+You must the available resources whenwriting effect code. Write code aligning
+with exsting pattern.
