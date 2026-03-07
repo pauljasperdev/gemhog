@@ -28,12 +28,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: "Gemhog — We listen to investment podcasts so you don't have to",
   description:
-    "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
+    "Expert claims surfaced and clustered — so you can make better decisions. Stay on top of current trends in the stock market.",
   openGraph: {
     type: "website",
     title: "Gemhog — We listen to investment podcasts so you don't have to",
     description:
-      "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
+      "Expert claims surfaced and clustered — so you can make better decisions. Stay on top of current trends in the stock market.",
     url: appUrl,
     siteName: "Gemhog",
     locale: "en_US",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Gemhog — We listen to investment podcasts so you don't have to",
     description:
-      "Expert stock picks and investment theses from 200+ podcasts. Delivered in 5 minutes.",
+      "Expert claims surfaced and clustered — so you can make better decisions. Stay on top of current trends in the stock market.",
   },
 };
 
