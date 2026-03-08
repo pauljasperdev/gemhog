@@ -13,4 +13,6 @@ export const secrets = {
   PodscanApiToken: new sst.Secret("PodscanApiToken"),
   AdminEmail: new sst.Secret("AdminEmail"),
   GithubConnectionArn: new sst.Secret("GithubConnectionArn", "unknown"),
+  ChatwootWebsiteToken: new sst.Secret("ChatwootWebsiteToken", "unknown"),
+  ChatwootIdentityToken: new sst.Secret("ChatwootIdentityToken", "unknown"),
 };
