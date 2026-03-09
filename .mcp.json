@@ -1,16 +1,3 @@
 {
-  "mcpServers": {
-    "playwright": {
-      "command": "node",
-      "args": [
-        "node_modules/@playwright/mcp/cli.js",
-        "--browser",
-        "chromium",
-        "--headless",
-        "--isolated",
-        "--config",
-        "playwright-mcp.config.json"
-      ]
-    }
-  }
+  "mcpServers": {}
 }

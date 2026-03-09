@@ -36,11 +36,37 @@ const TEST_ENV = {
 };
 
 Object.assign(process.env, TEST_ENV);
+
+/**
+ * Sign a session token the same way better-auth's cookie-builder does.
+ * Uses HMAC-SHA256 and returns `${token}.${base64Signature}`.
+ */
+async function signSessionToken(
+  token: string,
+  secret: string,
+): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(token),
+  );
+  const base64Sig = btoa(String.fromCharCode(...new Uint8Array(signature)));
+  return `${token}.${base64Sig}`;
+}
+
 describe("auth integration", () => {
   let pool: Pool;
   let db: ReturnType<typeof drizzle>;
-  // biome-ignore lint/suspicious/noExplicitAny: dynamic import type
-  let auth: any;
+  // Auth type from dynamic import - properly typed via module type extraction
+  let auth: Awaited<typeof import("../src/service")>["auth"];
 
   beforeAll(async () => {
     pool = new Pool({ connectionString: TEST_ENV.DATABASE_URL });
@@ -233,6 +259,81 @@ describe("auth integration", () => {
         [adminEmail],
       );
       expect(result.rows[0]?.role).toBe("admin");
+    });
+  });
+
+  describe("deleteUser", () => {
+    it("deleteUser is enabled in the auth config", () => {
+      // Verify the auth instance exposes a deleteUser API endpoint
+      expect(auth.api.deleteUser).toBeDefined();
+      expect(typeof auth.api.deleteUser).toBe("function");
+    });
+
+    it("authenticated user can self-delete and removes all rows", async () => {
+      // Freeze time to ensure session stays "fresh" for freshAge check (default 24h)
+      vi.useFakeTimers();
+      vi.setSystemTime(Date.now());
+
+      try {
+        // Access auth internals to create session directly (without testUtils plugin)
+        const ctx = await auth.$context;
+
+        // Create a user directly via DB insert
+        const userId = crypto.randomUUID();
+        const email = `delete-me-${Date.now()}@example.com`;
+        await db.insert(schema.user).values({
+          id: userId,
+          name: "Delete Me",
+          email,
+          emailVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        // Create a fresh session via internalAdapter (same as testUtils.login does)
+        const session = await ctx.internalAdapter.createSession(userId);
+        const token = session.token;
+        const secret = ctx.secret;
+
+        // Sign the cookie the same way better-auth does
+        const signedToken = await signSessionToken(token, secret);
+        const cookieName = ctx.authCookies.sessionToken.name;
+        const headers = new Headers();
+        headers.set("cookie", `${cookieName}=${signedToken}`);
+
+        // Verify user exists before deletion
+        const beforeUser = await pool.query(
+          'SELECT id FROM "user" WHERE id = $1',
+          [userId],
+        );
+        expect(beforeUser.rows).toHaveLength(1);
+
+        // Self-delete via auth.api.deleteUser (requires fresh session)
+        await auth.api.deleteUser({ headers, body: {} });
+
+        // Verify user row is gone
+        const afterUser = await pool.query(
+          'SELECT id FROM "user" WHERE id = $1',
+          [userId],
+        );
+        expect(afterUser.rows).toHaveLength(0);
+
+        // Verify session rows are gone
+        const afterSession = await pool.query(
+          "SELECT id FROM session WHERE user_id = $1",
+          [userId],
+        );
+        expect(afterSession.rows).toHaveLength(0);
+
+        // Verify account rows are gone
+        const afterAccount = await pool.query(
+          "SELECT id FROM account WHERE user_id = $1",
+          [userId],
+        );
+        expect(afterAccount.rows).toHaveLength(0);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

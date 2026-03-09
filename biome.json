@@ -28,7 +28,6 @@
       "!**/wrangler.jsonc",
       "!**/.source",
       "!**/convex/_generated",
-      "!**/.playwright-results",
       "!**/.planning/intel",
       "!t3/t3",
       "!t3/t3",

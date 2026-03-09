@@ -30,6 +30,11 @@ const unwrappedAuth = betterAuth({
     enabled: false,
   },
   secret: BETTER_AUTH_SECRET,
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   databaseHooks: {
     user: {
       create: {

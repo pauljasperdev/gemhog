@@ -3,12 +3,11 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     projects: ["apps/*", "packages/*"],
-    // Exclude integration and e2e tests from unit test runs
+    // Exclude integration tests from unit test runs
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
       "**/*.int.test.ts", // Integration tests have their own config
-      "**/*.e2e.test.ts", // E2E tests use Playwright, not Vitest
     ],
     // Disable file parallelism to prevent database race conditions
     // Integration tests share the same database and can conflict

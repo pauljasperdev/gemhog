@@ -16,11 +16,6 @@ export default defineProject({
     name: "web",
     environment: "node",
     include: ["src/**/*.test.ts", "app/**/*.test.ts", "tests/**/*.test.ts"],
-    exclude: [
-      "**/*.int.test.ts",
-      "**/*.int.test.tsx",
-      "**/*.e2e.test.ts",
-      "**/*.e2e.test.tsx",
-    ],
+    exclude: ["**/*.int.test.ts", "**/*.int.test.tsx"],
   },
 });
