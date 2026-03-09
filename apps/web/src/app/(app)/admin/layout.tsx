@@ -8,7 +8,10 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  if (!session) redirect("/" as Route);
-  if (session.user.role !== "admin") redirect("/" as Route);
+  // The parent (app) layout already redirects unauthenticated users
+  // This layout only adds the admin-role guard
+  if (!session || session.user.role !== "admin") {
+    redirect("/dashboard" as Route);
+  }
   return <>{children}</>;
 }

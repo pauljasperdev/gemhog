@@ -1,21 +1,16 @@
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { getSession } from "@/server/better-auth/server";
-import { SignOutButton } from "./sign-out-button";
 
 export default async function AdminPage() {
   const session = await getSession();
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-      <div className="mb-8 font-bold font-heading text-2xl text-foreground uppercase tracking-tight">
-        Gemhog<span className="text-primary">.</span>
-      </div>
+    <div className="flex flex-col gap-4 p-8">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-primary">Admin Dashboard</CardTitle>
@@ -23,9 +18,6 @@ export default async function AdminPage() {
             Welcome, {session?.user.name || session?.user.email}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-end">
-          <SignOutButton />
-        </CardContent>
       </Card>
     </div>
   );

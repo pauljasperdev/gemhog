@@ -7,7 +7,7 @@ export default async function SignInPage() {
   const session = await getSession();
 
   if (session) {
-    redirect("/admin" as Route);
+    redirect("/dashboard" as Route);
   }
 
   return <SignInForm />;
