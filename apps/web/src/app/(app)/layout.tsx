@@ -37,7 +37,6 @@ export default async function AppLayout({
           </header>
           {children}
         </SidebarInset>
-        <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>
       <ChatwootWidget
         user={{
