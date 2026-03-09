@@ -31,11 +31,13 @@ export function AppSidebar({ session }: { session: Session }) {
             <SidebarMenuButton
               size="lg"
               asChild
-              className="hover:border-transparent"
+              className="hover:!bg-transparent hover:!text-current hover:!border-transparent [&:hover_*]:!text-current"
             >
               <Link href="/dashboard">
-                <Logo />
-                <span className="truncate font-semibold">Gemhog</span>
+                <Logo className="!size-8" />
+                <span className="truncate font-semibold group-data-[collapsible=icon]:hidden">
+                  Gemhog
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

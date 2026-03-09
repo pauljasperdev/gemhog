@@ -61,9 +61,9 @@ export function SidebarUserSection({ session }: { session: Session }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:border-foreground"
+              className="group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:hover:!border-foreground group-data-[collapsible=icon]:[&:hover_*]:!text-current data-[state=open]:border-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="h-8 w-8 shrink-0 rounded-lg">
                 <AvatarImage
                   src={user.image ?? undefined}
                   alt={user.name ?? "User"}
@@ -72,13 +72,13 @@ export function SidebarUserSection({ session }: { session: Session }) {
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 {user.name && (
                   <span className="truncate font-medium">{user.name}</span>
                 )}
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
