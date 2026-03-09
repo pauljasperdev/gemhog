@@ -53,7 +53,7 @@ function PaginationLink({
           variant: isActive ? "outline" : "ghost",
           size,
         }),
-        "border border-border hover:border-primary hover:text-primary font-heading uppercase text-xs",
+        "border-2 border-border hover:border-primary hover:text-primary font-heading uppercase text-xs",
         isActive && "border-primary text-primary bg-secondary",
         className,
       )}

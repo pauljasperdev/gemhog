@@ -20,7 +20,7 @@
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #fafafa;
-  --border: #c8c4bb;
+  --border: var(--foreground);
   --input: #edfafa;
   --ring: #0d9488;
   --chart-1: #0d9488;
@@ -35,7 +35,7 @@
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #edfafa;
   --sidebar-accent-foreground: #1c1c1c;
-  --sidebar-border: #c8c4bb;
+  --sidebar-border: var(--foreground);
   --sidebar-ring: #0d9488;
 }
 

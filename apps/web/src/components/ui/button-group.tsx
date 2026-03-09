@@ -32,7 +32,7 @@ function ButtonGroupSeparator({
   return (
     <div
       data-slot="button-group-separator"
-      className={cn("border-l border-border", className)}
+      className={cn("border-l-2 border-border", className)}
       {...props}
     />
   );
@@ -46,7 +46,7 @@ function ButtonGroupText({
     <span
       data-slot="button-group-text"
       className={cn(
-        "flex items-center border border-input bg-secondary px-3 text-sm text-muted-foreground",
+        "flex items-center border-2 border-input bg-secondary px-3 text-sm text-muted-foreground",
         className,
       )}
       {...props}

@@ -194,7 +194,7 @@ function ChartTooltipContent({
     <div
       data-slot="chart-tooltip-content"
       className={cn(
-        "grid min-w-[8rem] items-start gap-1.5 border border-border bg-popover px-2.5 py-1.5 text-xs shadow-sm",
+        "grid min-w-[8rem] items-start gap-1.5 border-2 border-border bg-popover px-2.5 py-1.5 text-xs shadow-sm",
         className,
       )}
     >

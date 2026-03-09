@@ -78,7 +78,7 @@ export default async function UnsubscribePage({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md border border-border bg-card p-8 text-center shadow-sm">
+      <div className="w-full max-w-md border-2 border-border bg-card p-8 text-center shadow-sm">
         {status === "success" && <SuccessContent />}
         {status === "invalid" && <InvalidContent />}
         {status === "error" && <ErrorContent />}

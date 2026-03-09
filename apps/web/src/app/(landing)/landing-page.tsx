@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CookieSettingsButton } from "@/components/cookie-consent";
 import { Section } from "@/components/section";
 import { SubscribeForm } from "@/components/subscribe-form";
+import { Button } from "@/components/ui/button";
 
 const problems = [
   {
@@ -47,12 +48,9 @@ export function LandingPage() {
         <div className="font-black font-heading text-xl uppercase tracking-tight">
           Gemhog<span className="text-primary">.</span>
         </div>
-        <a
-          href="/sign-in"
-          className="border-2 border-foreground px-5 py-2 font-bold text-xs uppercase tracking-widest transition-all hover:bg-foreground hover:text-background"
-        >
-          Sign In
-        </a>
+        <Button variant="outline" asChild>
+          <Link href="/sign-in">Sign In</Link>
+        </Button>
       </nav>
 
       {/* Hero */}

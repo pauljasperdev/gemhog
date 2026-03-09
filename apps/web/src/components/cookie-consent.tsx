@@ -41,7 +41,7 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] border border-border bg-card p-5 shadow-lg"
+      className="fixed bottom-4 left-4 z-50 w-full max-w-sm animate-[fade-in-up_0.3s_ease-out] border-2 border-border bg-card p-5 shadow-lg"
       role="dialog"
       aria-label="Cookie consent"
     >
@@ -54,7 +54,7 @@ export function CookieConsentBanner() {
       </p>
       <div className="mt-4 flex gap-2">
         <Button
-          variant="secondary"
+          variant="outline"
           size="sm"
           onClick={handleAccept}
           className="flex-1"

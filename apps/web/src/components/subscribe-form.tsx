@@ -15,7 +15,7 @@ type SubscribeStatus = "idle" | "subscribed" | "error";
 
 function SuccessCard() {
   return (
-    <div className="flex items-center gap-4 border border-primary/20 bg-primary/5 px-6 py-4">
+    <div className="flex items-center gap-4 border-2 border-primary/20 bg-primary/5 px-6 py-4">
       <CircleCheck
         className="size-7 shrink-0 text-primary"
         animate
@@ -37,9 +37,9 @@ function ErrorCard() {
   return (
     <div
       role="alert"
-      className="flex items-center gap-4 border border-destructive/20 bg-destructive/5 px-6 py-4"
+      className="flex items-center gap-4 border-2 border-destructive/20 bg-destructive/5 px-6 py-4"
     >
-      <div className="flex size-7 shrink-0 items-center justify-center border border-destructive/40 bg-destructive/10">
+      <div className="flex size-7 shrink-0 items-center justify-center border-2 border-destructive/40 bg-destructive/10">
         <span className="font-bold text-destructive text-xs">!</span>
       </div>
       <div>
@@ -115,12 +115,9 @@ export function SubscribeForm() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      className="h-12 flex-1 rounded-none border-foreground/20 bg-secondary/50 px-6 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
+                      className="h-12 flex-1 bg-secondary/50 px-6 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
                     />
-                    <Button
-                      type="submit"
-                      className="h-12 w-36 shrink-0 rounded-none px-8 font-heading text-sm tracking-wide"
-                    >
+                    <Button type="submit" className="h-12 w-36 shrink-0 px-8">
                       Join Waitlist
                     </Button>
                   </div>

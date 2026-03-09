@@ -75,7 +75,7 @@ export function SignInForm() {
       return;
     }
 
-    router.push("/admin" as Route);
+    router.push("/dashboard" as Route);
   };
 
   return (
@@ -92,9 +92,9 @@ export function SignInForm() {
         {error && (
           <div
             role="alert"
-            className="mb-6 flex items-center gap-4 border border-destructive/20 bg-destructive/5 px-4 py-3"
+            className="mb-6 flex items-center gap-4 border-2 border-destructive/20 bg-destructive/5 px-4 py-3"
           >
-            <div className="flex size-6 shrink-0 items-center justify-center border border-destructive/40 bg-destructive/10">
+            <div className="flex size-6 shrink-0 items-center justify-center border-2 border-destructive/40 bg-destructive/10">
               <span className="font-bold text-destructive text-xs">!</span>
             </div>
             <p className="text-destructive text-sm">{error}</p>
@@ -111,21 +111,13 @@ export function SignInForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
                 required
-                className="h-12 rounded-none border-foreground/20 bg-secondary/50 px-4 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
+                className="h-12 border-foreground/20 bg-secondary/50 px-4 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
               />
             </div>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="h-12 w-full rounded-none font-heading text-sm tracking-wide"
-            >
+            <Button type="submit" disabled={loading} className="h-12 w-full">
               {loading ? "Sending..." : "Send Code"}
             </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="h-12 w-full rounded-none font-heading text-sm tracking-wide"
-            >
+            <Button variant="outline" asChild className="h-12 w-full">
               <Link href="/">Go back</Link>
             </Button>
           </form>
@@ -152,20 +144,20 @@ export function SignInForm() {
               <Button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="h-12 w-full rounded-none font-heading text-sm tracking-wide"
+                className="h-12 w-full"
               >
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 onClick={() => {
                   setStep("email");
                   setOtp("");
                   setError(null);
                 }}
                 disabled={loading}
-                className="h-10 w-full rounded-none font-heading text-xs tracking-wide"
+                className="h-10 w-full"
               >
                 Use a different email
               </Button>

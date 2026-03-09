@@ -39,7 +39,7 @@ export function SectionErrorBoundary({
           return fallback;
         }
         return (
-          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-center">
+          <div className="rounded-lg border-2 border-destructive/20 bg-destructive/5 p-4 text-center">
             <h3 className="font-medium text-foreground">
               This section encountered an error
             </h3>

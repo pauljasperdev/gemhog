@@ -60,7 +60,7 @@ function DrawerContent({
       <DrawerPrimitive.Content
         data-slot="drawer-content"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col border border-border bg-card",
+          "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col border-2 border-border bg-card",
           className,
         )}
         {...props}

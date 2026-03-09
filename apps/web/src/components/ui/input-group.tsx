@@ -27,7 +27,7 @@ function InputGroupInput({
       type={type}
       data-slot="input-group-control"
       className={cn(
-        "flex h-9 w-full border border-input bg-background px-3 py-1 font-body text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 relative z-10 focus-visible:z-20",
+        "flex h-9 w-full border-2 border-input bg-background px-3 py-1 font-body text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 relative z-10 focus-visible:z-20",
         className,
       )}
       {...props}
@@ -43,7 +43,7 @@ function InputGroupTextarea({
     <textarea
       data-slot="input-group-control"
       className={cn(
-        "flex min-h-[60px] w-full border border-input bg-background px-3 py-2 font-body text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 relative z-10 focus-visible:z-20",
+        "flex min-h-[60px] w-full border-2 border-input bg-background px-3 py-2 font-body text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 relative z-10 focus-visible:z-20",
         className,
       )}
       {...props}
@@ -64,7 +64,7 @@ function InputGroupAddon({
     <div
       data-slot="input-group-addon"
       className={cn(
-        "flex items-center border border-input bg-secondary px-3 text-muted-foreground text-sm",
+        "flex items-center border-2 border-input bg-secondary px-3 text-muted-foreground text-sm",
         className,
       )}
       {...props}
@@ -80,7 +80,7 @@ function InputGroupButton({
     <div
       data-slot="input-group-button"
       className={cn(
-        "flex items-center [&>button]:h-full [&>button]:border-0 [&>button]:border-l [&>button]:border-input",
+        "flex items-center [&>button]:h-full [&>button]:border-0 [&>button]:border-l-2 [&>button]:border-input",
         className,
       )}
       {...props}

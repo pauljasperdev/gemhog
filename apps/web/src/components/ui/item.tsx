@@ -7,7 +7,7 @@ const itemVariants = cva("flex items-center w-full", {
   variants: {
     variant: {
       default: "bg-transparent",
-      outline: "border border-border",
+      outline: "border-2 border-border",
       muted: "bg-secondary",
     },
     size: {
@@ -65,7 +65,7 @@ function ItemSeparator({
   return (
     <div
       data-slot="item-separator"
-      className={cn("border-t border-border", className)}
+      className={cn("border-t-2 border-border", className)}
       {...props}
     />
   );
