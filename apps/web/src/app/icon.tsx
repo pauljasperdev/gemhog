@@ -18,13 +18,13 @@ export default function Icon() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F5F5F0",
+        backgroundColor: "#0D9488",
       }}
     >
       <span
         style={{
-          color: "#0D9488",
-          fontSize: 14,
+          color: "#F5F5F0",
+          fontSize: 16,
           fontWeight: 700,
           letterSpacing: "-0.5px",
           fontFamily: "Urbanist",
