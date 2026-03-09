@@ -6,7 +6,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { FormInput } from "@/components/ui/input";
 import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 import { trpc } from "@/trpc/client";
 import { CircleCheck } from "./animate-ui/icons/circle-check";
@@ -107,7 +107,7 @@ export function SubscribeForm() {
               return (
                 <Field data-invalid={isInvalid}>
                   <div className="flex gap-2">
-                    <Input
+                    <FormInput
                       type="email"
                       placeholder="your@email.com"
                       aria-label="Email address"
@@ -115,7 +115,7 @@ export function SubscribeForm() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      className="h-12 flex-1 bg-secondary/50 px-6 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
+                      className="flex-1 px-6"
                     />
                     <Button type="submit" className="h-12 w-36 shrink-0 px-8">
                       Join Waitlist

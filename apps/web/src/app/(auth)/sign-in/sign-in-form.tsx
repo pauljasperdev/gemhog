@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { FormInput } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
@@ -104,14 +104,13 @@ export function SignInForm() {
         {step === "email" ? (
           <form onSubmit={handleSendCode} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Input
+              <FormInput
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
                 required
-                className="h-12 border-foreground/20 bg-secondary/50 px-4 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50"
               />
             </div>
             <Button type="submit" disabled={loading} className="h-12 w-full">

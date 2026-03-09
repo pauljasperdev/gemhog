@@ -16,4 +16,16 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export { Input };
+function FormInput({ className, ...props }: React.ComponentProps<"input">) {
+  return (
+    <Input
+      className={cn(
+        "h-12 bg-secondary/50 px-4 text-foreground placeholder:text-muted-foreground focus-visible:ring-accent/50",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export { Input, FormInput };
