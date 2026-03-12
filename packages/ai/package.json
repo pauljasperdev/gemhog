@@ -1,0 +1,34 @@
+{
+  "name": "@gemhog/ai",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./model": "./src/model.ts",
+    "./model.layer": "./src/model.layer.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "smoke": "tsx scripts/smoke-bearer.ts",
+    "smoke:api": "tsx scripts/smoke-api.ts",
+    "smoke:api:heavy": "tsx scripts/smoke-api-heavy.ts",
+    "smoke:api:balanced": "tsx scripts/smoke-api-balanced.ts",
+    "smoke:api:light": "tsx scripts/smoke-api-light.ts",
+    "smoke:bearer": "tsx scripts/smoke-bearer.ts",
+    "smoke:bearer:heavy": "tsx scripts/smoke-bearer-heavy.ts",
+    "smoke:bearer:balanced": "tsx scripts/smoke-bearer-balanced.ts",
+    "smoke:bearer:light": "tsx scripts/smoke-bearer-light.ts"
+  },
+  "dependencies": {
+    "@effect/ai": "catalog:",
+    "@effect/ai-anthropic": "catalog:",
+    "@effect/platform": "catalog:",
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

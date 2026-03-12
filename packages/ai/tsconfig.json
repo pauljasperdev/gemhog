@@ -1,0 +1,9 @@
+{
+  "extends": "@gemhog/config/tsconfig.base.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true
+  }
+}
