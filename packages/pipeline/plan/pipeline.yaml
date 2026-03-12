@@ -1,0 +1,498 @@
+# Gemhog Agent Pipeline
+# Last updated: 2026-03-03
+# 
+# Read top-to-bottom. Nesting shows call hierarchy.
+# Each child is called by its parent.
+
+# =============================================================================
+# MODEL ALIASES
+# =============================================================================
+
+models:
+  heavy: claude-opus-4-5       # max power, extended thinking, expensive
+  balanced: claude-sonnet-4-6  # good quality, reasonable cost
+  fast: claude-haiku-4-5       # quick tasks, cheap
+
+# =============================================================================
+# SCHEMAS
+# =============================================================================
+
+schemas:
+  
+  ExtractedClaim:
+    id: string                     # pipeline ID: clm_{episode_id}_{index}
+                                   # (DB ID assigned later on ingestion)
+    source:
+      episode_id: string
+      podcast_id: string
+    claim:
+      type: micro | macro
+      stance: bullish | bearish | neutral
+      statement: string            # the actual claim, faithfully represented (not reduced)
+      reasoning: string            # why they said it
+      entities:                    # what/who the claim is about
+        - name: string
+          type: company | asset | industry | institution | geography | person | other
+      # entity type meanings:
+      #   company     — individual businesses (Nvidia, Apple, Micron)
+      #   asset       — investable products: commodities (gold, oil, uranium),
+      #                 crypto (Bitcoin, ETH), ETFs (MSCI World, SPY),
+      #                 indices (S&P 500, NASDAQ), bonds (Treasuries)
+      #   industry    — sectors (semiconductors, healthcare, energy)
+      #   institution — Fed, ECB, SEC, governments, regulatory bodies
+      #   geography   — countries, regions, continents
+      #   person      — investors, executives, policymakers (Buffett, Powell)
+      #   other       — catch-all for edge cases
+      #
+      quotes: array of string        # 0-15 verbatim excerpts from transcript supporting this claim
+                                   # each max 1000 chars, exact substrings of episode_transcript
+    extraction_confidence: number  # 0.0 - 1.0
+    speaker:                         # who made this claim (if determinable from transcript)
+      name: string | null            # resolved name (e.g., "David Gardner")
+      role: host | guest | unknown   # from Podscan metadata
+      company: string | null         # speaker's company (from metadata if available)
+      speaker_label: string | null   # raw label (e.g., "SPEAKER_03") for traceability
+      confidence: high | inferred | unknown
+        # high: speaker_label mapped to metadata.speakers dict
+        # inferred: LLM guessed from context (e.g., "my fund owns...")
+        # unknown: no speaker info available (metadata was null)
+    timeframe:
+      horizon: immediate | near_term | medium_term | long_term | structural | not_specified
+        #   immediate:   0-2 weeks       (earnings reaction, breaking news)
+        #   near_term:   2wks - 3 months (quarter-over-quarter)
+        #   medium_term: 3 months - 1 year (annual cycle)
+        #   long_term:   1 - 5 years    (business cycle)
+        #   structural:  5+ years        (secular/demographic trends)
+        #   not_specified: no time reference given
+      expiration_date: string | null  # when the claim becomes irrelevant
+    specificity_level: high | medium | low | background  
+    evidentiary_basis: reported_data | expert_opinion | company_statement | market_observation | speculative  
+    disclosed_position:               
+      type: long | short | none_stated | not_mentioned
+      position_quote: string | null   # verbatim quote showing position disclosure
+  
+  ValidatedClaim:
+    # ExtractedClaim + validation metadata
+    extends: ExtractedClaim
+    validation:
+      status: PASS
+      validated_at: timestamp
+  
+  RankedClaim:
+    # ValidatedClaim + ranking metadata
+    extends: ValidatedClaim
+    ranking:
+      score: number              # 0.0-1.0 overall importance
+      tags: array of ranking_tag
+  
+  EmbeddedClaim:
+    # RankedClaim + embedding vector + search-enabling fields
+    extends: RankedClaim
+    embedding:
+      vector: array of number       # 1536 dimensions (text-embedding-3-small)
+      model: string                 # "text-embedding-3-small"
+      input_text: string            # what was embedded (for debugging and recompute)
+    # Search-enabling fields (stored as real indexed DB columns, not in JSONB)
+    full_text: string               # concatenated searchable text for full-text search (tsvector indexed)
+    entity_names: array of string   # entity names for faceted filtering (array indexed)
+    created_at: timestamp
+    updated_at: timestamp
+
+  Entity:
+    id: string                       # uuid, primary key
+    canonical_name: string           # official display name (e.g. "Nvidia Corporation")
+    type: company | asset | industry | institution | geography | person | other
+    figi: string | null              # Financial Instrument Global Identifier (BBG000B9XRY4)
+    wikidata_qid: string | null      # Wikidata QID (Q12345) for persons and places
+    ticker: string | null            # primary exchange ticker (e.g. "NVDA")
+    exchange: string | null          # primary exchange code (e.g. "XNAS")
+    description: string | null       # brief human-readable description
+    metadata: object                 # JSONB — type-specific extra data:
+    # company:  { sector, industry, headquarters }
+    # asset:    { asset_class: equity|commodity|crypto|bond|index|etf, currency }
+    # person:   { title, affiliated_entity_ids, notable_for }
+    # geography:{ iso_code, level: country|region|city }
+    created_at: timestamp
+    updated_at: timestamp
+    status: active | inactive                     # entity lifecycle state
+
+  EntityAlias:
+    id: string                       # uuid, primary key
+    entity_id: string                # FK → Entity.id
+    alias: string                    # variant name (e.g. "NVDA", "Nvidia", "NVIDIA Corp")
+    alias_type: ticker | abbrev | legal | colloquial
+    source: string                   # where alias came from (openfigi | wikidata | extraction | manual)
+    created_at: timestamp
+    updated_at: timestamp
+    # UNIQUE(alias, entity_id)
+    # INDEX on alias for fast lookup
+
+  ClaimEntity:
+    claim_id: string                 # FK → Claim.id
+    entity_id: string                # FK → Entity.id
+    mention_name: string             # raw name as it appeared in claim
+    is_primary: boolean              # true = main subject of the claim
+    created_at: timestamp
+    updated_at: timestamp
+    # PRIMARY KEY (claim_id, entity_id)
+    # INDEX on entity_id (enables "all claims about entity X" queries)
+
+  ranking_tag:
+    # MVP tags (essential for credibility and quality signals)
+    - notable_speaker      # recognized authority, track record, credentials
+    - skin_in_game         # speaker disclosed personal position
+    - high_specificity     # concrete: ticker + direction + target + timeline
+    - catalyst_identified  # clear event/trigger that will move the asset
+    # Note: additional tags (well_reasoned, variant_perception, contrarian,
+    # bullish_standout, bearish_standout, high_conviction) can be added post-MVP
+  
+  ValidationReport:
+    claims:
+      - claim_index: number
+        status: PASS | FAIL | REJECT
+        reason: string | null
+    summary:
+      passed: number
+      failed: number
+      rejected: number
+  
+  EpisodeStats:                       # computed per episode after extraction completes
+    episode_id: string
+    podcast_id: string
+    podcast_name: string
+    podcast_reach_score: number       # 0-100 (from Podscan)
+    claim_count: number               # validated claims extracted
+    avg_confidence: number | null     # mean extraction_confidence (null if 0 claims)
+    hosts: array of { name, company? }   # from transcript metadata, default []
+    guests: array of { name, company?, occupation? }  # from transcript metadata, default []
+    # note: included in extraction output JSON as episodeStats field, not a separate file
+
+# =============================================================================
+# SCRIPTS
+# =============================================================================
+
+scripts:
+  # Interface contract for all scripts:
+  # - Called by agents via exec
+  # - Input: JSON via file path argument or stdin
+  # - Output: JSON to stdout
+  # - Exit codes: 0 = success, 1 = validation failure, 2 = error
+  
+  schema-validate.ts:
+    purpose: Effect Schema validation of ExtractedClaim array
+    input: path to claims JSON file
+    output: "{ valid: boolean, errors: [...] }"
+    api: none
+    
+  embed-claims.ts:
+    purpose: Generate embeddings and search fields for similarity and persistence
+    input: path to RankedClaim array JSON
+    output: array of EmbeddedClaim  # see schemas section
+    api: OpenAI Embeddings (text-embedding-3-small)
+    generates:
+      embedding.vector: 1536-dim vector from statement + reasoning + entity names
+      embedding.input_text: the concatenated text that was embedded
+      full_text: statement + reasoning concatenated for full-text search
+      entity_names: array of entity name strings extracted from claim.entities
+    note: embeddings used for query-time argument grouping (cosine similarity)
+    
+  validate-output.ts:
+    purpose: Effect Schema validation of extraction output (EmbeddedClaim array)
+    input: path to embedded claims JSON
+    output: "{ valid: boolean, errors: [...] }"
+    api: none
+
+# =============================================================================
+# PIPELINE
+# =============================================================================
+
+pipeline:
+  trigger: simple cron job (nightly, ~02:00 Europe/Berlin)
+  
+  fetch-phase:
+    fetch-transcripts:
+      type: rpc
+      procedure: readPodcastsByDate
+      returns: PodscanEpisode[]
+      note: CLI calls server via RPC, server queries Podscan API
+      empty-input: skip run, no error (nothing to process)
+  
+  extraction-phase:
+    extraction-orchestrator:
+      type: agent
+      runs: sequential, per transcript
+      receives: Podscan JSON (single episode)
+      produces: validated claims with source references
+      output: extraction/{date}/{episode-id}-claims.json
+      on-failure: log error, continue with remaining
+      
+      claim-extractor:
+        type: agent
+        model: heavy  # needs extended thinking for long transcripts
+        receives: Podscan JSON (full episode)
+        produces: array of ExtractedClaim (must be valid JSON)
+        
+        behavior:
+          - process transcript in one pass (use extended thinking)
+          - extract only tradeable investment content:
+              include:
+                - tradeable securities: stocks, ETFs, crypto, commodities (anything tradeable via a retail broker like Trade Republic)
+                - market trends / macro takes
+                - sector analysis
+                - reactions to market-moving events
+              exclude:
+                - non-tradeable investments (real estate, private equity, venture capital)
+                - sponsor reads
+                - personal anecdotes
+                - host banter / fluff
+                - general life advice (non-investment)
+          - each claim is self-contained with source reference
+          - generate claim IDs: clm_{episode_id}_{index}
+        
+        token-limit: fail with trace if transcript exceeds context
+        
+        output: array of ExtractedClaim  # see schemas section
+      
+      schema-validate:
+        type: script
+        runs: schema-validate.ts  # see scripts section
+        receives: claims JSON from extractor
+        produces: pass/fail
+        on-fail: extractor bug, do not retry downstream
+      
+      content-validator:
+        type: agent
+        model: balanced
+        receives: array of ExtractedClaim + source Podscan JSON
+        produces: ValidationReport  # see schemas section
+        
+        checks:
+          - faithful to source: does claim.statement faithfully represent the source?
+          - reasoning substantive: is reasoning meaningful, not generic?
+          - entities valid: entity names and types make sense
+          - coherent: claim and reasoning logically connected
+          - investment content only: not lifestyle advice, not fluff
+          - confidence threshold: extraction_confidence > 0.6
+          - actionability: is this something someone could act on?
+          - specificity: concrete claim vs vague generalization
+          - novelty: adds insight beyond common knowledge
+        
+        status meanings:
+          PASS: claim is valid, keep it
+          FAIL: fixable issue, send back to extractor with feedback
+          REJECT: not fixable (wrong content type, etc.), drop it
+      
+      rank-claims:
+        type: agent
+        model: balanced  # scoring within single episode, not cross-episode
+        receives: array of ValidatedClaim from one episode
+        produces: array of RankedClaim (ValidatedClaim + ranking metadata)
+        behavior:
+          - assign score (0.0-1.0) based on credibility, quality, conviction
+          - apply ranking_tags where applicable
+          - order by score descending
+      
+      embed-claims:
+        type: script
+        runs: embed-claims.ts  # see scripts section
+        receives: array of RankedClaim
+        produces: array of EmbeddedClaim with embedding vectors
+      
+      # Orchestrator retry logic:
+      # 1. Run extractor → schema-validate → content-validator
+      # 2. If any FAIL in report: pass report to extractor for rework
+      # 3. Re-run content-validator on reworked output
+      # 4. Max 2 rework cycles, then:
+      #    - Emit PASSed claims to ranking, then embedding
+      #    - Write unresolved FAILs to report file: extraction/{date}/unresolved.json
+      #    - REJECTed claims: logged in report, not passed forward
+  
+  ingestion-phase:
+    purpose: >
+      Persist ranked claims to the database, resolve extracted entity names to
+      canonical entities, and create claim-entity associations. Enables
+      entity-centric queries (e.g. "show all claims about NVIDIA").
+
+    entity-resolver:
+      type: agent
+      model: balanced
+      runs: per claim, per entity mention
+      receives: RankedClaim[] from extraction output JSON
+      produces: canonical Entity records + ClaimEntity links
+
+      matching-strategy:
+        layer-1-exact:
+          - Check EntityAlias table: match alias = raw_name (case-insensitive)
+          - Check Entity.ticker: match ticker = raw_name (uppercase); skip if ticker is ambiguous across exchanges (fall to layer-1.5)
+          - Check Entity.canonical_name: match case-insensitive
+          - If any match found: return entity_id, skip layer 2
+        layer-1.5-fuzzy:
+          - pg_trgm trigram similarity on canonical_name + all aliases (threshold: 0.9)
+          - Catches near-duplicates before LLM creates a new entity
+          - Example: Apple Inc vs Apple vs Apple Corp → same entity
+          - If score > 0.9: return entity_id, register raw_name as alias, skip layer 2
+        layer-2-llm:
+          - Agent receives: { name, type, claim_statement, claim_context }
+          - Query OpenFIGI for company/asset types
+          - Query Wikidata for person/geography/institution types
+          - Analyze claim context to disambiguate (e.g. "Apple" = company in finance context)
+          - If match found: return entity_id, register raw_name as alias
+          - If no match: create new Entity record, register raw_name as alias
+
+      tools:
+        lookup_openfigi:
+          purpose: Map ticker or company name to FIGI identifier
+          input: "{ idType: TICKER|ID_FULL_EXCHANGE_SYMBOL|NAME, idValue: string }"
+          output: "{ figi, name, ticker, exchCode, securityType }"
+          api: https://api.openfigi.com/v3/mapping (free, 25k req/min)
+        lookup_wikidata:
+          purpose: Resolve person, place, or institution to Wikidata QID
+          input: "{ query: string, type: person|geography|institution }"
+          output: "{ qid, label, description }"
+          api: https://www.wikidata.org/w/api.php (free, no auth)
+        search_entities:
+          purpose: Find existing entities in our DB by name similarity
+          input: "{ query: string, type: entity_type }"
+          output: "array of { id, canonical_name, score }"
+        create_entity:
+          purpose: Create a new canonical entity record
+          input: "{ canonical_name, type, figi?, ticker?, wikidata_qid?, ... }"
+          output: "{ entity_id }"
+        add_alias:
+          purpose: Register a variant name that maps to an entity
+          input: "{ entity_id, alias, alias_type, source }"
+          output: "{ success: true }"
+
+      behavior:
+        - Always prefer matching existing entities over creating new ones
+        - External API results (FIGI, Wikidata QID) are ground truth for canonical names
+        - Always register the raw mention_name as an alias after resolution
+        - Use claim context to disambiguate ambiguous names (e.g. "Apple")
+        - If entity type is "other", skip external APIs and create directly
+    persist-claims:
+      type: script
+      runs: after entity-resolver completes
+      receives: RankedClaim[] + resolved entity_ids
+      writes to: claim table (id, episode_id, stance, ranking_score, ranking_tags, entity_names, full_text, embedding, expiration_date, status, is_duplicate, original_claim_id, created_at, updated_at, claim_data JSONB)
+      # claim_data contains: statement, reasoning, quotes, speaker, entities, timeframe.horizon, specificity_level, evidentiary_basis, disclosed_position, validation, extraction_confidence
+      writes to: claim_entity table (claim_id, entity_id, mention_name, is_primary, created_at, updated_at)
+      primary-entity: the company/asset entity closest to the claim's investment thesis;
+                      fall back to first entity if no clear primary
+      dedup-check:
+        - Before persisting: compute cosine similarity against existing claims from same speaker + same entity
+        - If similarity > 0.92 AND same speaker: set is_duplicate=true, set original_claim_id to matching claim
+        - Duplicates persist to DB but are excluded from sentiment counts and cluster source counts
+
+    expire-claims:
+      type: script
+      runs: nightly, after ingestion completes
+      purpose: Transition claims to expired status when past their expiration_date
+      logic:
+        - Set status=expired WHERE expiration_date IS NOT NULL AND expiration_date < today  # top-level column, indexed
+        - Expired claims remain in DB but are excluded from all card view queries
+
+    write-run-report:
+      type: script
+      runs: after all phases complete
+      purpose: Write debugging/audit report for this pipeline run
+      output: reports/{date}/run-report.json
+      contains:
+        - episodes_processed: number
+        - claims_extracted: number
+        - claims_validated: number
+        - claims_rejected: number
+        - entities_created: number
+        - entities_resolved: number
+        - errors: array of { episode_id, stage, message }
+        - duration_ms: number
+
+  output-phase:
+    purpose: >
+      Surface claims as an entity-centric card view:
+      sentiment breakdown + grouped arguments by stance.
+      Grouping computed at query time with recency weighting.
+      Expired and duplicate claims excluded from all queries.
+
+    entity-search:
+      query: user types "NVIDIA", "NVDA", or any known alias
+      method: match against Entity.canonical_name, Entity.ticker, EntityAlias.alias
+      returns: matching Entity records
+
+    entity-card-view:
+      query: "all claims linked to entity_id X"
+      steps:
+        - Fetch all non-expired, non-duplicate claims via claim_entity WHERE entity_id = X
+        - Count by stance → sentiment breakdown (bullish %, bearish %, neutral %)
+        - For bullish claims: cluster by embedding cosine similarity (threshold ~0.85)
+        - For bearish claims: cluster by embedding cosine similarity (threshold ~0.85)
+        - Apply recency weighting: weight = 1.0 at 0 days old, decaying to 0.3 at 90+ days
+        - Per cluster: select representative claim (highest score × recency weight), count distinct episode sources
+        - Return top N clusters per stance ordered by source count
+
+      display:
+        - entity header: canonical_name + ticker
+        - sentiment bar: bullish / bearish / neutral percentages
+        - bullish arguments: grouped clusters with source counts + credibility indicators (notable_speaker, skin_in_game tags)
+        - bearish arguments: grouped clusters with source counts + credibility indicators (notable_speaker, skin_in_game tags)
+        - each argument links to representative claim + original episode
+
+    financial-data:
+      status: planned for future phase
+      note: P/E, revenue growth, margins, etc. from external data sources
+    discovery-view:
+      purpose: >
+        Surface entities users would miss: trending (accelerating mentions)
+        and sentiment extremes (strong consensus). Enables discovery without
+        knowing what to search for.
+
+      trending-entities:
+        purpose: Surface entities with accelerating mention velocity
+        computation:
+          - Count mentions per entity in 7-day and 30-day windows
+          - velocity = mentions_7d / (mentions_30d / 30 * 7)
+          - Normalize to avoid division by zero (min baseline = 1)
+        thresholds:
+          min_mentions_7d: 5          # avoid noise from single mentions
+          velocity_threshold: 1.5     # 50% acceleration = trending
+        output: Top 20 entities ordered by velocity descending
+        computation: query-time SQL aggregation on claims + claim_entities tables
+
+      sentiment-extremes:
+        purpose: Surface entities with strong bullish or bearish consensus
+        computation:
+          - Count claims by stance (bullish/bearish/neutral) per entity
+          - Calculate percentages
+          - Filter where any stance >= 90%
+        thresholds:
+          min_claims: 3               # need enough data points
+          consensus_threshold: 0.9    # 90%+ agreement
+        output:
+          bullish_extremes: entities where bullish_pct >= 90%
+          bearish_extremes: entities where bearish_pct >= 90%
+        computation: query-time SQL aggregation on claims + claim_entities tables
+
+      computation:
+        method: query-time  # SQL aggregation on demand; no batch job or cron needed for MVP
+        note: add materialized view or caching if discovery page performance degrades
+
+# Design principles:
+# 
+# 1. Traceability: Every claim references source via episode_id.
+#    Verbatim quotes stored in claim for auditability; source file remains the canonical reference.
+#    Source block is immutable — downstream steps never alter it.
+#
+# 2. Validation split: Schema validation (Effect Schema) catches extractor bugs.
+#    Content validation (LLM) checks semantic quality. Different failure
+#    modes, different fixes.
+#
+# 3. Entity-centric: Claims are linked to canonical entities, not pre-grouped
+#    into topic packages. Users navigate by stock/entity and see sentiment +
+#    grouped arguments. Grouping happens at query time using embeddings.
+#
+# 4. No manual review: Pipeline runs autonomously. Validated claims are
+#    immediately queryable. Enhance quality while online, not before.
+#
+# 5. Entity-centric with canonical resolution: Claims link to canonical entity
+#    records, not raw text names. Variant names ("NVDA", "Nvidia", "NVIDIA")
+#    all resolve to one entity row. Argument grouping happens at query time via
+#    embedding similarity — no pre-computed topic packages.
