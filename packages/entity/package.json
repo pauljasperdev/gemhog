@@ -1,0 +1,39 @@
+{
+  "name": "@gemhog/entity",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "check-types": "tsc --noEmit",
+    "smoke:repository": "LOCAL_ENV=1 SST_STAGE=test tsx scripts/test-repository.ts",
+    "smoke:resolver": "LOCAL_ENV=1 SST_STAGE=test tsx scripts/test-resolver.ts",
+    "smoke:resolver:live": "LOCAL_ENV=1 SST_STAGE=dev tsx scripts/smoke-resolver-live.ts",
+    "smoke:resolver:fallback": "LOCAL_ENV=1 SST_STAGE=test tsx scripts/smoke-resolver-fallback.ts",
+    "smoke:resolver:fuzzy": "LOCAL_ENV=1 SST_STAGE=test tsx scripts/smoke-resolver-fuzzy.ts",
+    "smoke:openfigi": "LOCAL_ENV=1 tsx scripts/test-openfigi.ts",
+    "smoke:openfigi:name": "LOCAL_ENV=1 tsx scripts/test-openfigi-name.ts",
+    "smoke:wikidata": "LOCAL_ENV=1 tsx scripts/test-wikidata.ts",
+    "smoke:seed": "LOCAL_ENV=1 SST_STAGE=test tsx scripts/seed-test-data.ts"
+  },
+  "dependencies": {
+    "@effect/ai": "catalog:",
+    "@effect/platform": "catalog:",
+    "@effect/sql": "catalog:",
+    "@effect/sql-drizzle": "catalog:",
+    "@gemhog/ai": "workspace:*",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "@types/pg": "^8.16.0",
+    "pg": "^8.17.2",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
