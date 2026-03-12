@@ -1,0 +1,22 @@
+{
+  "name": "@gemhog/claim",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gemhog/db": "workspace:*",
+    "@gemhog/entity": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
