@@ -26,6 +26,10 @@
     "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter web dev",
     "dev:server": "pnpm --filter server dev",
+    "dev:db:push": "LOCAL_ENV=1 pnpm --filter @gemhog/db db:push",
+    "dev:db:studio": "LOCAL_ENV=1 pnpm --filter @gemhog/db db:studio",
+    "dev:db:generate": "LOCAL_ENV=1 pnpm --filter @gemhog/db db:generate",
+    "dev:db:migrate": "LOCAL_ENV=1 pnpm --filter @gemhog/db db:migrate",
     "sst:dev": "pnpm sst dev",
     "sst:db:push": "sst shell -- pnpm --filter @gemhog/db db:push",
     "sst:db:studio": "sst shell -- pnpm --filter @gemhog/db db:studio",
@@ -46,6 +50,7 @@
     "prettier": "^3.8.0",
     "react-doctor": "^0.0.28",
     "sst": "4.1.1",
+    "tsx": "^4.19.1",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
@@ -53,7 +58,8 @@
   "pnpm": {
     "overrides": {
       "esbuild": ">=0.25.0",
-      "lodash-es": ">=4.17.23"
+      "lodash-es": ">=4.17.23",
+      "dompurify": ">=3.3.2"
     },
     "auditConfig": {}
   }
