@@ -1,13 +1,13 @@
 import * as Effect from "effect";
 import { PodscanService } from "./podscan";
 import type {
-  PodscanChartPodcast,
-  PodscanEpisode,
+  PodscanChartPodcastResponse,
+  PodscanEpisodeResponse,
   PodscanPagination,
   PodscanPodcastDetail,
 } from "./schema";
 
-const mockChartPodcasts: ReadonlyArray<PodscanChartPodcast> = [
+const mockChartPodcasts: ReadonlyArray<PodscanChartPodcastResponse> = [
   {
     rank: 1,
     name: "Mock Podcast Alpha",
@@ -101,7 +101,7 @@ const mockPodcastDetail: PodscanPodcastDetail = {
   },
 };
 
-const mockEpisodes: ReadonlyArray<PodscanEpisode> = [
+const mockEpisodes: ReadonlyArray<PodscanEpisodeResponse> = [
   {
     episode_id: "mock-episode-1",
     episode_title: "Mock Episode 1: Getting Started",
@@ -211,7 +211,7 @@ const buildPodcastDetail = (podcastId: string): PodscanPodcastDetail => {
 
 const buildLatestEpisodes = (
   podcastId: string,
-): ReadonlyArray<PodscanEpisode> => {
+): ReadonlyArray<PodscanEpisodeResponse> => {
   const snapshot = resolvePodcastSnapshot(podcastId);
   return mockEpisodes.map((episode, index) => ({
     ...episode,

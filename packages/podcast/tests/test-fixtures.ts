@@ -1,4 +1,7 @@
-import type { PodscanEpisode, PodscanPodcastDetail } from "../src/schema";
+import type {
+  PodscanEpisodeResponse,
+  PodscanPodcastDetail,
+} from "../src/schema";
 
 /**
  * Factory function to create mock PodscanPodcastDetail objects for testing.
@@ -65,8 +68,8 @@ export function createMockPodcastDetail(
  * and accepts partial overrides.
  */
 export function createMockEpisode(
-  overrides?: Partial<PodscanEpisode>,
-): PodscanEpisode {
+  overrides?: Partial<PodscanEpisodeResponse>,
+): PodscanEpisodeResponse {
   const timestamp = Date.now();
 
   return {
@@ -118,8 +121,8 @@ export function createMockEpisode(
  * episode_has_guests, and episode_has_sponsors.
  */
 export function createMockEpisodeWithNullableFields(
-  overrides?: Partial<PodscanEpisode>,
-): PodscanEpisode {
+  overrides?: Partial<PodscanEpisodeResponse>,
+): PodscanEpisodeResponse {
   const timestamp = Date.now();
 
   return {

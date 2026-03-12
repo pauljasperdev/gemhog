@@ -6,7 +6,7 @@ import { PodscanService } from "../src/podscan";
 import { MockPodscanService } from "../src/podscan.mock";
 import { PodcastRepository } from "../src/repository";
 import { PodcastRepositoryLive } from "../src/repository.live";
-import { episode, podcast } from "../src/sql";
+import { podscanEpisode, podscanPodcast } from "../src/sql";
 
 const DATABASE_URL =
   process.env.DATABASE_URL ??
@@ -22,10 +22,10 @@ const TestLive = Effect.Layer.mergeAll(TestRepositoryLive, MockPodscanService);
 const truncate = Effect.Effect.gen(function* () {
   const db = yield* PgDrizzle.PgDrizzle;
   yield* db
-    .delete(episode)
+    .delete(podscanEpisode)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.void));
   yield* db
-    .delete(podcast)
+    .delete(podscanPodcast)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.void));
 });
 

@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 import { PodscanLayer, PodscanService } from "../src";
-import type { PodscanChartPodcast } from "../src/schema";
+import type { PodscanChartPodcastResponse } from "../src/schema";
 
 const WEEKLY_THRESHOLD = 2.5; // episodes per week
 const DAILY_THRESHOLD = 5.0; // episodes per week
@@ -13,19 +13,19 @@ const parseFrequency = (freq: string | null): number | null => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
-const filterWeekly = (podcast: PodscanChartPodcast): boolean => {
+const filterWeekly = (podcast: PodscanChartPodcastResponse): boolean => {
   const freq = parseFrequency(podcast.frequency);
   return freq !== null && freq < WEEKLY_THRESHOLD;
 };
 
-const filterDaily = (podcast: PodscanChartPodcast): boolean => {
+const filterDaily = (podcast: PodscanChartPodcastResponse): boolean => {
   const freq = parseFrequency(podcast.frequency);
   return freq !== null && freq >= DAILY_THRESHOLD;
 };
 
 const sortByAudience = (
-  a: PodscanChartPodcast,
-  b: PodscanChartPodcast,
+  a: PodscanChartPodcastResponse,
+  b: PodscanChartPodcastResponse,
 ): number => {
   const aSize = a.audience_size ?? 0;
   const bSize = b.audience_size ?? 0;
@@ -42,7 +42,10 @@ const formatFrequency = (freq: string | null): string => {
   return parsed !== null ? parsed.toFixed(2) : "N/A";
 };
 
-const formatPodcast = (podcast: PodscanChartPodcast, index: number): string => {
+const formatPodcast = (
+  podcast: PodscanChartPodcastResponse,
+  index: number,
+): string => {
   return `${index}. ${podcast.name}
    Publisher: ${podcast.publisher}
    Podcast ID: ${podcast.podcast_id ?? "N/A"}

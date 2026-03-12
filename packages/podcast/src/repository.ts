@@ -4,22 +4,22 @@ import type {
   PodcastNotFoundError,
   PodcastRepositoryError,
 } from "./errors";
-import type { PodscanEpisode, PodscanPodcastDetail } from "./schema";
-import type { Episode, Podcast } from "./sql";
+import type { PodscanEpisodeResponse, PodscanPodcastDetail } from "./schema";
+import type { PodscanEpisode, PodscanPodcast } from "./sql";
 
 interface PodcastRepositoryShape {
   readonly upsertPodcastByPodscanId: (
     data: PodscanPodcastDetail,
-  ) => Effect.Effect.Effect<Podcast, PodcastRepositoryError, never>;
+  ) => Effect.Effect.Effect<PodscanPodcast, PodcastRepositoryError, never>;
 
   readonly upsertEpisodeByPodscanId: (
-    data: PodscanEpisode,
-  ) => Effect.Effect.Effect<Episode, PodcastRepositoryError, never>;
+    data: PodscanEpisodeResponse,
+  ) => Effect.Effect.Effect<PodscanEpisode, PodcastRepositoryError, never>;
 
   readonly readPodcastById: (
     podcastId: string,
   ) => Effect.Effect.Effect<
-    Podcast,
+    PodscanPodcast,
     PodcastRepositoryError | PodcastNotFoundError,
     never
   >;
@@ -27,7 +27,7 @@ interface PodcastRepositoryShape {
   readonly readEpisodeById: (
     episodeId: string,
   ) => Effect.Effect.Effect<
-    Episode,
+    PodscanEpisode,
     PodcastRepositoryError | EpisodeNotFoundError,
     never
   >;
@@ -35,7 +35,7 @@ interface PodcastRepositoryShape {
   readonly readEpisodesByPodcastId: (
     podcastId: string,
   ) => Effect.Effect.Effect<
-    ReadonlyArray<Episode>,
+    ReadonlyArray<PodscanEpisode>,
     PodcastRepositoryError,
     never
   >;
@@ -47,7 +47,7 @@ interface PodcastRepositoryShape {
   readonly readPodcastByPodscanId: (
     podscanPodcastId: string,
   ) => Effect.Effect.Effect<
-    Podcast,
+    PodscanPodcast,
     PodcastRepositoryError | PodcastNotFoundError,
     never
   >;

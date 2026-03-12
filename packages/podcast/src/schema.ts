@@ -1,16 +1,18 @@
 import { Schema } from "effect";
 
 // PodscanPodcast
-export const PodscanPodcast = Schema.Struct({
+export const PodscanPodcastSchema = Schema.Struct({
   podcast_id: Schema.String,
   podcast_name: Schema.String,
   podcast_url: Schema.String,
 });
 
-export type PodscanPodcast = Schema.Schema.Type<typeof PodscanPodcast>;
+export type PodscanPodcastResponse = Schema.Schema.Type<
+  typeof PodscanPodcastSchema
+>;
 
 // PodscanEpisode
-export const PodscanEpisode = Schema.Struct({
+export const PodscanEpisodeSchema = Schema.Struct({
   episode_id: Schema.String,
   episode_title: Schema.String,
   episode_url: Schema.String,
@@ -40,16 +42,18 @@ export const PodscanEpisode = Schema.Struct({
       topic_name_normalized: Schema.String,
     }),
   ),
-  podcast: PodscanPodcast,
+  podcast: PodscanPodcastSchema,
   posted_at: Schema.String,
   created_at: Schema.String,
   updated_at: Schema.String,
 });
 
-export type PodscanEpisode = Schema.Schema.Type<typeof PodscanEpisode>;
+export type PodscanEpisodeResponse = Schema.Schema.Type<
+  typeof PodscanEpisodeSchema
+>;
 
 // PodscanChartPodcast
-export const PodscanChartPodcast = Schema.Struct({
+export const PodscanChartPodcastSchema = Schema.Struct({
   rank: Schema.Number,
   name: Schema.String,
   publisher: Schema.String,
@@ -63,12 +67,12 @@ export const PodscanChartPodcast = Schema.Struct({
   frequency: Schema.NullOr(Schema.String),
 });
 
-export type PodscanChartPodcast = Schema.Schema.Type<
-  typeof PodscanChartPodcast
+export type PodscanChartPodcastResponse = Schema.Schema.Type<
+  typeof PodscanChartPodcastSchema
 >;
 
 // PodscanPodcastDetail
-export const PodscanPodcastDetail = Schema.Struct({
+export const PodscanPodcastDetailSchema = Schema.Struct({
   podcast_id: Schema.String,
   podcast_guid: Schema.String,
   podcast_name: Schema.String,
@@ -112,15 +116,15 @@ export const PodscanPodcastDetail = Schema.Struct({
 });
 
 export type PodscanPodcastDetail = Schema.Schema.Type<
-  typeof PodscanPodcastDetail
+  typeof PodscanPodcastDetailSchema
 >;
 
 export const PodscanPodcastDetailResponse = Schema.Struct({
-  podcast: PodscanPodcastDetail,
+  podcast: PodscanPodcastDetailSchema,
 });
 
 export const PodscanTopPodcastsResponse = Schema.Struct({
-  podcasts: Schema.Array(PodscanChartPodcast),
+  podcasts: Schema.Array(PodscanChartPodcastSchema),
 });
 
 const PodscanPagination = Schema.Struct({
@@ -135,6 +139,6 @@ const PodscanPagination = Schema.Struct({
 export type PodscanPagination = Schema.Schema.Type<typeof PodscanPagination>;
 
 export const PodscanEpisodesResponse = Schema.Struct({
-  episodes: Schema.Array(PodscanEpisode),
+  episodes: Schema.Array(PodscanEpisodeSchema),
   pagination: PodscanPagination,
 });

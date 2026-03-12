@@ -3,8 +3,10 @@ import { defineConfig } from "drizzle-kit";
 export default defineConfig({
   schema: [
     "./src/auth.sql.ts",
-    "./src/podcast.sql.ts",
+    "./src/podscan.sql.ts",
     "./src/subscriber.sql.ts",
+    "./src/entity.sql.ts",
+    "./src/claim.sql.ts",
   ],
   out: "./migrations",
   dialect: "postgresql",

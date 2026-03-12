@@ -1,12 +1,12 @@
 import * as Effect from "effect";
 import type { BucketError } from "./errors";
-import type { PodscanEpisode } from "./schema";
+import type { PodscanEpisodeResponse } from "./schema";
 
 interface BucketServiceShape {
   readonly writeEpisode: (
     prefix: string,
     date: string,
-    episode: PodscanEpisode,
+    episode: PodscanEpisodeResponse,
   ) => Effect.Effect.Effect<void, BucketError, never>;
 }
 

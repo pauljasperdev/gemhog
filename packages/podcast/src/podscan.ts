@@ -1,8 +1,8 @@
 import * as Effect from "effect";
 import type { PodscanError } from "./errors";
 import type {
-  PodscanChartPodcast,
-  PodscanEpisode,
+  PodscanChartPodcastResponse,
+  PodscanEpisodeResponse,
   PodscanPagination,
   PodscanPodcastDetail,
 } from "./schema";
@@ -12,7 +12,7 @@ interface PodscanServiceShape {
     category: string,
     limit: number,
   ) => Effect.Effect.Effect<
-    ReadonlyArray<PodscanChartPodcast>,
+    ReadonlyArray<PodscanChartPodcastResponse>,
     PodscanError,
     never
   >;
@@ -24,7 +24,7 @@ interface PodscanServiceShape {
     page?: number,
   ) => Effect.Effect.Effect<
     {
-      readonly episodes: ReadonlyArray<PodscanEpisode>;
+      readonly episodes: ReadonlyArray<PodscanEpisodeResponse>;
       readonly pagination: PodscanPagination;
     },
     PodscanError,

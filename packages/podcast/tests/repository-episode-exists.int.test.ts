@@ -4,7 +4,7 @@ import * as Effect from "effect";
 import { afterEach, describe, expect, it } from "vitest";
 import { PodcastRepository } from "../src/repository";
 import { PodcastRepositoryLive } from "../src/repository.live";
-import { episode, podcast } from "../src/sql";
+import { podscanEpisode, podscanPodcast } from "../src/sql";
 import { createMockEpisode, createMockPodcastDetail } from "./test-fixtures";
 
 const DATABASE_URL =
@@ -20,10 +20,10 @@ const TestRepositoryLive = PodcastRepositoryLive.pipe(
 const truncate = Effect.Effect.gen(function* () {
   const db = yield* PgDrizzle.PgDrizzle;
   yield* db
-    .delete(episode)
+    .delete(podscanEpisode)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
   yield* db
-    .delete(podcast)
+    .delete(podscanPodcast)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
 });
 

@@ -3,7 +3,7 @@ import * as Effect from "effect";
 import { annotateCurrentSpan } from "effect/Effect";
 import { BucketService } from "./bucket";
 import { BucketError } from "./errors";
-import type { PodscanEpisode } from "./schema";
+import type { PodscanEpisodeResponse } from "./schema";
 
 export const BucketServiceLive = Effect.Layer.effect(
   BucketService,
@@ -12,7 +12,11 @@ export const BucketServiceLive = Effect.Layer.effect(
     const s3 = new S3Client({});
 
     const writeEpisode = Effect.Effect.fn("podcast.bucket.writeEpisode")(
-      function* (prefix: string, date: string, episode: PodscanEpisode) {
+      function* (
+        prefix: string,
+        date: string,
+        episode: PodscanEpisodeResponse,
+      ) {
         yield* annotateCurrentSpan("prefix", prefix);
         yield* annotateCurrentSpan("date", date);
         yield* annotateCurrentSpan("episodeId", episode.episode_id);

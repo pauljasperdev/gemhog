@@ -9,7 +9,7 @@ import {
 } from "../src/errors";
 import { PodcastRepository } from "../src/repository";
 import { PodcastRepositoryLive } from "../src/repository.live";
-import { episode, podcast } from "../src/sql";
+import { podscanEpisode, podscanPodcast } from "../src/sql";
 import { createMockEpisode, createMockPodcastDetail } from "./test-fixtures";
 
 const DATABASE_URL =
@@ -26,10 +26,10 @@ const truncate = Effect.Effect.gen(function* () {
   const db = yield* PgDrizzle.PgDrizzle;
   // Delete episode first (child), then podcast (parent) - FK order matters
   yield* db
-    .delete(episode)
+    .delete(podscanEpisode)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
   yield* db
-    .delete(podcast)
+    .delete(podscanPodcast)
     .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
 });
 

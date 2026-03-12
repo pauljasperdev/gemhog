@@ -8,8 +8,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export const podcast = pgTable(
-  "podcast",
+export const podscanPodcast = pgTable(
+  "podscan_podcast",
   {
     id: text("id")
       .primaryKey()
@@ -48,12 +48,12 @@ export const podcast = pgTable(
       .notNull(),
   },
   (table) => [
-    index("podcast_podscan_podcast_id_idx").on(table.podscanPodcastId),
+    index("podscan_podcast_podscan_podcast_id_idx").on(table.podscanPodcastId),
   ],
 );
 
-export const episode = pgTable(
-  "episode",
+export const podscanEpisode = pgTable(
+  "podscan_episode",
   {
     id: text("id")
       .primaryKey()
@@ -61,7 +61,7 @@ export const episode = pgTable(
     podscanEpisodeId: text("podscan_episode_id").notNull().unique(),
     podcastId: text("podcast_id")
       .notNull()
-      .references(() => podcast.id),
+      .references(() => podscanPodcast.id),
     title: text("title").notNull(),
     description: text("description").notNull(),
     url: text("url").notNull(),
@@ -86,10 +86,10 @@ export const episode = pgTable(
       .notNull(),
   },
   (table) => [
-    index("episode_podcast_id_idx").on(table.podcastId),
-    index("episode_podscan_episode_id_idx").on(table.podscanEpisodeId),
+    index("podscan_episode_podcast_id_idx").on(table.podcastId),
+    index("podscan_episode_podscan_episode_id_idx").on(table.podscanEpisodeId),
   ],
 );
 
-export type Podcast = typeof podcast.$inferSelect;
-export type Episode = typeof episode.$inferSelect;
+export type PodscanPodcast = typeof podscanPodcast.$inferSelect;
+export type PodscanEpisode = typeof podscanEpisode.$inferSelect;

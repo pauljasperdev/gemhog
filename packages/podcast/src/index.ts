@@ -15,5 +15,5 @@ export { MockPodscanService } from "./podscan.mock";
 export { PodcastRepository } from "./repository";
 export { PodcastRepositoryLive } from "./repository.live";
 export * from "./schema";
-export type { Episode, Podcast } from "./sql";
+export type { PodscanEpisode, PodscanPodcast } from "./sql";
 export * as podcastSchema from "./sql";

@@ -6,7 +6,7 @@ import {
 } from "@effect/platform";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { beforeEach, describe, expect, it } from "@effect/vitest";
-import type { Episode, Podcast } from "@gemhog/db/podcast";
+import type { PodscanEpisode, PodscanPodcast } from "@gemhog/db/podcast";
 import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
@@ -20,8 +20,8 @@ import { PodscanServiceLive } from "../src/podscan.live";
 import { PodcastRepository } from "../src/repository";
 import { PodcastRepositoryLive } from "../src/repository.live";
 import type {
-  PodscanChartPodcast,
-  PodscanEpisode,
+  PodscanChartPodcastResponse,
+  PodscanEpisodeResponse,
   PodscanPodcastDetail,
 } from "../src/schema";
 
@@ -46,7 +46,7 @@ process.env.PODSCAN_BASE_URL =
 process.env.PODCAST_BUCKET_NAME =
   process.env.PODCAST_BUCKET_NAME ?? "test-bucket";
 
-function makeTestPodcast(overrides?: Partial<Podcast>): Podcast {
+function makeTestPodcast(overrides?: Partial<PodscanPodcast>): PodscanPodcast {
   return {
     id: overrides?.id ?? "test-podcast-id",
     podscanPodcastId: overrides?.podscanPodcastId ?? "test-podscan-id",
@@ -81,7 +81,7 @@ function makeTestPodcast(overrides?: Partial<Podcast>): Podcast {
   };
 }
 
-function makeTestEpisode(overrides?: Partial<Episode>): Episode {
+function makeTestEpisode(overrides?: Partial<PodscanEpisode>): PodscanEpisode {
   return {
     id: overrides?.id ?? "test-episode-id",
     podcastId: overrides?.podcastId ?? "test-podcast-id",
@@ -109,8 +109,8 @@ function makeTestEpisode(overrides?: Partial<Episode>): Episode {
 }
 
 function makeTestPodscanChartPodcast(
-  overrides?: Partial<PodscanChartPodcast>,
-): PodscanChartPodcast {
+  overrides?: Partial<PodscanChartPodcastResponse>,
+): PodscanChartPodcastResponse {
   return {
     rank: overrides?.rank ?? 1,
     name: overrides?.name ?? "Test Podcast",
@@ -127,8 +127,8 @@ function makeTestPodscanChartPodcast(
 }
 
 function makeTestPodscanEpisode(
-  overrides?: Partial<PodscanEpisode>,
-): PodscanEpisode {
+  overrides?: Partial<PodscanEpisodeResponse>,
+): PodscanEpisodeResponse {
   return {
     episode_id: overrides?.episode_id ?? "test-episode-id",
     episode_title: overrides?.episode_title ?? "Test Episode",

@@ -4,8 +4,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./auth": "./src/auth.sql.ts",
-    "./podcast": "./src/podcast.sql.ts",
+    "./podcast": "./src/podscan.sql.ts",
     "./subscriber": "./src/subscriber.sql.ts",
+    "./entity": "./src/entity.sql.ts",
+    "./claim": "./src/claim.sql.ts",
     "./migrate": "./src/migrate.ts"
   },
   "scripts": {
@@ -13,7 +15,8 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "db:migrate": "tsx src/migrate.local.ts"
+    "db:migrate": "tsx src/migrate.local.ts",
+    "db:test:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@effect/sql": "^0.49",

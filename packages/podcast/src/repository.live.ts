@@ -9,8 +9,8 @@ import {
   PodcastRepositoryError,
 } from "./errors";
 import { PodcastRepository } from "./repository";
-import type { PodscanEpisode, PodscanPodcastDetail } from "./schema";
-import { episode, podcast } from "./sql";
+import type { PodscanEpisodeResponse, PodscanPodcastDetail } from "./schema";
+import { podscanEpisode, podscanPodcast } from "./sql";
 
 export const PodcastRepositoryLive = Effect.Layer.effect(
   PodcastRepository,
@@ -54,10 +54,10 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
         };
 
         const rows = yield* db
-          .insert(podcast)
+          .insert(podscanPodcast)
           .values(podcastData)
           .onConflictDoUpdate({
-            target: podcast.podscanPodcastId,
+            target: podscanPodcast.podscanPodcastId,
             set: {
               ...podcastData,
               updatedAt: new Date(),
@@ -80,13 +80,13 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
     const upsertEpisodeByPodscanId = Effect.Effect.fn(
       "podcast.repository.upsertEpisode",
     )(
-      function* (data: PodscanEpisode) {
+      function* (data: PodscanEpisodeResponse) {
         yield* annotateCurrentSpan("podscanEpisodeId", data.episode_id);
 
         const podcastRows = yield* db
           .select()
-          .from(podcast)
-          .where(eq(podcast.podscanPodcastId, data.podcast.podcast_id))
+          .from(podscanPodcast)
+          .where(eq(podscanPodcast.podscanPodcastId, data.podcast.podcast_id))
           .pipe(
             Effect.Effect.catchTag("SqlError", (sqlError: SqlError) => {
               const cause = `Database operation failed during podcast FK resolution: ${sqlError.message}`;
@@ -128,10 +128,10 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
         };
 
         const rows = yield* db
-          .insert(episode)
+          .insert(podscanEpisode)
           .values(episodeData)
           .onConflictDoUpdate({
-            target: episode.podscanEpisodeId,
+            target: podscanEpisode.podscanEpisodeId,
             set: {
               ...episodeData,
               updatedAt: new Date(),
@@ -159,8 +159,8 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         const rows = yield* db
           .select()
-          .from(podcast)
-          .where(eq(podcast.id, podcastId));
+          .from(podscanPodcast)
+          .where(eq(podscanPodcast.id, podcastId));
 
         const row = rows[0];
         if (!row) {
@@ -187,8 +187,8 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         const rows = yield* db
           .select()
-          .from(episode)
-          .where(eq(episode.id, episodeId));
+          .from(podscanEpisode)
+          .where(eq(podscanEpisode.id, episodeId));
 
         const row = rows[0];
         if (!row) {
@@ -215,8 +215,8 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         const rows = yield* db
           .select()
-          .from(episode)
-          .where(eq(episode.podcastId, podcastId));
+          .from(podscanEpisode)
+          .where(eq(podscanEpisode.podcastId, podcastId));
         return rows;
       },
       (effect) =>
@@ -235,9 +235,9 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
         yield* annotateCurrentSpan("podscanEpisodeId", podscanEpisodeId);
 
         const rows = yield* db
-          .select({ id: episode.id })
-          .from(episode)
-          .where(eq(episode.podscanEpisodeId, podscanEpisodeId));
+          .select({ id: podscanEpisode.id })
+          .from(podscanEpisode)
+          .where(eq(podscanEpisode.podscanEpisodeId, podscanEpisodeId));
 
         return rows.length > 0;
       },
@@ -258,8 +258,8 @@ export const PodcastRepositoryLive = Effect.Layer.effect(
 
         const rows = yield* db
           .select()
-          .from(podcast)
-          .where(eq(podcast.podscanPodcastId, podscanPodcastId));
+          .from(podscanPodcast)
+          .where(eq(podscanPodcast.podscanPodcastId, podscanPodcastId));
 
         const row = rows[0];
         if (!row) {
