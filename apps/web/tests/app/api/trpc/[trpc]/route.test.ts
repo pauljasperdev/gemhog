@@ -1,11 +1,11 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@gemhog/api/context", () => ({
+vi.mock("@gemhog/trpc/context", () => ({
   createContext: vi.fn(),
 }));
 
-vi.mock("@gemhog/api/routers/index", () => ({
+vi.mock("@gemhog/trpc/routers/index", () => ({
   appRouter: {},
 }));
 

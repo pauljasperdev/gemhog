@@ -1,0 +1,25 @@
+{
+  "name": "@gemhog/rpc",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform": "catalog:",
+    "@effect/rpc": "catalog:",
+    "@effect/rpc-http": "catalog:",
+    "@gemhog/claim": "workspace:*",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/entity": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

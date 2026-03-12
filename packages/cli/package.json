@@ -1,21 +1,23 @@
 {
-  "name": "@gemhog/server",
+  "name": "@gemhog/cli",
   "type": "module",
-  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@effect-aws/lambda": "catalog:",
-    "@effect/platform": "catalog:",
-    "@gemhog/db": "workspace:*",
+    "@effect/cli": "^0.53",
     "@gemhog/env": "workspace:*",
-    "@gemhog/rpc": "workspace:*",
+    "@gemhog/extraction": "workspace:*",
     "@gemhog/telemetry": "workspace:*",
     "effect": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@gemhog/config": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

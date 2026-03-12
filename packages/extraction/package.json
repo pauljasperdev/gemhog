@@ -1,0 +1,27 @@
+{
+  "name": "@gemhog/extraction",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/ai": "^0.23",
+    "@effect/ai-anthropic": "^0.23",
+    "@effect/ai-openai": "^0.23",
+    "@gemhog/claim": "workspace:*",
+    "@gemhog/db": "workspace:*",
+    "@gemhog/entity": "workspace:*",
+    "@gemhog/env": "workspace:*",
+    "@gemhog/telemetry": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@gemhog/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

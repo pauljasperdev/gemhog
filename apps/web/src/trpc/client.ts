@@ -1,4 +1,4 @@
-import type { AppRouter } from "@gemhog/api/routers/index";
+import type { AppRouter } from "@gemhog/trpc/routers/index";
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
