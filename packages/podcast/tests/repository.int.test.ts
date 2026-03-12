@@ -1,5 +1,6 @@
 import * as PgDrizzle from "@effect/sql-drizzle/Pg";
-import { PgClient } from "@effect/sql-pg";
+import { DrizzleIntegrationLive } from "@gemhog/db";
+import { ConfigLayerTest } from "@gemhog/env/test";
 import * as Effect from "effect";
 import { afterEach, describe, expect, it } from "vitest";
 import {
@@ -12,40 +13,42 @@ import { PodcastRepositoryLive } from "../src/repository.live";
 import { podscanEpisode, podscanPodcast } from "../src/sql";
 import { createMockEpisode, createMockPodcastDetail } from "./test-fixtures";
 
-const DATABASE_URL =
-  process.env.DATABASE_URL ??
-  "postgresql://postgres:password@localhost:5432/gemhog";
-
-const TestPgLive = PgClient.layer({ url: Effect.Redacted.make(DATABASE_URL) });
-const TestDrizzleLive = PgDrizzle.layer.pipe(Effect.Layer.provide(TestPgLive));
-const TestRepositoryLive = PodcastRepositoryLive.pipe(
-  Effect.Layer.provide(TestDrizzleLive),
-);
-
-const truncate = Effect.Effect.gen(function* () {
-  const db = yield* PgDrizzle.PgDrizzle;
-  // Delete episode first (child), then podcast (parent) - FK order matters
-  yield* db
-    .delete(podscanEpisode)
-    .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
-  yield* db
-    .delete(podscanPodcast)
-    .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
-});
-
-const runWithRepository = <A, E>(
-  effect: Effect.Effect.Effect<A, E, PodcastRepository>,
-) =>
-  Effect.Effect.runPromise(
-    effect.pipe(Effect.Effect.provide(TestRepositoryLive)),
-  );
-
-const runTruncate = () =>
-  Effect.Effect.runPromise(
-    truncate.pipe(Effect.Effect.provide(TestDrizzleLive)),
-  );
-
 describe("podcast repository integration", () => {
+  const TestDrizzleLive = DrizzleIntegrationLive.pipe(
+    Effect.Layer.provide(ConfigLayerTest),
+  );
+  const TestRepositoryLive = PodcastRepositoryLive.pipe(
+    Effect.Layer.provide(TestDrizzleLive),
+  );
+
+  const truncate = Effect.Effect.gen(function* () {
+    const db = yield* PgDrizzle.PgDrizzle;
+    // Delete episode first (child), then podcast (parent) - FK order matters
+    yield* db
+      .delete(podscanEpisode)
+      .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
+    yield* db
+      .delete(podscanPodcast)
+      .pipe(Effect.Effect.catchAll(() => Effect.Effect.succeed(undefined)));
+  });
+
+  const runWithRepository = <A, E>(
+    effect: Effect.Effect.Effect<A, E, PodcastRepository>,
+  ) =>
+    Effect.Effect.runPromise(
+      effect.pipe(
+        Effect.Effect.provide(TestRepositoryLive),
+      ) as Effect.Effect.Effect<A, E, never>,
+    );
+
+  // Used by afterEach
+  const runTruncate = () =>
+    Effect.Effect.runPromise(
+      truncate.pipe(
+        Effect.Effect.provide(TestDrizzleLive),
+      ) as Effect.Effect.Effect<void, never, never>,
+    );
+
   afterEach(async () => {
     await runTruncate();
   });

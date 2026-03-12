@@ -13,6 +13,8 @@
     "check": "biome check --error-on-warnings --write . && pnpm -r check-types",
     "test": "./scripts/test.sh",
     "test:audit": "pnpm audit --audit-level moderate --ignore-unfixable",
+    "test:integration": "./scripts/test/integration.sh",
+    "test:integration:boundaries": "./scripts/test/check-integration-boundaries.sh",
     "db:start": "docker compose -f ./infra/docker-compose.yml up -d",
     "db:watch": "docker compose -f ./infra/docker-compose.yml up",
     "db:stop": "docker compose -f ./infra/docker-compose.yml stop",

@@ -1,5 +1,5 @@
 // vitest.integration.config.ts
-// Dedicated config for integration tests across the monorepo
+// Unified config for all integration tests across the monorepo
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({

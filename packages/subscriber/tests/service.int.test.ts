@@ -1,8 +1,10 @@
 import * as PgDrizzle from "@effect/sql-drizzle/Pg";
-import { PgClient } from "@effect/sql-pg";
+import { DrizzleIntegrationLive } from "@gemhog/db";
 import { EmailServiceConsole } from "@gemhog/email";
+import { ConfigLayerTest } from "@gemhog/env/test";
 import * as Effect from "effect";
-import { afterEach, describe, expect, it } from "vitest";
+import { Config } from "effect";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { SubscriberNotFoundError } from "../src/errors";
 import { SubscriberRepository } from "../src/repository";
 import { SubscriberRepositoryLive } from "../src/repository.live";
@@ -10,16 +12,22 @@ import { SubscriberService } from "../src/service";
 import { SubscriberServiceLive } from "../src/service.live";
 import { subscriber } from "../src/sql";
 
-const DATABASE_URL =
-  process.env.DATABASE_URL ??
-  "postgresql://postgres:password@localhost:5432/gemhog";
+// Bootstrap: read config values from ConfigLayerTest
+beforeAll(async () => {
+  const testConfig = await Effect.Effect.runPromise(
+    Effect.Effect.gen(function* () {
+      const betterAuthSecret = yield* Config.string("BETTER_AUTH_SECRET");
+      const appUrl = yield* Config.string("APP_URL");
+      return { betterAuthSecret, appUrl };
+    }).pipe(Effect.Effect.provide(ConfigLayerTest)),
+  );
+  vi.stubEnv("BETTER_AUTH_SECRET", testConfig.betterAuthSecret);
+  vi.stubEnv("APP_URL", testConfig.appUrl);
+});
 
-process.env.BETTER_AUTH_SECRET =
-  process.env.BETTER_AUTH_SECRET ?? "test-secret-at-least-32-characters-long";
-process.env.APP_URL = process.env.APP_URL ?? "http://localhost:3001";
-
-const TestPgLive = PgClient.layer({ url: Effect.Redacted.make(DATABASE_URL) });
-const TestDrizzleLive = PgDrizzle.layer.pipe(Effect.Layer.provide(TestPgLive));
+const TestDrizzleLive = DrizzleIntegrationLive.pipe(
+  Effect.Layer.provide(ConfigLayerTest),
+);
 const TestRepositoryLive = SubscriberRepositoryLive.pipe(
   Effect.Layer.provide(TestDrizzleLive),
 );

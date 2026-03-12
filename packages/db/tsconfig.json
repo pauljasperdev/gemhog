@@ -1,7 +1,9 @@
 {
   "extends": "@gemhog/config/tsconfig.base.json",
   "compilerOptions": {
+    "rootDir": "src",
     "sourceMap": true,
     "outDir": "dist"
-  }
+  },
+  "include": ["src"]
 }

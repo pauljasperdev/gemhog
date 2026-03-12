@@ -21,7 +21,7 @@ echo ""
 
 echo "=== Integration Tests ==="
 rm -rf apps/web/.next
-vitest run --config vitest.integration.config.ts
+pnpm test:integration
 echo "OK integration"
 echo ""
 

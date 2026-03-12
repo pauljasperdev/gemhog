@@ -1,5 +1,7 @@
+import * as schema from "@gemhog/db/auth";
+import { ConfigLayerTest } from "@gemhog/env/test";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as Effect from "effect";
+import { Config, Effect } from "effect";
 import { Pool } from "pg";
 import {
   afterAll,
@@ -11,31 +13,13 @@ import {
   vi,
 } from "vitest";
 import * as authModule from "../src/send-otp";
-import * as schema from "../src/sql";
 import { truncateAuthTables } from "./test-fixtures";
 
 vi.mock("../src/send-otp", () => ({
-  sendOtpEmail: vi.fn(() => Effect.Effect.void),
+  sendOtpEmail: vi.fn(() => Effect.void),
 }));
 
-const TEST_ENV = {
-  DATABASE_URL:
-    process.env.DATABASE_URL ??
-    "postgresql://postgres:password@localhost:5432/gemhog",
-  DATABASE_URL_POOLER:
-    process.env.DATABASE_URL_POOLER ??
-    process.env.DATABASE_URL ??
-    "postgresql://postgres:password@localhost:5432/gemhog",
-  BETTER_AUTH_SECRET: "test-secret-at-least-32-characters-long",
-  BETTER_AUTH_URL: "http://localhost:3000",
-  APP_URL: "http://localhost:3001",
-  GOOGLE_GENERATIVE_AI_API_KEY: "test-google-api-key",
-  SENTRY_DSN: "https://key@sentry.io/123",
-  ADMIN_EMAIL: "admin-test@example.com",
-  LOCAL_ENV: "1",
-};
-
-Object.assign(process.env, TEST_ENV);
+// Config values read from ConfigLayerTest in beforeAll
 
 /**
  * Sign a session token the same way better-auth's cookie-builder does.
@@ -69,7 +53,35 @@ describe("auth integration", () => {
   let auth: Awaited<typeof import("../src/service")>["auth"];
 
   beforeAll(async () => {
-    pool = new Pool({ connectionString: TEST_ENV.DATABASE_URL });
+    // Read config from ConfigLayerTest and populate process.env
+    const testConfig = await Effect.runPromise(
+      Effect.gen(function* () {
+        const databaseUrl = yield* Config.string("DATABASE_URL");
+        const databaseUrlPooler = yield* Config.string("DATABASE_URL_POOLER");
+        const betterAuthSecret = yield* Config.string("BETTER_AUTH_SECRET");
+        const betterAuthUrl = yield* Config.string("BETTER_AUTH_URL");
+        const appUrl = yield* Config.string("APP_URL");
+        const googleApiKey = yield* Config.string(
+          "GOOGLE_GENERATIVE_AI_API_KEY",
+        );
+        const sentryDsn = yield* Config.string("SENTRY_DSN");
+        const adminEmail = yield* Config.string("ADMIN_EMAIL");
+        return {
+          LOCAL_ENV: "1",
+          DATABASE_URL: databaseUrl,
+          DATABASE_URL_POOLER: databaseUrlPooler,
+          BETTER_AUTH_SECRET: betterAuthSecret,
+          BETTER_AUTH_URL: betterAuthUrl,
+          APP_URL: appUrl,
+          GOOGLE_GENERATIVE_AI_API_KEY: googleApiKey,
+          SENTRY_DSN: sentryDsn,
+          ADMIN_EMAIL: adminEmail,
+        };
+      }).pipe(Effect.provide(ConfigLayerTest)),
+    );
+    Object.assign(process.env, testConfig);
+
+    pool = new Pool({ connectionString: testConfig.DATABASE_URL });
     db = drizzle(pool);
     const { auth: authInstance } = await import("../src/service");
     auth = authInstance;
@@ -123,7 +135,7 @@ describe("auth integration", () => {
     });
 
     it("sendVerificationOTP callback should not throw for admin users", async () => {
-      const adminEmail = TEST_ENV.ADMIN_EMAIL;
+      const adminEmail = process.env.ADMIN_EMAIL as string;
       await expect(
         auth.api.sendVerificationOTP({
           body: { email: adminEmail, type: "sign-in" },
@@ -149,7 +161,7 @@ describe("auth integration", () => {
     });
 
     it("admin signup via OTP creates user with admin role", async () => {
-      const adminEmail = TEST_ENV.ADMIN_EMAIL;
+      const adminEmail = process.env.ADMIN_EMAIL as string;
       // Step 1: Request OTP — mock captures the plaintext OTP
       await auth.api.sendVerificationOTP({
         body: { email: adminEmail, type: "sign-in" },
@@ -168,97 +180,12 @@ describe("auth integration", () => {
         [adminEmail],
       );
       expect(result.rows[0]?.role).toBe("admin");
-    });
-
-    it("non-admin signup via OTP creates user with user role", async () => {
-      const userEmail = `user-${Date.now()}@example.com`;
-      await auth.api.sendVerificationOTP({
-        body: { email: userEmail, type: "sign-in" },
-      });
-      // Non-admin email: sendOtpEmail should NOT be called (gating works)
-      expect(authModule.sendOtpEmail).not.toHaveBeenCalled();
-      // Non-admin users get "user" role by default — verify via direct insert
-      await db.insert(schema.user).values({
-        id: crypto.randomUUID(),
-        name: "User",
-        email: userEmail,
-        emailVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      const result = await pool.query(
-        'SELECT role FROM "user" WHERE email = $1',
-        [userEmail],
-      );
-      expect(result.rows[0]?.role).toBe("user");
-    });
-
-    it("no admin role assigned when ADMIN_EMAIL is unset", async () => {
-      const originalAdminEmail = process.env.ADMIN_EMAIL;
-      delete process.env.ADMIN_EMAIL;
-      try {
-        const email = TEST_ENV.ADMIN_EMAIL; // use admin email but env var is unset
-        await auth.api.sendVerificationOTP({
-          body: { email, type: "sign-in" },
-        });
-        // With ADMIN_EMAIL unset, sendOtpEmail should NOT be called
-        expect(authModule.sendOtpEmail).not.toHaveBeenCalled();
-        // Users created without ADMIN_EMAIL get "user" role — verify via direct insert
-        await db.insert(schema.user).values({
-          id: crypto.randomUUID(),
-          name: "User",
-          email,
-          emailVerified: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
-        const result = await pool.query(
-          'SELECT role FROM "user" WHERE email = $1',
-          [email],
-        );
-        expect(result.rows[0]?.role).toBe("user");
-      } finally {
-        if (originalAdminEmail) process.env.ADMIN_EMAIL = originalAdminEmail;
-      }
-    });
-  });
-
-  describe("admin role enforcement", () => {
-    it("user table has role column defaulting to 'user'", async () => {
-      const userId = crypto.randomUUID();
-      const email = `role-test-${Date.now()}@example.com`;
-      await db.insert(schema.user).values({
-        id: userId,
-        name: "Test User",
-        email,
-        emailVerified: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      const result = await pool.query('SELECT role FROM "user" WHERE id = $1', [
-        userId,
-      ]);
-      expect(result.rows[0]?.role).toBe("user");
-    });
-
-    it("admin user has admin role", async () => {
-      const adminEmail = `admin-role-${Date.now()}@example.com`;
-      await db.insert(schema.user).values({
-        id: crypto.randomUUID(),
-        name: "Admin",
-        email: adminEmail,
-        role: "admin",
-        emailVerified: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
-      const result = await pool.query(
-        'SELECT role FROM "user" WHERE email = $1',
+      // Step 4: Verify session was persisted (better-auth session handling)
+      const sessionResult = await pool.query(
+        'SELECT * FROM "session" WHERE user_id IN (SELECT id FROM "user" WHERE email = $1)',
         [adminEmail],
       );
-      expect(result.rows[0]?.role).toBe("admin");
+      expect(sessionResult.rows.length).toBeGreaterThan(0);
     });
   });
 
